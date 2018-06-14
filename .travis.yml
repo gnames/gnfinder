@@ -1,0 +1,11 @@
+language: go
+
+go:
+  - 1.10.x
+
+before_install:
+  - go get -t github.com/onsi/gomega
+  - go get -t github.com/onsi/ginkgo/ginkgo
+  - go get -t github.com/modocache/gover
+
+script: ginkgo

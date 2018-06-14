@@ -1,0 +1,9 @@
+/gnfinder/**
+scripts/training/**
+debug.test
+t
+t.json
+*.test
+*test
+.idea
+.vscode

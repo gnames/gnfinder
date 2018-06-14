@@ -1,0 +1,28 @@
+function! Layout()
+    " Rough num columns to decide between laptop and big monitor screens
+    let numcol = 2
+    if winwidth(0) >= 180
+        let numcol = 3
+    endif
+
+    if numcol == 3
+        e term://bash
+        vnew
+    endif
+
+    set colorcolumn=81
+    vsp term://ginkgo watch
+    sp term://bash
+    resize 8
+    wincmd l
+    vertical resize 81
+    edit README.md
+    tabe README.md
+    vsp term://bash
+    wincmd l
+    vertical resize 81
+    tabfirst
+endfunction
+
+command! -register Layout call Layout()
+
