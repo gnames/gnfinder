@@ -1,4 +1,4 @@
-scripts/training/**
+scripts/training/training
 debug.test
 t
 t.json
