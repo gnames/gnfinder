@@ -34,7 +34,6 @@ func FindNames(text []rune, d *dict.Dictionary, opts ...util.Opt) Output {
 	if m.Bayes {
 		nlp.TagTokens(tokens, d, m)
 	}
-
 	return CollectOutput(tokens, text, m)
 }
 

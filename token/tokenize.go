@@ -67,10 +67,12 @@ func lastWordForLine(text []rune, i int, space map[rune]byte) bool {
 
 func concatenateTokens(t1 Token, t2 Token) Token {
 	var v []rune
+	t1Raw := make([]rune, len(t1.Raw))
+	copy(t1Raw, t1.Raw)
 	if t2.Raw[0] >= rune('a') && t2.Raw[0] <= rune('z') {
-		v = append(t1.Raw[0:len(t1.Raw)-1], t2.Raw...)
+		v = append(t1Raw[0:len(t1Raw)-1], t2.Raw...)
 	} else {
-		v = append(t1.Raw, t2.Raw...)
+		v = append(t1Raw, t2.Raw...)
 	}
 	t := Token{
 		Raw:   v,

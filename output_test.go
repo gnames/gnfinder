@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gnames/gnfinder"
+	"github.com/gnames/gnfinder/util"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -23,6 +24,22 @@ var _ = Describe("Output", func() {
 			o := makeOutput()
 			j := o.ToJSON()
 			Expect(string(j)[0:17]).To(Equal("{\n  \"metadata\": {"))
+		})
+
+		It("creates real verbatim out of multiline names", func() {
+			str := `
+Thalictroides, 18s per doz.
+vitifoiia, Is. 6d. each
+Calopogon, or Cymbidium pul-
+
+
+cheilum, 1 5s. per doz.
+Conostylis Americana, 2i. 6d.
+			`
+			output := gnfinder.FindNames([]rune(str), dictionary,
+				util.WithBayes(true))
+			Expect(output.Names[1].Verbatim).
+				To(Equal("Cymbidium pul-\n\n\ncheilum,"))
 		})
 	})
 
