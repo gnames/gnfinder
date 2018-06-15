@@ -9,7 +9,8 @@ import (
 	"github.com/gnames/gnfinder/nlp"
 	"github.com/gnames/gnfinder/token"
 	"github.com/gnames/gnfinder/util"
-	jsoniter "github.com/json-iterator/go"
+	"github.com/json-iterator/go"
+	"github.com/gnames/gnfinder/resolver"
 )
 
 // Output type is the result of name-finding.
@@ -46,14 +47,15 @@ type OddsDatum struct {
 
 // Name represents one found name.
 type Name struct {
-	Type        string            `json:"type"`
-	Verbatim    string            `json:"verbatim"`
-	Name        string            `json:"name"`
-	Odds        float64           `json:"odds,omitempty"`
-	OddsDetails token.OddsDetails `json:"odds_details,omitempty"`
-	OffsetStart int               `json:"start"`
-	OffsetEnd   int               `json:"end"`
-	Annotation  string            `json:"annotation"`
+	Type        string               `json:"type"`
+	Verbatim    string               `json:"verbatim"`
+	Name        string               `json:"name"`
+	Odds        float64              `json:"odds,omitempty"`
+	OddsDetails token.OddsDetails    `json:"odds_details,omitempty"`
+	OffsetStart int                  `json:"start"`
+	OffsetEnd   int                  `json:"end"`
+	Annotation  string               `json:"annotation"`
+	Validation  *resolver.NameOutput `json:"validation"`
 }
 
 // ToJSON converts Output to JSON representation.

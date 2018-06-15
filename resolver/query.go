@@ -7,26 +7,29 @@ type Query struct {
 		Responses []struct {
 			Total         graphql.Int    `graphql:"total"`
 			SuppliedInput graphql.String `graphql:"suppliedInput"`
-			Results       []struct {
-				CanonicalName struct {
-					ValueRanked graphql.String `graphql:"valueRanked"`
-				}
-				Name struct {
-					Value graphql.String `graphql:"value"`
-				} `graphql:"name"`
-				DataSource struct {
-					ID    graphql.Int    `graphql:"id"`
-					Title graphql.String `graphql:"title"`
-				}
-				MatchType struct {
-					Kind         graphql.String `graphql:"kind"`
-					EditDistance graphql.Int    `graphql:"editDistance"`
-				}
-				Score struct {
-					Value          graphql.Float `graphql:"value"`
-					ParsingQuality graphql.Int   `graphql:"parsingQuality"`
-				}
+			Results []struct {
+				ResultsPerDataSource []struct {
+					DataSource struct {
+						Id int `graphql:"id"`
+					} `graphql:"dataSource"`
+					Results []struct {
+						Name struct {
+							Value string `graphql:"value"`
+						} `graphql:"name"`
+						Classification struct {
+							Path string `graphql:"path"`
+						} `graphql:"classification"`
+						MatchType struct {
+							Kind graphql.String `graphql:"kind"`
+						} `graphql:"matchType"`
+						AcceptedName struct {
+							Name struct {
+								Value string `graphql:"value"`
+							} `graphql:"name"`
+						} `graphql:"acceptedName"`
+					} `graphql:"results"`
+				} `graphql:"resultsPerDataSource"`
 			} `graphql:"results"`
 		} `graphql:"responses"`
-	} `graphql:"nameResolver(names:$names, advancedResolution:true,preferredDataSourceIds:[1,12,169])"`
+	} `graphql:"nameResolver(names: $names, advancedResolution: $advancedResolution, bestMatchOnly: true, preferredDataSourceIds: [1,12,169])"`
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/gnames/bayes"
 	"github.com/gnames/gnfinder/lang"
+	"time"
 )
 
 // Model keeps configuration variables
@@ -30,9 +31,12 @@ type Model struct {
 
 // Resolver contains configuration of Resolver data
 type Resolver struct {
-	URL       string
-	BatchSize int
-	Workers   int
+	URL                string
+	BatchSize          int
+	Workers            int
+	WaitTimeout		   time.Duration
+	Verify             bool
+	AdvancedResolution bool
 }
 
 // NewModel creates Model object with default data, or with data coming
@@ -45,9 +49,10 @@ func NewModel(opts ...Opt) *Model {
 		//   Index: make(map[int]int),
 		// },
 		Resolver: Resolver{
-			URL:       "http://index-api.globalnames.org/api/graphql",
-			BatchSize: 500,
-			Workers:   runtime.NumCPU(),
+			URL:         "http://index-api.globalnames.org/api/graphql",
+			WaitTimeout: 90 * time.Second,
+			BatchSize:   500,
+			Workers:     runtime.NumCPU(),
 		},
 	}
 	for _, o := range opts {
@@ -110,6 +115,26 @@ func WithResolverBatch(n int) func(*Model) error {
 func WithResolverWorkers(n int) func(*Model) error {
 	return func(m *Model) error {
 		m.Workers = n
+		return nil
+	}
+}
+
+func WithResolverVerification(f bool) func(*Model) error {
+	return func(m *Model) error {
+		m.Verify = f
+		if !f {
+			m.AdvancedResolution = false
+		}
+		return nil
+	}
+}
+
+func WithResolverAdvancedVerification(f bool) func(*Model) error {
+	return func(m *Model) error {
+		m.AdvancedResolution = f
+		if f {
+			m.Verify = true
+		}
 		return nil
 	}
 }

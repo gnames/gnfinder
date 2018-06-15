@@ -30,7 +30,7 @@ import (
 	"github.com/gnames/gnfinder/dict"
 	"github.com/gnames/gnfinder/lang"
 	"github.com/gnames/gnfinder/util"
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -62,6 +62,12 @@ var rootCmd = &cobra.Command{
 			log.Println(err)
 			os.Exit(1)
 		}
+		resolverVerifyFlag, err :=
+			cmd.Flags().GetString("resolver-verify")
+		if err != nil {
+			log.Println(err)
+			os.Exit(1)
+		}
 		switch len(args) {
 		case 0:
 			if !checkStdin() {
@@ -82,7 +88,21 @@ var rootCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(0)
 		}
-		findNames(data, lang, bayes)
+
+		verify := false
+		verifyAdvanced := false
+		switch resolverVerifyFlag {
+		case "":
+		case "simple":
+			verify = true
+		case "advanced":
+			verify = true
+			verifyAdvanced = true
+		default:
+			panic(fmt.Errorf("unexpected value of `resolver-verify` flag %s", resolverVerifyFlag))
+		}
+
+		findNames(data, lang, bayes, verify, verifyAdvanced)
 	},
 }
 
@@ -106,8 +126,9 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("bayes", "b", false, "always ran Bayes algorithms")
+	rootCmd.Flags().BoolP("bayes", "b", false, "always run Bayes algorithms")
 	rootCmd.Flags().StringP("lang", "l", "", "text's language")
+	rootCmd.Flags().StringP("resolver-verify", "r", "", "")
 	log.SetFlags(0)
 }
 
@@ -137,8 +158,10 @@ func initConfig() {
 	}
 }
 
-func findNames(data []byte, langString string, bayes bool) {
-	dict := dict.LoadDictionary()
+func findNames(data []byte, langString string, bayes bool,
+	verify bool, verifyAdvanced bool) {
+
+	dictionary := dict.LoadDictionary()
 	var output []byte
 	var opts []util.Opt
 	if langString != "" {
@@ -149,8 +172,12 @@ func findNames(data []byte, langString string, bayes bool) {
 		}
 		opts = append(opts, util.WithLanguage(l))
 	}
-	opts = append(opts, util.WithBayes(bayes))
-	output = gnfinder.FindNamesJSON(data, &dict, opts...)
+
+	opts = append(opts,
+		util.WithBayes(bayes),
+		util.WithResolverVerification(verify),
+		util.WithResolverAdvancedVerification(verifyAdvanced))
+	output = gnfinder.FindNamesJSON(data, &dictionary, opts...)
 	fmt.Println(string(output))
 }
 

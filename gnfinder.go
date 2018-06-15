@@ -6,6 +6,7 @@ import (
 	"github.com/gnames/gnfinder/heuristic"
 	"github.com/gnames/gnfinder/lang"
 	"github.com/gnames/gnfinder/nlp"
+	"github.com/gnames/gnfinder/resolver"
 	"github.com/gnames/gnfinder/token"
 	"github.com/gnames/gnfinder/util"
 )
@@ -38,21 +39,30 @@ func FindNames(text []rune, d *dict.Dictionary, opts ...util.Opt) Output {
 }
 
 // CollectOutput takes tagged tokens and assembles gnfinder output out of them.
-func CollectOutput(ts []token.Token, text []rune,
-	m *util.Model) Output {
+func CollectOutput(ts []token.Token, text []rune, m *util.Model) Output {
 	var names []Name
+	var namesStr []string
 	l := len(ts)
 	for i := range ts {
 		u := &ts[i]
 		if u.Decision == token.NotName {
 			continue
 		}
+		namesStr = append(namesStr, name.Verbatim)
 		name := TokensToName(ts[i:util.UpperIndex(i, l)], text)
 		if name.Odds == 0.0 || name.Odds > 1.0 || name.Type == "Binomial" ||
 			name.Type == "Trinomial" {
 			names = append(names, name)
 		}
 	}
+
 	output := NewOutput(names, ts, m)
+	if m.Resolver.Verify {
+		namesResolved := <-resolver.Run(namesStr, m)
+		for idx, name := range output.Names {
+			output.Names[idx].Validation = namesResolved[name.Verbatim]
+		}
+	}
+
 	return output
 }
