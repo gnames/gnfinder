@@ -224,7 +224,7 @@ func SetIndices(ts []Token, d *dict.Dictionary) {
 	}
 
 	iIsp := iSp + 1
-	if l > iIsp && checkRank(&ts[iIsp], d) {
+	if l > iIsp+1 && checkRank(&ts[iIsp], d) {
 		u.Indices.Rank = iIsp
 		iIsp++
 	}

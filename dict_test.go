@@ -18,7 +18,7 @@ var _ = Describe("Dictionary", func() {
 	Describe("CommonWords", func() {
 		It("has common words list", func() {
 			l := len(dictionary.CommonWords)
-			Expect(l).To(Equal(68844))
+			Expect(l).To(Equal(68846))
 			_, ok := dictionary.CommonWords["all"]
 			Expect(ok).To(Equal(true))
 		})

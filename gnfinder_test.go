@@ -56,6 +56,13 @@ var _ = Describe("Gnfinder", func() {
 			Expect(output.Names[0].Name).To(Equal("P. calycina var. mathewsii"))
 		})
 
+		It("does not break if rank does not have epithet", func() {
+			s := "This is Pomatomus saltator var."
+			output := FindNames([]rune(s), dictionary)
+			Expect(len(output.Names)).To(Equal(1))
+			Expect(output.Names[0].Name).To(Equal("Pomatomus saltator"))
+		})
+
 		It("finds names in a book", func() {
 			output := FindNames([]rune(string(book)), dictionary)
 			Expect(len(output.Names)).To(Equal(4571))
@@ -86,6 +93,22 @@ var _ = Describe("Gnfinder", func() {
 				Expect(len(output.Names)).To(Equal(1))
 				Expect(output.Names[0].Name).To(Equal(v[1]))
 			}
+		})
+
+		It("recognizes various 3-letter words as non-species epithets", func() {
+			s := [][2]string{
+				{"Pardosa bis", "Pardosa"},
+				{"Pardosa des", "Pardosa"},
+				{"Pardosa taken", "Pardosa"},
+				{"Pardosa del", "Pardosa"},
+				{"Pardosa either", "Pardosa"},
+			}
+			for _, v := range s {
+				output := FindNames([]rune(v[0]), dictionary)
+				Expect(len(output.Names)).To(Equal(1))
+				Expect(output.Names[0].Name).To(Equal(v[1]))
+			}
+
 		})
 	})
 
