@@ -48,7 +48,8 @@ func CollectOutput(ts []token.Token, text []rune,
 			continue
 		}
 		name := TokensToName(ts[i:util.UpperIndex(i, l)], text)
-		if name.Odds == 0.0 || name.Odds > 1.0 {
+		if name.Odds == 0.0 || name.Odds > 1.0 || name.Type == "Binomial" ||
+			name.Type == "Trinomial" {
 			names = append(names, name)
 		}
 	}

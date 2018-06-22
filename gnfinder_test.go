@@ -1,6 +1,8 @@
 package gnfinder_test
 
 import (
+	"fmt"
+
 	. "github.com/gnames/gnfinder"
 	"github.com/gnames/gnfinder/lang"
 	"github.com/gnames/gnfinder/util"
@@ -65,7 +67,16 @@ var _ = Describe("Gnfinder", func() {
 
 		It("finds names in a book", func() {
 			output := FindNames([]rune(string(book)), dictionary)
-			Expect(len(output.Names)).To(Equal(4571))
+			Expect(len(output.Names)).To(Equal(4579))
+			noOdds := 0
+			for _, v := range output.Names {
+
+				if v.Odds == 0 {
+					fmt.Println(v.Name)
+					noOdds++
+				}
+			}
+			Expect(noOdds).To(Equal(0))
 		})
 
 		// 	It("finds names in a book with new BayesOddsThreshold", func() {
@@ -90,9 +101,26 @@ var _ = Describe("Gnfinder", func() {
 			}
 			for _, v := range s {
 				output := FindNames([]rune(v[0]), dictionary)
-				Expect(len(output.Names)).To(Equal(1))
 				Expect(output.Names[0].Name).To(Equal(v[1]))
 			}
+		})
+
+		// We provide names that did not get odds assigned to in the past
+		It("assigns odds in all accepted names in Bayes mode", func() {
+			s := [][2]string{
+				{"Puperita pupa", "Puperita pupa"},
+				{"Cypraea mus", "Cypraea mus"},
+				{"Astraea tuber", "Astraea tuber"},
+				{"A. sulcosa \nvan", "A. sulcosa"},
+				{"C. bairdi psyche", "C. bairdi psyche"},
+				{"Acmaea \n\nleuco pleura", "Acmaea leuco pleura"},
+			}
+			for _, v := range s {
+				output := FindNames([]rune(v[0]), dictionary, util.WithBayes(true))
+				Expect(output.Names[0].Name).To(Equal(v[1]))
+				Expect(output.Names[0].Odds).To(BeNumerically(">", 0.0))
+			}
+
 		})
 
 		It("recognizes various 3-letter words as non-species epithets", func() {

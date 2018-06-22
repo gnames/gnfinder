@@ -128,7 +128,6 @@ func (t *Token) SetSpeciesDict(d *dict.Dictionary) {
 	}
 	name := strings.ToLower(t.Cleaned)
 	in := func(dict map[string]struct{}) bool { _, ok := dict[name]; return ok }
-
 	switch {
 	case in(d.WhiteSpecies):
 		t.SpeciesDict = dict.WhiteSpecies

@@ -16,14 +16,16 @@ func TagTokens(ts []token.Token, d *dict.Dictionary, m *util.Model) {
 	l := len(ts)
 	for i := range ts {
 		t := &ts[i]
-		if t.Features.Capitalized && t.UninomialDict != dict.BlackUninomial {
-			t.SetUninomialDict(d)
-			ts2 := ts[i:util.UpperIndex(i, l)]
-			fs := NewFeatureSet(ts2)
-			priorOdds := nameFrequency()
-			odds := predictOdds(nb, t, &fs, priorOdds)
-			processBayesResults(odds, ts, i, m.BayesOddsThreshold, d)
+		if !t.Features.Capitalized || t.UninomialDict == dict.BlackUninomial {
+			continue
 		}
+
+		t.SetUninomialDict(d)
+		ts2 := ts[i:util.UpperIndex(i, l)]
+		fs := NewFeatureSet(ts2)
+		priorOdds := nameFrequency()
+		odds := predictOdds(nb, t, &fs, priorOdds)
+		processBayesResults(odds, ts, i, m.BayesOddsThreshold, d)
 	}
 }
 
@@ -32,13 +34,15 @@ func processBayesResults(odds []bayes.Posterior, ts []token.Token, i int,
 	uni := &ts[i]
 	decideUninomial(odds, uni, oddsThreshold)
 
-	if uni.Indices.Species == 0 || odds[1].MaxLabel != Name {
+	if uni.Indices.Species == 0 || (odds[1].MaxLabel != Name &&
+		uni.Decision.In(token.NotName, token.Uninomial)) {
 		return
 	}
 
 	sp := &ts[i+uni.Indices.Species]
 	decideSpeces(odds, uni, sp, oddsThreshold, d)
-	if uni.Indices.Infraspecies == 0 || odds[2].MaxLabel != Name {
+	if uni.Indices.Infraspecies == 0 || (odds[2].MaxLabel != Name &&
+		!uni.Decision.In(token.Trinomial, token.BayesTrinomial)) {
 		return
 	}
 	isp := &ts[i+uni.Indices.Infraspecies]
