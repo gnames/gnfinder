@@ -8,23 +8,32 @@ type Query struct {
 			Total         graphql.Int    `graphql:"total"`
 			SuppliedInput graphql.String `graphql:"suppliedInput"`
 			Results []struct {
+				Name struct {
+					Value graphql.String `graphql:"value"`
+				} `graphql:"name"`
 				ResultsPerDataSource []struct {
 					DataSource struct {
-						Id int `graphql:"id"`
+						Id graphql.Int `graphql:"id"`
 					} `graphql:"dataSource"`
 					Results []struct {
 						Name struct {
-							Value string `graphql:"value"`
+							Value graphql.String `graphql:"value"`
 						} `graphql:"name"`
 						Classification struct {
-							Path string `graphql:"path"`
+							Path graphql.String `graphql:"path"`
 						} `graphql:"classification"`
 						MatchType struct {
-							Kind graphql.String `graphql:"kind"`
+							Kind                 graphql.String `graphql:"kind"`
+							VerbatimEditDistance graphql.Int    `graphql:"stemEditDistance"`
+							StemEditDistance     graphql.Int    `graphql:"verbatimEditDistance"`
 						} `graphql:"matchType"`
+						Score struct {
+							Value          graphql.Float `graphql:"value"`
+							ParsingQuality graphql.Int   `graphql:"parsingQuality"`
+						}
 						AcceptedName struct {
 							Name struct {
-								Value string `graphql:"value"`
+								Value graphql.String `graphql:"value"`
 							} `graphql:"name"`
 						} `graphql:"acceptedName"`
 					} `graphql:"results"`

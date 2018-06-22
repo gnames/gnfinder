@@ -49,7 +49,7 @@ func NewModel(opts ...Opt) *Model {
 		//   Index: make(map[int]int),
 		// },
 		Resolver: Resolver{
-			URL:         "http://index-api.globalnames.org/api/graphql",
+			URL:         "http://index.globalnames.org/api/graphql",
 			WaitTimeout: 90 * time.Second,
 			BatchSize:   500,
 			Workers:     runtime.NumCPU(),

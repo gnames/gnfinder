@@ -15,7 +15,7 @@ var _ = Describe("Model", func() {
 			Expect(m.Language).To(Equal(lang.NotSet))
 			Expect(m.Bayes).To(BeFalse())
 			Expect(m.BayesOddsThreshold).To(Equal(100.0))
-			Expect(m.URL).To(Equal("http://index-api.globalnames.org/api/graphql"))
+			Expect(m.URL).To(Equal("http://index.globalnames.org/api/graphql"))
 			Expect(m.BatchSize).To(Equal(500))
 		})
 
