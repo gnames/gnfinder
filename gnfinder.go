@@ -48,8 +48,8 @@ func CollectOutput(ts []token.Token, text []rune, m *util.Model) Output {
 		if u.Decision == token.NotName {
 			continue
 		}
-		namesStr = append(namesStr, name.Verbatim)
 		name := TokensToName(ts[i:util.UpperIndex(i, l)], text)
+		namesStr = append(namesStr, name.Verbatim)
 		if name.Odds == 0.0 || name.Odds > 1.0 || name.Type == "Binomial" ||
 			name.Type == "Trinomial" {
 			names = append(names, name)
