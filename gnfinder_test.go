@@ -14,60 +14,60 @@ var _ = Describe("Gnfinder", func() {
 	Describe("FindNames", func() {
 		It("finds names", func() {
 			s := "Plantago major and Pardosa moesta are spiders and plants"
-			output := FindNames([]rune(s), dictionary)
+			output := FindNames([]rune(s), dictionary, model)
 			Expect(output.Names[0].Name).To(Equal("Plantago major"))
 			Expect(len(output.Names)).To(Equal(2))
 		})
 
 		It("works with very short/empty texts", func() {
 			s := "  \n\t    \v\r\n"
-			output := FindNames([]rune(s), dictionary)
+			output := FindNames([]rune(s), dictionary, model)
 			Expect(len(output.Names)).To(Equal(0))
 			s = "Pomatomus"
-			output = FindNames([]rune(s), dictionary)
+			output = FindNames([]rune(s), dictionary, model)
 			Expect(len(output.Names)).To(Equal(1))
 			s = "Pomatomus saltator"
-			output = FindNames([]rune(s), dictionary)
+			output = FindNames([]rune(s), dictionary, model)
 			Expect(len(output.Names)).To(Equal(1))
 		})
 
 		It("does not find capitalized infraspecies", func() {
 			s := "the periwinkles Littorina and Tectarius and other shore species"
-			output := FindNames([]rune(s), dictionary)
+			output := FindNames([]rune(s), dictionary, model)
 			Expect(len(output.Names)).To(Equal(2))
 			Expect(output.Names[0].Name).To(Equal("Littorina"))
 			Expect(output.Names[1].Name).To(Equal("Tectarius"))
 			s = `8 Living Flamingo Tongues on the Rough
       Sea-whip, Miiricea muricata Alba`
-			output = FindNames([]rune(s), dictionary)
+			output = FindNames([]rune(s), dictionary, model)
 			Expect(len(output.Names)).To(Equal(1))
 			Expect(output.Names[0].Name).To(Equal("Miiricea muricata"))
 		})
 
 		It("recognizes subgenus", func() {
 			s := "Pomatomus (Pomatomus) saltator"
-			output := FindNames([]rune(s), dictionary)
+			output := FindNames([]rune(s), dictionary, model)
 			Expect(len(output.Names)).To(Equal(2))
 			Expect(output.Names[1].Name).To(Equal("Pomatomus"))
 		})
 
 		It("recognizes infraspecies with rank", func() {
 			s := "This is a P. calycina var. mathewsii. and it is a legume"
-			output := FindNames([]rune(s), dictionary)
+			output := FindNames([]rune(s), dictionary, model)
 			Expect(len(output.Names)).To(Equal(1))
 			Expect(output.Names[0].Name).To(Equal("P. calycina var. mathewsii"))
 		})
 
 		It("does not break if rank does not have epithet", func() {
 			s := "This is Pomatomus saltator var."
-			output := FindNames([]rune(s), dictionary)
+			output := FindNames([]rune(s), dictionary, model)
 			Expect(len(output.Names)).To(Equal(1))
 			Expect(output.Names[0].Name).To(Equal("Pomatomus saltator"))
 		})
 
 		It("finds names in a book", func() {
-			output := FindNames([]rune(string(book)), dictionary)
-			Expect(len(output.Names)).To(Equal(4579))
+			output := FindNames([]rune(string(book)), dictionary, model)
+			Expect(len(output.Names)).To(Equal(4587))
 			noOdds := 0
 			for _, v := range output.Names {
 
@@ -78,12 +78,6 @@ var _ = Describe("Gnfinder", func() {
 			}
 			Expect(noOdds).To(Equal(0))
 		})
-
-		// 	It("finds names in a book with new BayesOddsThreshold", func() {
-		// 		output := FindNames([]rune(string(book)),
-		// 			dictionary, WithBayesThreshold(1))
-		// 		Expect(len(output.Names)).To(Equal(5049))
-		// 	})
 
 		It("recognizes 'impossible', unknown and abbreviated binomials", func() {
 			s := [][2]string{
@@ -100,7 +94,7 @@ var _ = Describe("Gnfinder", func() {
 				{"[Different Pomatomus ]saltator...", "Pomatomus"},
 			}
 			for _, v := range s {
-				output := FindNames([]rune(v[0]), dictionary)
+				output := FindNames([]rune(v[0]), dictionary, model)
 				Expect(output.Names[0].Name).To(Equal(v[1]))
 			}
 		})
@@ -116,7 +110,8 @@ var _ = Describe("Gnfinder", func() {
 				{"Acmaea \n\nleuco pleura", "Acmaea leuco pleura"},
 			}
 			for _, v := range s {
-				output := FindNames([]rune(v[0]), dictionary, util.WithBayes(true))
+				mBayes := util.NewModel(util.WithBayes(true))
+				output := FindNames([]rune(v[0]), dictionary, mBayes)
 				Expect(output.Names[0].Name).To(Equal(v[1]))
 				Expect(output.Names[0].Odds).To(BeNumerically(">", 0.0))
 			}
@@ -132,7 +127,7 @@ var _ = Describe("Gnfinder", func() {
 				{"Pardosa either", "Pardosa"},
 			}
 			for _, v := range s {
-				output := FindNames([]rune(v[0]), dictionary)
+				output := FindNames([]rune(v[0]), dictionary, model)
 				Expect(len(output.Names)).To(Equal(1))
 				Expect(output.Names[0].Name).To(Equal(v[1]))
 			}
@@ -143,13 +138,13 @@ var _ = Describe("Gnfinder", func() {
 	It("rejects black dictionary genera", func() {
 		s := []string{"The moesta", "This saltator"}
 		for _, v := range s {
-			output := FindNames([]rune(v), dictionary)
+			output := FindNames([]rune(v), dictionary, model)
 			Expect(len(output.Names)).To(Equal(0))
 		}
 	})
 
 	It("does not recognize one letter genera", func() {
-		output := FindNames([]rune("I saltator"), dictionary)
+		output := FindNames([]rune("I saltator"), dictionary, model)
 		Expect(len(output.Names)).To(Equal(0))
 	})
 
@@ -175,7 +170,7 @@ var _ = Describe("Gnfinder", func() {
       Xifreda & Sanso; Butia yatay var. paraguayensis (Barb.Rodr.) Becc.;
       Palm.
       `
-			output := FindNames([]rune(s), dictionary)
+			output := FindNames([]rune(s), dictionary, model)
 			Expect(output.Names[0].Name).To(Equal("Butia paraguayensis"))
 			Expect(output.Names[1].Name).To(Equal("Butia amadelpha"))
 			Expect(output.Names[7].Name).To(Equal("Butia yatay var. paraguayensis"))
@@ -189,9 +184,9 @@ var _ = Describe("Gnfinder", func() {
       Rodr.; Cocos australis Mart.; Cocos datil Drude & Griseb.; Cocos geriba
       Barb.Rodr.; Cocos martiana Drude; Cocos plumosa Hook.f.;
       Cocos romanzoffiana Cham.; Cocos romanzoffiana var. macropinum Becc.
-      `
-			output := FindNames([]rune(s), dictionary,
-				util.WithLanguage(lang.English))
+			`
+			mEng := util.NewModel(util.WithLanguage(lang.English))
+			output := FindNames([]rune(s), dictionary, mEng)
 			Expect(output.Names[1].Name).
 				To(Equal("Arecastrum romanzoffianum var. australe"))
 			Expect(output.Names[3].Name).To(Equal("Cocos acrocomioides"))
@@ -213,7 +208,7 @@ var _ = Describe("Gnfinder", func() {
       The Golden Cowrie is the most popular among the so-called rarities, the
       present-day price ranging from $20 to $60.
 			`
-			output := FindNames([]rune(s), dictionary)
+			output := FindNames([]rune(s), dictionary, model)
 			Expect(output.Names[0].Name).
 				To(Equal("Tectarius"))
 			Expect(output.Names[1].Name).
@@ -236,7 +231,7 @@ var _ = Describe("Gnfinder", func() {
 			verschiedenartige. Queradern meistens vorhanden , selten in sehr grosser
 			Zahl ausgebildet.
 			`
-			output := FindNames([]rune(s), dictionary)
+			output := FindNames([]rune(s), dictionary, model)
 			Expect(output.Meta.Language).To(Equal("deu"))
 			Expect(len(output.Names)).To(Equal(4))
 			Expect(output.Names[0].Name).To(Equal("Coccidae"))

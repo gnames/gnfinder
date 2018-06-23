@@ -1,130 +1,199 @@
+// Package resolver verifies found name-strings against gnindex site located
+// at https://index.globalnames.org. The gnindex site contains several datasets
+// of scientific names.
 package resolver
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"github.com/gnames/gnfinder/util"
-
 	"github.com/shurcooL/graphql"
-	"fmt"
 )
+
+// Verification presents data of an attempted remote verification
+// of a name-string.
+type Verification struct {
+	// DataSourceID is the ID of the DataSource of the returned best match result.
+	DataSourceID int `json:"dataSourceId"`
+	// MatchedName is a verbatim name-string from the matched result.
+	MatchedName string `json:"matchedName"`
+	// CurrentName is a currently accepted name according to the matched result.
+	CurrentName string `json:"currentName"`
+	// ClassificationPath of the matched result.
+	ClassificationPath string `json:"clssificationPath"`
+	// DatabasesNum tells how many databases matched by the name-string.
+	DatabasesNum int `json:"databasesNum"`
+	// Verified is true if name was found in gnindex.
+	Verified bool `json:"verified"`
+	// MatchType provides what kind of verification occured if any.
+	MatchType string `json:"matchType"`
+	// Retries is number of attempted retries
+	Retries int
+	// ErrorString explains what happened if resolution did not work
+	Error error
+}
+
+type VerifyOutput map[string]Verification
+
+type Result struct {
+	Names   []string
+	Query   Query
+	Retries int
+	Error   error
+}
 
 type name struct {
 	Value string `json:"value"`
 }
 
-type NameOutput struct {
-	Total              int    `json:"total"`
-	Resolved           bool   `json:"resolved"`
-	MatchType          string `json:"matchType"`
-	DataSourceId       int    `json:"dataSourceId"`
-	Name               string `json:"name"`
-	ClassificationPath string `json:"classificationPath"`
-	AcceptedName       string `json:"acceptedName"`
-}
+var (
+	// maxRetries        = 5
+	// maxRetriesReached = errors.New("Reached resolver retry limit")
+	wg sync.WaitGroup
+)
 
-type batch []name
-
-var nameOutputEmpty = NameOutput{
-	Resolved: false,
-}
-
-func Run(names []string, m *util.Model) chan map[string]*NameOutput {
-	var namesResolved = make(map[string]*NameOutput)
-
+func Verify(names []string, m *util.Model) VerifyOutput {
+	verResult := make(VerifyOutput)
 	client := graphql.NewClient(m.URL, nil)
-	jobs := make(chan batch)
-	qs := make(chan *Query)
-	namesResolvedChan := make(chan map[string]*NameOutput)
-	var wgJobs sync.WaitGroup
+	var (
+		jobs = make(chan []string)
+		res  = make(chan Result)
+		done = make(chan bool)
+	)
 
-	for _, name := range names {
-		namesResolved[name] = &nameOutputEmpty
-	}
-	//fmt.Printf("total names count to resolve: %d\n", len(namesResolved))
+	go prepareJobs(names, jobs, m.BatchSize)
 
-	go prepareJobs(namesResolved, jobs, m)
-
-	wgJobs.Add(m.Workers)
+	wg.Add(m.Workers)
 	for i := 1; i <= m.Workers; i++ {
-		go resolverWorker(i, jobs, qs, &wgJobs, client, m)
+		go resolverWorker(client, jobs, res, m)
 	}
 
-	go (func() {
-		for q := range qs {
-			//fmt.Printf("processed: %d\n", len(q.NameResolver.Responses))
-			for _, responses := range q.NameResolver.Responses {
-				if responses.Total > 0 {
-					resultPerDataSource := responses.Results[0].ResultsPerDataSource[0]
-					result := resultPerDataSource.Results[0]
-					namesResolved[string(responses.SuppliedInput)] =
-						&NameOutput{
-							Resolved:           true,
-							Total:              int(responses.Total),
-							MatchType:          string(result.MatchType.Kind),
-							DataSourceId:       int(resultPerDataSource.DataSource.Id),
-							Name:               string(result.Name.Value),
-							ClassificationPath: string(result.Classification.Path),
-							AcceptedName:       string(result.AcceptedName.Name.Value),
-						}
-				}
-			}
-		}
+	go processResult(verResult, res, done)
 
-		namesResolvedChan <- namesResolved
-	})()
-
-	wgJobs.Wait()
-	close(qs)
-
-	return namesResolvedChan
+	wg.Wait()
+	close(res)
+	<-done
+	return verResult
 }
 
-func resolverWorker(workerIdx int, jobs <-chan batch, qs chan *Query,
-	wg *sync.WaitGroup, client *graphql.Client, m *util.Model) {
+func resolverWorker(client *graphql.Client,
+	jobs <-chan []string, res chan<- Result, m *util.Model) {
 	defer wg.Done()
-	for batchJob := range jobs {
+
+	for names := range jobs {
 		var q Query
-		variables := map[string]interface{}{
-			"names":              batchJob,
-			"advancedResolution": graphql.Boolean(m.AdvancedResolution),
+		graphqlVars := map[string]interface{}{
+			"names": jsonNames(names),
 		}
-		ctx, cancel := context.WithTimeout(context.Background(), m.Resolver.WaitTimeout)
+		ctx, cancel := context.WithTimeout(context.Background(), m.WaitTimeout)
+
 		queryDone := make(chan error)
-		go (func() { queryDone <- client.Query(ctx, &q, variables) })()
+		go (func() { queryDone <- client.Query(ctx, &q, graphqlVars) })()
 
 		select {
 		case err := <-queryDone:
 			cancel()
 			if err != nil {
-				fmt.Errorf("resolve worker error: %v\n", err)
+				res <- Result{
+					Names:   names,
+					Query:   q,
+					Retries: 0,
+					Error:   fmt.Errorf("Resolve worker error: %v\n", err),
+				}
 			} else {
-				qs <- &q
+				res <- Result{Query: q, Retries: 0}
 			}
 		case <-ctx.Done():
-			fmt.Errorf("resolve worker timeout: %v\n", ctx.Err())
+			cancel()
+			res <- Result{
+				Names:   names,
+				Query:   q,
+				Retries: 0,
+				Error:   fmt.Errorf("Resolve worker timeout: %v\n", ctx.Err()),
+			}
 		}
 	}
 }
 
-func prepareJobs(namesResolved map[string]*NameOutput, jobs chan<- batch, m *util.Model) {
-	nameIdx := 0
-	btch := make(batch, m.BatchSize)
-	for nm := range namesResolved {
-		btch[nameIdx] = name{Value: nm}
-		nameIdx++
-		if nameIdx%m.BatchSize == 0 {
-			nameIdx = 0
-			//fmt.Printf("job sent: %d\n", len(btch))
-			jobs <- btch
-			btch = make(batch, m.BatchSize)
+func prepareJobs(names []string, jobs chan<- []string, batchSize int) {
+	l := len(names)
+	offset := 0
+	for {
+		limit := offset + batchSize
+		if limit < l {
+			jobs <- names[offset:limit]
+			offset = limit
+		} else {
+			jobs <- names[offset:l]
+			close(jobs)
+			return
 		}
 	}
-	if nameIdx > 0 {
-		//fmt.Printf("job sent (last): %d\n", nameIdx)
-		jobs <- btch[:nameIdx]
-	}
+}
 
-	close(jobs)
+func jsonNames(names []string) []name {
+	res := make([]name, len(names))
+	for i := range names {
+		res[i] = name{Value: names[i]}
+	}
+	return res
+}
+
+func processResult(verResult VerifyOutput,
+	res <-chan Result, done chan<- bool) {
+	for r := range res {
+
+		if r.Query.NameResolver.Responses == nil {
+			processError(verResult, r)
+			continue
+		}
+
+		for _, resp := range r.Query.NameResolver.Responses {
+			if resp.Total > 0 {
+				processMatch(verResult, resp, r.Retries, r.Error)
+			} else {
+				processNoMatch(verResult, resp, r.Retries, r.Error)
+			}
+		}
+	}
+	done <- true
+}
+
+func processError(verResult VerifyOutput, result Result) {
+	for _, n := range result.Names {
+		verResult[n] = Verification{
+			Retries: result.Retries,
+			Error:   result.Error,
+		}
+	}
+}
+
+func processMatch(verResult VerifyOutput, resp QueryResponse, retries int,
+	err error) {
+	resultPerDataSource := resp.Results[0].ResultsPerDataSource[0]
+	result := resultPerDataSource.Results[0]
+	verResult[string(resp.SuppliedInput)] =
+		Verification{
+			DataSourceID:       int(resultPerDataSource.DataSource.Id),
+			MatchedName:        string(result.Name.Value),
+			CurrentName:        string(result.AcceptedName.Name.Value),
+			ClassificationPath: string(result.Classification.Path),
+			DatabasesNum:       int(resp.Total),
+			Verified:           true,
+			MatchType:          string(result.MatchType.Kind),
+			Retries:            retries,
+			Error:              err,
+		}
+}
+
+func processNoMatch(verResult VerifyOutput, resp QueryResponse, retries int,
+	err error) {
+	verResult[string(resp.SuppliedInput)] =
+		Verification{
+			Verified: false,
+			Retries:  retries,
+			Error:    err,
+		}
 }

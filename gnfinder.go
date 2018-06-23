@@ -6,7 +6,6 @@ import (
 	"github.com/gnames/gnfinder/heuristic"
 	"github.com/gnames/gnfinder/lang"
 	"github.com/gnames/gnfinder/nlp"
-	"github.com/gnames/gnfinder/resolver"
 	"github.com/gnames/gnfinder/token"
 	"github.com/gnames/gnfinder/util"
 )
@@ -15,15 +14,15 @@ import (
 // as well as tokens
 func FindNamesJSON(data []byte, dict *dict.Dictionary,
 	opts ...util.Opt) []byte {
-	output := FindNames([]rune(string(data)), dict, opts...)
+	m := util.NewModel(opts...)
+	output := FindNames([]rune(string(data)), dict, m)
 	return output.ToJSON()
 }
 
 // FindNames traverses a text and finds scientific names in it.
-func FindNames(text []rune, d *dict.Dictionary, opts ...util.Opt) Output {
+func FindNames(text []rune, d *dict.Dictionary, m *util.Model) Output {
 	tokens := token.Tokenize(text)
 
-	m := util.NewModel(opts...)
 	if m.Language == lang.NotSet {
 		m.Language = lang.DetectLanguage(text)
 	}
@@ -41,7 +40,6 @@ func FindNames(text []rune, d *dict.Dictionary, opts ...util.Opt) Output {
 // CollectOutput takes tagged tokens and assembles gnfinder output out of them.
 func CollectOutput(ts []token.Token, text []rune, m *util.Model) Output {
 	var names []Name
-	var namesStr []string
 	l := len(ts)
 	for i := range ts {
 		u := &ts[i]
@@ -49,7 +47,6 @@ func CollectOutput(ts []token.Token, text []rune, m *util.Model) Output {
 			continue
 		}
 		name := TokensToName(ts[i:util.UpperIndex(i, l)], text)
-		namesStr = append(namesStr, name.Verbatim)
 		if name.Odds == 0.0 || name.Odds > 1.0 || name.Type == "Binomial" ||
 			name.Type == "Trinomial" {
 			names = append(names, name)
@@ -57,12 +54,5 @@ func CollectOutput(ts []token.Token, text []rune, m *util.Model) Output {
 	}
 
 	output := NewOutput(names, ts, m)
-	if m.Resolver.Verify {
-		namesResolved := <-resolver.Run(namesStr, m)
-		for idx, name := range output.Names {
-			output.Names[idx].Validation = namesResolved[name.Verbatim]
-		}
-	}
-
 	return output
 }

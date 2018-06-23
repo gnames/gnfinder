@@ -1,4 +1,5 @@
 scripts/training/training
+gnfinder/gnfinder
 debug.test
 t
 t.json

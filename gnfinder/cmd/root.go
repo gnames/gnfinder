@@ -29,6 +29,7 @@ import (
 	"github.com/gnames/gnfinder"
 	"github.com/gnames/gnfinder/dict"
 	"github.com/gnames/gnfinder/lang"
+	"github.com/gnames/gnfinder/resolver"
 	"github.com/gnames/gnfinder/util"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -167,7 +168,6 @@ func findNames(data []byte, langString string, bayes bool,
 	verify bool) {
 
 	dictionary := dict.LoadDictionary()
-	var output []byte
 	var opts []util.Opt
 	if langString != "" {
 		l, err := lang.NewLanguage(langString)
@@ -182,8 +182,35 @@ func findNames(data []byte, langString string, bayes bool,
 		util.WithBayes(bayes),
 		util.WithResolverVerification(verify),
 	)
-	output = gnfinder.FindNamesJSON(data, &dictionary, opts...)
-	fmt.Println(string(output))
+	output := gnfinder.FindNames([]rune(string(data)), &dictionary, opts...)
+
+	m := util.NewModel(opts...)
+	if m.Resolver.Verify {
+		names := uniqueNameStrings(output.Names)
+		namesResolved := resolver.Verify(names, m)
+		for i, n := range output.Names {
+			if v, ok := namesResolved[n.Name]; ok {
+				output.Names[i].Verification = v
+			}
+		}
+	}
+	fmt.Println(string(output.ToJSON()))
+}
+
+func uniqueNameStrings(names []gnfinder.Name) []string {
+	var empty struct{}
+	var set = make(map[string]struct{})
+	var uniqueNames []string
+
+	for _, n := range names {
+		set[n.Name] = empty
+	}
+
+	for n := range set {
+		uniqueNames = append(uniqueNames, n)
+	}
+
+	return uniqueNames
 }
 
 func checkStdin() bool {

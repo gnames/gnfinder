@@ -4,14 +4,18 @@ import (
 	"io/ioutil"
 
 	"github.com/gnames/gnfinder/dict"
+	"github.com/gnames/gnfinder/util"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
 	"testing"
 )
 
-var book []byte
-var dictionary *dict.Dictionary
+var (
+	book       []byte
+	dictionary *dict.Dictionary
+	model      *util.Model
+)
 
 func TestGnfinder(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -25,4 +29,8 @@ var _ = BeforeSuite(func() {
 	Expect(len(book)).To(BeNumerically(">", 1000000))
 	d := dict.LoadDictionary()
 	dictionary = &d
+})
+
+var _ = BeforeEach(func() {
+	model = util.NewModel()
 })

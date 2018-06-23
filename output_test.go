@@ -35,9 +35,9 @@ Calopogon, or Cymbidium pul-
 
 cheilum, 1 5s. per doz.
 Conostylis Americana, 2i. 6d.
-      `
-			output := gnfinder.FindNames([]rune(str), dictionary,
-				util.WithBayes(true))
+			`
+			mBayes := util.NewModel(util.WithBayes(true))
+			output := gnfinder.FindNames([]rune(str), dictionary, mBayes)
 			Expect(output.Names[1].Verbatim).
 				To(Equal("Cymbidium pul-\n\n\ncheilum,"))
 		})
@@ -56,7 +56,8 @@ Conostylis Americana, 2i. 6d.
 
 func makeOutput() gnfinder.Output {
 	s := `Pardosa moesta, Pomatomus saltator and Bubo bubo decided to get a
-    a cup of Camelia sinensis on a nice Sunday evening.`
-	output := gnfinder.FindNames([]rune(s), dictionary, util.WithBayes(true))
+		a cup of Camelia sinensis on a nice Sunday evening.`
+	mBayes := util.NewModel(util.WithBayes(true))
+	output := gnfinder.FindNames([]rune(s), dictionary, mBayes)
 	return output
 }
