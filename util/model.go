@@ -3,9 +3,10 @@ package util
 import (
 	"runtime"
 
+	"time"
+
 	"github.com/gnames/bayes"
 	"github.com/gnames/gnfinder/lang"
-	"time"
 )
 
 // Model keeps configuration variables
@@ -34,7 +35,7 @@ type Resolver struct {
 	URL                string
 	BatchSize          int
 	Workers            int
-	WaitTimeout		   time.Duration
+	WaitTimeout        time.Duration
 	Verify             bool
 	AdvancedResolution bool
 }
@@ -122,19 +123,6 @@ func WithResolverWorkers(n int) func(*Model) error {
 func WithResolverVerification(f bool) func(*Model) error {
 	return func(m *Model) error {
 		m.Verify = f
-		if !f {
-			m.AdvancedResolution = false
-		}
-		return nil
-	}
-}
-
-func WithResolverAdvancedVerification(f bool) func(*Model) error {
-	return func(m *Model) error {
-		m.AdvancedResolution = f
-		if f {
-			m.Verify = true
-		}
 		return nil
 	}
 }

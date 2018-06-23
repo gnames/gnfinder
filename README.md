@@ -40,8 +40,9 @@ To install latest gnfinder
 
 ```
 git get github.com/gnames/gnfinder
-cd $GOPATH/src/github.com/gnames/gnfinder/gnfinder
-go install
+cd $GOPATH/src/github.com/gnames/gnfinder
+make
+gnfinder -h
 ```
 
 ### Testing

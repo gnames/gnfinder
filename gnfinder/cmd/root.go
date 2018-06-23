@@ -35,7 +35,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
+var (
+	buildVersion string
+	buildDate    string
+	cfgFile      string
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -44,14 +48,24 @@ var rootCmd = &cobra.Command{
 	Long: `Finds scientific names in plain UTF-8 encoded texts
 
  Name finding happens in two stages. First we apply heuristic rules, and
- then, if it is possible, Bayesian algorithms to find scientific names. Then,
- if the service is available, gnfinder verifies names against gnindex
- database. Found names and metadata are returned in JSON format.`,
+ then, if it is possible, Bayesian algorithms to find scientific names.
+ Optionally, gnfinder verifies found names against gnindex database located
+ at https://index.globalnames.org. Found names and metadata are returned in
+ JSON format to the standard output.`,
 
 	// Uncomment the following line if your bare application has an action
 	// associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
 		var data []byte
+		version, err := cmd.Flags().GetBool("version")
+		if err != nil {
+			log.Println(err)
+			os.Exit(1)
+		}
+		if version {
+			fmt.Printf("version: %s\n\ndate:    %s\n\n", buildVersion, buildDate)
+			os.Exit(0)
+		}
 		lang, err := cmd.Flags().GetString("lang")
 		if err != nil {
 			log.Println(err)
@@ -62,12 +76,13 @@ var rootCmd = &cobra.Command{
 			log.Println(err)
 			os.Exit(1)
 		}
-		resolverVerifyFlag, err :=
-			cmd.Flags().GetString("resolver-verify")
+		verify, err :=
+			cmd.Flags().GetBool("check-names")
 		if err != nil {
 			log.Println(err)
 			os.Exit(1)
 		}
+
 		switch len(args) {
 		case 0:
 			if !checkStdin() {
@@ -89,26 +104,15 @@ var rootCmd = &cobra.Command{
 			os.Exit(0)
 		}
 
-		verify := false
-		verifyAdvanced := false
-		switch resolverVerifyFlag {
-		case "":
-		case "simple":
-			verify = true
-		case "advanced":
-			verify = true
-			verifyAdvanced = true
-		default:
-			panic(fmt.Errorf("unexpected value of `resolver-verify` flag %s", resolverVerifyFlag))
-		}
-
-		findNames(data, lang, bayes, verify, verifyAdvanced)
+		findNames(data, lang, bayes, verify)
 	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
+func Execute(ver string, date string) {
+	buildVersion = ver
+	buildDate = date
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -126,9 +130,10 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
+	rootCmd.Flags().BoolP("version", "v", false, "show version")
 	rootCmd.Flags().BoolP("bayes", "b", false, "always run Bayes algorithms")
+	rootCmd.Flags().BoolP("check-names", "c", false, "verify found name-strings")
 	rootCmd.Flags().StringP("lang", "l", "", "text's language")
-	rootCmd.Flags().StringP("resolver-verify", "r", "", "")
 	log.SetFlags(0)
 }
 
@@ -159,7 +164,7 @@ func initConfig() {
 }
 
 func findNames(data []byte, langString string, bayes bool,
-	verify bool, verifyAdvanced bool) {
+	verify bool) {
 
 	dictionary := dict.LoadDictionary()
 	var output []byte
@@ -176,7 +181,7 @@ func findNames(data []byte, langString string, bayes bool,
 	opts = append(opts,
 		util.WithBayes(bayes),
 		util.WithResolverVerification(verify),
-		util.WithResolverAdvancedVerification(verifyAdvanced))
+	)
 	output = gnfinder.FindNamesJSON(data, &dictionary, opts...)
 	fmt.Println(string(output))
 }
