@@ -23,10 +23,11 @@
 
 This document follows [changelog guidelines]
 
+[v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
-[#3]: https://github.com/gnames/gnfinder/issues/3
 [#4]: https://github.com/gnames/gnfinder/issues/4
+[#3]: https://github.com/gnames/gnfinder/issues/3
 
 [changelog guidelines]: https://github.com/olivierlacan/keep-a-changelog
 [gnindex]: https://index.globalnames.org
