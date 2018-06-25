@@ -182,9 +182,9 @@ func findNames(data []byte, langString string, bayes bool,
 		util.WithBayes(bayes),
 		util.WithResolverVerification(verify),
 	)
-	output := gnfinder.FindNames([]rune(string(data)), &dictionary, opts...)
-
 	m := util.NewModel(opts...)
+	output := gnfinder.FindNames([]rune(string(data)), &dictionary, m)
+
 	if m.Resolver.Verify {
 		names := uniqueNameStrings(output.Names)
 		namesResolved := resolver.Verify(names, m)

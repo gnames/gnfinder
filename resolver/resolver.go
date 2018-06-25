@@ -5,6 +5,7 @@ package resolver
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sync"
 
@@ -48,12 +49,6 @@ type name struct {
 	Value string `json:"value"`
 }
 
-var (
-	// maxRetries        = 5
-	// maxRetriesReached = errors.New("Reached resolver retry limit")
-	wg sync.WaitGroup
-)
-
 func Verify(names []string, m *util.Model) VerifyOutput {
 	verResult := make(VerifyOutput)
 	client := graphql.NewClient(m.URL, nil)
@@ -61,13 +56,14 @@ func Verify(names []string, m *util.Model) VerifyOutput {
 		jobs = make(chan []string)
 		res  = make(chan Result)
 		done = make(chan bool)
+		wg   sync.WaitGroup
 	)
 
 	go prepareJobs(names, jobs, m.BatchSize)
 
 	wg.Add(m.Workers)
 	for i := 1; i <= m.Workers; i++ {
-		go resolverWorker(client, jobs, res, m)
+		go resolverWorker(client, jobs, res, &wg, m)
 	}
 
 	go processResult(verResult, res, done)
@@ -78,42 +74,68 @@ func Verify(names []string, m *util.Model) VerifyOutput {
 	return verResult
 }
 
-func resolverWorker(client *graphql.Client,
-	jobs <-chan []string, res chan<- Result, m *util.Model) {
+func try(fn func(int) (bool, error)) (int, error) {
+	var (
+		err               error
+		tryAgain          bool
+		maxRetries        = 3
+		maxRetriesReached = errors.New("Reached verifier retry limit")
+		attempt           = 1
+	)
+	for {
+		tryAgain, err = fn(attempt)
+		if !tryAgain || err == nil {
+			break
+		}
+		attempt++
+		if attempt > maxRetries {
+			return maxRetries, maxRetriesReached
+		}
+	}
+	return attempt, err
+}
+
+func resolverWorker(client *graphql.Client, jobs <-chan []string,
+	res chan<- Result, wg *sync.WaitGroup, m *util.Model) {
 	defer wg.Done()
 
 	for names := range jobs {
 		var q Query
-		graphqlVars := map[string]interface{}{
-			"names": jsonNames(names),
-		}
-		ctx, cancel := context.WithTimeout(context.Background(), m.WaitTimeout)
-
-		queryDone := make(chan error)
-		go (func() { queryDone <- client.Query(ctx, &q, graphqlVars) })()
-
-		select {
-		case err := <-queryDone:
-			cancel()
-			if err != nil {
-				res <- Result{
-					Names:   names,
-					Query:   q,
-					Retries: 0,
-					Error:   fmt.Errorf("Resolve worker error: %v\n", err),
+		attempts, err := try(func(int) (bool, error) {
+			graphqlVars := map[string]interface{}{
+				"names": jsonNames(names),
+			}
+			queryDone := make(chan error)
+			ctx, cancel := context.WithTimeout(context.Background(), m.WaitTimeout)
+			go (func() { queryDone <- client.Query(ctx, &q, graphqlVars) })()
+			select {
+			case err := <-queryDone:
+				cancel()
+				if err != nil {
+					return false, fmt.Errorf("Resolve worker error: %v\n", err)
+				} else {
+					return false, nil
 				}
-			} else {
-				res <- Result{Query: q, Retries: 0}
+			case <-ctx.Done():
+				cancel()
+				return true, ctx.Err()
 			}
-		case <-ctx.Done():
-			cancel()
-			res <- Result{
-				Names:   names,
-				Query:   q,
-				Retries: 0,
-				Error:   fmt.Errorf("Resolve worker timeout: %v\n", ctx.Err()),
-			}
+		})
+		createResult(q, names, attempts, err, res)
+	}
+}
+
+func createResult(q Query, names []string, attempts int, err error,
+	res chan<- Result) {
+	if err != nil {
+		res <- Result{
+			Names:   names,
+			Query:   q,
+			Retries: attempts,
+			Error:   err,
 		}
+	} else {
+		res <- Result{Query: q, Retries: attempts}
 	}
 }
 
