@@ -55,7 +55,7 @@ type Name struct {
 	OffsetStart  int                   `json:"start"`
 	OffsetEnd    int                   `json:"end"`
 	Annotation   string                `json:"annotation"`
-	Verification resolver.Verification `json:"verification"`
+	Verification resolver.Verification `json:"verification,omitempty"`
 }
 
 // ToJSON converts Output to JSON representation.

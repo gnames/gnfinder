@@ -17,23 +17,23 @@ import (
 // of a name-string.
 type Verification struct {
 	// DataSourceID is the ID of the DataSource of the returned best match result.
-	DataSourceID int `json:"dataSourceId"`
+	DataSourceID int `json:"dataSourceId,omitempty"`
 	// MatchedName is a verbatim name-string from the matched result.
-	MatchedName string `json:"matchedName"`
+	MatchedName string `json:"matchedName,omitempty"`
 	// CurrentName is a currently accepted name according to the matched result.
-	CurrentName string `json:"currentName"`
+	CurrentName string `json:"currentName,omitempty"`
 	// ClassificationPath of the matched result.
-	ClassificationPath string `json:"clssificationPath"`
+	ClassificationPath string `json:"clssificationPath,omitempty"`
 	// DatabasesNum tells how many databases matched by the name-string.
-	DatabasesNum int `json:"databasesNum"`
+	DatabasesNum int `json:"databasesNum,omitempty"`
 	// Verified is true if name was found in gnindex.
-	Verified bool `json:"verified"`
+	Verified bool `json:"verified,omitempty"`
 	// MatchType provides what kind of verification occured if any.
-	MatchType string `json:"matchType"`
+	MatchType string `json:"matchType,omitempty"`
 	// Retries is number of attempted retries
-	Retries int
+	Retries int `json:"retries,omitempty"`
 	// ErrorString explains what happened if resolution did not work
-	Error error
+	Error error `json:"remoteError,omitempty"`
 }
 
 type VerifyOutput map[string]Verification

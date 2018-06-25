@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix [#5]: Hide verification "data" if it is empty
+
 ## [v0.5.1]
 
 - Add [#4]: Name resolution attempts several times in case of timeout
@@ -26,6 +28,7 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#5]: https://github.com/gnames/gnfinder/issues/5
 [#4]: https://github.com/gnames/gnfinder/issues/4
 [#3]: https://github.com/gnames/gnfinder/issues/3
 
