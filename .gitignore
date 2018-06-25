@@ -7,3 +7,4 @@ t.json
 *test
 .idea
 .vscode
+*.tar.gz
