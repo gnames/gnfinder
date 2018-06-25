@@ -2,7 +2,12 @@
 
 ## Unreleased
 
-- Fix [#5]: Hide verification "data" if it is empty
+- Add [#7]: Add EditDistance field to verification output.
+- Add [#6]: Add 'NoMatch' value to verification 'MatchType'.
+
+- Fix [#5]: Hide verification "data" if it is empty.
+
+- Remove [#6]: Remove Verified field, as it repeats 'NoMatch' information.
 
 ## [v0.5.1]
 
@@ -28,6 +33,8 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#7]: https://github.com/gnames/gnfinder/issues/7
+[#6]: https://github.com/gnames/gnfinder/issues/6
 [#5]: https://github.com/gnames/gnfinder/issues/5
 [#4]: https://github.com/gnames/gnfinder/issues/4
 [#3]: https://github.com/gnames/gnfinder/issues/3

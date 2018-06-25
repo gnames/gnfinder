@@ -26,8 +26,9 @@ type Verification struct {
 	ClassificationPath string `json:"clssificationPath,omitempty"`
 	// DatabasesNum tells how many databases matched by the name-string.
 	DatabasesNum int `json:"databasesNum,omitempty"`
-	// Verified is true if name was found in gnindex.
-	Verified bool `json:"verified,omitempty"`
+	// EditDistance tells how many changes needs to be done to apply fuzzy
+	// match to requested name.
+	EditDistance int `json:"editDistance,omitempty"`
 	// MatchType provides what kind of verification occured if any.
 	MatchType string `json:"matchType,omitempty"`
 	// Retries is number of attempted retries
@@ -203,8 +204,8 @@ func processMatch(verResult VerifyOutput, resp QueryResponse, retries int,
 			CurrentName:        string(result.AcceptedName.Name.Value),
 			ClassificationPath: string(result.Classification.Path),
 			DatabasesNum:       int(resp.Total),
-			Verified:           true,
 			MatchType:          string(result.MatchType.Kind),
+			EditDistance:       int(result.MatchType.VerbatimEditDistance),
 			Retries:            retries,
 			Error:              err,
 		}
@@ -214,8 +215,8 @@ func processNoMatch(verResult VerifyOutput, resp QueryResponse, retries int,
 	err error) {
 	verResult[string(resp.SuppliedInput)] =
 		Verification{
-			Verified: false,
-			Retries:  retries,
-			Error:    err,
+			MatchType: "NoMatch",
+			Retries:   retries,
+			Error:     err,
 		}
 }
