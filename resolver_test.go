@@ -18,6 +18,7 @@ var _ = Describe("Resolver", func() {
 			names := []string{"Homo sapiens", "Pardosa moesta", "Who knows what"}
 			nameOutputs := Verify(names, m)
 			for i := range nameOutputs {
+				Expect(nameOutputs[i].Retries).To(Equal(3))
 				Expect(nameOutputs[i].Error.Error()).
 					To(ContainSubstring("no such host"))
 			}

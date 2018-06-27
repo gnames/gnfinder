@@ -5,9 +5,9 @@ package resolver
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/gnames/gnfinder/util"
 	"github.com/shurcooL/graphql"
@@ -77,11 +77,10 @@ func Verify(names []string, m *util.Model) VerifyOutput {
 
 func try(fn func(int) (bool, error)) (int, error) {
 	var (
-		err               error
-		tryAgain          bool
-		maxRetries        = 3
-		maxRetriesReached = errors.New("Reached verifier retry limit")
-		attempt           = 1
+		err        error
+		tryAgain   bool
+		maxRetries = 3
+		attempt    = 1
 	)
 	for {
 		tryAgain, err = fn(attempt)
@@ -90,7 +89,7 @@ func try(fn func(int) (bool, error)) (int, error) {
 		}
 		attempt++
 		if attempt > maxRetries {
-			return maxRetries, maxRetriesReached
+			return maxRetries, err
 		}
 	}
 	return attempt, err
@@ -113,7 +112,8 @@ func resolverWorker(client *graphql.Client, jobs <-chan []string,
 			case err := <-queryDone:
 				cancel()
 				if err != nil {
-					return false, fmt.Errorf("Resolve worker error: %v\n", err)
+					time.Sleep(200 * time.Millisecond)
+					return true, fmt.Errorf("Resolve worker error: %v\n", err)
 				} else {
 					return false, nil
 				}

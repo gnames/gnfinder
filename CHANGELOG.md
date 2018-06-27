@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add [#8]: Retry verification if any error happens in the process.
 - Add [#7]: Add EditDistance field to verification output.
 - Add [#6]: Add 'NoMatch' value to verification 'MatchType'.
 
@@ -33,6 +34,7 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#8]: https://github.com/gnames/gnfinder/issues/8
 [#7]: https://github.com/gnames/gnfinder/issues/7
 [#6]: https://github.com/gnames/gnfinder/issues/6
 [#5]: https://github.com/gnames/gnfinder/issues/5
