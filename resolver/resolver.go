@@ -174,7 +174,7 @@ func processResult(verResult VerifyOutput,
 		}
 
 		for _, resp := range r.Query.NameResolver.Responses {
-			if resp.Total > 0 {
+			if resp.Total > 0 && len(resp.Results) > 0 {
 				processMatch(verResult, resp, r.Retries, r.Error)
 			} else {
 				processNoMatch(verResult, resp, r.Retries, r.Error)
