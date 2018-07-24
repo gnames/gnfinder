@@ -7,6 +7,9 @@ import (
 
 	"github.com/gnames/bayes"
 	"github.com/gnames/gnfinder/lang"
+	"strconv"
+	"github.com/gnames/bhlindex"
+	"os"
 )
 
 // Model keeps configuration variables
@@ -40,6 +43,19 @@ type Resolver struct {
 	AdvancedResolution bool
 }
 
+// Returns number of workers by reading it from WORKERS_NUMBER environment
+// variable.
+func WorkersNum() int {
+	var workersNum = runtime.NumCPU()
+	wn, found := os.LookupEnv("WORKERS_NUMBER")
+	if found {
+		wni, err := strconv.Atoi(wn)
+		bhlindex.Check(err)
+		workersNum = wni
+	}
+	return workersNum
+}
+
 // NewModel creates Model object with default data, or with data coming
 // from opts.
 func NewModel(opts ...Opt) *Model {
@@ -53,7 +69,7 @@ func NewModel(opts ...Opt) *Model {
 			URL:         "http://index.globalnames.org/api/graphql",
 			WaitTimeout: 90 * time.Second,
 			BatchSize:   500,
-			Workers:     runtime.NumCPU(),
+			Workers:     WorkersNum(),
 		},
 	}
 	for _, o := range opts {
