@@ -32,6 +32,7 @@ type QueryResponse struct {
 		Name struct {
 			Value graphql.String `graphql:"value"`
 		} `graphql:"name"`
+		QualitySummary       graphql.String `graphql:"qualitySummary"`
 		ResultsPerDataSource []struct {
 			DataSource struct {
 				Id graphql.Int `graphql:"id"`
@@ -39,6 +40,14 @@ type QueryResponse struct {
 			Results []QueryResult `graphql:"results"`
 		} `graphql:"resultsPerDataSource"`
 	} `graphql:"results"`
+	PreferredResults []PreferredResult `graphql:"preferredResults"`
+}
+
+type PreferredResult struct {
+	DataSource struct {
+		ID graphql.Int `graphql:"id"`
+	} `graphql:"dataSource"`
+	NameID graphql.String `graphql:"localId"`
 }
 
 type Query struct {
