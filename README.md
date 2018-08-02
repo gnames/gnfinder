@@ -21,10 +21,45 @@ Finds scientific names using dictionary and nlp approaches.
   in approximately 3 hours using both heuristic and Bayes algorithms. Check
   [bhlindex] project for an example.
 
-## Usage as a command line app
+## Install as a command line app
 
 Download the binary executable for your operating system from the
-[latest release][releases]. To see flags and usage:
+[latest release][releases].
+
+### Linux or OS X
+
+Move ``gnfinder`` executabe somewhere in your PATH
+(for example ``/usr/local/bin``)
+
+```bash
+sudo mv path_to/gnfinder /usr/local/bin
+```
+
+### Windows
+
+One possible way would be to create a default folder for executables and place ``gnfinder`` there.
+
+Use ``Windows+R`` keys
+combination and type "``cmd``". In the appeared terminal window type:
+
+```cmd
+mkdir C:\bin
+copy path_to\gnfinder.exe C:\bin
+```
+
+[Add ``C:\bin`` directory to your ``PATH``][winpath] environment variable.
+
+### Go
+
+```
+go get github.com/gnames/gnfinder
+cd $GOPATH/src/github.com/gnames/gnfinder
+make install
+```
+
+## Usage as a command line app
+
+To see flags and usage:
 
 ```bash
 gnfinder --help
@@ -104,3 +139,5 @@ go test
 [releases]: https://github.com/gnames/gnfinder/releases
 [gnindex]: https://index.globalnames.org
 [bhlindex]: https://github.com/gnames/bhlindex
+[newwinlogo]: https://i.stack.imgur.com/B8Zit.png
+[winpath]: https://www.computerhope.com/issues/ch000549.htm
