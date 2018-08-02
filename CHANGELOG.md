@@ -2,10 +2,12 @@
 
 ## Unreleased
 
+- Add: StemEditDistance for fuzzy matching by stem.
+
 ## [v.0.5.2]
 
-- Add [#11]: Quality Summary and Preferred data sources in verification
-- Add [#9]: Additional information how to install in README.md
+- Add [#11]: Quality Summary and Preferred data sources in verification.
+- Add [#9]: Additional information how to install in README.md.
 - Add [#8]: Retry verification if any error happens in the process.
 - Add [#7]: Add EditDistance field to verification output.
 - Add [#6]: Add 'NoMatch' value to verification 'MatchType'.

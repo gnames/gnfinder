@@ -32,6 +32,9 @@ type Verification struct {
 	// EditDistance tells how many changes needs to be done to apply fuzzy
 	// match to requested name.
 	EditDistance int `json:"editDistance,omitempty"`
+	// StemEditDistance tells how many changes needs to be done to apply fuzzy
+	// match to stemmed name.
+	StemEditDistance int `json:"stemEditDistance,omitempty"`
 	// MatchType tells what kind of verification occurred if any.
 	MatchType        string                  `json:"matchType,omitempty"`
 	PreferredResults []PreferredResultSingle `json:"preferredResults,omitempty"`
@@ -217,6 +220,7 @@ func processMatch(verResult VerifyOutput, resp QueryResponse, retries int,
 			DataSourceQuality:  string(resp.Results[0].QualitySummary),
 			MatchType:          string(result.MatchType.Kind),
 			EditDistance:       int(result.MatchType.VerbatimEditDistance),
+			StemEditDistance:   int(result.MatchType.StemEditDistance),
 			PreferredResults:   getPreferredResults(preferredResults),
 			Retries:            retries,
 			Error:              err,
