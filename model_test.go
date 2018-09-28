@@ -14,6 +14,7 @@ var _ = Describe("Model", func() {
 			m := util.NewModel()
 			Expect(m.Language).To(Equal(lang.NotSet))
 			Expect(m.Bayes).To(BeFalse())
+			Expect(len(m.Sources)).To(Equal(0))
 			Expect(m.BayesOddsThreshold).To(Equal(100.0))
 			Expect(m.URL).To(Equal("http://index.globalnames.org/api/graphql"))
 			Expect(m.BatchSize).To(Equal(500))
@@ -42,6 +43,11 @@ var _ = Describe("Model", func() {
 		It("sets batch size for resolver", func() {
 			m := util.NewModel(util.WithResolverBatch(333))
 			Expect(m.BatchSize).To(Equal(333))
+		})
+
+		It("sets data sources for verification", func() {
+			m := util.NewModel(util.WithSources([]int{1, 2, 3}))
+			Expect(m.Sources).To(Equal([]int{1, 2, 3}))
 		})
 
 		It("sets workers' number  for resolver", func() {

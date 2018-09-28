@@ -45,13 +45,15 @@ type QueryResponse struct {
 
 type PreferredResult struct {
 	DataSource struct {
-		ID graphql.Int `graphql:"id"`
+		ID    graphql.Int    `graphql:"id"`
+		Title graphql.String `graphql:"title"`
 	} `graphql:"dataSource"`
-	NameID graphql.String `graphql:"localId"`
+	NameID  graphql.String `graphql:"localId"`
+	TaxonID graphql.String `graphql:"taxonId"`
 }
 
 type Query struct {
 	NameResolver struct {
 		Responses []QueryResponse `graphql:"responses"`
-	} `graphql:"nameResolver(names: $names, advancedResolution: true, bestMatchOnly: true, preferredDataSourceIds: [1,12,169])"`
+	} `graphql:"nameResolver(names: $names, advancedResolution: true, bestMatchOnly: true, preferredDataSourceIds: $sources)"`
 }

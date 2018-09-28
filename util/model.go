@@ -36,6 +36,7 @@ type Resolver struct {
 	BatchSize          int
 	Workers            int
 	WaitTimeout        time.Duration
+	Sources            []int
 	Verify             bool
 	AdvancedResolution bool
 }
@@ -120,9 +121,19 @@ func WithResolverWorkers(n int) func(*Model) error {
 	}
 }
 
-func WithResolverVerification(f bool) func(*Model) error {
+func WithVerification(v bool) func(*Model) error {
 	return func(m *Model) error {
-		m.Verify = f
+		m.Verify = v
+		return nil
+	}
+}
+
+// WithSources is an option that sets IDs of data sources used for
+// verification. Results from these sources (if any) will be returned no matter
+// what is the best matching result.
+func WithSources(s []int) func(*Model) error {
+	return func(m *Model) error {
+		m.Sources = s
 		return nil
 	}
 }

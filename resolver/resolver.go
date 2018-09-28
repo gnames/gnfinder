@@ -45,8 +45,10 @@ type Verification struct {
 }
 
 type PreferredResultSingle struct {
-	DataSourceID int    `json:"dataSourceId"`
-	NameID       string `json:"nameId"`
+	DataSourceID    int    `json:"dataSourceId"`
+	DataSourceTitle string `json:"dataSourceTitle"`
+	NameID          string `json:"localId"`
+	TaxonID         string `json:"taxonId"`
 }
 
 type VerifyOutput map[string]Verification
@@ -107,6 +109,14 @@ func try(fn func(int) (bool, error)) (int, error) {
 	return attempt, err
 }
 
+func sources(s []int) []graphql.Int {
+	res := make([]graphql.Int, len(s))
+	for i, v := range s {
+		res[i] = graphql.Int(v)
+	}
+	return res
+}
+
 func resolverWorker(client *graphql.Client, jobs <-chan []string,
 	res chan<- Result, wg *sync.WaitGroup, m *util.Model) {
 	defer wg.Done()
@@ -115,7 +125,8 @@ func resolverWorker(client *graphql.Client, jobs <-chan []string,
 		var q Query
 		attempts, err := try(func(int) (bool, error) {
 			graphqlVars := map[string]interface{}{
-				"names": jsonNames(names),
+				"names":   jsonNames(names),
+				"sources": sources(m.Sources),
 			}
 			queryDone := make(chan error)
 			ctx, cancel := context.WithTimeout(context.Background(), m.WaitTimeout)
@@ -230,8 +241,12 @@ func processMatch(verResult VerifyOutput, resp QueryResponse, retries int,
 func getPreferredResults(results []PreferredResult) []PreferredResultSingle {
 	var prs []PreferredResultSingle
 	for _, r := range results {
-		pr := PreferredResultSingle{DataSourceID: int(r.DataSource.ID),
-			NameID: string(r.NameID)}
+		pr := PreferredResultSingle{
+			DataSourceID:    int(r.DataSource.ID),
+			DataSourceTitle: string(r.DataSource.Title),
+			NameID:          string(r.NameID),
+			TaxonID:         string(r.TaxonID),
+		}
 		prs = append(prs, pr)
 	}
 	return prs

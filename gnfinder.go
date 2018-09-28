@@ -56,3 +56,21 @@ func CollectOutput(ts []token.Token, text []rune, m *util.Model) Output {
 	output := NewOutput(names, ts, m)
 	return output
 }
+
+// UniqueNameStrings takes a list of names, and returns a list of unique
+// name-strings
+func UniqueNameStrings(names []Name) []string {
+	var empty struct{}
+	var set = make(map[string]struct{})
+	var uniqueNames []string
+
+	for _, n := range names {
+		set[n.Name] = empty
+	}
+
+	for n := range set {
+		uniqueNames = append(uniqueNames, n)
+	}
+
+	return uniqueNames
+}

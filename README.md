@@ -51,7 +51,7 @@ copy path_to\gnfinder.exe C:\bin
 
 ### Go
 
-```
+```bash
 go get github.com/gnames/gnfinder
 cd $GOPATH/src/github.com/gnames/gnfinder
 make install
@@ -71,6 +71,12 @@ Getting data from a pipe forcing English language and verification
 
 ```bash
 echo "Pomatomus saltator and Parus major" | gnfinder -c -l eng
+```
+
+Verifying data against ``NCBI`` and ``Encyclopedia of Life``
+
+```bash
+echo "Pomatomus saltator and Parus major" | gnfinder -c -l eng -s "4,12"
 ```
 
 Getting data from a file and redirecting result to another file

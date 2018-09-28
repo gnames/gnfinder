@@ -52,12 +52,19 @@ var rootCmd = &cobra.Command{
  then, if it is possible, Bayesian algorithms to find scientific names.
  Optionally, gnfinder verifies found names against gnindex database located
  at https://index.globalnames.org. Found names and metadata are returned in
- JSON format to the standard output.`,
+ JSON format to the standard output.
+
+ Verification returns 'the best' result for the match. If specific datasets
+ are important for verification, they can be set with '-s' '--sources' flag
+ using IDs from https://index.globalnames.org/datasource. The default sources
+ are 'Catalogue of life' (ID 1), GBIF (ID 11), and Open Tree of Life (ID
+ 179).`,
 
 	// Uncomment the following line if your bare application has an action
 	// associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
 		var data []byte
+
 		version, err := cmd.Flags().GetBool("version")
 		if err != nil {
 			log.Println(err)
@@ -67,6 +74,9 @@ var rootCmd = &cobra.Command{
 			fmt.Printf("version: %s\n\ndate:    %s\n\n", buildVersion, buildDate)
 			os.Exit(0)
 		}
+
+		sources := sources(cmd)
+
 		lang, err := cmd.Flags().GetString("lang")
 		if err != nil {
 			log.Println(err)
@@ -105,7 +115,7 @@ var rootCmd = &cobra.Command{
 			os.Exit(0)
 		}
 
-		findNames(data, lang, bayes, verify)
+		findNames(data, lang, bayes, verify, sources)
 	},
 }
 
@@ -131,11 +141,14 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("version", "v", false, "show version")
-	rootCmd.Flags().BoolP("bayes", "b", false, "always run Bayes algorithms")
-	rootCmd.Flags().BoolP("check-names", "c", false, "verify found name-strings")
-	rootCmd.Flags().StringP("lang", "l", "", "text's language")
+	rootCmd.Flags().BoolP("version", "v", false, "show version.")
+	rootCmd.Flags().BoolP("bayes", "b", false, "always run Bayes algorithms.")
+	rootCmd.Flags().BoolP("check-names", "c", false, "verify found name-strings.")
+	rootCmd.Flags().StringP("lang", "l", "", "text's language.")
+	rootCmd.Flags().IntSliceP("sources", "s", []int{1, 11, 179},
+		"IDs of data sources used in verification.")
 	log.SetFlags(0)
+
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -153,7 +166,6 @@ func initConfig() {
 
 		// Search config in home directory with name ".gnfinder" (without extension).
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".gnfinder")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
@@ -165,7 +177,7 @@ func initConfig() {
 }
 
 func findNames(data []byte, langString string, bayes bool,
-	verify bool) {
+	verify bool, sources []int) {
 
 	dictionary := dict.LoadDictionary()
 	var opts []util.Opt
@@ -180,13 +192,14 @@ func findNames(data []byte, langString string, bayes bool,
 
 	opts = append(opts,
 		util.WithBayes(bayes),
-		util.WithResolverVerification(verify),
+		util.WithVerification(verify),
+		util.WithSources(sources),
 	)
 	m := util.NewModel(opts...)
 	output := gnfinder.FindNames([]rune(string(data)), &dictionary, m)
 
 	if m.Resolver.Verify {
-		names := uniqueNameStrings(output.Names)
+		names := gnfinder.UniqueNameStrings(output.Names)
 		namesResolved := resolver.Verify(names, m)
 		for i, n := range output.Names {
 			if v, ok := namesResolved[n.Name]; ok {
@@ -197,22 +210,6 @@ func findNames(data []byte, langString string, bayes bool,
 	fmt.Println(string(output.ToJSON()))
 }
 
-func uniqueNameStrings(names []gnfinder.Name) []string {
-	var empty struct{}
-	var set = make(map[string]struct{})
-	var uniqueNames []string
-
-	for _, n := range names {
-		set[n.Name] = empty
-	}
-
-	for n := range set {
-		uniqueNames = append(uniqueNames, n)
-	}
-
-	return uniqueNames
-}
-
 func checkStdin() bool {
 	stdInFile := os.Stdin
 	stat, err := stdInFile.Stat()
@@ -220,4 +217,12 @@ func checkStdin() bool {
 		log.Panic(err)
 	}
 	return (stat.Mode() & os.ModeCharDevice) == 0
+}
+
+func sources(cmd *cobra.Command) []int {
+	res, err := cmd.Flags().GetIntSlice("sources")
+	if err != nil {
+		log.Panic(err)
+	}
+	return res
 }
