@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package protob;
+
+message Pong {
+    string value = 1;
+}
+
+message Void {}
+
+message WithText {
+    bool value = 1;
+}
+
+message WithDetails {
+    bool value = 1;
+}
+
+message WithLanguage {
+    string value = 1;
+}
+
+message WithVerification {
+    bool value = 1;
+}
+
+message Opts {
+    WithText with_text = 1;
+    WithDetails with_details = 2;
+    WithLanguage language = 3;
+    WithVerification with_verification = 4;
+}
+
+message NameStrings {
+    bytes text = 3;
+    repeated NameString names = 6;
+}
+
+message NameString {
+    string value = 1;
+    float odds = 2;
+    string path = 3;
+    bool curated = 4;
+    int32 edit_distance = 5;
+    int32 edit_distance_stem = 6;
+    int32 source_id = 7;
+    MatchType match = 8;
+}
+
+enum MatchType {
+    NONE = 0;
+    EXACT = 1;
+    CANONICAL_EXACT = 2;
+    CANONICAL_FUZZY = 3;
+    PARTIAL_EXACT = 4;
+    PARTIAL_FUZZY = 5;
+}
+
+
+service GNFinder {
+    rpc Ping(Void) returns(Pong) {}
+}
