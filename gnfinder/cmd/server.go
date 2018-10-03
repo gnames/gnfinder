@@ -27,17 +27,16 @@ import (
 var serverCmd = &cobra.Command{
 	Use:   "server",
 	Short: "Provides RESTful API to gnfinder functionality. Default port 8778.",
-	Long: `Starts an HTTP server using supplied port (8888 is default).
+	Long: `Starts an HTTP server using supplied port (8778 is default).
 
 The server provides RESTful API to gnfinder functionality.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		port, err := cmd.Flags().GetString("port")
+		port, err := cmd.Flags().GetInt("port")
 		if err != nil {
 			log.Println(err)
 			os.Exit(1)
 		}
-		fmt.Printf("port: %s\n\n", port)
-		port = fmt.Sprintf(":%s", port)
+		fmt.Printf("port: %d\n\n", port)
 		server.Run(port)
 		os.Exit(0)
 	},
@@ -46,6 +45,6 @@ The server provides RESTful API to gnfinder functionality.`,
 func init() {
 	rootCmd.AddCommand(serverCmd)
 
-	serverCmd.Flags().StringP("port", "p", "8778", "server's port")
+	serverCmd.Flags().IntP("port", "p", 8778, "server's port")
 	log.SetFlags(0)
 }

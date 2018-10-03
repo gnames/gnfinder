@@ -13,12 +13,12 @@ LDFLAGS=-ldflags "-X main.buildDate=${DATE} \
                   -X main.buildVersion=${VERSION}"
 
 
-all: install
+all: grpc install
 
 test:
   ginkgo
 
-build:
+build: grpc
   cd gnfinder; \
   $(GOCLEAN); \
   GOOS=linux GOARCH=amd64 $(GOBUILD) ${LDFLAGS}; \
@@ -34,3 +34,7 @@ build:
 install:
   cd gnfinder; \
   $(GOINSTALL) ${LDFLAGS};
+
+grpc:
+  cd protob; \
+  protoc -I . ./protob.proto --go_out=plugins=grpc:.;

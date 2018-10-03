@@ -8,10 +8,6 @@ message Pong {
 
 message Void {}
 
-message WithText {
-    bool value = 1;
-}
-
 message WithDetails {
     bool value = 1;
 }
@@ -24,8 +20,8 @@ message WithVerification {
     bool value = 1;
 }
 
-message Opts {
-    WithText with_text = 1;
+message Params {
+    bytes text = 1;
     WithDetails with_details = 2;
     WithLanguage language = 3;
     WithVerification with_verification = 4;
@@ -59,4 +55,5 @@ enum MatchType {
 
 service GNFinder {
     rpc Ping(Void) returns(Pong) {}
+    rpc FindNames(Params) returns(NameStrings) {}
 }

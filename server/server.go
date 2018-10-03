@@ -17,11 +17,18 @@ func (gnfinderServer) Ping(ctx context.Context, void *protob.Void) (*protob.Pong
 	return &pong, nil
 }
 
-func Run(port string) {
-	srv := grpc.NewServer()
+func (gnfinderServer) FindNames(ctx context.Context,
+	params *protob.Params) (*protob.NameStrings, error) {
+	var names protob.NameStrings
+	// text := params.Text
+	return &names, nil
+}
+
+func Run(port int) {
 	var gnf gnfinderServer
+	srv := grpc.NewServer()
 	protob.RegisterGNFinderServer(srv, gnf)
-	portVal := fmt.Sprintf(":%s", port)
+	portVal := fmt.Sprintf(":%d", port)
 	l, err := net.Listen("tcp", portVal)
 	if err != nil {
 		log.Fatalf("could not listen to %s: %v", portVal, err)
