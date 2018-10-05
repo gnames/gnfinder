@@ -8,6 +8,7 @@ import (
 
 	"github.com/gnames/gnfinder"
 	"github.com/gnames/gnfinder/dict"
+	"github.com/gnames/gnfinder/lang"
 	"github.com/gnames/gnfinder/protob"
 	"github.com/gnames/gnfinder/util"
 	"google.golang.org/grpc"
@@ -27,6 +28,17 @@ func (gnfinderServer) FindNames(ctx context.Context,
 	params *protob.Params) (*protob.NameStrings, error) {
 	text := params.Text
 	var opts []util.Opt
+
+	if params.WithBayes {
+		opts = append(opts, util.WithBayes(true))
+	}
+	if len(params.Language) > 0 {
+		l, err := lang.NewLanguage(params.Language)
+		if err == nil {
+			opts = append(opts, util.WithLanguage(l))
+		}
+	}
+
 	m := util.NewModel(opts...)
 	output := gnfinder.FindNames([]rune(string(text)), &dictionary, m)
 

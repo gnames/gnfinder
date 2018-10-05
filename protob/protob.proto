@@ -8,23 +8,11 @@ message Pong {
 
 message Void {}
 
-message WithDetails {
-    bool value = 1;
-}
-
-message WithLanguage {
-    string value = 1;
-}
-
-message WithVerification {
-    bool value = 1;
-}
-
 message Params {
     bytes text = 1;
-    WithDetails with_details = 2;
-    WithLanguage language = 3;
-    WithVerification with_verification = 4;
+    bool with_details = 2;
+    bool with_bayes = 3;
+    string language = 4;
 }
 
 message NameStrings {
