@@ -10,7 +10,6 @@ message Void {}
 
 message Params {
     bytes text = 1;
-    bool with_details = 2;
     bool with_bayes = 3;
     string language = 4;
 }
@@ -22,13 +21,14 @@ message NameStrings {
 
 message NameString {
     string value = 1;
-    float odds = 2;
-    string path = 3;
-    bool curated = 4;
-    int32 edit_distance = 5;
-    int32 edit_distance_stem = 6;
-    int32 source_id = 7;
-    MatchType match = 8;
+    string verbatim = 2;
+    float odds = 3;
+    string path = 4;
+    bool curated = 5;
+    int32 edit_distance = 6;
+    int32 edit_distance_stem = 7;
+    int32 source_id = 8;
+    MatchType match = 9;
 }
 
 enum MatchType {

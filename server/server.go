@@ -51,7 +51,9 @@ func protobNameStrings(output *gnfinder.Output) protob.NameStrings {
 	var names []*protob.NameString
 	for _, n := range output.Names {
 		name := protob.NameString{
-			Value: n.Name,
+			Value:    n.Name,
+			Verbatim: n.Verbatim,
+			Odds:     float32(n.Odds),
 		}
 		names = append(names, &name)
 	}
