@@ -121,6 +121,8 @@ func WithResolverWorkers(n int) func(*Model) error {
 	}
 }
 
+// WithVerification is a flag that determines if names will be sent for
+// validation to https://index.globalnames.org service.
 func WithVerification(v bool) func(*Model) error {
 	return func(m *Model) error {
 		m.Verify = v
