@@ -92,9 +92,11 @@ func protobNameStrings(output *gnfinder.Output) protob.NameStrings {
 	var names []*protob.NameString
 	for _, n := range output.Names {
 		name := protob.NameString{
-			Value:    n.Name,
-			Verbatim: n.Verbatim,
-			Odds:     float32(n.Odds),
+			Value:       n.Name,
+			Verbatim:    n.Verbatim,
+			Odds:        float32(n.Odds),
+			OffsetStart: int32(n.OffsetStart),
+			OffsetEnd:   int32(n.OffsetEnd),
 		}
 		name.Path = n.Verification.ClassificationPath
 		name.Curated = n.Verification.DataSourceQuality == "HasCuratedSources"

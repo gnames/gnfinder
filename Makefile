@@ -23,7 +23,7 @@ build: grpc
   $(GOCLEAN); \
   GOOS=linux GOARCH=amd64 CGO_ENABLED=0 $(GOBUILD) ${LDFLAGS};
 
-release: grpc
+release: grpc dockerhub
   cd gnfinder; \
   $(GOCLEAN); \
   GOOS=linux GOARCH=amd64 $(GOBUILD) ${LDFLAGS}; \
