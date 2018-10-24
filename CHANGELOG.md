@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-# [v.0.6.0]
+# [v0.6.0]
 
 - Add: [#16]: docker support. Command `make docker` creates docker image.
 - Add: [#15]: enable gRPC to set data-source IDs for verification
@@ -12,7 +12,7 @@
 - Add: [#12]: gRPC-based HTTP API to access gnfinder from other languages.
 - Add: StemEditDistance for fuzzy matching by stem.
 
-## [v.0.5.2]
+## [v0.5.2]
 
 - Add [#11]: Quality Summary and Preferred data sources in verification.
 - Add [#9]: Additional information how to install in README.md.
