@@ -4,7 +4,7 @@
 
 # [v.0.6.0]
 
-- Add: [#16]: command line `gnfinder` testing system
+- Add: [#16]: docker support. Command `make docker` creates docker image.
 - Add: [#15]: enable gRPC to set data-source IDs for verification
 - Add: [#14]: setting for name verification data-sources as well as command
        line flag. Currently tests for gRPC are located in [Ruby gem gndinder]
