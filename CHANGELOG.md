@@ -1,8 +1,12 @@
 # Changelog
 
 ## Unreleased
+- Add: [#17]: return offsets for the start and the end of name-strings
+
+- Fix: [#18]: gRPC works with diacritics in text input.
 
 # [v0.6.0]
+
 
 - Add: [#16]: docker support. Command `make docker` creates docker image.
 - Add: [#15]: enable gRPC to set data-source IDs for verification
@@ -52,6 +56,8 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#18]: https://github.com/gnames/gnfinder/issues/18
+[#17]: https://github.com/gnames/gnfinder/issues/17
 [#16]: https://github.com/gnames/gnfinder/issues/16
 [#15]: https://github.com/gnames/gnfinder/issues/15
 [#14]: https://github.com/gnames/gnfinder/issues/14

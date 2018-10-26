@@ -1,4 +1,4 @@
-# Global Names Finder [![Build Status][travis-img]][travis] [![Doc Status][doc-img]][doc]
+# Global Names Finder [![Build Status][travis-img]][travis] [![Doc Status][doc-img]][doc] [![Go Report Card][go-report-img]][go-report]
 
 Finds scientific names using dictionary and nlp approaches.
 
@@ -108,6 +108,15 @@ bytesText := []byte(utfText)
 jsonNames := FindNamesJSON(bytesText, dict, opts)
 ```
 
+## Usage as a docker
+
+```bash
+docker pull gnames/gnfinder
+
+# run gnfinder server, and map it to port 8888 on the host machine
+docker run -d -p 8888:8778 --name gnfinder gnames/gnfinder
+```
+
 ### Development
 
 To install latest gnfinder
@@ -147,3 +156,5 @@ go test
 [bhlindex]: https://github.com/gnames/bhlindex
 [newwinlogo]: https://i.stack.imgur.com/B8Zit.png
 [winpath]: https://www.computerhope.com/issues/ch000549.htm
+[go-report-img]: https://goreportcard.com/badge/github.com/gnames/gnfinder
+[go-report]: https://goreportcard.com/report/github.com/gnames/gnfinder

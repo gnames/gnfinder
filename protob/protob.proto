@@ -9,7 +9,7 @@ message Pong {
 message Void {}
 
 message Params {
-	bytes text = 1;
+	string text = 1;
 	bool with_bayes = 3;
 	string language = 4;
 	bool with_verification = 5;
