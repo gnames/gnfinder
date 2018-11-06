@@ -3,24 +3,24 @@ package gnfinder_test
 import (
 	"time"
 
-	. "github.com/gnames/gnfinder/resolver"
 	"github.com/gnames/gnfinder/util"
+	. "github.com/gnames/gnfinder/verifier"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Resolver", func() {
+var _ = Describe("Verifier", func() {
 	Describe("Verify", func() {
 		It("handles non existing URL", func() {
 			m := util.NewModel()
-			m.Resolver.URL = "http://abra8103cadabra.com"
-			m.Resolver.WaitTimeout = 1 * time.Second
+			m.Verifier.URL = "http://abra8103cadabra.com"
+			m.Verifier.WaitTimeout = 1 * time.Second
 			names := []string{"Homo sapiens", "Pardosa moesta", "Who knows what"}
 			nameOutputs := Verify(names, m)
+			Expect(len(nameOutputs)).To(Equal(3))
 			for i := range nameOutputs {
 				Expect(nameOutputs[i].Retries).To(Equal(3))
-				Expect(nameOutputs[i].Error.Error()).
-					To(ContainSubstring("no such host"))
+				Expect(nameOutputs[i].Error).To(ContainSubstring("no such host"))
 			}
 		})
 
@@ -56,7 +56,7 @@ var _ = Describe("Resolver", func() {
 			nameOutputs := Verify([]string{name}, m)
 			result := nameOutputs[name]
 			Expect(result.DatabasesNum).To(BeNumerically(">", 2))
-			Expect(result.MatchType).To(Equal("ExactCanonicalMatch"))
+			Expect(result.MatchType).To(Equal("Match"))
 			Expect(result.DataSourceID).To(BeNumerically(">", 0))
 			Expect(result.MatchedName).To(Equal("Homo sapiens Linnaeus, 1758"))
 			Expect(result.ClassificationPath).To(Equal("Animalia|Chordata|Mammalia|Primates|Hominoidea|Hominidae|Homo|Homo sapiens"))

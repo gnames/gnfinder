@@ -1,7 +1,4 @@
-// Package resolver verifies found name-strings against gnindex site located
-// at https://index.globalnames.org. The gnindex site contains several datasets
-// of scientific names.
-package resolver
+package verifier
 
 import (
 	"context"
@@ -10,7 +7,7 @@ import (
 	"time"
 
 	"github.com/gnames/gnfinder/util"
-	"github.com/shurcooL/graphql"
+	"github.com/machinebox/graphql"
 )
 
 // Verification presents data of an attempted remote verification
@@ -36,43 +33,49 @@ type Verification struct {
 	// match to stemmed name.
 	StemEditDistance int `json:"stemEditDistance,omitempty"`
 	// MatchType tells what kind of verification occurred if any.
-	MatchType        string                  `json:"matchType,omitempty"`
-	PreferredResults []PreferredResultSingle `json:"preferredResults,omitempty"`
-	// Retries is number of attempted retries
+	MatchType string `json:"matchType,omitempty"`
+	// PreferredResults contains matches for data sources the user has a
+	// particular interest.
+	PreferredResults []preferredResultSingle `json:"preferredResults,omitempty"`
+	// Retries is number of attempted retries.
 	Retries int `json:"retries,omitempty"`
-	// ErrorString explains what happened if resolution did not work
-	Error error `json:"remoteError,omitempty"`
+	// ErrorString explains what happened if resolution did not work.
+	Error string `json:"error,omitempty"`
 }
 
-type PreferredResultSingle struct {
+type preferredResultSingle struct {
 	DataSourceID    int    `json:"dataSourceId"`
 	DataSourceTitle string `json:"dataSourceTitle"`
-	NameID          string `json:"localId"`
+	NameID          string `json:"nameId"`
+	Name            string `json:"name"`
 	TaxonID         string `json:"taxonId"`
+}
+
+type NameInput struct {
+	Value string `json:"value"`
 }
 
 type VerifyOutput map[string]Verification
 
 type Result struct {
-	Names   []string
-	Query   Query
-	Retries int
-	Error   error
-}
-
-type name struct {
-	Value string `json:"value"`
+	Names    []string
+	Response *graphqlResponse
+	Retries  int
+	Error    error
 }
 
 func Verify(names []string, m *util.Model) VerifyOutput {
-	verResult := make(VerifyOutput)
-	client := graphql.NewClient(m.URL, nil)
 	var (
 		jobs = make(chan []string)
 		res  = make(chan Result)
 		done = make(chan bool)
 		wg   sync.WaitGroup
 	)
+	output := make(VerifyOutput)
+	client := graphql.NewClient(m.Verifier.URL)
+
+	// uncomment to help debugging graphql
+	// client.Log = func(s string) { log.Println(s) }
 
 	go prepareJobs(names, jobs, m.BatchSize)
 
@@ -81,12 +84,36 @@ func Verify(names []string, m *util.Model) VerifyOutput {
 		go resolverWorker(client, jobs, res, &wg, m)
 	}
 
-	go processResult(verResult, res, done)
+	go processResult(output, res, done)
 
 	wg.Wait()
 	close(res)
 	<-done
-	return verResult
+	return output
+}
+
+func jsonNames(names []string) []NameInput {
+	res := make([]NameInput, len(names))
+	for i := range names {
+		res[i] = NameInput{Value: names[i]}
+	}
+	return res
+}
+
+func prepareJobs(names []string, jobs chan<- []string, batchSize int) {
+	l := len(names)
+	offset := 0
+	for {
+		limit := offset + batchSize
+		if limit < l {
+			jobs <- names[offset:limit]
+			offset = limit
+		} else {
+			jobs <- names[offset:l]
+			close(jobs)
+			return
+		}
+	}
 }
 
 func try(fn func(int) (bool, error)) (int, error) {
@@ -109,30 +136,22 @@ func try(fn func(int) (bool, error)) (int, error) {
 	return attempt, err
 }
 
-func sources(s []int) []graphql.Int {
-	res := make([]graphql.Int, len(s))
-	for i, v := range s {
-		res[i] = graphql.Int(v)
-	}
-	return res
-}
-
 func resolverWorker(client *graphql.Client, jobs <-chan []string,
 	res chan<- Result, wg *sync.WaitGroup, m *util.Model) {
 	defer wg.Done()
+	var resp graphqlResponse
 
 	for names := range jobs {
-		var q Query
 		attempts, err := try(func(int) (bool, error) {
-			graphqlVars := map[string]interface{}{
-				"names":   jsonNames(names),
-				"sources": sources(m.Sources),
-			}
-			queryDone := make(chan error)
+			req := graphqlRequest()
+			req.Var("names", jsonNames(names))
+			req.Var("sources", m.Sources)
+
+			queryErr := make(chan error)
 			ctx, cancel := context.WithTimeout(context.Background(), m.WaitTimeout)
-			go (func() { queryDone <- client.Query(ctx, &q, graphqlVars) })()
+			go (func() { queryErr <- client.Run(ctx, req, &resp) })()
 			select {
-			case err := <-queryDone:
+			case err := <-queryErr:
 				cancel()
 				if err != nil {
 					time.Sleep(200 * time.Millisecond)
@@ -145,58 +164,33 @@ func resolverWorker(client *graphql.Client, jobs <-chan []string,
 				return true, ctx.Err()
 			}
 		})
-		createResult(q, names, attempts, err, res)
+		createResult(names, &resp, attempts, err, res)
 	}
 }
 
-func createResult(q Query, names []string, attempts int, err error,
-	res chan<- Result) {
+func createResult(names []string, resp *graphqlResponse, attempts int,
+	err error, res chan<- Result) {
 	if err != nil {
 		res <- Result{
-			Names:   names,
-			Query:   q,
-			Retries: attempts,
-			Error:   err,
+			Names:    names,
+			Response: resp,
+			Retries:  attempts,
+			Error:    err,
 		}
 	} else {
-		res <- Result{Query: q, Retries: attempts}
+		res <- Result{Response: resp, Retries: attempts}
 	}
 }
 
-func prepareJobs(names []string, jobs chan<- []string, batchSize int) {
-	l := len(names)
-	offset := 0
-	for {
-		limit := offset + batchSize
-		if limit < l {
-			jobs <- names[offset:limit]
-			offset = limit
-		} else {
-			jobs <- names[offset:l]
-			close(jobs)
-			return
-		}
-	}
-}
-
-func jsonNames(names []string) []name {
-	res := make([]name, len(names))
-	for i := range names {
-		res[i] = name{Value: names[i]}
-	}
-	return res
-}
-
-func processResult(verResult VerifyOutput,
-	res <-chan Result, done chan<- bool) {
+func processResult(verResult VerifyOutput, res <-chan Result,
+	done chan<- bool) {
 	for r := range res {
-
-		if r.Query.NameResolver.Responses == nil {
+		if r.Response.NameResolver.Responses == nil {
 			processError(verResult, r)
 			continue
 		}
 
-		for _, resp := range r.Query.NameResolver.Responses {
+		for _, resp := range r.Response.NameResolver.Responses {
 			if resp.Total > 0 && len(resp.Results) > 0 {
 				processMatch(verResult, resp, r.Retries, r.Error)
 			} else {
@@ -211,53 +205,61 @@ func processError(verResult VerifyOutput, result Result) {
 	for _, n := range result.Names {
 		verResult[n] = Verification{
 			Retries: result.Retries,
-			Error:   result.Error,
+			Error:   result.Error.Error(),
 		}
 	}
 }
 
-func processMatch(verResult VerifyOutput, resp QueryResponse, retries int,
+func processMatch(verResult VerifyOutput, resp response, retries int,
 	err error) {
-	resultPerDataSource := resp.Results[0].ResultsPerDataSource[0]
-	result := resultPerDataSource.Results[0]
-	preferredResults := resp.PreferredResults
+	result := resp.Results[0]
+	match := result.MatchedNames[0]
 	verResult[string(resp.SuppliedInput)] =
 		Verification{
-			DataSourceID:       int(resultPerDataSource.DataSource.Id),
-			MatchedName:        string(result.Name.Value),
-			CurrentName:        string(result.AcceptedName.Name.Value),
-			ClassificationPath: string(result.Classification.Path),
+			DataSourceID:       int(result.MatchedNames[0].DataSource.ID),
+			MatchedName:        string(match.Name.Value),
+			CurrentName:        string(match.AcceptedName.Name.Value),
+			ClassificationPath: string(match.Classification.Path),
 			DatabasesNum:       int(resp.Total),
-			DataSourceQuality:  string(resp.Results[0].QualitySummary),
-			MatchType:          string(result.MatchType.Kind),
-			EditDistance:       int(result.MatchType.VerbatimEditDistance),
-			StemEditDistance:   int(result.MatchType.StemEditDistance),
-			PreferredResults:   getPreferredResults(preferredResults),
+			DataSourceQuality:  string(result.QualitySummary),
+			MatchType:          string(result.MatchedNames[0].MatchType.Kind),
+			EditDistance:       int(match.MatchType.VerbatimEditDistance),
+			StemEditDistance:   int(match.MatchType.StemEditDistance),
+			PreferredResults:   getPreferredResults(resp.PreferredResults),
 			Retries:            retries,
-			Error:              err,
+			Error:              errorString(err),
 		}
 }
 
-func getPreferredResults(results []PreferredResult) []PreferredResultSingle {
-	var prs []PreferredResultSingle
-	for _, r := range results {
-		pr := PreferredResultSingle{
-			DataSourceID:    int(r.DataSource.ID),
-			DataSourceTitle: string(r.DataSource.Title),
-			NameID:          string(r.NameID),
-			TaxonID:         string(r.TaxonID),
-		}
-		prs = append(prs, pr)
+func errorString(err error) string {
+	res := ""
+	if err != nil {
+		res = err.Error()
 	}
-	return prs
+	return res
 }
 
-func processNoMatch(verResult VerifyOutput, resp QueryResponse, retries int,
+func processNoMatch(verResult VerifyOutput, resp response, retries int,
 	err error) {
 	verResult[string(resp.SuppliedInput)] =
 		Verification{
 			MatchType: "NoMatch",
 			Retries:   retries,
-			Error:     err,
+			Error:     errorString(err),
 		}
+}
+
+func getPreferredResults(results []preferredResult) []preferredResultSingle {
+	var prs []preferredResultSingle
+	for _, r := range results {
+		pr := preferredResultSingle{
+			DataSourceID:    int(r.DataSource.ID),
+			DataSourceTitle: string(r.DataSource.Title),
+			NameID:          string(r.Name.ID),
+			Name:            string(r.Name.Value),
+			TaxonID:         string(r.TaxonID),
+		}
+		prs = append(prs, pr)
+	}
+	return prs
 }

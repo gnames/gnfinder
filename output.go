@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/gnames/gnfinder/nlp"
-	"github.com/gnames/gnfinder/resolver"
 	"github.com/gnames/gnfinder/token"
 	"github.com/gnames/gnfinder/util"
+	"github.com/gnames/gnfinder/verifier"
 	"github.com/json-iterator/go"
 )
 
@@ -55,7 +55,7 @@ type Name struct {
 	OffsetStart  int                   `json:"start"`
 	OffsetEnd    int                   `json:"end"`
 	Annotation   string                `json:"annotation"`
-	Verification resolver.Verification `json:"verification,omitempty"`
+	Verification verifier.Verification `json:"verification,omitempty"`
 }
 
 // ToJSON converts Output to JSON representation.

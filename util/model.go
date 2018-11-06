@@ -27,11 +27,11 @@ type Model struct {
 	// their value according to heuristic and Bayes name-finding algorithms.
 	// NameDistribution
 	// ResolverConf
-	Resolver
+	Verifier
 }
 
 // Resolver contains configuration of Resolver data
-type Resolver struct {
+type Verifier struct {
 	URL                string
 	BatchSize          int
 	Workers            int
@@ -50,7 +50,7 @@ func NewModel(opts ...Opt) *Model {
 		// NameDistribution: NameDistribution{
 		//   Index: make(map[int]int),
 		// },
-		Resolver: Resolver{
+		Verifier: Verifier{
 			URL:         "http://index.globalnames.org/api/graphql",
 			WaitTimeout: 90 * time.Second,
 			BatchSize:   500,
