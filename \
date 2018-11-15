@@ -108,7 +108,7 @@ func protobNameStrings(output *gnfinder.Output) protob.NameStrings {
 func verification(ver *verifier.Verification) *protob.Verification {
 	return &protob.Verification{
 		DataSourceId:       int32(ver.DataSourceID),
-		DataSourceTitle:    string(ver.DataSourceTitle),
+		DataSourceId:       string(ver.DataSourceTitle),
 		MatchedName:        ver.MatchedName,
 		CurrentName:        ver.CurrentName,
 		ClassificationPath: ver.ClassificationPath,
@@ -116,7 +116,7 @@ func verification(ver *verifier.Verification) *protob.Verification {
 		DataSourceQuality:  ver.DataSourceQuality,
 		EditDistance:       int32(ver.EditDistance),
 		StemEditDistance:   int32(ver.StemEditDistance),
-		MatchType:          getMatchType(ver.MatchType),
+		MatchType:        getMatchType(ver.MatchedName),
 		Error:              ver.Error,
 		PreferredResults:   sourcesResult(ver),
 	}
@@ -129,7 +129,7 @@ func sourcesResult(ver *verifier.Verification) []*protob.PreferredResult {
 		res[i] = &protob.PreferredResult{
 			DataSourceId:    int32(v.DataSourceID),
 			DataSourceTitle: v.DataSourceTitle,
-			NameId:          v.NameID,
+			NameId:          int32(v.NameID),
 			Name:            v.Name,
 			TaxonId:         v.TaxonID,
 		}
@@ -142,7 +142,7 @@ func getMatchType(match string) protob.MatchType {
 	case "ExactMatch":
 		return protob.MatchType_EXACT
 	case "FuzzyCanonicalMatch":
-		return protob.MatchType_FUZZY
+		return protob.MatchType_CANONICAL_FUZZY
 	case "ExactPartialMatch":
 		return protob.MatchType_PARTIAL_EXACT
 	case "FuzzyPartialMatch":

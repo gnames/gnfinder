@@ -15,10 +15,14 @@ import (
 type Verification struct {
 	// DataSourceID is the ID of the DataSource of the returned best match result.
 	DataSourceID int `json:"dataSourceId,omitempty"`
+	// DataSourceTitle is the Title of the DataSource of the returned best match result.
+	DataSourceTitle string `json:"dataSourceTitle,omitempty"`
 	// MatchedName is a verbatim name-string from the matched result.
 	MatchedName string `json:"matchedName,omitempty"`
 	// CurrentName is a currently accepted name according to the matched result.
 	CurrentName string `json:"currentName,omitempty"`
+	// Synonym is true when the name is not the same as currently accepted.
+	Synonym bool `json:"isSynonym,omitempty"`
 	// ClassificationPath of the matched result.
 	ClassificationPath string `json:"classificationPath,omitempty"`
 	// DatabasesNum tells how many databases matched by the name-string.
@@ -214,17 +218,23 @@ func processMatch(verResult VerifyOutput, resp response, retries int,
 	err error) {
 	result := resp.Results[0]
 	match := result.MatchedNames[0]
-	verResult[string(resp.SuppliedInput)] =
+	matchType := match.MatchType.Kind
+	if matchType == "Match" {
+		matchType = "ExactMatch"
+	}
+	verResult[resp.SuppliedInput] =
 		Verification{
-			DataSourceID:       int(result.MatchedNames[0].DataSource.ID),
-			MatchedName:        string(match.Name.Value),
-			CurrentName:        string(match.AcceptedName.Name.Value),
-			ClassificationPath: string(match.Classification.Path),
-			DatabasesNum:       int(resp.Total),
-			DataSourceQuality:  string(result.QualitySummary),
-			MatchType:          string(result.MatchedNames[0].MatchType.Kind),
-			EditDistance:       int(match.MatchType.VerbatimEditDistance),
-			StemEditDistance:   int(match.MatchType.StemEditDistance),
+			DataSourceID:       result.MatchedNames[0].DataSource.ID,
+			DataSourceTitle:    result.MatchedNames[0].DataSource.Title,
+			MatchedName:        match.Name.Value,
+			CurrentName:        match.AcceptedName.Name.Value,
+			Synonym:            match.Synonym,
+			ClassificationPath: match.Classification.Path,
+			DatabasesNum:       resp.Total,
+			DataSourceQuality:  result.QualitySummary,
+			MatchType:          matchType,
+			EditDistance:       match.MatchType.VerbatimEditDistance,
+			StemEditDistance:   match.MatchType.StemEditDistance,
 			PreferredResults:   getPreferredResults(resp.PreferredResults),
 			Retries:            retries,
 			Error:              errorString(err),
@@ -241,7 +251,7 @@ func errorString(err error) string {
 
 func processNoMatch(verResult VerifyOutput, resp response, retries int,
 	err error) {
-	verResult[string(resp.SuppliedInput)] =
+	verResult[resp.SuppliedInput] =
 		Verification{
 			MatchType: "NoMatch",
 			Retries:   retries,
@@ -253,11 +263,11 @@ func getPreferredResults(results []preferredResult) []preferredResultSingle {
 	var prs []preferredResultSingle
 	for _, r := range results {
 		pr := preferredResultSingle{
-			DataSourceID:    int(r.DataSource.ID),
-			DataSourceTitle: string(r.DataSource.Title),
-			NameID:          string(r.Name.ID),
-			Name:            string(r.Name.Value),
-			TaxonID:         string(r.TaxonID),
+			DataSourceID:    r.DataSource.ID,
+			DataSourceTitle: r.DataSource.Title,
+			NameID:          r.Name.ID,
+			Name:            r.Name.Value,
+			TaxonID:         r.TaxonID,
 		}
 		prs = append(prs, pr)
 	}

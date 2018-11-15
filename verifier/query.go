@@ -23,6 +23,7 @@ type matchedName struct {
 	DataSource     dataSource
 	Name           name
 	AcceptedName   acceptedName
+	Synonym        bool
 	MatchType      matchType
 }
 
@@ -38,7 +39,7 @@ type dataSource struct {
 }
 
 type name struct {
-	ID    int
+	ID    string
 	Value string
 }
 
@@ -47,9 +48,7 @@ type classification struct {
 }
 
 type acceptedName struct {
-	Name struct {
-		Value string
-	}
+	Name name
 }
 
 type matchType struct {
@@ -61,35 +60,35 @@ type matchType struct {
 func graphqlRequest() *graphql.Request {
 	req := graphql.NewRequest(`
 query($names: [name!]!, $sources: [Int!]) {
-	nameResolver(names: $names,
-		preferredDataSourceIds: $sources,
-		bestMatchOnly: true) {
-		responses {
-			total
-			suppliedInput
-			results {
-				qualitySummary
-				matchedNames {
-					synonym
-					classification { path }
-					dataSource { id title }
-					name { value }
-					acceptedName { name { value } }
-					matchType {
-					kind
-					verbatimEditDistance
-						stemEditDistance
-					}
-				}
-			}
-			preferredResults {
-				dataSource {id title}
-				name { value }
-				taxonId
-				acceptedName { name { value } }
-			}
-		}
-	}
+  nameResolver(names: $names,
+    preferredDataSourceIds: $sources,
+    bestMatchOnly: true) {
+    responses {
+      total
+      suppliedInput
+      results {
+        qualitySummary
+        matchedNames {
+          synonym
+          classification { path }
+          dataSource { id title }
+          name { value }
+          acceptedName { name { value } }
+          matchType {
+          kind
+          verbatimEditDistance
+            stemEditDistance
+          }
+        }
+      }
+      preferredResults {
+        dataSource {id title}
+        name { id value }
+        taxonId
+        acceptedName { name { value } }
+      }
+    }
+  }
 }`)
 	return req
 }

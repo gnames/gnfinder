@@ -56,7 +56,7 @@ var _ = Describe("Verifier", func() {
 			nameOutputs := Verify([]string{name}, m)
 			result := nameOutputs[name]
 			Expect(result.DatabasesNum).To(BeNumerically(">", 2))
-			Expect(result.MatchType).To(Equal("Match"))
+			Expect(result.MatchType).To(Equal("ExactMatch"))
 			Expect(result.DataSourceID).To(BeNumerically(">", 0))
 			Expect(result.MatchedName).To(Equal("Homo sapiens Linnaeus, 1758"))
 			Expect(result.ClassificationPath).To(Equal("Animalia|Chordata|Mammalia|Primates|Hominoidea|Hominidae|Homo|Homo sapiens"))

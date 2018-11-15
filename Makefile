@@ -13,7 +13,7 @@ LDFLAGS=-ldflags "-X main.buildDate=${DATE} \
                   -X main.buildVersion=${VERSION}"
 
 
-all: grpc install
+all: install
 
 test:
   ginkgo
@@ -36,7 +36,7 @@ release: grpc dockerhub
   zip -9 /tmp/gnfinder-${VER}-win-64.zip gnfinder.exe; \
   $(GOCLEAN);
 
-install:
+install: grpc
   cd gnfinder; \
   $(GOINSTALL) ${LDFLAGS};
 

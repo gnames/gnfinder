@@ -17,39 +17,54 @@ message Params {
 }
 
 message NameStrings {
-	bytes text = 3;
+	string date = 1;
+	string language = 2;
+	int32 total_tokens = 3;
+	int32 total_candidates = 4;
+	int32 total_names = 5;
 	repeated NameString names = 6;
 }
 
 message NameString {
-	string value = 1;
+	string type = 1;
 	string verbatim = 2;
-	float odds = 3;
-	string path = 4;
-	bool curated = 5;
-	int32 edit_distance = 6;
-	int32 edit_distance_stem = 7;
-	int32 source_id = 8;
-	MatchType match = 9;
-	int32 offset_start = 10;
-	int32 offset_end = 11;
-	repeated SourceResult sources_result = 12;
+	string name = 3;
+	float odds = 4;
+	int32 offset_start = 5;
+	int32 offset_end = 6;
+
+	Verification verification = 7;
 }
 
-message SourceResult {
-	int32 source_id = 1;
-	string title = 2;
+message Verification {
+	int32 data_source_id = 1;
+  string data_source_title = 2;
+	string matched_name = 3;
+	string current_name = 4;
+	string classification_path = 5;
+	int32 databases_num = 6;
+	string data_source_quality = 7;
+	int32 edit_distance = 8;
+	int32 stem_edit_distance = 9;
+	MatchType match_type = 11;
+	string error = 12;
+	repeated PreferredResult preferred_results = 13;
+}
+
+message PreferredResult {
+	int32 data_source_id = 1;
+	string data_source_title = 2;
 	string name_id = 3;
-	string taxon_id = 4;
+	string name = 4;
+	string taxon_id = 5;
 }
 
 enum MatchType {
 	NONE = 0;
 	EXACT = 1;
-	CANONICAL_EXACT = 2;
-	CANONICAL_FUZZY = 3;
-	PARTIAL_EXACT = 4;
-	PARTIAL_FUZZY = 5;
+	FUZZY = 2;
+	PARTIAL_EXACT = 3;
+	PARTIAL_FUZZY = 4;
 }
 
 

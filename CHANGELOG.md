@@ -1,15 +1,18 @@
 # Changelog
 
 ## Unreleased
-- Add: [#17]: return offsets for the start and the end of name-strings
+
+- Add: [#19]: bring gRPC output close to cli output. Breaks backward
+              compatibility of gRPC.
+- Add: [#20]: update API interaction with gnindex.
+- Add: [#17]: return offsets for the start and the end of name-strings.
 
 - Fix: [#18]: gRPC works with diacritics in text input.
 
-# [v0.6.0]
-
+## [v0.6.0]
 
 - Add: [#16]: docker support. Command `make docker` creates docker image.
-- Add: [#15]: enable gRPC to set data-source IDs for verification
+- Add: [#15]: enable gRPC to set data-source IDs for verification.
 - Add: [#14]: setting for name verification data-sources as well as command
        line flag. Currently tests for gRPC are located in [Ruby gem gndinder]
        project.
@@ -51,11 +54,14 @@
 
 This document follows [changelog guidelines]
 
+[v0.7.0]: https://github.com/gnames/gnfinder/compare/v0.6.0...v0.7.0
 [v0.6.0]: https://github.com/gnames/gnfinder/compare/v0.5.2...v0.6.0
 [v0.5.2]: https://github.com/gnames/gnfinder/compare/v0.5.1...v0.5.2
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#20]: https://github.com/gnames/gnfinder/issues/20
+[#19]: https://github.com/gnames/gnfinder/issues/19
 [#18]: https://github.com/gnames/gnfinder/issues/18
 [#17]: https://github.com/gnames/gnfinder/issues/17
 [#16]: https://github.com/gnames/gnfinder/issues/16

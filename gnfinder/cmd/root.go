@@ -29,8 +29,8 @@ import (
 	"github.com/gnames/gnfinder"
 	"github.com/gnames/gnfinder/dict"
 	"github.com/gnames/gnfinder/lang"
-	"github.com/gnames/gnfinder/resolver"
 	"github.com/gnames/gnfinder/util"
+	"github.com/gnames/gnfinder/verifier"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -198,9 +198,9 @@ func findNames(data []byte, langString string, bayes bool,
 	m := util.NewModel(opts...)
 	output := gnfinder.FindNames([]rune(string(data)), &dictionary, m)
 
-	if m.Resolver.Verify {
+	if m.Verifier.Verify {
 		names := gnfinder.UniqueNameStrings(output.Names)
-		namesResolved := resolver.Verify(names, m)
+		namesResolved := verifier.Verify(names, m)
 		for i, n := range output.Names {
 			if v, ok := namesResolved[n.Name]; ok {
 				output.Names[i].Verification = v
