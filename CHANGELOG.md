@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add: [#21]: work with apdated API for name verification in gnindex
 - Add: [#19]: bring gRPC output close to cli output. Breaks backward
               compatibility of gRPC.
 - Add: [#20]: update API interaction with gnindex.

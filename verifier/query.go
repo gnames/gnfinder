@@ -9,22 +9,19 @@ type graphqlResponse struct {
 }
 
 type response struct {
-	Total         int
-	SuppliedInput string
-	Results       []struct {
-		QualitySummary string
-		MatchedNames   []matchedName
+	MatchedDataSources int
+	SuppliedInput      string
+	QualitySummary     string
+	Results            []struct {
+		Classification classification
+		DataSource     dataSource
+		TaxonID        int
+		Name           name
+		AcceptedName   acceptedName
+		Synonym        bool
+		MatchType      matchType
 	}
 	PreferredResults []preferredResult
-}
-
-type matchedName struct {
-	Classification classification
-	DataSource     dataSource
-	Name           name
-	AcceptedName   acceptedName
-	Synonym        bool
-	MatchType      matchType
 }
 
 type preferredResult struct {
@@ -66,19 +63,19 @@ query($names: [name!]!, $sources: [Int!]) {
     responses {
       total
       suppliedInput
+      qualitySummary
+      matchedDataSources
       results {
-        qualitySummary
-        matchedNames {
-          synonym
-          classification { path }
-          dataSource { id title }
-          name { value }
-          acceptedName { name { value } }
-          matchType {
-          kind
-          verbatimEditDistance
-            stemEditDistance
-          }
+        name { id value }
+        taxonId
+        classification { path }
+        dataSource { id title }
+        acceptedName { name { value } }
+        synonym
+        matchType {
+        kind
+        verbatimEditDistance
+          stemEditDistance
         }
       }
       preferredResults {
