@@ -17,6 +17,8 @@ type Verification struct {
 	DataSourceID int `json:"dataSourceId,omitempty"`
 	// DataSourceTitle is the Title of the DataSource of the returned best match result.
 	DataSourceTitle string `json:"dataSourceTitle,omitempty"`
+	// TaxonID identifier of a taxon
+	TaxonID string `json:"taxonId,omitempty"`
 	// MatchedName is a verbatim name-string from the matched result.
 	MatchedName string `json:"matchedName,omitempty"`
 	// CurrentName is a currently accepted name according to the matched result.
@@ -78,8 +80,8 @@ func Verify(names []string, m *util.Model) VerifyOutput {
 	output := make(VerifyOutput)
 	client := graphql.NewClient(m.Verifier.URL)
 
-	// uncomment to help debugging graphql
-	// client.Log = func(s string) { log.Println(s) }
+	//	uncomment to help debugging graphql
+	//client.Log = func(s string) { log.Println(s) }
 
 	go prepareJobs(names, jobs, m.BatchSize)
 
@@ -195,7 +197,7 @@ func processResult(verResult VerifyOutput, res <-chan Result,
 		}
 
 		for _, resp := range r.Response.NameResolver.Responses {
-			if resp.Total > 0 && len(resp.Results) > 0 {
+			if resp.MatchedDataSources > 0 && len(resp.Results) > 0 {
 				processMatch(verResult, resp, r.Retries, r.Error)
 			} else {
 				processNoMatch(verResult, resp, r.Retries, r.Error)
@@ -217,24 +219,20 @@ func processError(verResult VerifyOutput, result Result) {
 func processMatch(verResult VerifyOutput, resp response, retries int,
 	err error) {
 	result := resp.Results[0]
-	match := result.MatchedNames[0]
-	matchType := match.MatchType.Kind
-	if matchType == "Match" {
-		matchType = "Exact"
-	}
 	verResult[resp.SuppliedInput] =
 		Verification{
-			DataSourceID:       result.MatchedNames[0].DataSource.ID,
-			DataSourceTitle:    result.MatchedNames[0].DataSource.Title,
-			MatchedName:        match.Name.Value,
-			CurrentName:        match.AcceptedName.Name.Value,
-			Synonym:            match.Synonym,
-			ClassificationPath: match.Classification.Path,
-			DataSourcesNum:     resp.Total,
-			DataSourceQuality:  result.QualitySummary,
-			MatchType:          matchType,
-			EditDistance:       match.MatchType.VerbatimEditDistance,
-			StemEditDistance:   match.MatchType.StemEditDistance,
+			DataSourceID:       result.DataSource.ID,
+			TaxonID:            result.TaxonID,
+			DataSourceTitle:    result.DataSource.Title,
+			MatchedName:        result.Name.Value,
+			CurrentName:        result.AcceptedName.Name.Value,
+			Synonym:            result.Synonym,
+			ClassificationPath: result.Classification.Path,
+			DataSourcesNum:     resp.MatchedDataSources,
+			DataSourceQuality:  resp.QualitySummary,
+			MatchType:          result.MatchType.Kind,
+			EditDistance:       result.MatchType.VerbatimEditDistance,
+			StemEditDistance:   result.MatchType.StemEditDistance,
 			PreferredResults:   getPreferredResults(resp.PreferredResults),
 			Retries:            retries,
 			Error:              errorString(err),

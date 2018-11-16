@@ -139,7 +139,9 @@ func sourcesResult(ver *verifier.Verification) []*protob.PreferredResult {
 
 func getMatchType(match string) protob.MatchType {
 	switch match {
-	case "Exact":
+	case "ExactMatch":
+		return protob.MatchType_EXACT
+	case "ExactCanonicalMatch":
 		return protob.MatchType_EXACT
 	case "FuzzyCanonicalMatch":
 		return protob.MatchType_FUZZY
