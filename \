@@ -112,7 +112,7 @@ func verification(ver *verifier.Verification) *protob.Verification {
 		MatchedName:        ver.MatchedName,
 		CurrentName:        ver.CurrentName,
 		ClassificationPath: ver.ClassificationPath,
-		DatabasesNum:       int32(ver.DatabasesNum),
+		DataSourcesNum:       int32(ver.DataSourcesNum),
 		DataSourceQuality:  ver.DataSourceQuality,
 		EditDistance:       int32(ver.EditDistance),
 		StemEditDistance:   int32(ver.StemEditDistance),
@@ -139,7 +139,7 @@ func sourcesResult(ver *verifier.Verification) []*protob.PreferredResult {
 
 func getMatchType(match string) protob.MatchType {
 	switch match {
-	case "ExactMatch":
+	case "Exact":
 		return protob.MatchType_EXACT
 	case "FuzzyCanonicalMatch":
 		return protob.MatchType_CANONICAL_FUZZY

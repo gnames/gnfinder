@@ -25,8 +25,8 @@ type Verification struct {
 	Synonym bool `json:"isSynonym,omitempty"`
 	// ClassificationPath of the matched result.
 	ClassificationPath string `json:"classificationPath,omitempty"`
-	// DatabasesNum tells how many databases matched by the name-string.
-	DatabasesNum int `json:"databasesNum,omitempty"`
+	// DataSourcesNum tells how many databases matched by the name-string.
+	DataSourcesNum int `json:"dataSourcesNum,omitempty"`
 	// DataSourceQuality shows if a name-string was found in curated or
 	// auto-curated data sources.
 	DataSourceQuality string `json:"dataSourceQuality,omitempty"`
@@ -220,7 +220,7 @@ func processMatch(verResult VerifyOutput, resp response, retries int,
 	match := result.MatchedNames[0]
 	matchType := match.MatchType.Kind
 	if matchType == "Match" {
-		matchType = "ExactMatch"
+		matchType = "Exact"
 	}
 	verResult[resp.SuppliedInput] =
 		Verification{
@@ -230,7 +230,7 @@ func processMatch(verResult VerifyOutput, resp response, retries int,
 			CurrentName:        match.AcceptedName.Name.Value,
 			Synonym:            match.Synonym,
 			ClassificationPath: match.Classification.Path,
-			DatabasesNum:       resp.Total,
+			DataSourcesNum:     resp.Total,
 			DataSourceQuality:  result.QualitySummary,
 			MatchType:          matchType,
 			EditDistance:       match.MatchType.VerbatimEditDistance,
