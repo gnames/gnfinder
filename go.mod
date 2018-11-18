@@ -4,6 +4,7 @@ require (
 	github.com/abadojack/whatlanggo v0.0.0-20181004111500-01d4c01a5a7c
 	github.com/gnames/bayes v0.1.0
 	github.com/golang/protobuf v1.2.0
+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.5
 	github.com/machinebox/graphql v0.2.2
 	github.com/mitchellh/go-homedir v1.0.0
