@@ -3,6 +3,9 @@
 ## Unreleased
 
 - Add [#21]: support updated gnindex API
+
+## [v0.7.0]
+
 - Add [#22]: Go module support for more stable builds
 - Add [#19]: bring gRPC output close to cli output. Breaks backward
              compatibility of gRPC.
