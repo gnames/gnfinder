@@ -42,7 +42,7 @@ message Verification {
 	string matched_name = 3;
 	string current_name = 4;
 	string classification_path = 5;
-	int32 databases_num = 6;
+	int32 data_sources_num = 6;
 	string data_source_quality = 7;
 	int32 edit_distance = 8;
 	int32 stem_edit_distance = 9;

@@ -108,7 +108,7 @@ func protobNameStrings(output *gnfinder.Output) protob.NameStrings {
 func verification(ver *verifier.Verification) *protob.Verification {
 	return &protob.Verification{
 		DataSourceId:       int32(ver.DataSourceID),
-		DataSourceTitle:    string(ver.DataSourceTitle),
+		DataSourceTitle:    ver.DataSourceTitle,
 		MatchedName:        ver.MatchedName,
 		CurrentName:        ver.CurrentName,
 		ClassificationPath: ver.ClassificationPath,

@@ -2,22 +2,23 @@
 
 ## Unreleased
 
-- Add: [#19]: bring gRPC output close to cli output. Breaks backward
-              compatibility of gRPC.
-- Add: [#20]: update API interaction with gnindex.
-- Add: [#17]: return offsets for the start and the end of name-strings.
-
-- Fix: [#18]: gRPC works with diacritics in text input.
+- Add [#21]: support updated gnindex API
+- Add [#22]: Go module support for more stable builds
+- Add [#19]: bring gRPC output close to cli output. Breaks backward
+             compatibility of gRPC.
+- Add [#20]: update API interaction with gnindex.
+- Add [#17]: return offsets for the start and the end of name-strings.
+- Fix [#18]: gRPC works with diacritics in text input.
 
 ## [v0.6.0]
 
-- Add: [#16]: docker support. Command `make docker` creates docker image.
-- Add: [#15]: enable gRPC to set data-source IDs for verification.
-- Add: [#14]: setting for name verification data-sources as well as command
+- Add [#16]: docker support. Command `make docker` creates docker image.
+- Add [#15]: enable gRPC to set data-source IDs for verification.
+- Add [#14]: setting for name verification data-sources as well as command
        line flag. Currently tests for gRPC are located in [Ruby gem gndinder]
        project.
-- Add: [#12]: gRPC-based HTTP API to access gnfinder from other languages.
-- Add: StemEditDistance for fuzzy matching by stem.
+- Add [#12]: gRPC-based HTTP API to access gnfinder from other languages.
+- Add StemEditDistance for fuzzy matching by stem.
 
 ## [v0.5.2]
 
@@ -26,9 +27,7 @@
 - Add [#8]: Retry verification if any error happens in the process.
 - Add [#7]: Add EditDistance field to verification output.
 - Add [#6]: Add 'NoMatch' value to verification 'MatchType'.
-
 - Fix [#5]: Hide verification "data" if it is empty.
-
 - Remove [#6]: Remove Verified field, as it repeats 'NoMatch' information.
 
 ## [v0.5.1]
@@ -60,6 +59,8 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#22]: https://github.com/gnames/gnfinder/issues/22
+[#21]: https://github.com/gnames/gnfinder/issues/21
 [#20]: https://github.com/gnames/gnfinder/issues/20
 [#19]: https://github.com/gnames/gnfinder/issues/19
 [#18]: https://github.com/gnames/gnfinder/issues/18
