@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [v0.8.0]
+
 - Add [#21]: support updated gnindex API
 
 ## [v0.7.0]
@@ -56,6 +58,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.8.0]: https://github.com/gnames/gnfinder/compare/v0.7.0...v0.8.0
 [v0.7.0]: https://github.com/gnames/gnfinder/compare/v0.6.0...v0.7.0
 [v0.6.0]: https://github.com/gnames/gnfinder/compare/v0.5.2...v0.6.0
 [v0.5.2]: https://github.com/gnames/gnfinder/compare/v0.5.1...v0.5.2
