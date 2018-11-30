@@ -62,5 +62,85 @@ var _ = Describe("Verifier", func() {
 			Expect(result.ClassificationPath).To(Equal("Animalia|Chordata|Mammalia|Primates|Hominoidea|Hominidae|Homo|Homo sapiens"))
 			Expect(result.CurrentName).To(Equal("Homo sapiens Linnaeus, 1758"))
 		})
+
+		It("finds exact match", func() {
+			m := util.NewModel()
+			name := "Homo sapiens Linnaeus, 1758"
+			nameOutputs := Verify([]string{name}, m)
+			result := nameOutputs[name]
+			Expect(result.MatchType).To(Equal("ExactMatch"))
+		})
+
+		It("finds partial match chopping from the end", func() {
+			m := util.NewModel()
+			name := "Homo sapiens cuneiformes alba Linnaeus, 1758"
+			nameOutputs := Verify([]string{name}, m)
+			result := nameOutputs[name]
+			Expect(result.MatchType).To(Equal("ExactPartialMatch"))
+		})
+
+		It("finds partial match chopping the middle", func() {
+			m := util.NewModel()
+			name := "Homo very strangis sapiens Linnaeus, 1758"
+			nameOutputs := Verify([]string{name}, m)
+			result := nameOutputs[name]
+			Expect(result.MatchType).To(Equal("ExactPartialMatch"))
+		})
+
+		It("finds fuzzy match", func() {
+			m := util.NewModel()
+			name := "Homo sapien Linnaeus, 1758"
+			nameOutputs := Verify([]string{name}, m)
+			result := nameOutputs[name]
+			Expect(result.MatchType).To(Equal("FuzzyCanonicalMatch"))
+		})
+
+		It("finds partial fuzzy match", func() {
+			m := util.NewModel()
+			name := "Homo alba sapien Linnaeus, 1758"
+			nameOutputs := Verify([]string{name}, m)
+			result := nameOutputs[name]
+			Expect(result.MatchType).To(Equal("FuzzyPartialMatch"))
+		})
+
+		It("finds genus by partial match", func() {
+			m := util.NewModel()
+			name := "Drosophila albatrosus paravosus"
+			nameOutputs := Verify([]string{name}, m)
+			result := nameOutputs[name]
+			Expect(result.MatchType).To(Equal("ExactPartialMatch"))
+			Expect(result.CurrentName).To(Equal("Drosophila"))
+		})
+
+		It("does not find genus by partial fuzzy match", func() {
+			m := util.NewModel()
+			name := "Drossophila albatrosus paravosus"
+			nameOutputs := Verify([]string{name}, m)
+			result := nameOutputs[name]
+			Expect(result.MatchType).To(Equal("NoMatch"))
+		})
+
+		It("does not find fuzzy match for abbreviations", func() {
+			m := util.NewModel()
+			name := "A. crassus"
+			nameOutputs := Verify([]string{name}, m)
+			result := nameOutputs[name]
+			Expect(result.MatchType).To(Equal("ExactCanonicalMatch"))
+			// Wait for fixes in API
+			// name = "A. crassuss"
+			// nameOutputs = Verify([]string{name}, m)
+			// result = nameOutputs[name]
+			// Expect(result.MatchType).To(Equal("ExactCanonicalMatch"))
+		})
+
+		// Removing this until it is fixed in API
+		// It("does not find partial match for abbreviations", func() {
+		// 	m := util.NewModel()
+		// 	name := "A. whoknowswhat"
+		// 	nameOutputs := Verify([]string{name}, m)
+		// 	result := nameOutputs[name]
+		// 	Expect(result.MatchType).To(Equal("NoMatch"))
+		// })
+
 	})
 })
