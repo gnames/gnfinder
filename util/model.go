@@ -51,7 +51,7 @@ func NewModel(opts ...Opt) *Model {
 		//   Index: make(map[int]int),
 		// },
 		Verifier: Verifier{
-			URL:         "http://172.22.247.6:3000/api/graphql",
+			URL:         "https://index.globalnames.org/api/graphql",
 			WaitTimeout: 90 * time.Second,
 			BatchSize:   500,
 			Workers:     runtime.NumCPU(),

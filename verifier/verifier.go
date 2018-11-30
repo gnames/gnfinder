@@ -219,10 +219,6 @@ func processError(verResult VerifyOutput, result Result) {
 func processMatch(verResult VerifyOutput, resp response, retries int,
 	err error) {
 	result := resp.Results[0]
-	matchType := result.MatchType.Kind
-	if matchType == "Match" {
-		matchType = "Exact"
-	}
 	verResult[resp.SuppliedInput] =
 		Verification{
 			DataSourceID:       result.DataSource.ID,
@@ -234,7 +230,7 @@ func processMatch(verResult VerifyOutput, resp response, retries int,
 			ClassificationPath: result.Classification.Path,
 			DataSourcesNum:     resp.MatchedDataSources,
 			DataSourceQuality:  resp.QualitySummary,
-			MatchType:          matchType,
+			MatchType:          result.MatchType.Kind,
 			EditDistance:       result.MatchType.VerbatimEditDistance,
 			StemEditDistance:   result.MatchType.StemEditDistance,
 			PreferredResults:   getPreferredResults(resp.PreferredResults),

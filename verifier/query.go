@@ -58,7 +58,8 @@ func graphqlRequest() *graphql.Request {
 	req := graphql.NewRequest(`
 query($names: [name!]!, $sources: [Int!]) {
   nameResolver(names: $names,
-    preferredDataSourceIds: $sources,
+		preferredDataSourceIds: $sources,
+		advancedResolution: true
     bestMatchOnly: true) {
     responses {
       total
