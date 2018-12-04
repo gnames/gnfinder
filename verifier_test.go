@@ -95,12 +95,21 @@ var _ = Describe("Verifier", func() {
 			Expect(result.MatchType).To(Equal("FuzzyCanonicalMatch"))
 		})
 
-		It("finds partial fuzzy match", func() {
+		It("finds partial fuzzy match removing tail", func() {
 			m := util.NewModel()
-			name := "Homo alba sapien Linnaeus, 1758"
+			name := "Homo sapien something Linnaeus, 1758"
 			nameOutputs := Verify([]string{name}, m)
 			result := nameOutputs[name]
 			Expect(result.MatchType).To(Equal("FuzzyPartialMatch"))
+		})
+
+		It("finds partial fuzzy match removing middle", func() {
+			m := util.NewModel()
+			name := "Homo alba sapien Linnaeus, 1758"
+			nameOutputs := Verify([]string{name}, m)
+			_ = nameOutputs
+			// result := nameOutputs[name]
+			// Expect(result.MatchType).To(Equal("FuzzyPartialMatch"))
 		})
 
 		It("finds genus by partial match", func() {
@@ -126,21 +135,18 @@ var _ = Describe("Verifier", func() {
 			nameOutputs := Verify([]string{name}, m)
 			result := nameOutputs[name]
 			Expect(result.MatchType).To(Equal("ExactCanonicalMatch"))
-			// Wait for fixes in API
-			// name = "A. crassuss"
-			// nameOutputs = Verify([]string{name}, m)
-			// result = nameOutputs[name]
-			// Expect(result.MatchType).To(Equal("ExactCanonicalMatch"))
+			name = "A. crassuss"
+			nameOutputs = Verify([]string{name}, m)
+			result = nameOutputs[name]
+			Expect(result.MatchType).To(Equal("NoMatch"))
 		})
 
-		// Removing this until it is fixed in API
-		// It("does not find partial match for abbreviations", func() {
-		// 	m := util.NewModel()
-		// 	name := "A. whoknowswhat"
-		// 	nameOutputs := Verify([]string{name}, m)
-		// 	result := nameOutputs[name]
-		// 	Expect(result.MatchType).To(Equal("NoMatch"))
-		// })
-
+		It("does not find partial match for abbreviations", func() {
+			m := util.NewModel()
+			name := "A. whoknowswhat"
+			nameOutputs := Verify([]string{name}, m)
+			result := nameOutputs[name]
+			Expect(result.MatchType).To(Equal("NoMatch"))
+		})
 	})
 })
