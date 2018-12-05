@@ -76,7 +76,7 @@ query($names: [name!]!, $sources: [Int!]) {
         matchType {
         kind
         verbatimEditDistance
-          stemEditDistance
+        stemEditDistance
         }
       }
       preferredResults {

@@ -81,7 +81,7 @@ func Verify(names []string, m *util.Model) VerifyOutput {
 	client := graphql.NewClient(m.Verifier.URL)
 
 	//	uncomment to help debugging graphql
-	//client.Log = func(s string) { log.Println(s) }
+	// client.Log = func(s string) { log.Println(s) }
 
 	go prepareJobs(names, jobs, m.BatchSize)
 
@@ -145,9 +145,9 @@ func try(fn func(int) (bool, error)) (int, error) {
 func resolverWorker(client *graphql.Client, jobs <-chan []string,
 	res chan<- Result, wg *sync.WaitGroup, m *util.Model) {
 	defer wg.Done()
-	var resp graphqlResponse
 
 	for names := range jobs {
+		resp := graphqlResponse{}
 		attempts, err := try(func(int) (bool, error) {
 			req := graphqlRequest()
 			req.Var("names", jsonNames(names))
@@ -219,24 +219,24 @@ func processError(verResult VerifyOutput, result Result) {
 func processMatch(verResult VerifyOutput, resp response, retries int,
 	err error) {
 	result := resp.Results[0]
-	verResult[resp.SuppliedInput] =
-		Verification{
-			DataSourceID:       result.DataSource.ID,
-			TaxonID:            result.TaxonID,
-			DataSourceTitle:    result.DataSource.Title,
-			MatchedName:        result.Name.Value,
-			CurrentName:        result.AcceptedName.Name.Value,
-			Synonym:            result.Synonym,
-			ClassificationPath: result.Classification.Path,
-			DataSourcesNum:     resp.MatchedDataSources,
-			DataSourceQuality:  resp.QualitySummary,
-			MatchType:          result.MatchType.Kind,
-			EditDistance:       result.MatchType.VerbatimEditDistance,
-			StemEditDistance:   result.MatchType.StemEditDistance,
-			PreferredResults:   getPreferredResults(resp.PreferredResults),
-			Retries:            retries,
-			Error:              errorString(err),
-		}
+	v := Verification{
+		DataSourceID:       result.DataSource.ID,
+		TaxonID:            result.TaxonID,
+		DataSourceTitle:    result.DataSource.Title,
+		MatchedName:        result.Name.Value,
+		CurrentName:        result.AcceptedName.Name.Value,
+		Synonym:            result.Synonym,
+		ClassificationPath: result.Classification.Path,
+		DataSourcesNum:     resp.MatchedDataSources,
+		DataSourceQuality:  resp.QualitySummary,
+		MatchType:          result.MatchType.Kind,
+		EditDistance:       result.MatchType.VerbatimEditDistance,
+		StemEditDistance:   result.MatchType.StemEditDistance,
+		PreferredResults:   getPreferredResults(resp.PreferredResults),
+		Retries:            retries,
+		Error:              errorString(err),
+	}
+	verResult[resp.SuppliedInput] = v
 }
 
 func errorString(err error) string {

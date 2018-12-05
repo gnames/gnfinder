@@ -107,9 +107,8 @@ var _ = Describe("Verifier", func() {
 			m := util.NewModel()
 			name := "Homo alba sapien Linnaeus, 1758"
 			nameOutputs := Verify([]string{name}, m)
-			_ = nameOutputs
-			// result := nameOutputs[name]
-			// Expect(result.MatchType).To(Equal("FuzzyPartialMatch"))
+			result := nameOutputs[name]
+			Expect(result.MatchType).To(Equal("FuzzyPartialMatch"))
 		})
 
 		It("finds genus by partial match", func() {
@@ -119,6 +118,21 @@ var _ = Describe("Verifier", func() {
 			result := nameOutputs[name]
 			Expect(result.MatchType).To(Equal("ExactPartialMatch"))
 			Expect(result.CurrentName).To(Equal("Drosophila"))
+		})
+
+		It("calculates edit and stem edit distances correctly", func() {
+			m := util.NewModel()
+			name1 := "Abelia grandifiora"
+			name2 := "Pardosa moestus"
+			nameOutputs := Verify([]string{name1, name2}, m)
+			result := nameOutputs[name1]
+			Expect(result.MatchType).To(Equal("FuzzyCanonicalMatch"))
+			Expect(result.EditDistance).To(Equal(1))
+			Expect(result.StemEditDistance).To(Equal(1))
+			result = nameOutputs[name2]
+			Expect(result.MatchType).To(Equal("FuzzyCanonicalMatch"))
+			Expect(result.EditDistance).To(Equal(2))
+			Expect(result.StemEditDistance).To(Equal(0))
 		})
 
 		It("does not find genus by partial fuzzy match", func() {
@@ -147,6 +161,59 @@ var _ = Describe("Verifier", func() {
 			nameOutputs := Verify([]string{name}, m)
 			result := nameOutputs[name]
 			Expect(result.MatchType).To(Equal("NoMatch"))
+		})
+
+		It("finds fuzzy match for names with missplaced character", func() {
+			m := util.NewModel()
+			name := "Anthriscus sylve�tris"
+			nameOutputs := Verify([]string{name}, m)
+			result := nameOutputs[name]
+			Expect(result.MatchType).To(Equal("FuzzyCanonicalMatch"))
+			Expect(result.MatchedName).To(Equal("Anthriscus sylvestris"))
+			Expect(result.EditDistance).To(Equal(1))
+		})
+
+		It("does not find  fuzzy match for these names", func() {
+			m := util.NewModel()
+			name := "A. officinalis volubilis"
+			nameOutputs := Verify([]string{name}, m)
+			result := nameOutputs[name]
+			Expect(result.MatchType).To(Equal("NoMatch"))
+		})
+
+		It("parses correctly optional fields like edit_distance", func() {
+			m := util.NewModel()
+			m.BatchSize = 2
+			names := []string{
+				"Aaadonta constrricta babelthuapi",
+				"Abertella",
+				"Abryna",
+				"Abia fulgens",
+				"Abisara abuna",
+				"Abirus antennatus",
+				"Abirus violaceus",
+				"Abdera scriiptipennis",
+				"Abgrallaspis degenerata",
+				"Abax",
+				"Abgliophragma",
+				"Abacetodes",
+				"Abietinaria",
+				"Abiinae",
+				"Abatodesmus",
+				"Abatetia",
+				"Abacion",
+				"Abichia abichi",
+				"Aatolana",
+				"Abarema microcalyx var. microcalyx",
+				"Abiotrophia",
+				"Abderos",
+				"Abirus andamansis",
+				"Abelus",
+				"Abies guatemalensis var. guatemalensis",
+			}
+			l := len(names)
+			nameOutputs := Verify(names, m)
+			Expect(len(nameOutputs)).To(Equal(l))
 		})
 	})
 })

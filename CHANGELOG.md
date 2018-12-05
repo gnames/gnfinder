@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## [v0.8.2]
+
+- Fix [#23]: ExactMatch results have editDistance > 0 somtimes
+
+## [v0.8.1]
+
+- Add more tests for gnindex.
+
 ## [v0.8.0]
 
 - Add [#21]: support updated gnindex API
@@ -58,6 +66,8 @@
 
 This document follows [changelog guidelines]
 
+[v0.8.2]: https://github.com/gnames/gnfinder/compare/v0.8.1...v0.8.2
+[v0.8.1]: https://github.com/gnames/gnfinder/compare/v0.8.0...v0.8.1
 [v0.8.0]: https://github.com/gnames/gnfinder/compare/v0.7.0...v0.8.0
 [v0.7.0]: https://github.com/gnames/gnfinder/compare/v0.6.0...v0.7.0
 [v0.6.0]: https://github.com/gnames/gnfinder/compare/v0.5.2...v0.6.0
@@ -65,6 +75,7 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#23]: https://github.com/gnames/gnfinder/issues/23
 [#22]: https://github.com/gnames/gnfinder/issues/22
 [#21]: https://github.com/gnames/gnfinder/issues/21
 [#20]: https://github.com/gnames/gnfinder/issues/20
