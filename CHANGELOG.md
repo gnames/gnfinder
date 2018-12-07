@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix [#24]: Canonical form for matched names
+
 ## [v0.8.2]
 
 - Fix [#23]: ExactMatch results have editDistance > 0 somtimes

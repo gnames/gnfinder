@@ -59,6 +59,7 @@ var _ = Describe("Verifier", func() {
 			Expect(result.MatchType).To(Equal("ExactCanonicalMatch"))
 			Expect(result.DataSourceID).To(BeNumerically(">", 0))
 			Expect(result.MatchedName).To(Equal("Homo sapiens Linnaeus, 1758"))
+			Expect(result.MatchedCanonical).To(Equal("Homo sapiens"))
 			Expect(result.ClassificationPath).To(Equal("Animalia|Chordata|Mammalia|Primates|Hominoidea|Hominidae|Homo|Homo sapiens"))
 			Expect(result.CurrentName).To(Equal("Homo sapiens Linnaeus, 1758"))
 		})
