@@ -17,6 +17,7 @@ type response struct {
 		DataSource     dataSource
 		TaxonID        string
 		Name           name
+		CanonicalName  canonical
 		AcceptedName   acceptedName
 		Synonym        bool
 		MatchType      matchType
@@ -38,6 +39,10 @@ type dataSource struct {
 type name struct {
 	ID    string
 	Value string
+}
+
+type canonical struct {
+	ValueRanked string
 }
 
 type classification struct {
@@ -67,7 +72,8 @@ query($names: [name!]!, $sources: [Int!]) {
       qualitySummary
       matchedDataSources
       results {
-        name { id value }
+				name { id value }
+				canonicalName { valueRanked }
         taxonId
         classification { path }
         dataSource { id title }

@@ -21,6 +21,8 @@ type Verification struct {
 	TaxonID string `json:"taxonId,omitempty"`
 	// MatchedName is a verbatim name-string from the matched result.
 	MatchedName string `json:"matchedName,omitempty"`
+	// MatchedCanonical is a canonical form of a matched name
+	MatchedCanonical string `json:"matchedCanonical,omitempty"`
 	// CurrentName is a currently accepted name according to the matched result.
 	CurrentName string `json:"currentName,omitempty"`
 	// Synonym is true when the name is not the same as currently accepted.
@@ -224,6 +226,7 @@ func processMatch(verResult VerifyOutput, resp response, retries int,
 		TaxonID:            result.TaxonID,
 		DataSourceTitle:    result.DataSource.Title,
 		MatchedName:        result.Name.Value,
+		MatchedCanonical:   result.CanonicalName.ValueRanked,
 		CurrentName:        result.AcceptedName.Name.Value,
 		Synonym:            result.Synonym,
 		ClassificationPath: result.Classification.Path,
