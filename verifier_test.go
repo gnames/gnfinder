@@ -182,6 +182,18 @@ var _ = Describe("Verifier", func() {
 			Expect(result.MatchType).To(Equal("NoMatch"))
 		})
 
+		It("users preferred sources", func() {
+			m := util.NewModel()
+			m.Sources = []int{4, 12}
+			name := "Homo sapiens"
+			nameOutputs := Verify([]string{name}, m)
+			result := nameOutputs[name]
+			Expect(len(result.PreferredResults)).To(BeNumerically(">", 0))
+			for _, v := range result.PreferredResults {
+				Expect(v.DataSourceID == 4 || v.DataSourceID == 12).To(BeTrue())
+			}
+		})
+
 		It("parses correctly optional fields like edit_distance", func() {
 			m := util.NewModel()
 			m.BatchSize = 2
