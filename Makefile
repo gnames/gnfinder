@@ -3,7 +3,8 @@ GOINSTALL=$(GOCMD) install
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=ginkgo
-
+GOGET = $(GOCMD) get
+FLAG_MODULE = GO111MODULE=on
 VERSION=`git describe --tags`
 VER=`git describe --tags --abbrev=0`
 DATE=`date -u '+%Y-%m-%d_%I:%M:%S%p'`
@@ -13,8 +14,14 @@ LDFLAGS=-ldflags "-X main.buildDate=${DATE} \
 
 all: install
 
-test:
-	ginkgo
+test: deps install
+	$(FLAG_MODULE) go test ./...
+
+deps:
+	$(FLAG_MODULE) $(GOGET) github.com/spf13/cobra/cobra@7547e83; \
+	$(FLAG_MODULE) $(GOGET) github.com/onsi/ginkgo/ginkgo@505cc35; \
+	$(FLAG_MODULE) $(GOGET) github.com/onsi/gomega@ce690c5; \
+	$(FLAG_MODULE) $(GOGET) github.com/golang/protobuf/protoc-gen-go@347cf4a
 
 build: grpc
 	cd gnfinder; \
