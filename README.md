@@ -1,6 +1,21 @@
-# Global Names Finder [![Build Status][travis-img]][travis] [![Doc Status][doc-img]][doc] [![Go Report Card][go-report-img]][go-report]
+# Global Names Finder
+
+[![Build Status][travis-img]][travis] [![Doc Status][doc-img]][doc] [![Go Report Card][go-report-img]][go-report]
 
 Finds scientific names using dictionary and nlp approaches.
+- [Global Names Finder](#global-names-finder)
+  - [Features](#features)
+  - [Install as a command line app](#install-as-a-command-line-app)
+    - [Linux or OS X](#linux-or-os-x)
+    - [Windows](#windows)
+    - [Go](#go)
+  - [Usage](#usage)
+    - [Usage as a command line app](#usage-as-a-command-line-app)
+    - [Usage as gRPC service](#usage-as-grpc-service)
+    - [Usage as a library](#usage-as-a-library)
+    - [Usage as a docker container](#usage-as-a-docker-container)
+  - [Development](#development)
+  - [Testing](#testing)
 
 ## Features
 
@@ -57,12 +72,22 @@ cd $GOPATH/src/github.com/gnames/gnfinder
 make install
 ```
 
-## Usage as a command line app
+## Usage
+
+### Usage as a command line app
 
 To see flags and usage:
 
 ```bash
 gnfinder --help
+# or just
+gnfinder
+```
+
+To see the version of its binary:
+
+```bash
+gnfinder -v
 ```
 
 Examples:
@@ -70,30 +95,41 @@ Examples:
 Getting data from a pipe forcing English language and verification
 
 ```bash
-echo "Pomatomus saltator and Parus major" | gnfinder -c -l eng
+echo "Pomatomus saltator and Parus major" | gnfinder find -c -l eng
 ```
 
 Verifying data against ``NCBI`` and ``Encyclopedia of Life``
 
 ```bash
-echo "Pomatomus saltator and Parus major" | gnfinder -c -l eng -s "4,12"
+echo "Pomatomus saltator and Parus major" | gnfinder find -c -l eng -s "4,12"
 ```
 
 Getting data from a file and redirecting result to another file
 
 ```bash
-gnfinder file1.txt > file2.json
+gnfinder find file1.txt > file2.json
 ```
 
-## Usage as a library
+### Usage as gRPC service
+
+Start gnfinder as a gRPC server:
 
 ```bash
-go get github.com/gnames/gnfinder
-go get github.com/json-iterator/go
-go get github.com/rakyll/statik
-# To update dictionaries if they are changed
+# using default 8778 port
+gnfinder grpc
+
+#using some other port
+gnfinder grpc -p 8901
+```
+
+Use a gRPC client for gnfinder. To learn how to make one, check a
+[```Ruby implementation```][gnfinder gem] of a client.
+
+### Usage as a library
+
+```bash
 cd $GOPATH/srs/github.com/gnames/gnfinder
-go generate
+make deps
 ```
 
 ```go
@@ -105,10 +141,10 @@ import (
 dict = &dict.LoadDictionary()
 bytesText := []byte(utfText)
 
-jsonNames := FindNamesJSON(bytesText, dict, opts)
+jsonNames := FindNamesJSON(bytesText, dict)
 ```
 
-## Usage as a docker
+### Usage as a docker container
 
 ```bash
 docker pull gnames/gnfinder
@@ -117,24 +153,24 @@ docker pull gnames/gnfinder
 docker run -d -p 8888:8778 --name gnfinder gnames/gnfinder
 ```
 
-### Development
+## Development
 
 To install latest gnfinder
 
 ```
 git get github.com/gnames/gnfinder
 cd $GOPATH/src/github.com/gnames/gnfinder
+make deps
 make
 gnfinder -h
 ```
 
-### Testing
+## Testing
 
 Install [ginkgo], a [BDD] testing framefork for Go.
 
 ```bash
-go get github.com/onsi/ginkgo/ginkgo
-go get github.com/onsi/gomega
+make deps
 ```
 
 To run tests go to root directory of the project and run
@@ -145,6 +181,10 @@ ginkgo
 #or
 
 go test
+
+#or
+
+make test
 ```
 
 [travis-img]: https://travis-ci.org/gnames/gnfinder.svg?branch=master
@@ -156,5 +196,6 @@ go test
 [bhlindex]: https://github.com/gnames/bhlindex
 [newwinlogo]: https://i.stack.imgur.com/B8Zit.png
 [winpath]: https://www.computerhope.com/issues/ch000549.htm
+[gnfinder gem]: https://rubygems.org/gems/gnfinder
 [go-report-img]: https://goreportcard.com/badge/github.com/gnames/gnfinder
 [go-report]: https://goreportcard.com/report/github.com/gnames/gnfinder

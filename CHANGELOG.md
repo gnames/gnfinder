@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Fix [#25]: Make CLI app work again (cobra-based cli does not allow
+             root command with input without flags so
+             ``gndinfer text.txt`` was broken).
 - Fix [#24]: Canonical form for matched names
 
 ## [v0.8.2]
@@ -77,6 +80,8 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#25]: https://github.com/gnames/gnfinder/issues/25
+[#24]: https://github.com/gnames/gnfinder/issues/24
 [#23]: https://github.com/gnames/gnfinder/issues/23
 [#22]: https://github.com/gnames/gnfinder/issues/22
 [#21]: https://github.com/gnames/gnfinder/issues/21

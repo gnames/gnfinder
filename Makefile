@@ -2,7 +2,7 @@ GOCMD=go
 GOINSTALL=$(GOCMD) install
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
-GOTEST=ginkgo
+GOGENERATE=$(GOCMD) generate
 GOGET = $(GOCMD) get
 FLAG_MODULE = GO111MODULE=on
 VERSION=`git describe --tags`
@@ -21,7 +21,9 @@ deps:
 	$(FLAG_MODULE) $(GOGET) github.com/spf13/cobra/cobra@7547e83; \
 	$(FLAG_MODULE) $(GOGET) github.com/onsi/ginkgo/ginkgo@505cc35; \
 	$(FLAG_MODULE) $(GOGET) github.com/onsi/gomega@ce690c5; \
-	$(FLAG_MODULE) $(GOGET) github.com/golang/protobuf/protoc-gen-go@347cf4a
+	$(FLAG_MODULE) $(GOGET) github.com/golang/protobuf/protoc-gen-go@347cf4a; \
+	$(FLAG_MODULE) $(GOGET) github.com/rakyll/statik@7925817; \
+	$(GOGENERATE)
 
 build: grpc
 	cd gnfinder; \
