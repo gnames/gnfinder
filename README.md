@@ -138,10 +138,9 @@ import (
   "github.com/gnames/gnfinder/dict"
 )
 
-dict = &dict.LoadDictionary()
 bytesText := []byte(utfText)
 
-jsonNames := FindNamesJSON(bytesText, dict)
+jsonNames := FindNamesJSON(bytesText)
 ```
 
 ### Usage as a docker container

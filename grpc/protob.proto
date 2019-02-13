@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package grpc;
+
+message Pong {
+	string value = 1;
+}
+
+message Void {}
+
+message Params {
+	string text = 1;
+	bool with_bayes = 3;
+	string language = 4;
+	bool with_verification = 5;
+	repeated int32 sources = 6;
+}
+
+message NameStrings {
+	string date = 1;
+	string language = 2;
+	int32 total_tokens = 3;
+	int32 total_candidates = 4;
+	int32 total_names = 5;
+	repeated NameString names = 6;
+}
+
+message NameString {
+	string type = 1;
+	string verbatim = 2;
+	string name = 3;
+	float odds = 4;
+	int32 offset_start = 5;
+	int32 offset_end = 6;
+
+	Verification verification = 7;
+}
+
+message Verification {
+	int32 data_source_id = 1;
+  string data_source_title = 2;
+	string matched_name = 3;
+	string current_name = 4;
+	string classification_path = 5;
+	int32 data_sources_num = 6;
+	string data_source_quality = 7;
+	int32 edit_distance = 8;
+	int32 stem_edit_distance = 9;
+	MatchType match_type = 11;
+	string error = 12;
+	repeated PreferredResult preferred_results = 13;
+}
+
+message PreferredResult {
+	int32 data_source_id = 1;
+	string data_source_title = 2;
+	string name_id = 3;
+	string name = 4;
+	string taxon_id = 5;
+}
+
+enum MatchType {
+	NONE = 0;
+	EXACT = 1;
+	FUZZY = 2;
+	PARTIAL_EXACT = 3;
+	PARTIAL_FUZZY = 4;
+}
+
+
+service GNFinder {
+	rpc Ping(Void) returns(Pong) {}
+	rpc FindNames(Params) returns(NameStrings) {}
+}

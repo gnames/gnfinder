@@ -3,8 +3,8 @@ package gnfinder_test
 import (
 	"io/ioutil"
 
+	. "github.com/gnames/gnfinder"
 	"github.com/gnames/gnfinder/dict"
-	"github.com/gnames/gnfinder/util"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -14,7 +14,7 @@ import (
 var (
 	book       []byte
 	dictionary *dict.Dictionary
-	model      *util.Model
+	gnf        *GNfinder
 )
 
 func TestGnfinder(t *testing.T) {
@@ -27,10 +27,9 @@ var _ = BeforeSuite(func() {
 	book, err = ioutil.ReadFile("./testdata/seashells_book.txt")
 	Expect(err).NotTo(HaveOccurred())
 	Expect(len(book)).To(BeNumerically(">", 1000000))
-	d := dict.LoadDictionary()
-	dictionary = &d
+	dictionary = dict.LoadDictionary()
 })
 
 var _ = BeforeEach(func() {
-	model = util.NewModel()
+	gnf = NewGNfinder(OptDict(dictionary))
 })

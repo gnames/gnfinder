@@ -20,7 +20,7 @@ PROTO_DIR="/tmp/proto-${PROTO_VERSION}"
 
 # Can't check for presence of directory as cache auto-creates it.
 if [ ! -f "${PROTO_DIR}/bin/protoc" ]; then
-  wget -O "${PROTO_FILE}" "${PROTO_PATH}" 
+  wget -O "${PROTO_FILE}" "${PROTO_PATH}"
   unzip -o "${PROTO_FILE}" -d "${PROTO_DIR}"
   rm "${PROTO_FILE}"
   sudo cp "${PROTO_DIR}/bin/protoc" /usr/local/bin

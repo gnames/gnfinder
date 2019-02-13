@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.8.3]
+
+- Add [#26]: Command line app tests
+- Add [#27]: Refactor code to make it more maintainable
 - Fix [#25]: Make CLI app work again (cobra-based cli does not allow
              root command with input without flags so
              ``gndinfer text.txt`` was broken).
@@ -71,6 +75,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.8.3]: https://github.com/gnames/gnfinder/compare/v0.8.2...v0.8.3
 [v0.8.2]: https://github.com/gnames/gnfinder/compare/v0.8.1...v0.8.2
 [v0.8.1]: https://github.com/gnames/gnfinder/compare/v0.8.0...v0.8.1
 [v0.8.0]: https://github.com/gnames/gnfinder/compare/v0.7.0...v0.8.0
@@ -80,6 +85,8 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#27]: https://github.com/gnames/gnfinder/issues/27
+[#26]: https://github.com/gnames/gnfinder/issues/26
 [#25]: https://github.com/gnames/gnfinder/issues/25
 [#24]: https://github.com/gnames/gnfinder/issues/24
 [#23]: https://github.com/gnames/gnfinder/issues/23

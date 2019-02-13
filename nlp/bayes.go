@@ -3,17 +3,17 @@ package nlp
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 
 	"github.com/gnames/bayes"
 	"github.com/gnames/gnfinder/dict"
+	"github.com/gnames/gnfinder/lang"
 	"github.com/gnames/gnfinder/token"
-	"github.com/gnames/gnfinder/util"
 	"github.com/rakyll/statik/fs"
 )
 
-func TagTokens(ts []token.Token, d *dict.Dictionary, m *util.Model) {
-	nb := naiveBayesFromDump(m)
-	l := len(ts)
+func TagTokens(ts []token.Token, d *dict.Dictionary, thr float64, l lang.Language) {
+	nb := naiveBayesFromDump(l)
 	for i := range ts {
 		t := &ts[i]
 		if !t.Features.Capitalized || t.UninomialDict == dict.BlackUninomial {
@@ -21,11 +21,11 @@ func TagTokens(ts []token.Token, d *dict.Dictionary, m *util.Model) {
 		}
 
 		t.SetUninomialDict(d)
-		ts2 := ts[i:util.UpperIndex(i, l)]
+		ts2 := ts[i:token.UpperIndex(i, len(ts))]
 		fs := NewFeatureSet(ts2)
 		priorOdds := nameFrequency()
 		odds := predictOdds(nb, t, &fs, priorOdds)
-		processBayesResults(odds, ts, i, m.BayesOddsThreshold, d)
+		processBayesResults(odds, ts, i, thr, d)
 	}
 }
 
@@ -99,20 +99,26 @@ func predictOdds(nb *bayes.NaiveBayes, t *token.Token, fs *FeatureSet,
 	odds bayes.LabelFreq) []bayes.Posterior {
 	evenOdds := map[bayes.Labeler]float64{Name: 1.0, NotName: 1.0}
 	oddsUni, err := nb.Predict(features(fs.Uninomial), bayes.WithPriorOdds(odds))
-	util.Check(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 	if t.Indices.Species == 0 {
 		return []bayes.Posterior{oddsUni}
 	}
 
 	oddsSp, err := nb.Predict(features(fs.Species), bayes.WithPriorOdds(evenOdds))
-	util.Check(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 	delete(oddsSp.Likelihoods[Name], "PriorOdds")
 	if t.Indices.Infraspecies == 0 {
 		return []bayes.Posterior{oddsUni, oddsSp}
 	}
 	f := features(fs.InfraSp)
 	oddsInfraSp, err := nb.Predict(f, bayes.WithPriorOdds(evenOdds))
-	util.Check(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 	delete(oddsInfraSp.Likelihoods[Name], "PriorOdds")
 	return []bayes.Posterior{oddsUni, oddsSp, oddsInfraSp}
 }
@@ -124,23 +130,32 @@ func nameFrequency() bayes.LabelFreq {
 	}
 }
 
-func naiveBayesFromDump(m *util.Model) *bayes.NaiveBayes {
+func naiveBayesFromDump(l lang.Language) *bayes.NaiveBayes {
 	nb := bayes.NewNaiveBayes()
 	bayes.RegisterLabel(labelMap)
 	staticFS, err := fs.New()
-	util.Check(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	dir := fmt.Sprintf("/nlp/%s/bayes.json", m.Language.String())
+	dir := fmt.Sprintf("/nlp/%s/bayes.json", l.String())
 	f, err := staticFS.Open(dir)
-	util.Check(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	defer func() {
 		err := f.Close()
-		util.Check(err)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}()
 
 	json, err := ioutil.ReadAll(f)
-	util.Check(err)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	nb.Restore(json)
 	return nb
 }

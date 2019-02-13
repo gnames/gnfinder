@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/gnames/gnfinder"
-	"github.com/gnames/gnfinder/util"
+	"github.com/gnames/gnfinder/output"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -36,8 +36,9 @@ Calopogon, or Cymbidium pul-
 cheilum, 1 5s. per doz.
 Conostylis Americana, 2i. 6d.
 			`
-			mBayes := util.NewModel(util.WithBayes(true))
-			output := gnfinder.FindNames([]rune(str), dictionary, mBayes)
+			gnf := gnfinder.NewGNfinder(gnfinder.OptDict(dictionary),
+				gnfinder.OptBayes(true))
+			output := gnf.FindNames([]byte(str))
 			Expect(output.Names[1].Verbatim).
 				To(Equal("Cymbidium pul-\n\n\ncheilum,"))
 		})
@@ -47,17 +48,17 @@ Conostylis Americana, 2i. 6d.
 		It("creates output object from JSON", func() {
 			o := makeOutput()
 			j := o.ToJSON()
-			o2 := gnfinder.Output{}
+			o2 := &output.Output{}
 			o2.FromJSON(j)
 			Expect(len(o2.Names)).To(Equal(4))
 		})
 	})
 })
 
-func makeOutput() gnfinder.Output {
+func makeOutput() *output.Output {
 	s := `Pardosa moesta, Pomatomus saltator and Bubo bubo decided to get a
 		a cup of Camelia sinensis on a nice Sunday evening.`
-	mBayes := util.NewModel(util.WithBayes(true))
-	output := gnfinder.FindNames([]rune(s), dictionary, mBayes)
+	gnf := gnfinder.NewGNfinder(gnfinder.OptDict(dictionary), gnfinder.OptBayes(true))
+	output := gnf.FindNames([]byte(s))
 	return output
 }

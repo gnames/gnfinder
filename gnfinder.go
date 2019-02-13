@@ -2,75 +2,93 @@
 package gnfinder
 
 import (
+	"github.com/gnames/bayes"
 	"github.com/gnames/gnfinder/dict"
-	"github.com/gnames/gnfinder/heuristic"
 	"github.com/gnames/gnfinder/lang"
-	"github.com/gnames/gnfinder/nlp"
-	"github.com/gnames/gnfinder/token"
-	"github.com/gnames/gnfinder/util"
+	"github.com/gnames/gnfinder/verifier"
 )
 
-// FindNamesJSON takes a text and returns scientific names found in the text,
-// as well as tokens
-func FindNamesJSON(data []byte, dict *dict.Dictionary,
-	opts ...util.Opt) []byte {
-	m := util.NewModel(opts...)
-	output := FindNames([]rune(string(data)), dict, m)
-	return output.ToJSON()
+// GNfinder is responsible for name-finding operations
+type GNfinder struct {
+	// Language of the text
+	Language lang.Language
+	// Bayes flag forces to run Bayes name-finding on unknown languages
+	Bayes bool
+	// BayesOddsThreshold sets the limit of posterior odds. Everything bigger
+	// that this limit will go to the names output.
+	BayesOddsThreshold float64
+	// TextOdds captures "concentration" of names as it is found for the whole
+	// text by heuristic name-finding. It should be close enough for real
+	// number of names in text. We use it when we do not have local conentration
+	// of names in a region of text.
+	TextOdds bayes.LabelFreq
+
+	// NameDistribution keeps data about position of names candidates and
+	// their value according to heuristic and Bayes name-finding algorithms.
+	// NameDistribution
+
+	// Verifier for scientific names
+	Verifier *verifier.Verifier
+	// Dict contains black, grey, and white list dictionaries
+	Dict *dict.Dictionary
 }
 
-// FindNames traverses a text and finds scientific names in it.
-func FindNames(text []rune, d *dict.Dictionary, m *util.Model) Output {
-	tokens := token.Tokenize(text)
+// Option type for changing GNfinder settings.
+type Option func(*GNfinder)
 
-	if m.Language == lang.NotSet {
-		m.Language = lang.DetectLanguage(text)
+// OptLanguage sets a language of a text.
+func OptLanguage(l lang.Language) Option {
+	return func(gnf *GNfinder) {
+		gnf.Language = l
 	}
-	if m.Language != lang.UnknownLanguage {
-		m.Bayes = true
-	}
-
-	heuristic.TagTokens(tokens, d, m)
-	if m.Bayes {
-		nlp.TagTokens(tokens, d, m)
-	}
-	return CollectOutput(tokens, text, m)
 }
 
-// CollectOutput takes tagged tokens and assembles gnfinder output out of them.
-func CollectOutput(ts []token.Token, text []rune, m *util.Model) Output {
-	var names []Name
-	l := len(ts)
-	for i := range ts {
-		u := &ts[i]
-		if u.Decision == token.NotName {
-			continue
-		}
-		name := TokensToName(ts[i:util.UpperIndex(i, l)], text)
-		if name.Odds == 0.0 || name.Odds > 1.0 || name.Type == "Binomial" ||
-			name.Type == "Trinomial" {
-			names = append(names, name)
-		}
+// OptBayes is an option that forces running bayes name-finding even when
+// the language is not supported by training sets.
+func OptBayes(b bool) Option {
+	return func(gnf *GNfinder) {
+		gnf.Bayes = b
 	}
-
-	output := NewOutput(names, ts, m)
-	return output
 }
 
-// UniqueNameStrings takes a list of names, and returns a list of unique
-// name-strings
-func UniqueNameStrings(names []Name) []string {
-	var empty struct{}
-	var set = make(map[string]struct{})
-	var uniqueNames []string
-
-	for _, n := range names {
-		set[n.Name] = empty
+// OptBayesThreshold is an option for name finding, that sets new threshold
+// for results from the Bayes name-finding. All the name candidates that have a
+// higher threshold will appear in the resulting names output.
+func OptBayesThreshold(odds float64) Option {
+	return func(gnf *GNfinder) {
+		gnf.BayesOddsThreshold = odds
 	}
+}
 
-	for n := range set {
-		uniqueNames = append(uniqueNames, n)
+// OptVerify is sets Verifier that will be used for validation of
+// name-strings against https://index.globalnames.org service.
+func OptVerify(opts ...verifier.Option) Option {
+	return func(gnf *GNfinder) {
+		gnf.Verifier = verifier.NewVerifier(opts...)
 	}
+}
 
-	return uniqueNames
+// OptDict allows to set already created dictionary for GNfinder.
+// It saves time, because then dictionary does not have to be loaded at
+// the construction time.
+func OptDict(d *dict.Dictionary) Option {
+	return func(gnf *GNfinder) {
+		gnf.Dict = d
+	}
+}
+
+// NewGNfinder creates GNfinder object with default data, or with data coming
+// from opts.
+func NewGNfinder(opts ...Option) *GNfinder {
+	gnf := &GNfinder{
+		Language:           lang.NotSet,
+		BayesOddsThreshold: 100.0,
+	}
+	for _, opt := range opts {
+		opt(gnf)
+	}
+	if gnf.Dict == nil {
+		gnf.Dict = dict.LoadDictionary()
+	}
+	return gnf
 }

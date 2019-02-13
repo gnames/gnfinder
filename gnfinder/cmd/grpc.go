@@ -19,7 +19,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/gnames/gnfinder/server"
+	"github.com/gnames/gnfinder/grpc"
 	"github.com/spf13/cobra"
 )
 
@@ -37,7 +37,7 @@ Provides gRPC API to gnfinder functionality.`,
 			os.Exit(1)
 		}
 		fmt.Printf("port: %d\n\n", port)
-		server.Run(port)
+		grpc.Run(port)
 		os.Exit(0)
 	},
 }

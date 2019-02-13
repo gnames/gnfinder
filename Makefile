@@ -47,8 +47,9 @@ install: grpc
 	cd gnfinder; \
 	GO111MODULE=on $(GOINSTALL) ${LDFLAGS};
 
+.PHONY:grpc
 grpc:
-	cd protob; \
+	cd grpc; \
 	protoc -I . ./protob.proto --go_out=plugins=grpc:.;
 
 docker: build

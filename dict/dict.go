@@ -3,11 +3,11 @@ package dict
 
 import (
 	"encoding/csv"
+	"log"
 	"net/http"
 
 	// _ is needed for virtual file system
 	_ "github.com/gnames/gnfinder/statik"
-	"github.com/gnames/gnfinder/util"
 	"github.com/rakyll/statik/fs"
 )
 
@@ -53,39 +53,48 @@ type Dictionary struct {
 }
 
 // LoadDictionary contain most popular words in European languages.
-func LoadDictionary() Dictionary {
+func LoadDictionary() *Dictionary {
 	statikFS, err := fs.New()
-	util.Check(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	d := Dictionary{}
-	d.BlackUninomials = readData(statikFS, "/black/uninomials.csv")
-	d.BlackSpecies = readData(statikFS, "/black/species.csv")
-	d.CommonWords = readData(statikFS, "/common/eu.csv")
-	d.GreyGenera = readData(statikFS, "/grey/genera.csv")
-	d.GreyGeneraSp = readData(statikFS, "/grey/genera_species.csv")
-	d.GreySpecies = readData(statikFS, "/grey/species.csv")
-	d.GreyUninomials = readData(statikFS, "/grey/uninomials.csv")
-	d.WhiteGenera = readData(statikFS, "/white/genera.csv")
-	d.WhiteSpecies = readData(statikFS, "/white/species.csv")
-	d.WhiteUninomials = readData(statikFS, "/white/uninomials.csv")
-	d.Ranks = setRanks()
+	d := &Dictionary{
+		BlackUninomials: readData(statikFS, "/black/uninomials.csv"),
+		BlackSpecies:    readData(statikFS, "/black/species.csv"),
+		CommonWords:     readData(statikFS, "/common/eu.csv"),
+		GreyGenera:      readData(statikFS, "/grey/genera.csv"),
+		GreyGeneraSp:    readData(statikFS, "/grey/genera_species.csv"),
+		GreySpecies:     readData(statikFS, "/grey/species.csv"),
+		GreyUninomials:  readData(statikFS, "/grey/uninomials.csv"),
+		WhiteGenera:     readData(statikFS, "/white/genera.csv"),
+		WhiteSpecies:    readData(statikFS, "/white/species.csv"),
+		WhiteUninomials: readData(statikFS, "/white/uninomials.csv"),
+		Ranks:           setRanks(),
+	}
 	return d
 }
 
 func readData(fs http.FileSystem, path string) map[string]struct{} {
 	res := make(map[string]struct{})
 	f, err := fs.Open(path)
+	if err != nil {
+		log.Fatal(err)
+	}
 	var empty struct{}
-	util.Check(err)
 
 	defer func() {
 		err := f.Close()
-		util.Check(err)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}()
 
 	reader := csv.NewReader(f)
 	records, err := reader.ReadAll()
-	util.Check(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	for _, v := range records {
 		res[v[0]] = empty

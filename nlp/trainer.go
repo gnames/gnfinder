@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"path/filepath"
 
 	"github.com/gnames/gnfinder/heuristic"
@@ -12,7 +13,6 @@ import (
 	"github.com/gnames/gnfinder/dict"
 	"github.com/gnames/gnfinder/lang"
 	"github.com/gnames/gnfinder/token"
-	"github.com/gnames/gnfinder/util"
 	jsoniter "github.com/json-iterator/go"
 )
 
@@ -67,17 +67,23 @@ func NewTrainingData(path string) TrainingData {
 		txt := fmt.Sprintf("%s.txt", v)
 		txtPath := filepath.Join(path, txt)
 		txtBytes, err := ioutil.ReadFile(txtPath)
-		util.Check(err)
+		if err != nil {
+			log.Fatal(err)
+		}
 		text := []rune(string(txtBytes))
 
 		json := fmt.Sprintf("%s.json", v)
 		jsonPath := filepath.Join(path, json)
 		namesBytes, err := ioutil.ReadFile(jsonPath)
-		util.Check(err)
+		if err != nil {
+			log.Fatal(err)
+		}
 		r := bytes.NewReader(namesBytes)
 		var nps NamesPositions
 		err = jsoniter.NewDecoder(r).Decode(&nps)
-		util.Check(err)
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		td[FileName(v)] = &TextData{Text: text, NamesPositions: nps}
 	}
@@ -102,8 +108,8 @@ func processText(t *TextData, d *dict.Dictionary) []bayes.LabeledFeatures {
 	var lfs, lfsText []bayes.LabeledFeatures
 	var nd NameData
 	ts := token.Tokenize(t.Text)
-	m := util.NewModel()
-	heuristic.TagTokens(ts, d, m)
+	d = dict.LoadDictionary()
+	heuristic.TagTokens(ts, d)
 	l := len(t.NamesPositions)
 	nameIdx, i := 0, 0
 	for {
@@ -126,17 +132,16 @@ func processText(t *TextData, d *dict.Dictionary) []bayes.LabeledFeatures {
 // and a new index to continue collecting data.
 func getFeatures(i int, ts []token.Token,
 	nd *NameData) (int, []bayes.LabeledFeatures) {
-	l := len(ts)
 	var lfs []bayes.LabeledFeatures
 	label := NotName
 
-	for j := i; j < l; j++ {
+	for j := i; j < len(ts); j++ {
 		t := &ts[j]
 		if !t.Capitalized {
 			continue
 		}
 
-		upperIndex := util.UpperIndex(j, l)
+		upperIndex := token.UpperIndex(j, len(ts))
 		featureSet := NewFeatureSet(ts[j:upperIndex])
 		if nd.Name != "" && t.End > nd.Start {
 			label = Name

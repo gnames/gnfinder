@@ -1,276 +1,73 @@
 package verifier
 
 import (
-	"context"
-	"fmt"
-	"sync"
 	"time"
-
-	"github.com/gnames/gnfinder/util"
-	"github.com/machinebox/graphql"
 )
 
-// Verification presents data of an attempted remote verification
-// of a name-string.
-type Verification struct {
-	// DataSourceID is the ID of the DataSource of the returned best match result.
-	DataSourceID int `json:"dataSourceId,omitempty"`
-	// DataSourceTitle is the Title of the DataSource of the returned best match result.
-	DataSourceTitle string `json:"dataSourceTitle,omitempty"`
-	// TaxonID identifier of a taxon
-	TaxonID string `json:"taxonId,omitempty"`
-	// MatchedName is a verbatim name-string from the matched result.
-	MatchedName string `json:"matchedName,omitempty"`
-	// MatchedCanonical is a canonical form of a matched name
-	MatchedCanonical string `json:"matchedCanonical,omitempty"`
-	// CurrentName is a currently accepted name according to the matched result.
-	CurrentName string `json:"currentName,omitempty"`
-	// Synonym is true when the name is not the same as currently accepted.
-	Synonym bool `json:"isSynonym,omitempty"`
-	// ClassificationPath of the matched result.
-	ClassificationPath string `json:"classificationPath,omitempty"`
-	// DataSourcesNum tells how many databases matched by the name-string.
-	DataSourcesNum int `json:"dataSourcesNum,omitempty"`
-	// DataSourceQuality shows if a name-string was found in curated or
-	// auto-curated data sources.
-	DataSourceQuality string `json:"dataSourceQuality,omitempty"`
-	// EditDistance tells how many changes needs to be done to apply fuzzy
-	// match to requested name.
-	EditDistance int `json:"editDistance,omitempty"`
-	// StemEditDistance tells how many changes needs to be done to apply fuzzy
-	// match to stemmed name.
-	StemEditDistance int `json:"stemEditDistance,omitempty"`
-	// MatchType tells what kind of verification occurred if any.
-	MatchType string `json:"matchType,omitempty"`
-	// PreferredResults contains matches for data sources the user has a
-	// particular interest.
-	PreferredResults []preferredResultSingle `json:"preferredResults,omitempty"`
-	// Retries is number of attempted retries.
-	Retries int `json:"retries,omitempty"`
-	// ErrorString explains what happened if resolution did not work.
-	Error string `json:"error,omitempty"`
+const GNindexURL = "http://index.globalnames.org/api/graphql"
+
+// Verifier is responsible for estimating validity of found name-strings.
+type Verifier struct {
+	// URL of name-verification service.
+	URL string
+	// BatchSize of a name-strings' slice sent for verification.
+	BatchSize int
+	// Workers is a number of workers that send batches of name strings to
+	// verification service.
+	Workers int
+	// WaitTimeout defines how long to wait for a response from
+	// verification service.
+	WaitTimeout time.Duration
+	// Sources is a slice of Data Source IDs. Results from these
+	// Data Sources will always be provided unless they are empty.
+	Sources []int
 }
 
-type preferredResultSingle struct {
-	DataSourceID    int    `json:"dataSourceId"`
-	DataSourceTitle string `json:"dataSourceTitle"`
-	NameID          string `json:"nameId"`
-	Name            string `json:"name"`
-	TaxonID         string `json:"taxonId"`
-}
+// Option type for changing Verifier.
+type Option func(*Verifier)
 
-type NameInput struct {
-	Value string `json:"value"`
-}
-
-type VerifyOutput map[string]Verification
-
-type Result struct {
-	Names    []string
-	Response *graphqlResponse
-	Retries  int
-	Error    error
-}
-
-func Verify(names []string, m *util.Model) VerifyOutput {
-	var (
-		jobs = make(chan []string)
-		res  = make(chan Result)
-		done = make(chan bool)
-		wg   sync.WaitGroup
-	)
-	output := make(VerifyOutput)
-	client := graphql.NewClient(m.Verifier.URL)
-
-	//	uncomment to help debugging graphql
-	// client.Log = func(s string) { log.Println(s) }
-
-	go prepareJobs(names, jobs, m.BatchSize)
-
-	wg.Add(m.Workers)
-	for i := 1; i <= m.Workers; i++ {
-		go resolverWorker(client, jobs, res, &wg, m)
-	}
-
-	go processResult(output, res, done)
-
-	wg.Wait()
-	close(res)
-	<-done
-	return output
-}
-
-func jsonNames(names []string) []NameInput {
-	res := make([]NameInput, len(names))
-	for i := range names {
-		res[i] = NameInput{Value: names[i]}
-	}
-	return res
-}
-
-func prepareJobs(names []string, jobs chan<- []string, batchSize int) {
-	l := len(names)
-	offset := 0
-	for {
-		limit := offset + batchSize
-		if limit < l {
-			jobs <- names[offset:limit]
-			offset = limit
-		} else {
-			jobs <- names[offset:l]
-			close(jobs)
-			return
-		}
+// OptURL option sets a new url for name verification service.
+func OptURL(url string) Option {
+	return func(v *Verifier) {
+		v.URL = url
 	}
 }
 
-func try(fn func(int) (bool, error)) (int, error) {
-	var (
-		err        error
-		tryAgain   bool
-		maxRetries = 3
-		attempt    = 1
-	)
-	for {
-		tryAgain, err = fn(attempt)
-		if !tryAgain || err == nil {
-			break
-		}
-		attempt++
-		if attempt > maxRetries {
-			return maxRetries, err
-		}
-	}
-	return attempt, err
-}
-
-func resolverWorker(client *graphql.Client, jobs <-chan []string,
-	res chan<- Result, wg *sync.WaitGroup, m *util.Model) {
-	defer wg.Done()
-
-	for names := range jobs {
-		resp := graphqlResponse{}
-		attempts, err := try(func(int) (bool, error) {
-			req := graphqlRequest()
-			req.Var("names", jsonNames(names))
-			req.Var("sources", m.Sources)
-
-			queryErr := make(chan error)
-			ctx, cancel := context.WithTimeout(context.Background(), m.WaitTimeout)
-			go (func() { queryErr <- client.Run(ctx, req, &resp) })()
-			select {
-			case err := <-queryErr:
-				cancel()
-				if err != nil {
-					time.Sleep(200 * time.Millisecond)
-					return true, fmt.Errorf("Resolve worker error: %v\n", err)
-				} else {
-					return false, nil
-				}
-			case <-ctx.Done():
-				cancel()
-				return true, ctx.Err()
-			}
-		})
-		createResult(names, &resp, attempts, err, res)
+// OptBatchSize sets the batch size of name-strings to send to the
+// verification service.
+func OptBatchSize(n int) Option {
+	return func(v *Verifier) {
+		v.BatchSize = n
 	}
 }
 
-func createResult(names []string, resp *graphqlResponse, attempts int,
-	err error, res chan<- Result) {
-	if err != nil {
-		res <- Result{
-			Names:    names,
-			Response: resp,
-			Retries:  attempts,
-			Error:    err,
-		}
-	} else {
-		res <- Result{Response: resp, Retries: attempts}
+// OptWorkers option sets the number of workers to process
+// name-verification jobs.
+func OptWorkers(n int) Option {
+	return func(v *Verifier) {
+		v.Workers = n
 	}
 }
 
-func processResult(verResult VerifyOutput, res <-chan Result,
-	done chan<- bool) {
-	for r := range res {
-		if r.Response.NameResolver.Responses == nil {
-			processError(verResult, r)
-			continue
-		}
-
-		for _, resp := range r.Response.NameResolver.Responses {
-			if resp.MatchedDataSources > 0 && len(resp.Results) > 0 {
-				processMatch(verResult, resp, r.Retries, r.Error)
-			} else {
-				processNoMatch(verResult, resp, r.Retries, r.Error)
-			}
-		}
-	}
-	done <- true
-}
-
-func processError(verResult VerifyOutput, result Result) {
-	for _, n := range result.Names {
-		verResult[n] = Verification{
-			Retries: result.Retries,
-			Error:   result.Error.Error(),
-		}
+// OptSources is an option that sets IDs of data sources used for
+// verification. Results from these sources (if any) will be returned no matter
+// what is the best matching result.
+func OptSources(s []int) Option {
+	return func(v *Verifier) {
+		v.Sources = s
 	}
 }
 
-func processMatch(verResult VerifyOutput, resp response, retries int,
-	err error) {
-	result := resp.Results[0]
-	v := Verification{
-		DataSourceID:       result.DataSource.ID,
-		TaxonID:            result.TaxonID,
-		DataSourceTitle:    result.DataSource.Title,
-		MatchedName:        result.Name.Value,
-		MatchedCanonical:   result.CanonicalName.ValueRanked,
-		CurrentName:        result.AcceptedName.Name.Value,
-		Synonym:            result.Synonym,
-		ClassificationPath: result.Classification.Path,
-		DataSourcesNum:     resp.MatchedDataSources,
-		DataSourceQuality:  resp.QualitySummary,
-		MatchType:          result.MatchType.Kind,
-		EditDistance:       result.MatchType.VerbatimEditDistance,
-		StemEditDistance:   result.MatchType.StemEditDistance,
-		PreferredResults:   getPreferredResults(resp.PreferredResults),
-		Retries:            retries,
-		Error:              errorString(err),
+func NewVerifier(opts ...Option) *Verifier {
+	v := &Verifier{
+		URL:         GNindexURL,
+		WaitTimeout: 90 * time.Second,
+		BatchSize:   500,
+		Workers:     5,
+		Sources:     []int{1, 11, 179},
 	}
-	verResult[resp.SuppliedInput] = v
-}
-
-func errorString(err error) string {
-	res := ""
-	if err != nil {
-		res = err.Error()
+	for _, opt := range opts {
+		opt(v)
 	}
-	return res
-}
-
-func processNoMatch(verResult VerifyOutput, resp response, retries int,
-	err error) {
-	verResult[resp.SuppliedInput] =
-		Verification{
-			MatchType: "NoMatch",
-			Retries:   retries,
-			Error:     errorString(err),
-		}
-}
-
-func getPreferredResults(results []preferredResult) []preferredResultSingle {
-	var prs []preferredResultSingle
-	for _, r := range results {
-		pr := preferredResultSingle{
-			DataSourceID:    r.DataSource.ID,
-			DataSourceTitle: r.DataSource.Title,
-			NameID:          r.Name.ID,
-			Name:            r.Name.Value,
-			TaxonID:         r.TaxonID,
-		}
-		prs = append(prs, pr)
-	}
-	return prs
+	return v
 }

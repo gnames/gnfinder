@@ -5,14 +5,13 @@ import (
 
 	"github.com/gnames/gnfinder/dict"
 	"github.com/gnames/gnfinder/token"
-	"github.com/gnames/gnfinder/util"
 )
 
 // TagTokens is important for both heuristic and Bayes approaches. It analyses
 // tokens and sets up token's indices. Indices determine if a token is a
 // potential unimonial, binomial or trinomial. Then if fills out signfificant
 // number of features pertained to the token.
-func TagTokens(ts []token.Token, d *dict.Dictionary, m *util.Model) {
+func TagTokens(ts []token.Token, d *dict.Dictionary) {
 	l := len(ts)
 
 	for i := range ts {
@@ -21,14 +20,13 @@ func TagTokens(ts []token.Token, d *dict.Dictionary, m *util.Model) {
 		if !t.Features.Capitalized {
 			continue
 		}
-		nameTs := ts[i:util.UpperIndex(i, l)]
+		nameTs := ts[i:token.UpperIndex(i, l)]
 		token.SetIndices(nameTs, d)
-		exploreNameCandidate(nameTs, d, m)
+		exploreNameCandidate(nameTs, d)
 	}
 }
 
-func exploreNameCandidate(ts []token.Token, d *dict.Dictionary,
-	m *util.Model) bool {
+func exploreNameCandidate(ts []token.Token, d *dict.Dictionary) bool {
 
 	u := &ts[0]
 
@@ -42,13 +40,13 @@ func exploreNameCandidate(ts []token.Token, d *dict.Dictionary,
 		return false
 	}
 
-	if ok := checkAsGenusSpecies(ts, d, m); !ok {
+	if ok := checkAsGenusSpecies(ts, d); !ok {
 		return false
 	}
 
 	if u.Decision.In(token.Binomial, token.PossibleBinomial,
 		token.BayesBinomial) {
-		checkInfraspecies(ts, d, m)
+		checkInfraspecies(ts, d)
 	}
 
 	return true
@@ -62,8 +60,7 @@ func checkAsSpecies(t *token.Token, d *dict.Dictionary) bool {
 	return false
 }
 
-func checkAsGenusSpecies(ts []token.Token, d *dict.Dictionary,
-	m *util.Model) bool {
+func checkAsGenusSpecies(ts []token.Token, d *dict.Dictionary) bool {
 	g := &ts[0]
 	s := &ts[g.Indices.Species]
 
@@ -101,7 +98,7 @@ func checkGreyGeneraSp(g *token.Token, s *token.Token,
 	return false
 }
 
-func checkInfraspecies(ts []token.Token, d *dict.Dictionary, m *util.Model) {
+func checkInfraspecies(ts []token.Token, d *dict.Dictionary) {
 	i := ts[0].Indices.Infraspecies
 	if i == 0 {
 		return

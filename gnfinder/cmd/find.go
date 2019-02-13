@@ -29,7 +29,6 @@ import (
 	"github.com/gnames/gnfinder"
 	"github.com/gnames/gnfinder/dict"
 	"github.com/gnames/gnfinder/lang"
-	"github.com/gnames/gnfinder/util"
 	"github.com/gnames/gnfinder/verifier"
 	"github.com/spf13/cobra"
 )
@@ -117,36 +116,32 @@ func init() {
 
 func findNames(data []byte, langString string, bayes bool,
 	verify bool, sources []int) {
+	var opts []gnfinder.Option
 
-	dictionary := dict.LoadDictionary()
-	var opts []util.Opt
+	opts = append(opts, gnfinder.OptDict(dict.LoadDictionary()))
 	if langString != "" {
 		l, err := lang.NewLanguage(langString)
 		if err != nil {
 			log.Println(err)
 			os.Exit(1)
 		}
-		opts = append(opts, util.WithLanguage(l))
+		opts = append(opts, gnfinder.OptLanguage(l))
 	}
 
-	opts = append(opts,
-		util.WithBayes(bayes),
-		util.WithVerification(verify),
-		util.WithSources(sources),
-	)
-	m := util.NewModel(opts...)
-	output := gnfinder.FindNames([]rune(string(data)), &dictionary, m)
-
-	if m.Verifier.Verify {
-		names := gnfinder.UniqueNameStrings(output.Names)
-		namesResolved := verifier.Verify(names, m)
-		for i, n := range output.Names {
-			if v, ok := namesResolved[n.Name]; ok {
-				output.Names[i].Verification = v
-			}
-		}
+	if verify {
+		opts = append(opts, gnfinder.OptVerify(verifier.OptSources(sources)))
 	}
-	fmt.Println(string(output.ToJSON()))
+
+	opts = append(opts, gnfinder.OptBayes(bayes))
+
+	gnf := gnfinder.NewGNfinder(opts...)
+	res := gnf.FindNames(data)
+
+	if gnf.Verifier != nil {
+		verifiedNames := gnf.Verifier.Run(res.UniqueNameStrings())
+		res.MergeVerification(verifiedNames)
+	}
+	fmt.Println(string(res.ToJSON()))
 }
 
 func checkStdin() bool {
