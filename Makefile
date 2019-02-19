@@ -49,7 +49,7 @@ install: grpc
 
 .PHONY:grpc
 grpc:
-	cd grpc; \
+	cd protob; \
 	protoc -I . ./protob.proto --go_out=plugins=grpc:.;
 
 docker: build

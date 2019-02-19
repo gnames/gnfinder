@@ -10,6 +10,7 @@ import (
 	"github.com/gnames/gnfinder/dict"
 	"github.com/gnames/gnfinder/lang"
 	"github.com/gnames/gnfinder/output"
+	"github.com/gnames/gnfinder/protob"
 	"github.com/gnames/gnfinder/verifier"
 	"google.golang.org/grpc"
 )
@@ -22,7 +23,7 @@ func Run(port int) {
 	var gnfs gnfinderServer
 	srv := grpc.NewServer()
 	dictionary = dict.LoadDictionary()
-	RegisterGNFinderServer(srv, gnfs)
+	protob.RegisterGNFinderServer(srv, gnfs)
 	portVal := fmt.Sprintf(":%d", port)
 	l, err := net.Listen("tcp", portVal)
 	if err != nil {
@@ -32,13 +33,13 @@ func Run(port int) {
 }
 
 func (gnfinderServer) Ping(ctx context.Context,
-	void *Void) (*Pong, error) {
-	pong := Pong{Value: "pong"}
+	void *protob.Void) (*protob.Pong, error) {
+	pong := protob.Pong{Value: "pong"}
 	return &pong, nil
 }
 
 func (gnfinderServer) FindNames(ctx context.Context,
-	params *Params) (*NameStrings, error) {
+	params *protob.Params) (*protob.NameStrings, error) {
 	text := params.Text
 	opts := setOpts(params)
 	gnf := gnfinder.NewGNfinder(opts...)
@@ -54,7 +55,7 @@ func (gnfinderServer) FindNames(ctx context.Context,
 	return &names, nil
 }
 
-func setOpts(params *Params) []gnfinder.Option {
+func setOpts(params *protob.Params) []gnfinder.Option {
 	opts := []gnfinder.Option{gnfinder.OptDict(dictionary)}
 
 	if params.WithBayes {
@@ -82,10 +83,10 @@ func setOpts(params *Params) []gnfinder.Option {
 	return opts
 }
 
-func protobNameStrings(out *output.Output) NameStrings {
-	var names []*NameString
+func protobNameStrings(out *output.Output) protob.NameStrings {
+	var names []*protob.NameString
 	for _, n := range out.Names {
-		name := &NameString{
+		name := &protob.NameString{
 			Type:         n.Type,
 			Verbatim:     n.Verbatim,
 			Name:         n.Name,
@@ -96,11 +97,15 @@ func protobNameStrings(out *output.Output) NameStrings {
 		}
 		names = append(names, name)
 	}
-	return NameStrings{Names: names}
+	return protob.NameStrings{Names: names}
 }
 
-func verification(ver *verifier.Verification) *Verification {
-	return &Verification{
+func verification(ver *verifier.Verification) *protob.Verification {
+	if ver == nil {
+		var protoVer *protob.Verification
+		return protoVer
+	}
+	protoVer := &protob.Verification{
 		DataSourceId:       int32(ver.DataSourceID),
 		DataSourceTitle:    ver.DataSourceTitle,
 		MatchedName:        ver.MatchedName,
@@ -114,13 +119,14 @@ func verification(ver *verifier.Verification) *Verification {
 		Error:              ver.Error,
 		PreferredResults:   sourcesResult(ver),
 	}
+	return protoVer
 }
 
-func sourcesResult(ver *verifier.Verification) []*PreferredResult {
+func sourcesResult(ver *verifier.Verification) []*protob.PreferredResult {
 	l := len(ver.PreferredResults)
-	res := make([]*PreferredResult, l)
+	res := make([]*protob.PreferredResult, l)
 	for i, v := range ver.PreferredResults {
-		res[i] = &PreferredResult{
+		res[i] = &protob.PreferredResult{
 			DataSourceId:    int32(v.DataSourceID),
 			DataSourceTitle: v.DataSourceTitle,
 			NameId:          v.NameID,
@@ -131,18 +137,18 @@ func sourcesResult(ver *verifier.Verification) []*PreferredResult {
 	return res
 }
 
-func getMatchType(match string) MatchType {
+func getMatchType(match string) protob.MatchType {
 	switch match {
 	case "ExactMatch":
-		return MatchType_EXACT
+		return protob.MatchType_EXACT
 	case "ExactCanonicalMatch":
-		return MatchType_EXACT
+		return protob.MatchType_EXACT
 	case "FuzzyCanonicalMatch":
-		return MatchType_FUZZY
+		return protob.MatchType_FUZZY
 	case "ExactPartialMatch":
-		return MatchType_PARTIAL_EXACT
+		return protob.MatchType_PARTIAL_EXACT
 	case "FuzzyPartialMatch":
-		return MatchType_PARTIAL_FUZZY
+		return protob.MatchType_PARTIAL_FUZZY
 	}
-	return MatchType_NONE
+	return protob.MatchType_NONE
 }
