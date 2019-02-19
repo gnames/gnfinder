@@ -2,13 +2,16 @@
 
 ## Unreleased
 
-## [v0.8.3]
+## [v0.8.4]
 
-- Add [#26]: Command line app tests
 - Add [#27]: Refactor code to make it more maintainable
+- Add [#26]: Command line app tests
 - Fix [#25]: Make CLI app work again (cobra-based cli does not allow
              root command with input without flags so
              ``gndinfer text.txt`` was broken).
+
+## [v0.8.3]
+
 - Fix [#24]: Canonical form for matched names
 
 ## [v0.8.2]
