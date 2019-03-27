@@ -28,6 +28,7 @@ deps:
 build: grpc
 	cd gnfinder; \
 	$(GOCLEAN); \
+	$(GOGENERATE)
 	GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 $(GOBUILD) ${LDFLAGS};
 
 release: grpc dockerhub
@@ -45,6 +46,7 @@ release: grpc dockerhub
 
 install: grpc
 	cd gnfinder; \
+	$(GOGENERATE)
 	GO111MODULE=on $(GOINSTALL) ${LDFLAGS};
 
 .PHONY:grpc
