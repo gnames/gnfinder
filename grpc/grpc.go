@@ -105,34 +105,41 @@ func verification(ver *verifier.Verification) *protob.Verification {
 		var protoVer *protob.Verification
 		return protoVer
 	}
+	match := ver.BestResult
 	protoVer := &protob.Verification{
-		DataSourceId:       int32(ver.DataSourceID),
-		DataSourceTitle:    ver.DataSourceTitle,
-		MatchedName:        ver.MatchedName,
-		CurrentName:        ver.CurrentName,
-		ClassificationPath: ver.ClassificationPath,
-		DataSourcesNum:     int32(ver.DataSourcesNum),
-		DataSourceQuality:  ver.DataSourceQuality,
-		EditDistance:       int32(ver.EditDistance),
-		StemEditDistance:   int32(ver.StemEditDistance),
-		MatchType:          getMatchType(ver.MatchType),
-		Error:              ver.Error,
-		PreferredResults:   sourcesResult(ver),
+		BestResult:        buildResult(match),
+		PreferredResults:  preferredResults(ver),
+		DataSourcesNum:    int32(ver.DataSourcesNum),
+		DataSourceQuality: ver.DataSourceQuality,
+		Retries:           int32(ver.Retries),
+		Error:             ver.Error,
 	}
 	return protoVer
 }
 
-func sourcesResult(ver *verifier.Verification) []*protob.PreferredResult {
-	l := len(ver.PreferredResults)
-	res := make([]*protob.PreferredResult, l)
+func buildResult(res *verifier.ResultData) *protob.ResultData {
+	rd := &protob.ResultData{
+		DataSourceId:       int32(res.DataSourceID),
+		DataSourceTitle:    res.DataSourceTitle,
+		TaxonId:            res.TaxonID,
+		MatchedName:        res.MatchedName,
+		MatchedCanonical:   res.MatchedCanonical,
+		CurrentName:        res.CurrentName,
+		ClassificationPath: res.ClassificationPath,
+		ClassificationRank: res.ClassificationRank,
+		ClassificationIds:  res.ClassificationIDs,
+		EditDistance:       int32(res.EditDistance),
+		StemEditDistance:   int32(res.StemEditDistance),
+		MatchType:          getMatchType(res.MatchType),
+	}
+
+	return rd
+}
+
+func preferredResults(ver *verifier.Verification) []*protob.ResultData {
+	res := make([]*protob.ResultData, len(ver.PreferredResults))
 	for i, v := range ver.PreferredResults {
-		res[i] = &protob.PreferredResult{
-			DataSourceId:    int32(v.DataSourceID),
-			DataSourceTitle: v.DataSourceTitle,
-			NameId:          v.NameID,
-			Name:            v.Name,
-			TaxonId:         v.TaxonID,
-		}
+		res[i] = buildResult(v)
 	}
 	return res
 }

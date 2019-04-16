@@ -100,7 +100,7 @@ func (v *Verifier) resolverWorker(client *graphql.Client, jobs <-chan []string,
 				cancel()
 				if err != nil {
 					time.Sleep(200 * time.Millisecond)
-					return true, fmt.Errorf("Resolve worker error: %v\n", err)
+					return true, fmt.Errorf("resolve worker error: %v", err)
 				} else {
 					return false, nil
 				}
@@ -159,22 +159,26 @@ func processMatch(verResult Output, resp response, retries int,
 	err error) {
 	result := resp.Results[0]
 	v := &Verification{
-		DataSourceID:       result.DataSource.ID,
-		TaxonID:            result.TaxonID,
-		DataSourceTitle:    result.DataSource.Title,
-		MatchedName:        result.Name.Value,
-		MatchedCanonical:   result.CanonicalName.ValueRanked,
-		CurrentName:        result.AcceptedName.Name.Value,
-		Synonym:            result.Synonym,
-		ClassificationPath: result.Classification.Path,
-		DataSourcesNum:     resp.MatchedDataSources,
-		DataSourceQuality:  resp.QualitySummary,
-		MatchType:          result.MatchType.Kind,
-		EditDistance:       result.MatchType.VerbatimEditDistance,
-		StemEditDistance:   result.MatchType.StemEditDistance,
-		PreferredResults:   getPreferredResults(resp.PreferredResults),
-		Retries:            retries,
-		Error:              errorString(err),
+		BestResult: &ResultData{
+			DataSourceID:       result.DataSource.ID,
+			TaxonID:            result.TaxonID,
+			DataSourceTitle:    result.DataSource.Title,
+			MatchedName:        result.Name.Value,
+			MatchedCanonical:   result.CanonicalName.ValueRanked,
+			CurrentName:        result.AcceptedName.Name.Value,
+			Synonym:            result.Synonym,
+			ClassificationPath: result.Classification.Path,
+			ClassificationRank: result.Classification.PathRanks,
+			ClassificationIDs:  result.Classification.PathIDs,
+			MatchType:          result.MatchType.Kind,
+			EditDistance:       result.MatchType.VerbatimEditDistance,
+			StemEditDistance:   result.MatchType.StemEditDistance,
+		},
+		DataSourcesNum:    resp.MatchedDataSources,
+		DataSourceQuality: resp.QualitySummary,
+		PreferredResults:  getPreferredResults(resp.PreferredResults),
+		Retries:           retries,
+		Error:             errorString(err),
 	}
 	verResult[resp.SuppliedInput] = v
 }
@@ -186,26 +190,35 @@ func errorString(err error) string {
 	}
 	return res
 }
-
 func processNoMatch(verResult Output, resp response, retries int,
 	err error) {
 	verResult[resp.SuppliedInput] =
 		&Verification{
-			MatchType: "NoMatch",
-			Retries:   retries,
-			Error:     errorString(err),
+			BestResult: &ResultData{
+				MatchType: "NoMatch",
+			},
+			Retries: retries,
+			Error:   errorString(err),
 		}
 }
 
-func getPreferredResults(results []preferredResult) []preferredResultSingle {
-	var prs []preferredResultSingle
+func getPreferredResults(results []dataResult) []*ResultData {
+	var prs []*ResultData
 	for _, r := range results {
-		pr := preferredResultSingle{
-			DataSourceID:    r.DataSource.ID,
-			DataSourceTitle: r.DataSource.Title,
-			NameID:          r.Name.ID,
-			Name:            r.Name.Value,
-			TaxonID:         r.TaxonID,
+		pr := &ResultData{
+			DataSourceID:       r.DataSource.ID,
+			TaxonID:            r.TaxonID,
+			DataSourceTitle:    r.DataSource.Title,
+			MatchedName:        r.Name.Value,
+			MatchedCanonical:   r.CanonicalName.ValueRanked,
+			CurrentName:        r.AcceptedName.Name.Value,
+			Synonym:            r.Synonym,
+			ClassificationPath: r.Classification.Path,
+			ClassificationRank: r.Classification.PathRanks,
+			ClassificationIDs:  r.Classification.PathIDs,
+			MatchType:          r.MatchType.Kind,
+			EditDistance:       r.MatchType.VerbatimEditDistance,
+			StemEditDistance:   r.MatchType.StemEditDistance,
 		}
 		prs = append(prs, pr)
 	}

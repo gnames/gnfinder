@@ -12,23 +12,19 @@ type response struct {
 	MatchedDataSources int
 	SuppliedInput      string
 	QualitySummary     string
-	Results            []struct {
-		Classification classification
-		DataSource     dataSource
-		TaxonID        string
-		Name           name
-		CanonicalName  canonical
-		AcceptedName   acceptedName
-		Synonym        bool
-		MatchType      matchType
-	}
-	PreferredResults []preferredResult
+	Results            []dataResult
+	PreferredResults   []dataResult
 }
 
-type preferredResult struct {
-	DataSource dataSource
-	Name       name
-	TaxonID    string
+type dataResult struct {
+	Classification classification
+	DataSource     dataSource
+	TaxonID        string
+	Name           name
+	CanonicalName  canonical
+	AcceptedName   acceptedName
+	Synonym        bool
+	MatchType      matchType
 }
 
 type dataSource struct {
@@ -46,7 +42,9 @@ type canonical struct {
 }
 
 type classification struct {
-	Path string
+	Path      string
+	PathRanks string
+	PathIDs   string
 }
 
 type acceptedName struct {
@@ -75,21 +73,29 @@ query($names: [name!]!, $sources: [Int!]) {
 				name { id value }
 				canonicalName { valueRanked }
         taxonId
-        classification { path }
+				classification { path pathRanks pathIds }
         dataSource { id title }
         acceptedName { name { value } }
         synonym
         matchType {
-        kind
-        verbatimEditDistance
-        stemEditDistance
-        }
+					kind
+					verbatimEditDistance
+					stemEditDistance
+				}
       }
       preferredResults {
-        dataSource {id title}
-        name { id value }
+				name { id value }
+				canonicalName { valueRanked }
         taxonId
+				classification { path pathRanks pathIds }
+        dataSource { id title }
         acceptedName { name { value } }
+        synonym
+        matchType {
+					kind
+					verbatimEditDistance
+					stemEditDistance
+				}
       }
     }
   }

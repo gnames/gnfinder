@@ -2,6 +2,29 @@
 
 ## Unreleased
 
+## [v0.8.8]
+
+- Add [#29]: Enhance verification results. Now preferred data sources
+             have the same fields as the best result. Classification
+             has IDs and ranks.
+
+## [v0.8.7]
+
+- Add: Update dictionaries setting latin common names to grey
+       dictionary.
+
+## [v0.8.6]
+
+- Add: Dictionaries update.
+
+## [v0.8.5]
+
+- Add [#28]: Generic names from ICN (botanical) code might have authors
+             in parentheses that look the same as subgenus part of ICZN
+             names. As a result parsing such names creates fake
+             uninomials. We removed such fake uninomials from uninomial
+             white dictionary.
+
 ## [v0.8.4]
 
 - Add [#27]: Refactor code to make it more maintainable
@@ -78,6 +101,11 @@
 
 This document follows [changelog guidelines]
 
+[v0.8.8]: https://github.com/gnames/gnfinder/compare/v0.8.7...v0.8.8
+[v0.8.7]: https://github.com/gnames/gnfinder/compare/v0.8.6...v0.8.7
+[v0.8.6]: https://github.com/gnames/gnfinder/compare/v0.8.5...v0.8.6
+[v0.8.5]: https://github.com/gnames/gnfinder/compare/v0.8.4...v0.8.5
+[v0.8.4]: https://github.com/gnames/gnfinder/compare/v0.8.3...v0.8.4
 [v0.8.3]: https://github.com/gnames/gnfinder/compare/v0.8.2...v0.8.3
 [v0.8.2]: https://github.com/gnames/gnfinder/compare/v0.8.1...v0.8.2
 [v0.8.1]: https://github.com/gnames/gnfinder/compare/v0.8.0...v0.8.1
@@ -88,6 +116,8 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#29]: https://github.com/gnames/gnfinder/issues/29
+[#28]: https://github.com/gnames/gnfinder/issues/28
 [#27]: https://github.com/gnames/gnfinder/issues/27
 [#26]: https://github.com/gnames/gnfinder/issues/26
 [#25]: https://github.com/gnames/gnfinder/issues/25

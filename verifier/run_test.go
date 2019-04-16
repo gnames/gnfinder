@@ -39,7 +39,7 @@ var _ = Describe("Verifier", func() {
 			output := v.Run(names)
 			var verified, notVerified int
 			for _, o := range output {
-				if o.MatchType == "NoMatch" {
+				if o.BestResult.MatchType == "NoMatch" {
 					notVerified++
 				} else {
 					verified++
@@ -54,13 +54,14 @@ var _ = Describe("Verifier", func() {
 			name := "Homo sapiens"
 			nameOutputs := v.Run([]string{name})
 			result := nameOutputs[name]
+			match := result.BestResult
 			Expect(result.DataSourcesNum).To(BeNumerically(">", 0))
-			Expect(result.MatchType).To(Equal("ExactCanonicalMatch"))
-			Expect(result.DataSourceID).To(BeNumerically(">", 0))
-			Expect(result.MatchedName).To(Equal("Homo sapiens Linnaeus, 1758"))
-			Expect(result.MatchedCanonical).To(Equal("Homo sapiens"))
-			Expect(result.ClassificationPath).To(Equal("Animalia|Chordata|Mammalia|Primates|Hominoidea|Hominidae|Homo|Homo sapiens"))
-			Expect(result.CurrentName).To(Equal("Homo sapiens Linnaeus, 1758"))
+			Expect(match.MatchType).To(Equal("ExactCanonicalMatch"))
+			Expect(match.DataSourceID).To(BeNumerically(">", 0))
+			Expect(match.MatchedName).To(Equal("Homo sapiens Linnaeus, 1758"))
+			Expect(match.MatchedCanonical).To(Equal("Homo sapiens"))
+			Expect(match.ClassificationPath).To(Equal("Animalia|Chordata|Mammalia|Primates|Hominoidea|Hominidae|Homo|Homo sapiens"))
+			Expect(match.CurrentName).To(Equal("Homo sapiens Linnaeus, 1758"))
 		})
 
 		It("finds exact match", func() {
@@ -68,7 +69,7 @@ var _ = Describe("Verifier", func() {
 			name := "Homo sapiens Linnaeus, 1758"
 			nameOutputs := v.Run([]string{name})
 			result := nameOutputs[name]
-			Expect(result.MatchType).To(Equal("ExactMatch"))
+			Expect(result.BestResult.MatchType).To(Equal("ExactMatch"))
 		})
 
 		It("finds partial match chopping from the end", func() {
@@ -76,7 +77,7 @@ var _ = Describe("Verifier", func() {
 			name := "Homo sapiens cuneiformes alba Linnaeus, 1758"
 			nameOutputs := v.Run([]string{name})
 			result := nameOutputs[name]
-			Expect(result.MatchType).To(Equal("ExactPartialMatch"))
+			Expect(result.BestResult.MatchType).To(Equal("ExactPartialMatch"))
 		})
 
 		It("finds partial match chopping the middle", func() {
@@ -84,7 +85,7 @@ var _ = Describe("Verifier", func() {
 			name := "Homo very strangis sapiens Linnaeus, 1758"
 			nameOutputs := v.Run([]string{name})
 			result := nameOutputs[name]
-			Expect(result.MatchType).To(Equal("ExactPartialMatch"))
+			Expect(result.BestResult.MatchType).To(Equal("ExactPartialMatch"))
 		})
 
 		It("finds fuzzy match", func() {
@@ -92,7 +93,7 @@ var _ = Describe("Verifier", func() {
 			name := "Homo sapien Linnaeus, 1758"
 			nameOutputs := v.Run([]string{name})
 			result := nameOutputs[name]
-			Expect(result.MatchType).To(Equal("FuzzyCanonicalMatch"))
+			Expect(result.BestResult.MatchType).To(Equal("FuzzyCanonicalMatch"))
 		})
 
 		It("finds partial fuzzy match removing tail", func() {
@@ -100,7 +101,7 @@ var _ = Describe("Verifier", func() {
 			name := "Homo sapien something Linnaeus, 1758"
 			nameOutputs := v.Run([]string{name})
 			result := nameOutputs[name]
-			Expect(result.MatchType).To(Equal("FuzzyPartialMatch"))
+			Expect(result.BestResult.MatchType).To(Equal("FuzzyPartialMatch"))
 		})
 
 		It("finds partial fuzzy match removing middle", func() {
@@ -108,14 +109,14 @@ var _ = Describe("Verifier", func() {
 			name := "Homo alba sapien Linnaeus, 1758"
 			nameOutputs := v.Run([]string{name})
 			result := nameOutputs[name]
-			Expect(result.MatchType).To(Equal("FuzzyPartialMatch"))
+			Expect(result.BestResult.MatchType).To(Equal("FuzzyPartialMatch"))
 		})
 
 		It("finds genus by partial match", func() {
 			v := NewVerifier()
 			name := "Drosophila albatrosus paravosus"
 			nameOutputs := v.Run([]string{name})
-			result := nameOutputs[name]
+			result := nameOutputs[name].BestResult
 			Expect(result.MatchType).To(Equal("ExactPartialMatch"))
 			Expect(result.CurrentName).To(Equal("Drosophila"))
 		})
@@ -125,11 +126,11 @@ var _ = Describe("Verifier", func() {
 			name1 := "Abelia grandifiora"
 			name2 := "Pardosa moestus"
 			nameOutputs := v.Run([]string{name1, name2})
-			result := nameOutputs[name1]
+			result := nameOutputs[name1].BestResult
 			Expect(result.MatchType).To(Equal("FuzzyCanonicalMatch"))
 			Expect(result.EditDistance).To(Equal(1))
 			Expect(result.StemEditDistance).To(Equal(1))
-			result = nameOutputs[name2]
+			result = nameOutputs[name2].BestResult
 			Expect(result.MatchType).To(Equal("FuzzyCanonicalMatch"))
 			Expect(result.EditDistance).To(Equal(2))
 			Expect(result.StemEditDistance).To(Equal(0))
@@ -139,7 +140,7 @@ var _ = Describe("Verifier", func() {
 			v := NewVerifier()
 			name := "Drossophila albatrosus paravosus"
 			nameOutputs := v.Run([]string{name})
-			result := nameOutputs[name]
+			result := nameOutputs[name].BestResult
 			Expect(result.MatchType).To(Equal("NoMatch"))
 		})
 
@@ -147,11 +148,11 @@ var _ = Describe("Verifier", func() {
 			v := NewVerifier()
 			name := "A. crassus"
 			nameOutputs := v.Run([]string{name})
-			result := nameOutputs[name]
+			result := nameOutputs[name].BestResult
 			Expect(result.MatchType).To(Equal("ExactCanonicalMatch"))
 			name = "A. crassuss"
 			nameOutputs = v.Run([]string{name})
-			result = nameOutputs[name]
+			result = nameOutputs[name].BestResult
 			Expect(result.MatchType).To(Equal("NoMatch"))
 		})
 
@@ -159,7 +160,7 @@ var _ = Describe("Verifier", func() {
 			v := NewVerifier()
 			name := "A. whoknowswhat"
 			nameOutputs := v.Run([]string{name})
-			result := nameOutputs[name]
+			result := nameOutputs[name].BestResult
 			Expect(result.MatchType).To(Equal("NoMatch"))
 		})
 
@@ -167,7 +168,7 @@ var _ = Describe("Verifier", func() {
 			v := NewVerifier()
 			name := "Anthriscus sylve�tris"
 			nameOutputs := v.Run([]string{name})
-			result := nameOutputs[name]
+			result := nameOutputs[name].BestResult
 			Expect(result.MatchType).To(Equal("FuzzyCanonicalMatch"))
 			Expect(result.MatchedName).To(Equal("Anthriscus sylvestris"))
 			Expect(result.EditDistance).To(Equal(1))
@@ -177,7 +178,7 @@ var _ = Describe("Verifier", func() {
 			v := NewVerifier()
 			name := "A. officinalis volubilis"
 			nameOutputs := v.Run([]string{name})
-			result := nameOutputs[name]
+			result := nameOutputs[name].BestResult
 			Expect(result.MatchType).To(Equal("NoMatch"))
 		})
 

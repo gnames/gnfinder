@@ -37,26 +37,28 @@ message NameString {
 }
 
 message Verification {
-	int32 data_source_id = 1;
-  string data_source_title = 2;
-	string matched_name = 3;
-	string current_name = 4;
-	string classification_path = 5;
-	int32 data_sources_num = 6;
-	string data_source_quality = 7;
-	int32 edit_distance = 8;
-	int32 stem_edit_distance = 9;
-	MatchType match_type = 11;
-	string error = 12;
-	repeated PreferredResult preferred_results = 13;
+	ResultData	best_result = 1;
+	repeated ResultData preferred_results = 2;
+	int32 data_sources_num = 3;
+	string data_source_quality = 4;
+	int32 retries = 5;
+	string error = 6;
 }
 
-message PreferredResult {
+message ResultData {
 	int32 data_source_id = 1;
 	string data_source_title = 2;
-	string name_id = 3;
-	string name = 4;
-	string taxon_id = 5;
+	string taxon_id = 3;
+	string matched_name = 4;
+	string matched_canonical = 5;
+	string current_name = 6;
+	bool synonym = 7;
+	string classification_path = 8;
+	string classification_rank = 9;
+	string classification_ids = 10;
+	int32 edit_distance = 11;
+	int32 stem_edit_distance = 12;
+	MatchType match_type = 13;
 }
 
 enum MatchType {
@@ -66,7 +68,6 @@ enum MatchType {
 	PARTIAL_EXACT = 3;
 	PARTIAL_FUZZY = 4;
 }
-
 
 service GNFinder {
 	rpc Ping(Void) returns(Pong) {}

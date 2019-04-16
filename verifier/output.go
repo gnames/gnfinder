@@ -3,6 +3,23 @@ package verifier
 // Verification presents data of an attempted remote verification
 // of a name-string.
 type Verification struct {
+	// BestResult returns a result with the best overal score.
+	BestResult *ResultData
+	// PreferredResults contains verification for data sources the user needs
+	// to be present if available.
+	PreferredResults []*ResultData `json:"preferredResults,omitempty"`
+	// DataSourcesNum tells how many databases matched by the name-string.
+	DataSourcesNum int `json:"dataSourcesNum,omitempty"`
+	// DataSourceQuality shows if a name-string was found in curated or
+	// auto-curated data sources.
+	DataSourceQuality string `json:"dataSourceQuality,omitempty"`
+	// Retries is number of attempted retries.
+	Retries int `json:"retries,omitempty"`
+	// ErrorString explains what happened if resolution did not work.
+	Error string `json:"error,omitempty"`
+}
+
+type ResultData struct {
 	// DataSourceID is the ID of the DataSource of the returned best match result.
 	DataSourceID int `json:"dataSourceId,omitempty"`
 	// DataSourceTitle is the Title of the DataSource of the returned best match result.
@@ -19,11 +36,10 @@ type Verification struct {
 	Synonym bool `json:"isSynonym,omitempty"`
 	// ClassificationPath of the matched result.
 	ClassificationPath string `json:"classificationPath,omitempty"`
-	// DataSourcesNum tells how many databases matched by the name-string.
-	DataSourcesNum int `json:"dataSourcesNum,omitempty"`
-	// DataSourceQuality shows if a name-string was found in curated or
-	// auto-curated data sources.
-	DataSourceQuality string `json:"dataSourceQuality,omitempty"`
+	// ClassificationRank of the matched result.
+	ClassificationRank string `json:"classificationRank,omitempty"`
+	// ClassificationIDs of the matched result.
+	ClassificationIDs string `json:"classificationIDs,omitempty"`
 	// EditDistance tells how many changes needs to be done to apply fuzzy
 	// match to requested name.
 	EditDistance int `json:"editDistance,omitempty"`
@@ -32,21 +48,6 @@ type Verification struct {
 	StemEditDistance int `json:"stemEditDistance,omitempty"`
 	// MatchType tells what kind of verification occurred if any.
 	MatchType string `json:"matchType,omitempty"`
-	// PreferredResults contains matches for data sources the user has a
-	// particular interest.
-	PreferredResults []preferredResultSingle `json:"preferredResults,omitempty"`
-	// Retries is number of attempted retries.
-	Retries int `json:"retries,omitempty"`
-	// ErrorString explains what happened if resolution did not work.
-	Error string `json:"error,omitempty"`
-}
-
-type preferredResultSingle struct {
-	DataSourceID    int    `json:"dataSourceId"`
-	DataSourceTitle string `json:"dataSourceTitle"`
-	NameID          string `json:"nameId"`
-	Name            string `json:"name"`
-	TaxonID         string `json:"taxonId"`
 }
 
 type NameInput struct {

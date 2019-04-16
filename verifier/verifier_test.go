@@ -53,4 +53,15 @@ var _ = Describe("Verifier", func() {
 			Expect(v.Sources).To(Equal([]int{1, 2, 3}))
 		})
 	})
+
+	Describe("Run()", func() {
+		It("Runs a query and returns result", func() {
+			v := NewVerifier()
+			name := []string{"Pardosa moesta"}
+			o := v.Run(name)["Pardosa moesta"]
+			Expect(o.BestResult.MatchedCanonical).To(Equal("Pardosa moesta"))
+			Expect(len(o.BestResult.ClassificationIDs)).To(BeNumerically(">", 10))
+			Expect(len(o.PreferredResults)).To(Equal(3))
+		})
+	})
 })
