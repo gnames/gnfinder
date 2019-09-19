@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.8.9]
+
+- Fix [#30]: Tokenizer breaks if a text ends on a dash followed by space.
+
 ## [v0.8.8]
 
 - Add [#29]: Enhance verification results. Now preferred data sources
@@ -101,6 +105,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.8.9]: https://github.com/gnames/gnfinder/compare/v0.8.8...v0.8.9
 [v0.8.8]: https://github.com/gnames/gnfinder/compare/v0.8.7...v0.8.8
 [v0.8.7]: https://github.com/gnames/gnfinder/compare/v0.8.6...v0.8.7
 [v0.8.6]: https://github.com/gnames/gnfinder/compare/v0.8.5...v0.8.6
@@ -116,6 +121,7 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#30]: https://github.com/gnames/gnfinder/issues/30
 [#29]: https://github.com/gnames/gnfinder/issues/29
 [#28]: https://github.com/gnames/gnfinder/issues/28
 [#27]: https://github.com/gnames/gnfinder/issues/27

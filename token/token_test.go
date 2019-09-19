@@ -81,4 +81,10 @@ var _ = Describe("Tokenize()", func() {
 		tokens := token.Tokenize([]rune(string(book)))
 		Expect(len(tokens)).To(Equal(171020))
 	})
+
+	It("does not break on texts that end with a dash", func() {
+		str := "text sometimes\nends with a dash- "
+		tokens := token.Tokenize([]rune(str))
+		Expect(len(tokens)).To(Equal(6))
+	})
 })

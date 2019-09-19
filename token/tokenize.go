@@ -59,6 +59,9 @@ func lastWordForLine(text []rune, i int) bool {
 			return false
 		}
 		i++
+		if i >= len(text) {
+			return false
+		}
 	}
 }
 
