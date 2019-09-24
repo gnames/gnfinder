@@ -21,17 +21,20 @@ var _ = Describe("GNfinder", func() {
 		})
 
 		It("takes language", func() {
-			gnf := NewGNfinder(OptDict(dictionary), OptLanguage(lang.English))
+			gnf := NewGNfinder(OptDict(dictionary), OptBayesWeights(weights),
+				OptLanguage(lang.English))
 			Expect(gnf.Language).To(Equal(lang.English))
 		})
 
 		It("sets bayes", func() {
-			gnf := NewGNfinder(OptDict(dictionary), OptBayes(true))
+			gnf := NewGNfinder(OptDict(dictionary), OptBayesWeights(weights),
+				OptBayes(true))
 			Expect(gnf.Bayes).To(BeTrue())
 		})
 
 		It("sets bayes' threshold", func() {
-			gnf := NewGNfinder(OptDict(dictionary), OptBayesThreshold(200))
+			gnf := NewGNfinder(OptDict(dictionary), OptBayesWeights(weights),
+				OptBayesThreshold(200))
 			Expect(gnf.BayesOddsThreshold).To(Equal(200.0))
 		})
 
@@ -43,6 +46,7 @@ var _ = Describe("GNfinder", func() {
 			}
 			opts := []Option{
 				OptDict(dictionary),
+				OptBayesWeights(weights),
 				OptVerify(vOpts...),
 				OptBayes(true),
 				OptLanguage(lang.English),

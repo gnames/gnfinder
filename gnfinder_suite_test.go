@@ -3,8 +3,11 @@ package gnfinder_test
 import (
 	"io/ioutil"
 
+	"github.com/gnames/bayes"
 	. "github.com/gnames/gnfinder"
 	"github.com/gnames/gnfinder/dict"
+	"github.com/gnames/gnfinder/lang"
+	"github.com/gnames/gnfinder/nlp"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -14,6 +17,7 @@ import (
 var (
 	book       []byte
 	dictionary *dict.Dictionary
+	weights    map[lang.Language]*bayes.NaiveBayes
 	gnf        *GNfinder
 )
 
@@ -28,6 +32,7 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 	Expect(len(book)).To(BeNumerically(">", 1000000))
 	dictionary = dict.LoadDictionary()
+	weights = nlp.BayesWeights()
 })
 
 var _ = BeforeEach(func() {

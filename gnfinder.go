@@ -1,10 +1,10 @@
-//go:generate statik -f -src=./data/files
 package gnfinder
 
 import (
 	"github.com/gnames/bayes"
 	"github.com/gnames/gnfinder/dict"
 	"github.com/gnames/gnfinder/lang"
+	"github.com/gnames/gnfinder/nlp"
 	"github.com/gnames/gnfinder/verifier"
 )
 
@@ -27,10 +27,12 @@ type GNfinder struct {
 	// their value according to heuristic and Bayes name-finding algorithms.
 	// NameDistribution
 
-	// Verifier for scientific names
+	// Verifier for scientific names.
 	Verifier *verifier.Verifier
-	// Dict contains black, grey, and white list dictionaries
+	// Dict contains black, grey, and white list dictionaries.
 	Dict *dict.Dictionary
+	// BayesTrained contains training for all supported bayes dictionaries.
+	BayesWeights map[lang.Language]*bayes.NaiveBayes
 }
 
 // Option type for changing GNfinder settings.
@@ -77,6 +79,15 @@ func OptDict(d *dict.Dictionary) Option {
 	}
 }
 
+// OptBayesWeights allows to set already created Bayes Training data and
+// store it in gnfinder's BayesWeights field.
+// It saves time if multiple workers have to be created by a client app.
+func OptBayesWeights(bw map[lang.Language]*bayes.NaiveBayes) Option {
+	return func(gnf *GNfinder) {
+		gnf.BayesWeights = bw
+	}
+}
+
 // NewGNfinder creates GNfinder object with default data, or with data coming
 // from opts.
 func NewGNfinder(opts ...Option) *GNfinder {
@@ -89,6 +100,9 @@ func NewGNfinder(opts ...Option) *GNfinder {
 	}
 	if gnf.Dict == nil {
 		gnf.Dict = dict.LoadDictionary()
+	}
+	if gnf.BayesWeights == nil {
+		gnf.BayesWeights = nlp.BayesWeights()
 	}
 	return gnf
 }

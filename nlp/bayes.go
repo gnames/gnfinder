@@ -7,13 +7,13 @@ import (
 
 	"github.com/gnames/bayes"
 	"github.com/gnames/gnfinder/dict"
+	"github.com/gnames/gnfinder/fs"
 	"github.com/gnames/gnfinder/lang"
 	"github.com/gnames/gnfinder/token"
-	"github.com/rakyll/statik/fs"
 )
 
-func TagTokens(ts []token.Token, d *dict.Dictionary, thr float64, l lang.Language) {
-	nb := naiveBayesFromDump(l)
+func TagTokens(ts []token.Token, d *dict.Dictionary, nb *bayes.NaiveBayes,
+	thr float64) {
 	for i := range ts {
 		t := &ts[i]
 		if !t.Features.Capitalized || t.UninomialDict == dict.BlackUninomial {
@@ -130,16 +130,19 @@ func nameFrequency() bayes.LabelFreq {
 	}
 }
 
+func BayesWeights() map[lang.Language]*bayes.NaiveBayes {
+	bw := make(map[lang.Language]*bayes.NaiveBayes)
+	for k := range lang.LanguagesSet() {
+		bw[k] = naiveBayesFromDump(k)
+	}
+	return bw
+}
+
 func naiveBayesFromDump(l lang.Language) *bayes.NaiveBayes {
 	nb := bayes.NewNaiveBayes()
 	bayes.RegisterLabel(labelMap)
-	staticFS, err := fs.New()
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	dir := fmt.Sprintf("/nlp/%s/bayes.json", l.String())
-	f, err := staticFS.Open(dir)
+	f, err := fs.Files.Open(dir)
 	if err != nil {
 		log.Fatal(err)
 	}

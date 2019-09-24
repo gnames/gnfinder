@@ -20,7 +20,9 @@
 
 package main
 
-import "github.com/gnames/gnfinder/gnfinder/cmd"
+import (
+	"github.com/gnames/gnfinder/gnfinder/cmd"
+)
 
 var (
 	buildVersion string

@@ -108,7 +108,6 @@ func processText(t *TextData, d *dict.Dictionary) []bayes.LabeledFeatures {
 	var lfs, lfsText []bayes.LabeledFeatures
 	var nd NameData
 	ts := token.Tokenize(t.Text)
-	d = dict.LoadDictionary()
 	heuristic.TagTokens(ts, d)
 	l := len(t.NamesPositions)
 	nameIdx, i := 0, 0

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## [v0.8.10]
+
+- Add [#31]: Speedup name-finding for large numbers of small texts. Solving
+             only partialy by preloading Bayes training data. We are going to
+             do other optimizations later.
+
 ## [v0.8.9]
 
 - Fix [#30]: Tokenizer breaks if a text ends on a dash followed by space.
@@ -105,11 +111,10 @@
 
 This document follows [changelog guidelines]
 
+[v0.8.10]: https://github.com/gnames/gnfinder/compare/v0.8.9...v0.8.10
 [v0.8.9]: https://github.com/gnames/gnfinder/compare/v0.8.8...v0.8.9
 [v0.8.8]: https://github.com/gnames/gnfinder/compare/v0.8.7...v0.8.8
-[v0.8.7]: https://github.com/gnames/gnfinder/compare/v0.8.6...v0.8.7
-[v0.8.6]: https://github.com/gnames/gnfinder/compare/v0.8.5...v0.8.6
-[v0.8.5]: https://github.com/gnames/gnfinder/compare/v0.8.4...v0.8.5
+[v0.8.7]: https://github.com/gnames/gnfinder/compare/v0.8.6...v0.8.7 [v0.8.6]: https://github.com/gnames/gnfinder/compare/v0.8.5...v0.8.6 [v0.8.5]: https://github.com/gnames/gnfinder/compare/v0.8.4...v0.8.5
 [v0.8.4]: https://github.com/gnames/gnfinder/compare/v0.8.3...v0.8.4
 [v0.8.3]: https://github.com/gnames/gnfinder/compare/v0.8.2...v0.8.3
 [v0.8.2]: https://github.com/gnames/gnfinder/compare/v0.8.1...v0.8.2
@@ -121,6 +126,7 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#31]: https://github.com/gnames/gnfinder/issues/31
 [#30]: https://github.com/gnames/gnfinder/issues/30
 [#29]: https://github.com/gnames/gnfinder/issues/29
 [#28]: https://github.com/gnames/gnfinder/issues/28

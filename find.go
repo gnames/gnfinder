@@ -29,7 +29,8 @@ func (gnf *GNfinder) FindNames(data []byte) *output.Output {
 
 	heuristic.TagTokens(tokens, gnf.Dict)
 	if gnf.Bayes {
-		nlp.TagTokens(tokens, gnf.Dict, gnf.BayesOddsThreshold, gnf.Language)
+		nb := gnf.BayesWeights[gnf.Language]
+		nlp.TagTokens(tokens, gnf.Dict, nb, gnf.BayesOddsThreshold)
 	}
 	return output.TokensToOutput(tokens, text, gnf.Language)
 }

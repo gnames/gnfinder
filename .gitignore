@@ -3,6 +3,8 @@ gnfinder/gnfinder
 debug.test
 t
 t.json
+*.pprof
+*.trace
 *.test
 *test
 .idea

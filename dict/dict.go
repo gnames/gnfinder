@@ -3,12 +3,10 @@ package dict
 
 import (
 	"encoding/csv"
+	"io"
 	"log"
-	"net/http"
 
-	// _ is needed for virtual file system
-	_ "github.com/gnames/gnfinder/statik"
-	"github.com/rakyll/statik/fs"
+	"github.com/gnames/gnfinder/fs"
 )
 
 // DictionaryType describes available dictionaries
@@ -54,30 +52,25 @@ type Dictionary struct {
 
 // LoadDictionary contain most popular words in European languages.
 func LoadDictionary() *Dictionary {
-	statikFS, err := fs.New()
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	d := &Dictionary{
-		BlackUninomials: readData(statikFS, "/black/uninomials.csv"),
-		BlackSpecies:    readData(statikFS, "/black/species.csv"),
-		CommonWords:     readData(statikFS, "/common/eu.csv"),
-		GreyGenera:      readData(statikFS, "/grey/genera.csv"),
-		GreyGeneraSp:    readData(statikFS, "/grey/genera_species.csv"),
-		GreySpecies:     readData(statikFS, "/grey/species.csv"),
-		GreyUninomials:  readData(statikFS, "/grey/uninomials.csv"),
-		WhiteGenera:     readData(statikFS, "/white/genera.csv"),
-		WhiteSpecies:    readData(statikFS, "/white/species.csv"),
-		WhiteUninomials: readData(statikFS, "/white/uninomials.csv"),
+		BlackUninomials: readData("/black/uninomials.csv"),
+		BlackSpecies:    readData("/black/species.csv"),
+		CommonWords:     readData("/common/eu.csv"),
+		GreyGenera:      readData("/grey/genera.csv"),
+		GreyGeneraSp:    readData("/grey/genera_species.csv"),
+		GreySpecies:     readData("/grey/species.csv"),
+		GreyUninomials:  readData("/grey/uninomials.csv"),
+		WhiteGenera:     readData("/white/genera.csv"),
+		WhiteSpecies:    readData("/white/species.csv"),
+		WhiteUninomials: readData("/white/uninomials.csv"),
 		Ranks:           setRanks(),
 	}
 	return d
 }
 
-func readData(fs http.FileSystem, path string) map[string]struct{} {
+func readData(path string) map[string]struct{} {
 	res := make(map[string]struct{})
-	f, err := fs.Open(path)
+	f, err := fs.Files.Open(path)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -91,12 +84,14 @@ func readData(fs http.FileSystem, path string) map[string]struct{} {
 	}()
 
 	reader := csv.NewReader(f)
-	records, err := reader.ReadAll()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for _, v := range records {
+	for {
+		v, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
 		res[v[0]] = empty
 	}
 	return res
