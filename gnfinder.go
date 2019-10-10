@@ -8,12 +8,15 @@ import (
 	"github.com/gnames/gnfinder/verifier"
 )
 
-// GNfinder is responsible for name-finding operations
+// GNfinder is responsible for name-finding operations.
 type GNfinder struct {
-	// Language of the text
+	// Language of the text.
 	Language lang.Language
-	// Bayes flag forces to run Bayes name-finding on unknown languages
+	// Bayes flag tells to run Bayes name-finding on unknown languages.
 	Bayes bool
+	// BayesForced flag is true if OptBayes was passed during creation of
+	// GNfinder instance.
+	BayesForced bool
 	// BayesOddsThreshold sets the limit of posterior odds. Everything bigger
 	// that this limit will go to the names output.
 	BayesOddsThreshold float64
@@ -25,7 +28,7 @@ type GNfinder struct {
 
 	// NameDistribution keeps data about position of names candidates and
 	// their value according to heuristic and Bayes name-finding algorithms.
-	// NameDistribution
+	// NameDistribution.
 
 	// Verifier for scientific names.
 	Verifier *verifier.Verifier
@@ -50,6 +53,7 @@ func OptLanguage(l lang.Language) Option {
 func OptBayes(b bool) Option {
 	return func(gnf *GNfinder) {
 		gnf.Bayes = b
+		gnf.BayesForced = true
 	}
 }
 

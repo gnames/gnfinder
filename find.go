@@ -23,7 +23,7 @@ func (gnf *GNfinder) FindNames(data []byte) *output.Output {
 	if gnf.Language == lang.NotSet {
 		gnf.Language = lang.DetectLanguage(text)
 	}
-	if gnf.Language != lang.UnknownLanguage {
+	if !gnf.BayesForced && gnf.Language != lang.UnknownLanguage {
 		gnf.Bayes = true
 	}
 

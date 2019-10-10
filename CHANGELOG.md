@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add [#33]: Make it possible to force Bayes not only "on" but also "off".
+- Add [#32]: Add benchmarks to gnfinder_test.go.
+
 ## [v0.8.10]
 
 - Add [#31]: Speedup name-finding for large numbers of small texts. Solving

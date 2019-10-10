@@ -68,7 +68,9 @@ var _ = Describe("GNfinder", func() {
 })
 
 // Benchmarks. To run all of them use
-// go test ./... -run=XXX -bench=. -benchmem -count=10 > bench.txt && benchstat bench.txt
+// go test ./... -bench=. -benchmem -count=10 > bench.txt && benchstat bench.txt
+// do not use -run=XXX or -run=^$, we need tests to preload dictionary and
+// Bayes weights.
 func BenchmarkSmallNoBayesText(b *testing.B) {
 	opts := []Option{
 		OptBayes(false),
