@@ -11,3 +11,4 @@ t.json
 .vscode
 *.tar.gz
 protob.pb.go
+bench*.txt
