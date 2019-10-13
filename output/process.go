@@ -11,7 +11,7 @@ import (
 )
 
 // TokensToOutput takes tagged tokens and assembles output out of them.
-func TokensToOutput(ts []token.Token, text []rune, l lang.Language) *Output {
+func TokensToOutput(ts []token.Token, text []rune, l lang.Language, code string) *Output {
 	var names []Name
 	for i := range ts {
 		u := &ts[i]
@@ -25,7 +25,7 @@ func TokensToOutput(ts []token.Token, text []rune, l lang.Language) *Output {
 		}
 	}
 
-	return newOutput(names, ts, l)
+	return newOutput(names, ts, l, code)
 }
 
 // UniqueNameStrings takes a list of names, and returns a list of unique
@@ -65,7 +65,7 @@ func tokensToName(ts []token.Token, text []rune) Name {
 	case 3:
 		return infraspeciesName(ts, text)
 	default:
-		panic(fmt.Errorf("Unkown Decision: %s", u.Decision))
+		panic(fmt.Errorf("unkown Decision: %s", u.Decision))
 	}
 }
 

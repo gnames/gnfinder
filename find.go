@@ -20,17 +20,18 @@ func (gnf *GNfinder) FindNames(data []byte) *output.Output {
 	text := []rune(string(data))
 	tokens := token.Tokenize(text)
 
-	if gnf.Language == lang.NotSet {
-		gnf.Language = lang.DetectLanguage(text)
+	if !gnf.LanguageForced {
+		gnf.LanguageUsed, gnf.LanguageDetected = lang.DetectLanguage(text)
 	}
-	if !gnf.BayesForced && gnf.Language != lang.UnknownLanguage {
+	if !gnf.BayesForced && gnf.LanguageUsed != lang.UnknownLanguage {
 		gnf.Bayes = true
 	}
 
 	heuristic.TagTokens(tokens, gnf.Dict)
 	if gnf.Bayes {
-		nb := gnf.BayesWeights[gnf.Language]
+		nb := gnf.BayesWeights[gnf.LanguageUsed]
 		nlp.TagTokens(tokens, gnf.Dict, nb, gnf.BayesOddsThreshold)
 	}
-	return output.TokensToOutput(tokens, text, gnf.Language)
+	return output.TokensToOutput(tokens, text, gnf.LanguageUsed,
+		gnf.LanguageDetected)
 }

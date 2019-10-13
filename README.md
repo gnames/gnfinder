@@ -24,8 +24,9 @@ Finds scientific names using dictionary and nlp approaches.
   `gnfinder.exe` (~15Mb) is needed.
 * Takes UTF8-encoded text and returns back JSON-formatted output that contains
   detected scientific names.
-* Automatically detects the language of the text, and adjusts Bayes algorithm.
-  for the language. English and German languages are currently supported.
+* Optionally, automatically detects the language of the text, and adjusts Bayes
+  algorithm for the language. English and German languages are currently
+  supported.
 * Uses complementary heuristic and natural language processing algorithms.
 * Does not use Bayes algorithm if language cannot be detected. There is an
   option that can override this rule.
@@ -118,7 +119,7 @@ Start gnfinder as a gRPC server:
 # using default 8778 port
 gnfinder grpc
 
-#using some other port
+# using some other port
 gnfinder grpc -p 8901
 ```
 

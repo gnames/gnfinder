@@ -18,11 +18,13 @@ message Params {
 
 message NameStrings {
 	string date = 1;
-	string language = 2;
-	int32 total_tokens = 3;
-	int32 total_candidates = 4;
-	int32 total_names = 5;
-	repeated NameString names = 6;
+	string language_used = 2;
+	string language_detected = 3;
+	bool language_forced = 4;
+	int32 total_tokens = 5;
+	int32 total_candidates = 6;
+	int32 total_names = 7;
+	repeated NameString names = 8;
 }
 
 message NameString {

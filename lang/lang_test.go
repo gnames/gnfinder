@@ -44,13 +44,16 @@ var _ = Describe("Lang", func() {
 					perpendicular stem or leading shoot should be
 					destroyed, one of the horizontals may be fixed
 					`
-				Expect(lang.DetectLanguage([]rune(text))).To(Equal(lang.English))
+				l, code := lang.DetectLanguage([]rune(text))
+				Expect(l).To(Equal(lang.English))
+				Expect(code).To(Equal("eng"))
 			})
 
 			It("detects unknown language as UnknownLanguage", func() {
 				text := "Однажды в студеную, зимнюю пору я из лесу вышел"
-				Expect(lang.DetectLanguage([]rune(text))).
-					To(Equal(lang.UnknownLanguage))
+				l, code := lang.DetectLanguage([]rune(text))
+				Expect(l).To(Equal(lang.UnknownLanguage))
+				Expect(code).To(Equal("rus"))
 			})
 		})
 	})

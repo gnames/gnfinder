@@ -20,7 +20,7 @@ var _ = Describe("GNfinder", func() {
 	Describe("NewGNfinder()", func() {
 		It("returns new GNfinder object", func() {
 			gnf := NewGNfinder()
-			Expect(gnf.Language).To(Equal(lang.NotSet))
+			Expect(gnf.LanguageUsed).To(Equal(lang.NotSet))
 			Expect(gnf.Bayes).To(BeFalse())
 			Expect(gnf.Verifier).To(BeNil())
 			// dictionary is loaded internally
@@ -30,7 +30,7 @@ var _ = Describe("GNfinder", func() {
 		It("takes language", func() {
 			gnf := NewGNfinder(OptDict(dictionary), OptBayesWeights(weights),
 				OptLanguage(lang.English))
-			Expect(gnf.Language).To(Equal(lang.English))
+			Expect(gnf.LanguageUsed).To(Equal(lang.English))
 		})
 
 		It("sets bayes", func() {
@@ -61,7 +61,7 @@ var _ = Describe("GNfinder", func() {
 			gnf := NewGNfinder(opts...)
 			Expect(gnf.Verifier.Workers).To(Equal(10))
 			Expect(gnf.Verifier.URL).To(Equal(url))
-			Expect(gnf.Language).To(Equal(lang.English))
+			Expect(gnf.LanguageUsed).To(Equal(lang.English))
 			Expect(gnf.Bayes).To(BeTrue())
 		})
 	})

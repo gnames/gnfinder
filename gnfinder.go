@@ -10,8 +10,13 @@ import (
 
 // GNfinder is responsible for name-finding operations.
 type GNfinder struct {
-	// Language of the text.
-	Language lang.Language
+	// LanguageUsed for name-finding in the text.
+	LanguageUsed lang.Language
+	// LanguageDetected is a language code according to language detection.
+	LanguageDetected string
+	// LanguageForced flag is true if OptLanguage was passed during creation
+	// of GNfinder instance.
+	LanguageForced bool
 	// Bayes flag tells to run Bayes name-finding on unknown languages.
 	Bayes bool
 	// BayesForced flag is true if OptBayes was passed during creation of
@@ -44,7 +49,9 @@ type Option func(*GNfinder)
 // OptLanguage sets a language of a text.
 func OptLanguage(l lang.Language) Option {
 	return func(gnf *GNfinder) {
-		gnf.Language = l
+		gnf.LanguageUsed = l
+		gnf.LanguageDetected = "n/a"
+		gnf.LanguageForced = true
 	}
 }
 
@@ -96,7 +103,7 @@ func OptBayesWeights(bw map[lang.Language]*bayes.NaiveBayes) Option {
 // from opts.
 func NewGNfinder(opts ...Option) *GNfinder {
 	gnf := &GNfinder{
-		Language:           lang.NotSet,
+		LanguageUsed:       lang.NotSet,
 		BayesOddsThreshold: 100.0,
 	}
 	for _, opt := range opts {

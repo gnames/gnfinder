@@ -38,7 +38,7 @@ func NewLanguage(lang string) (Language, error) {
 	var l Language
 	langs := strings.Join(supportedLanguages, ", ")
 	return l, fmt.Errorf(
-		"Unknown language %s.\nSupported languages are: %s.", lang, langs)
+		"unknown language %s.\nSupported languages are: %s", lang, langs)
 }
 
 // LanguagesSet returns a 'set' of languages for more effective
@@ -53,7 +53,7 @@ func LanguagesSet() map[Language]struct{} {
 }
 
 // DetectLanguage finds the most probable language for a text.
-func DetectLanguage(text []rune) Language {
+func DetectLanguage(text []rune) (Language, string) {
 	sampleLength := len(text)
 	if sampleLength > 40000 {
 		sampleLength = 40000
@@ -62,10 +62,10 @@ func DetectLanguage(text []rune) Language {
 	code := whatlanggo.LangToString(info.Lang)
 	switch code {
 	case "eng":
-		return English
+		return English, code
 	case "deu":
-		return German
+		return German, code
 	default:
-		return UnknownLanguage
+		return UnknownLanguage, code
 	}
 }

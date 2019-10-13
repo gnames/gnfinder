@@ -97,7 +97,18 @@ func protobNameStrings(out *output.Output) protob.NameStrings {
 		}
 		names = append(names, name)
 	}
-	return protob.NameStrings{Names: names}
+	ns := protob.NameStrings{
+		Date:             out.Date.String(),
+		LanguageUsed:     out.LanguageUsed,
+		LanguageDetected: out.LanguageDetected,
+		LanguageForced:   out.LanguageForced,
+		TotalTokens:      int32(out.TotalTokens),
+		TotalCandidates:  int32(out.TotalNameCandidates),
+		TotalNames:       int32(out.TotalNames),
+		Names:            names,
+	}
+
+	return ns
 }
 
 func verification(ver *verifier.Verification) *protob.Verification {

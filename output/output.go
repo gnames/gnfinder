@@ -17,12 +17,15 @@ type Output struct {
 	Names []Name `json:"names"`
 }
 
-// NewOutput is a constructor for Output type.
-func newOutput(names []Name, ts []token.Token, l lang.Language) *Output {
+// newOutput is a constructor for Output type.
+func newOutput(names []Name, ts []token.Token,
+	l lang.Language, code string) *Output {
 	meta := Meta{
-		Date:        time.Now(),
-		Language:    l.String(),
-		TotalTokens: len(ts), TotalNameCandidates: candidatesNum(ts),
+		Date:             time.Now(),
+		LanguageUsed:     l.String(),
+		LanguageDetected: code,
+		LanguageForced: code == "",
+		TotalTokens:      len(ts), TotalNameCandidates: candidatesNum(ts),
 		TotalNames: len(names),
 	}
 	o := &Output{Meta: meta, Names: names}
@@ -33,8 +36,12 @@ func newOutput(names []Name, ts []token.Token, l lang.Language) *Output {
 type Meta struct {
 	// Date represents time when output was generated.
 	Date time.Time `json:"date"`
-	// Language of the document
-	Language string `json:"language"`
+	// LanguageUsed inside name-finding algorithm
+	LanguageUsed string `json:"language_used"`
+	// LanguageDetected automatically for the text
+	LanguageDetected string `json:"language_detected"`
+	// LanguageForced by language option
+	LanguageForced bool `json:"language_forced"`
 	// TotalTokens is a number of 'normalized' words in the text
 	TotalTokens int `json:"total_words"`
 	// TotalNameCandidates is a number of words that might be a start of

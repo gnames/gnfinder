@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## [v0.8.11]
+
+- Add [:34]: Better language detection.
 - Add [#33]: Make it possible to force Bayes not only "on" but also "off".
 - Add [#32]: Add benchmarks to gnfinder_test.go.
 
@@ -114,10 +117,13 @@
 
 This document follows [changelog guidelines]
 
+[v0.8.11]: https://github.com/gnames/gnfinder/compare/v0.8.10...v0.8.11
 [v0.8.10]: https://github.com/gnames/gnfinder/compare/v0.8.9...v0.8.10
 [v0.8.9]: https://github.com/gnames/gnfinder/compare/v0.8.8...v0.8.9
 [v0.8.8]: https://github.com/gnames/gnfinder/compare/v0.8.7...v0.8.8
-[v0.8.7]: https://github.com/gnames/gnfinder/compare/v0.8.6...v0.8.7 [v0.8.6]: https://github.com/gnames/gnfinder/compare/v0.8.5...v0.8.6 [v0.8.5]: https://github.com/gnames/gnfinder/compare/v0.8.4...v0.8.5
+[v0.8.7]: https://github.com/gnames/gnfinder/compare/v0.8.6...v0.8.7
+[v0.8.6]: https://github.com/gnames/gnfinder/compare/v0.8.5...v0.8.6
+[v0.8.5]: https://github.com/gnames/gnfinder/compare/v0.8.4...v0.8.5
 [v0.8.4]: https://github.com/gnames/gnfinder/compare/v0.8.3...v0.8.4
 [v0.8.3]: https://github.com/gnames/gnfinder/compare/v0.8.2...v0.8.3
 [v0.8.2]: https://github.com/gnames/gnfinder/compare/v0.8.1...v0.8.2
@@ -129,6 +135,9 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#34]: https://github.com/gnames/gnfinder/issues/34
+[#33]: https://github.com/gnames/gnfinder/issues/33
+[#32]: https://github.com/gnames/gnfinder/issues/32
 [#31]: https://github.com/gnames/gnfinder/issues/31
 [#30]: https://github.com/gnames/gnfinder/issues/30
 [#29]: https://github.com/gnames/gnfinder/issues/29
