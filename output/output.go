@@ -24,7 +24,7 @@ func newOutput(names []Name, ts []token.Token,
 		Date:             time.Now(),
 		LanguageUsed:     l.String(),
 		LanguageDetected: code,
-		LanguageForced: code == "",
+		LanguageForced:   code == "n/a",
 		TotalTokens:      len(ts), TotalNameCandidates: candidatesNum(ts),
 		TotalNames: len(names),
 	}
