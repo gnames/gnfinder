@@ -11,7 +11,8 @@ import (
 )
 
 // TokensToOutput takes tagged tokens and assembles output out of them.
-func TokensToOutput(ts []token.Token, text []rune, l lang.Language, code string) *Output {
+func TokensToOutput(ts []token.Token, text []rune, l lang.Language,
+	code string, version string) *Output {
 	var names []Name
 	for i := range ts {
 		u := &ts[i]
@@ -25,7 +26,7 @@ func TokensToOutput(ts []token.Token, text []rune, l lang.Language, code string)
 		}
 	}
 
-	return newOutput(names, ts, l, code)
+	return newOutput(names, ts, l, code, version)
 }
 
 // UniqueNameStrings takes a list of names, and returns a list of unique

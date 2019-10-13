@@ -5,12 +5,10 @@ GOCLEAN=$(GOCMD) clean
 GOGENERATE=$(GOCMD) generate
 GOGET = $(GOCMD) get
 FLAG_MODULE = GO111MODULE=on
+FLAGS_SHARED = $(FLAG_MODULE) CGO_ENABLED=0 GOARCH=amd64
 VERSION=`git describe --tags`
 VER=`git describe --tags --abbrev=0`
 DATE=`date -u '+%Y-%m-%d_%I:%M:%S%p'`
-LDFLAGS=-ldflags "-X main.buildDate=${DATE} \
-                  -X main.buildVersion=${VERSION}"
-
 
 all: install
 
@@ -24,29 +22,39 @@ deps:
 	$(FLAG_MODULE) $(GOGET) github.com/golang/protobuf/protoc-gen-go@347cf4a; \
 	$(GOGENERATE)
 
-build: grpc
+version:
+	echo "package gnfinder" > version.go
+	echo "" >> version.go
+	echo "const Version = \"$(VERSION)"\" >> version.go
+	echo "const Build = \"$(DATE)\"" >> version.go
+
+asset:
+	cd fs; \
+	$(FLAGS_SHARED) go run -tags=dev assets_gen.go
+
+build: grpc version asset
 	$(GOGENERATE)
 	cd gnfinder; \
 	$(GOCLEAN); \
-	GO111MODULE=on GOOS=linux GOARCH=amd64 CGO_ENABLED=0 $(GOBUILD) ${LDFLAGS};
+	$(FLAGS_SHARED) GOOS=linux $(GOBUILD);
 
-release: grpc dockerhub
+release: grpc version asset dockerhub
 	cd gnfinder; \
 	$(GOCLEAN); \
-	GO111MODULE=on GOOS=linux GOARCH=amd64 $(GOBUILD) ${LDFLAGS}; \
+	$(FLAGS_SHARED) GOOS=linux $(GOBUILD); \
 	tar zcvf /tmp/gnfinder-${VER}-linux.tar.gz gnfinder; \
 	$(GOCLEAN); \
-	GO111MODULE=on GOOS=darwin GOARCH=amd64 $(GOBUILD) ${LDFLAGS}; \
+	$(FLAGS_SHARED) GOOS=darwin $(GOBUILD); \
 	tar zcvf /tmp/gnfinder-${VER}-mac.tar.gz gnfinder; \
 	$(GOCLEAN); \
-	GO111MODULE=on GOOS=windows GOARCH=amd64 $(GOBUILD) ${LDFLAGS}; \
+	$(FLAGS_SHARED) GOOS=windows $(GOBUILD); \
 	zip -9 /tmp/gnfinder-${VER}-win-64.zip gnfinder.exe; \
 	$(GOCLEAN);
 
-install: grpc
+install: grpc version asset
 	$(GOGENERATE)
 	cd gnfinder; \
-	GO111MODULE=on $(GOINSTALL) ${LDFLAGS};
+	$(FLAGS_SHARED) $(GOINSTALL);
 
 .PHONY:grpc
 grpc:

@@ -25,15 +25,14 @@ import (
 	"log"
 	"os"
 
+	"github.com/gnames/gnfinder"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
-	buildVersion string
-	buildDate    string
-	cfgFile      string
+	cfgFile string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -51,7 +50,8 @@ var rootCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if version {
-			fmt.Printf("version: %s\n\ndate:    %s\n\n", buildVersion, buildDate)
+			fmt.Printf("version: %s\n\ndate:    %s\n\n",
+				gnfinder.Version, gnfinder.Build)
 			os.Exit(0)
 		}
 
@@ -65,8 +65,6 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute(ver string, date string) {
-	buildVersion = ver
-	buildDate = date
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

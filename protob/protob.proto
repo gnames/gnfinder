@@ -2,11 +2,16 @@ syntax = "proto3";
 
 package protob;
 
+message Void {}
+
 message Pong {
 	string value = 1;
 }
 
-message Void {}
+message Version {
+  string version = 1;
+  string build = 2;
+}
 
 message Params {
 	string text = 1;
@@ -18,13 +23,14 @@ message Params {
 
 message NameStrings {
 	string date = 1;
-	string language_used = 2;
-	string language_detected = 3;
-	bool language_forced = 4;
-	int32 total_tokens = 5;
-	int32 total_candidates = 6;
-	int32 total_names = 7;
-	repeated NameString names = 8;
+	string finder_version = 2;
+	string language_used = 3;
+	string language_detected = 4;
+	bool language_forced = 5;
+	int32 total_tokens = 6;
+	int32 total_candidates = 7;
+	int32 total_names = 8;
+	repeated NameString names = 9;
 }
 
 message NameString {
@@ -73,5 +79,6 @@ enum MatchType {
 
 service GNFinder {
 	rpc Ping(Void) returns(Pong) {}
+  rpc Ver(Void) returns(Version) {}
 	rpc FindNames(Params) returns(NameStrings) {}
 }

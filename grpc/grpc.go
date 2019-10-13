@@ -38,6 +38,15 @@ func (gnfinderServer) Ping(ctx context.Context,
 	return &pong, nil
 }
 
+func (gnfinderServer) Ver(ctx context.Context,
+	void *protob.Void) (*protob.Version, error) {
+	ver := protob.Version{
+		Version: gnfinder.Version,
+		Build:   gnfinder.Build,
+	}
+	return &ver, nil
+}
+
 func (gnfinderServer) FindNames(ctx context.Context,
 	params *protob.Params) (*protob.NameStrings, error) {
 	text := params.Text
@@ -99,6 +108,7 @@ func protobNameStrings(out *output.Output) protob.NameStrings {
 	}
 	ns := protob.NameStrings{
 		Date:             out.Date.String(),
+		FinderVersion:    out.FinderVersion,
 		LanguageUsed:     out.LanguageUsed,
 		LanguageDetected: out.LanguageDetected,
 		LanguageForced:   out.LanguageForced,

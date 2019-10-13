@@ -14,6 +14,7 @@ var _ = Describe("Output", func() {
 		It("creates an Output object", func() {
 			o := makeOutput()
 			Expect(o.Meta.Date.Year()).To(BeNumerically("~", time.Now().Year(), 1))
+			Expect(o.Meta.FinderVersion).To(MatchRegexp(`^v\d\.\d\.\d`))
 			Expect(len(o.Names)).To(Equal(4))
 			Expect(o.Names[0].Name).To(Equal("Pardosa moesta"))
 		})

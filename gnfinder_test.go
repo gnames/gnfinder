@@ -71,103 +71,116 @@ var _ = Describe("GNfinder", func() {
 // go test ./... -bench=. -benchmem -count=10 > bench.txt && benchstat bench.txt
 // do not use -run=XXX or -run=^$, we need tests to preload dictionary and
 // Bayes weights.
+
+// BenchmarkSmallNoBayesText runs only heuristic algorithms on small text
+// without language detection
 func BenchmarkSmallNoBayesText(b *testing.B) {
+	l, err := lang.NewLanguage("eng")
+	if err != nil {
+		panic(err)
+	}
 	opts := []Option{
 		OptBayes(false),
+		OptLanguage(l),
 		OptDict(dictionary),
 		OptBayesWeights(weights),
 	}
-	gnf := NewGNfinder(opts...)
-	f, err := os.Create("small.trace")
-	if err != nil {
-		panic(err)
-	}
-	err = trace.Start(f)
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-	defer b.StopTimer()
-	defer trace.Stop()
-
-	var o *output.Output
-
-	for i := 0; i < b.N; i++ {
-		o = gnf.FindNames([]byte("Pardosa moesta"))
-	}
-
-	_ = fmt.Sprintf("%d", len(o.Names))
+	traceFile := "small.trace"
+	input := []byte("Pardosa moesta")
+	runBenchmark(b, input, traceFile, opts)
 }
 
+// BenchmarkSmallYesBayesText runs only both algorithms on small text
+// WITH language detection
 func BenchmarkSmallYesBayesText(b *testing.B) {
 	opts := []Option{
 		OptBayes(true),
 		OptDict(dictionary),
 		OptBayesWeights(weights),
 	}
-	gnf := NewGNfinder(opts...)
-	f, err := os.Create("small-bayes.trace")
-	if err != nil {
-		panic(err)
-	}
-	err = trace.Start(f)
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-	defer b.StopTimer()
-	defer trace.Stop()
-
-	var o *output.Output
-
-	for i := 0; i < b.N; i++ {
-		o = gnf.FindNames([]byte("Pardosa moesta"))
-	}
-
-	_ = fmt.Sprintf("%d", len(o.Names))
+	traceFile := "small-bayes.trace"
+	input := []byte("Pardosa moesta")
+	runBenchmark(b, input, traceFile, opts)
 }
 
-func BenchmarkBigNoBayesText(b *testing.B) {
+// BenchmarkSmallEngText runs both algorithms on small text
+// WITHOUT language detection
+func BenchmarkSmallEngText(b *testing.B) {
+	l, err := lang.NewLanguage("eng")
+	if err != nil {
+		panic(err)
+	}
 	opts := []Option{
-		OptBayes(false),
+		OptLanguage(l),
 		OptDict(dictionary),
 		OptBayesWeights(weights),
 	}
-	gnf := NewGNfinder(opts...)
-	f, err := os.Create("big.trace")
-	if err != nil {
-		panic(err)
-	}
-	err = trace.Start(f)
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-	defer b.StopTimer()
-	defer trace.Stop()
-
-	var o *output.Output
-
-	text, err := ioutil.ReadFile("testdata/seashells_book.txt")
-	if err != nil {
-		panic(err)
-	}
-
-	for i := 0; i < b.N; i++ {
-		o = gnf.FindNames(text)
-	}
-
-	_ = fmt.Sprintf("%d", len(o.Names))
+	traceFile := "small-eng.trace"
+	input := []byte("Pardosa moesta")
+	runBenchmark(b, input, traceFile, opts)
 }
 
+// BenchmarkBigNoBayesText runs only heuristic algorithm on large text
+// WITHOUT language detection
+func BenchmarkBigNoBayesText(b *testing.B) {
+	l, err := lang.NewLanguage("eng")
+	if err != nil {
+		panic(err)
+	}
+	opts := []Option{
+		OptBayes(false),
+		OptLanguage(l),
+		OptDict(dictionary),
+		OptBayesWeights(weights),
+	}
+	traceFile := "big.trace"
+	input, err := ioutil.ReadFile("testdata/seashells_book.txt")
+	if err != nil {
+		panic(err)
+	}
+	runBenchmark(b, input, traceFile, opts)
+}
+
+// BenchmarkBigYesBayesText runs both algorithms on large text
+// WITH language detection
 func BenchmarkBigYesBayesText(b *testing.B) {
 	opts := []Option{
 		OptBayes(true),
 		OptDict(dictionary),
 		OptBayesWeights(weights),
 	}
+	traceFile := "big.trace"
+	input, err := ioutil.ReadFile("testdata/seashells_book.txt")
+	if err != nil {
+		panic(err)
+	}
+	runBenchmark(b, input, traceFile, opts)
+}
+
+// BenchmarkBigEngText runs both algorithms on large text
+// WITHOUT language detection
+func BenchmarkBigEngText(b *testing.B) {
+	l, err := lang.NewLanguage("eng")
+	if err != nil {
+		panic(err)
+	}
+	opts := []Option{
+		OptLanguage(l),
+		OptDict(dictionary),
+		OptBayesWeights(weights),
+	}
+	traceFile := "big.trace"
+	input, err := ioutil.ReadFile("testdata/seashells_book.txt")
+	if err != nil {
+		panic(err)
+	}
+	runBenchmark(b, input, traceFile, opts)
+}
+
+func runBenchmark(b *testing.B, input []byte, traceFile string,
+	opts []Option) {
 	gnf := NewGNfinder(opts...)
-	f, err := os.Create("big-bayes.trace")
+	f, err := os.Create(traceFile)
 	if err != nil {
 		panic(err)
 	}
@@ -181,13 +194,8 @@ func BenchmarkBigYesBayesText(b *testing.B) {
 
 	var o *output.Output
 
-	text, err := ioutil.ReadFile("testdata/seashells_book.txt")
-	if err != nil {
-		panic(err)
-	}
-
 	for i := 0; i < b.N; i++ {
-		o = gnf.FindNames(text)
+		o = gnf.FindNames(input)
 	}
 
 	_ = fmt.Sprintf("%d", len(o.Names))

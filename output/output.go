@@ -19,9 +19,10 @@ type Output struct {
 
 // newOutput is a constructor for Output type.
 func newOutput(names []Name, ts []token.Token,
-	l lang.Language, code string) *Output {
+	l lang.Language, code string, ver string) *Output {
 	meta := Meta{
 		Date:             time.Now(),
+		FinderVersion:    ver,
 		LanguageUsed:     l.String(),
 		LanguageDetected: code,
 		LanguageForced:   code == "n/a",
@@ -36,6 +37,8 @@ func newOutput(names []Name, ts []token.Token,
 type Meta struct {
 	// Date represents time when output was generated.
 	Date time.Time `json:"date"`
+	// FinderVersion the version of gnfinder
+	FinderVersion string
 	// LanguageUsed inside name-finding algorithm
 	LanguageUsed string `json:"language_used"`
 	// LanguageDetected automatically for the text
