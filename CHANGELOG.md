@@ -4,7 +4,8 @@
 
 ## [v0.8.11]
 
-- Add [#35]: Add version info to gRPC server
+- Add [#36]: Refactor GNfinder options.
+- Add [#35]: Add version info to gRPC server.
 - Add [#34]: Better language detection.
 - Add [#33]: Make it possible to force Bayes not only "on" but also "off".
 - Add [#32]: Add benchmarks to `gnfinder_test.go`.
@@ -136,6 +137,7 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#36]: https://github.com/gnames/gnfinder/issues/36
 [#35]: https://github.com/gnames/gnfinder/issues/35
 [#34]: https://github.com/gnames/gnfinder/issues/34
 [#33]: https://github.com/gnames/gnfinder/issues/33

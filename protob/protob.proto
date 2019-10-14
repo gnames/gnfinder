@@ -15,18 +15,19 @@ message Version {
 
 message Params {
 	string text = 1;
-	bool with_bayes = 3;
+	bool no_bayes = 3; // has to make it negative because of false default value.
 	string language = 4;
-	bool with_verification = 5;
-	repeated int32 sources = 6;
+	bool detect_language = 5;
+	bool verification = 6;
+	repeated int32 sources = 7;
 }
 
-message NameStrings {
+message Output {
 	string date = 1;
 	string finder_version = 2;
-	string language_used = 3;
+	string language = 3;
 	string language_detected = 4;
-	bool language_forced = 5;
+	bool detect_language = 5;
 	int32 total_tokens = 6;
 	int32 total_candidates = 7;
 	int32 total_names = 8;
@@ -80,5 +81,5 @@ enum MatchType {
 service GNFinder {
 	rpc Ping(Void) returns(Pong) {}
   rpc Ver(Void) returns(Version) {}
-	rpc FindNames(Params) returns(NameStrings) {}
+	rpc FindNames(Params) returns(Output) {}
 }

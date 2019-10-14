@@ -2,7 +2,6 @@ package lang
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/abadojack/whatlanggo"
 )
@@ -13,32 +12,37 @@ type Language int
 // Set of languages. Last one is an indicator of the 'edge', as well as
 // a default value for GnFinder.Language.
 const (
-	UnknownLanguage Language = iota
+	DefaultLanguage Language = iota
 	English
 	German
 	NotSet
 )
 
 func (l Language) String() string {
-	languages := [...]string{"other", "eng", "deu", ""}
+	languages := [...]string{"eng", "eng", "deu", ""}
 	return languages[l]
 }
 
 // NewLanguage takes a string and returns matching language, or error, if
 // a matching language cannot be found.
 func NewLanguage(lang string) (Language, error) {
-	var supportedLanguages []string
-	for i := 1; i < int(NotSet); i++ {
-		l := Language(i)
-		supportedLanguages = append(supportedLanguages, l.String())
+	for _, l := range SupportedLanguages() {
 		if l.String() == lang {
 			return l, nil
 		}
 	}
 	var l Language
-	langs := strings.Join(supportedLanguages, ", ")
-	return l, fmt.Errorf(
-		"unknown language %s.\nSupported languages are: %s", lang, langs)
+	return l, fmt.Errorf("unknown language %s", lang)
+}
+
+// SupportedLanguages returns a slice of supported by gnfinder languages.
+func SupportedLanguages() []Language {
+	var res []Language
+	for i := 1; i < int(NotSet); i++ {
+		l := Language(i)
+		res = append(res, l)
+	}
+	return res
 }
 
 // LanguagesSet returns a 'set' of languages for more effective
@@ -66,6 +70,6 @@ func DetectLanguage(text []rune) (Language, string) {
 	case "deu":
 		return German, code
 	default:
-		return UnknownLanguage, code
+		return DefaultLanguage, code
 	}
 }

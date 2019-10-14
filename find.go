@@ -10,28 +10,32 @@ import (
 
 // FindNamesJSON takes a text as bytes and returns JSON representation of
 // scientific names found in the text
-func (gnf *GNfinder) FindNamesJSON(data []byte) []byte {
-	output := gnf.FindNames(data)
+func (gnf *GNfinder) FindNamesJSON(data []byte, opts ...Option) []byte {
+	output := gnf.FindNames(data, opts...)
 	return output.ToJSON()
 }
 
 // FindNames traverses a text and finds scientific names in it.
-func (gnf *GNfinder) FindNames(data []byte) *output.Output {
+func (gnf *GNfinder) FindNames(data []byte, opts ...Option) *output.Output {
+	if len(opts) > 0 {
+		backupOpts := gnf.Update(opts...)
+		defer func() {
+			for _, opt := range backupOpts {
+				opt(gnf)
+			}
+		}()
+	}
 	text := []rune(string(data))
 	tokens := token.Tokenize(text)
 
-	if !gnf.LanguageForced {
-		gnf.LanguageUsed, gnf.LanguageDetected = lang.DetectLanguage(text)
+	if gnf.DetectLanguage {
+		gnf.Language, gnf.LanguageDetected = lang.DetectLanguage(text)
 	}
-	if !gnf.BayesForced && gnf.LanguageUsed != lang.UnknownLanguage {
-		gnf.Bayes = true
-	}
-
 	heuristic.TagTokens(tokens, gnf.Dict)
 	if gnf.Bayes {
-		nb := gnf.BayesWeights[gnf.LanguageUsed]
+		nb := gnf.BayesWeights[gnf.Language]
 		nlp.TagTokens(tokens, gnf.Dict, nb, gnf.BayesOddsThreshold)
 	}
-	return output.TokensToOutput(tokens, text, gnf.LanguageUsed,
+	return output.TokensToOutput(tokens, text, gnf.Language,
 		gnf.LanguageDetected, Version)
 }

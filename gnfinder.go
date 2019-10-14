@@ -10,18 +10,15 @@ import (
 
 // GNfinder is responsible for name-finding operations.
 type GNfinder struct {
-	// LanguageUsed for name-finding in the text.
-	LanguageUsed lang.Language
-	// LanguageDetected is a language code according to language detection.
+	// Language for name-finding in the text.
+	Language lang.Language
+	// LanguageDetected is the code of a language that was detected in text.
+	// It is an empty string, if detection of language is not set.
 	LanguageDetected string
-	// LanguageForced flag is true if OptLanguage was passed during creation
-	// of GNfinder instance.
-	LanguageForced bool
-	// Bayes flag tells to run Bayes name-finding on unknown languages.
+	// DetectLanguage flag is true if we want to detect language automatically.
+	DetectLanguage bool
+	// Bayes is true when we run Bayes algorithm, and false when we dont.
 	Bayes bool
-	// BayesForced flag is true if OptBayes was passed during creation of
-	// GNfinder instance.
-	BayesForced bool
 	// BayesOddsThreshold sets the limit of posterior odds. Everything bigger
 	// that this limit will go to the names output.
 	BayesOddsThreshold float64
@@ -49,9 +46,18 @@ type Option func(*GNfinder)
 // OptLanguage sets a language of a text.
 func OptLanguage(l lang.Language) Option {
 	return func(gnf *GNfinder) {
-		gnf.LanguageUsed = l
-		gnf.LanguageDetected = "n/a"
-		gnf.LanguageForced = true
+		gnf.Language = l
+		gnf.LanguageDetected = ""
+		gnf.DetectLanguage = false
+	}
+}
+
+// OptDetectLanguage when true sets automatic detection of text's language.
+func OptDetectLanguage(bool) Option {
+	return func(gnf *GNfinder) {
+		gnf.Language = lang.NotSet
+		gnf.LanguageDetected = ""
+		gnf.DetectLanguage = true
 	}
 }
 
@@ -60,7 +66,6 @@ func OptLanguage(l lang.Language) Option {
 func OptBayes(b bool) Option {
 	return func(gnf *GNfinder) {
 		gnf.Bayes = b
-		gnf.BayesForced = true
 	}
 }
 
@@ -103,7 +108,8 @@ func OptBayesWeights(bw map[lang.Language]*bayes.NaiveBayes) Option {
 // from opts.
 func NewGNfinder(opts ...Option) *GNfinder {
 	gnf := &GNfinder{
-		LanguageUsed:       lang.NotSet,
+		Language:           lang.DefaultLanguage,
+		Bayes:              true,
 		BayesOddsThreshold: 100.0,
 	}
 	for _, opt := range opts {
@@ -116,4 +122,20 @@ func NewGNfinder(opts ...Option) *GNfinder {
 		gnf.BayesWeights = nlp.BayesWeights()
 	}
 	return gnf
+}
+
+// Update updates GNfinder object to new options, and returns optiongs that
+// can be used to revert GNfinder back to previous state.
+func (gnf *GNfinder) Update(opts ...Option) []Option {
+	backup := []Option{
+		OptBayes(gnf.Bayes),
+		OptDetectLanguage(gnf.DetectLanguage),
+	}
+	if gnf.Language != lang.DefaultLanguage && !gnf.DetectLanguage {
+		backup = append(backup, OptLanguage(gnf.Language))
+	}
+	for _, opt := range opts {
+		opt(gnf)
+	}
+	return backup
 }

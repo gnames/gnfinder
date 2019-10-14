@@ -158,7 +158,7 @@ docker run -d -p 8888:8778 --name gnfinder gnames/gnfinder
 To install latest gnfinder
 
 ```
-git get github.com/gnames/gnfinder
+go get github.com/gnames/gnfinder
 cd $GOPATH/src/github.com/gnames/gnfinder
 make deps
 make

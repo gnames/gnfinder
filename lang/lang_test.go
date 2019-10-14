@@ -13,8 +13,8 @@ var _ = Describe("Lang", func() {
 			It("returns string representation of language", func() {
 				l := lang.English
 				Expect(l.String()).To(Equal("eng"))
-				l = lang.UnknownLanguage
-				Expect(l.String()).To(Equal("other"))
+				l = lang.DefaultLanguage
+				Expect(l.String()).To(Equal("eng"))
 			})
 		})
 
@@ -23,6 +23,14 @@ var _ = Describe("Lang", func() {
 				ls := lang.LanguagesSet()
 				_, ok := ls[lang.English]
 				Expect(ok).To(Equal(true))
+			})
+		})
+
+		Describe("SupportedLanguages", func() {
+			It("returns all supported languages", func() {
+				sl := lang.SupportedLanguages()
+				Expect(len(sl)).To(BeNumerically(">", 1))
+				Expect(int(sl[0])).To(Equal(1))
 			})
 		})
 
@@ -52,7 +60,7 @@ var _ = Describe("Lang", func() {
 			It("detects unknown language as UnknownLanguage", func() {
 				text := "Однажды в студеную, зимнюю пору я из лесу вышел"
 				l, code := lang.DetectLanguage([]rune(text))
-				Expect(l).To(Equal(lang.UnknownLanguage))
+				Expect(l).To(Equal(lang.DefaultLanguage))
 				Expect(code).To(Equal("rus"))
 			})
 		})

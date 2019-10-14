@@ -12,3 +12,4 @@ t.json
 *.tar.gz
 protob.pb.go
 bench*.txt
+version.go

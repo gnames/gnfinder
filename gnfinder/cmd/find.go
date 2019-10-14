@@ -25,6 +25,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/gnames/gnfinder"
 	"github.com/gnames/gnfinder/dict"
@@ -39,7 +40,7 @@ var findCmd = &cobra.Command{
 	Short: "Finds scientific names in UTF-8-encoded plain texts",
 	Long: `
  Name finding happens in two stages. First we apply heuristic rules, and
- then, if it is possible, Bayesian algorithms to find scientific names.
+ then, unless opted out, Bayesian algorithms to find scientific names.
  Optionally, gnfinder verifies found names against gnindex database located
  at https://index.globalnames.org. Found names and metadata are returned in
  JSON format to the standard output.
@@ -58,7 +59,7 @@ var findCmd = &cobra.Command{
 			log.Println(err)
 			os.Exit(1)
 		}
-		bayes, err := cmd.Flags().GetBool("bayes")
+		noBayes, err := cmd.Flags().GetBool("no-bayes")
 		if err != nil {
 			log.Println(err)
 			os.Exit(1)
@@ -91,7 +92,7 @@ var findCmd = &cobra.Command{
 			os.Exit(0)
 		}
 
-		findNames(data, lang, bayes, verify, sources)
+		findNames(data, lang, noBayes, verify, sources)
 	},
 }
 
@@ -107,22 +108,26 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// findCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	findCmd.Flags().BoolP("bayes", "b", false, "always run Bayes algorithms.")
+	findCmd.Flags().BoolP("no-bayes", "n", false, "do not run Bayes algorithms.")
 	findCmd.Flags().BoolP("check-names", "c", false, "verify found name-strings.")
-	findCmd.Flags().StringP("lang", "l", "", "text's language.")
+	findCmd.Flags().StringP("lang", "l", "", "text's language or 'detect' for automatic detection.")
 	findCmd.Flags().IntSliceP("sources", "s", []int{1, 11, 179},
 		"IDs of data sources used in verification.")
 }
 
-func findNames(data []byte, langString string, bayes bool,
+func findNames(data []byte, langString string, noBayes bool,
 	verify bool, sources []int) {
 	var opts []gnfinder.Option
 
 	opts = append(opts, gnfinder.OptDict(dict.LoadDictionary()))
-	if langString != "" {
+	if langString == "detect" {
+		opts = append(opts, gnfinder.OptDetectLanguage(true))
+	} else if langString != "" {
 		l, err := lang.NewLanguage(langString)
 		if err != nil {
-			log.Println(err)
+			log.Printf("Error: %s\n", err)
+			log.Printf("Supported language codes: %s.\n", langsToString())
+			log.Printf("To detect language automatically use '-l detect'.")
 			os.Exit(1)
 		}
 		opts = append(opts, gnfinder.OptLanguage(l))
@@ -132,7 +137,7 @@ func findNames(data []byte, langString string, bayes bool,
 		opts = append(opts, gnfinder.OptVerify(verifier.OptSources(sources)))
 	}
 
-	opts = append(opts, gnfinder.OptBayes(bayes))
+	opts = append(opts, gnfinder.OptBayes(!noBayes))
 
 	gnf := gnfinder.NewGNfinder(opts...)
 	res := gnf.FindNames(data)
@@ -142,6 +147,15 @@ func findNames(data []byte, langString string, bayes bool,
 		res.MergeVerification(verifiedNames)
 	}
 	fmt.Println(string(res.ToJSON()))
+}
+
+func langsToString() string {
+	langs := lang.SupportedLanguages()
+	res := make([]string, len(langs))
+	for i, v := range langs {
+		res[i] = v.String()
+	}
+	return strings.Join(res, ", ")
 }
 
 func checkStdin() bool {

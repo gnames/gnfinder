@@ -6,9 +6,11 @@ import (
 	"log"
 	"net"
 
+	"github.com/gnames/bayes"
 	"github.com/gnames/gnfinder"
 	"github.com/gnames/gnfinder/dict"
 	"github.com/gnames/gnfinder/lang"
+	"github.com/gnames/gnfinder/nlp"
 	"github.com/gnames/gnfinder/output"
 	"github.com/gnames/gnfinder/protob"
 	"github.com/gnames/gnfinder/verifier"
@@ -18,11 +20,13 @@ import (
 type gnfinderServer struct{}
 
 var dictionary *dict.Dictionary
+var weights map[lang.Language]*bayes.NaiveBayes
 
 func Run(port int) {
 	var gnfs gnfinderServer
 	srv := grpc.NewServer()
 	dictionary = dict.LoadDictionary()
+	weights = nlp.BayesWeights()
 	protob.RegisterGNFinderServer(srv, gnfs)
 	portVal := fmt.Sprintf(":%d", port)
 	l, err := net.Listen("tcp", portVal)
@@ -48,7 +52,7 @@ func (gnfinderServer) Ver(ctx context.Context,
 }
 
 func (gnfinderServer) FindNames(ctx context.Context,
-	params *protob.Params) (*protob.NameStrings, error) {
+	params *protob.Params) (*protob.Output, error) {
 	text := params.Text
 	opts := setOpts(params)
 	gnf := gnfinder.NewGNfinder(opts...)
@@ -65,13 +69,14 @@ func (gnfinderServer) FindNames(ctx context.Context,
 }
 
 func setOpts(params *protob.Params) []gnfinder.Option {
-	opts := []gnfinder.Option{gnfinder.OptDict(dictionary)}
-
-	if params.WithBayes {
-		opts = append(opts, gnfinder.OptBayes(true))
+	opts := []gnfinder.Option{
+		gnfinder.OptDict(dictionary),
+		gnfinder.OptBayesWeights(weights),
 	}
 
-	if params.WithVerification {
+	opts = append(opts, gnfinder.OptBayes(!params.NoBayes))
+
+	if params.Verification {
 		var verOpts []verifier.Option
 		var sources []int
 		for _, v := range params.Sources {
@@ -82,7 +87,9 @@ func setOpts(params *protob.Params) []gnfinder.Option {
 		opts = append(opts, gnfinder.OptVerify(verOpts...))
 	}
 
-	if len(params.Language) > 0 {
+	if params.DetectLanguage {
+		opts = append(opts, gnfinder.OptDetectLanguage(true))
+	} else if len(params.Language) > 0 {
 		l, err := lang.NewLanguage(params.Language)
 		if err == nil {
 			opts = append(opts, gnfinder.OptLanguage(l))
@@ -92,7 +99,7 @@ func setOpts(params *protob.Params) []gnfinder.Option {
 	return opts
 }
 
-func protobNameStrings(out *output.Output) protob.NameStrings {
+func protobNameStrings(out *output.Output) protob.Output {
 	var names []*protob.NameString
 	for _, n := range out.Names {
 		name := &protob.NameString{
@@ -106,12 +113,12 @@ func protobNameStrings(out *output.Output) protob.NameStrings {
 		}
 		names = append(names, name)
 	}
-	ns := protob.NameStrings{
+	ns := protob.Output{
 		Date:             out.Date.String(),
 		FinderVersion:    out.FinderVersion,
-		LanguageUsed:     out.LanguageUsed,
+		Language:         out.Language,
 		LanguageDetected: out.LanguageDetected,
-		LanguageForced:   out.LanguageForced,
+		DetectLanguage:   out.DetectLanguage,
 		TotalTokens:      int32(out.TotalTokens),
 		TotalCandidates:  int32(out.TotalNameCandidates),
 		TotalNames:       int32(out.TotalNames),

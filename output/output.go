@@ -23,9 +23,9 @@ func newOutput(names []Name, ts []token.Token,
 	meta := Meta{
 		Date:             time.Now(),
 		FinderVersion:    ver,
-		LanguageUsed:     l.String(),
+		Language:         l.String(),
 		LanguageDetected: code,
-		LanguageForced:   code == "n/a",
+		DetectLanguage:   code != "",
 		TotalTokens:      len(ts), TotalNameCandidates: candidatesNum(ts),
 		TotalNames: len(names),
 	}
@@ -39,12 +39,12 @@ type Meta struct {
 	Date time.Time `json:"date"`
 	// FinderVersion the version of gnfinder
 	FinderVersion string
-	// LanguageUsed inside name-finding algorithm
-	LanguageUsed string `json:"language_used"`
+	// Language inside name-finding algorithm
+	Language string `json:"language"`
 	// LanguageDetected automatically for the text
 	LanguageDetected string `json:"language_detected"`
 	// LanguageForced by language option
-	LanguageForced bool `json:"language_forced"`
+	DetectLanguage bool `json:"detect_language"`
 	// TotalTokens is a number of 'normalized' words in the text
 	TotalTokens int `json:"total_words"`
 	// TotalNameCandidates is a number of words that might be a start of
