@@ -50,8 +50,7 @@ var rootCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if version {
-			fmt.Printf("version: %s\n\ndate:    %s\n\n",
-				gnfinder.Version, gnfinder.Build)
+			fmt.Printf("\nversion: %s\n\n", gnfinder.Version)
 			os.Exit(0)
 		}
 
@@ -64,7 +63,7 @@ var rootCmd = &cobra.Command{
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute(ver string, date string) {
+func Execute(ver string) {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

@@ -44,10 +44,7 @@ func (gnfinderServer) Ping(ctx context.Context,
 
 func (gnfinderServer) Ver(ctx context.Context,
 	void *protob.Void) (*protob.Version, error) {
-	ver := protob.Version{
-		Version: gnfinder.Version,
-		Build:   gnfinder.Build,
-	}
+	ver := protob.Version{Version: gnfinder.Version}
 	return &ver, nil
 }
 

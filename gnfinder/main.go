@@ -26,9 +26,8 @@ import (
 
 var (
 	buildVersion string
-	buildDate    string
 )
 
 func main() {
-	cmd.Execute(buildVersion, buildDate)
+	cmd.Execute(buildVersion)
 }

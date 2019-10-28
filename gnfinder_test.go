@@ -99,9 +99,7 @@ var _ = Describe("GNfinder", func() {
 })
 
 // Benchmarks. To run all of them use
-// go test ./... -bench=. -benchmem -count=10 > bench.txt && benchstat bench.txt
-// do not use -run=XXX or -run=^$, we need tests to preload dictionary and
-// Bayes weights.
+// go test ./... -bench=. -benchmem -count=10 -run=XXX > bench.txt && benchstat bench.txt
 
 // BenchmarkSmallNoBayes runs only heuristic algorithm on small text
 // without language detection
@@ -112,7 +110,7 @@ func BenchmarkSmallNoBayes(b *testing.B) {
 	}
 	traceFile := "small.trace"
 	input := []byte("Pardosa moesta")
-	runBenchmark(b, input, traceFile, opts)
+	runBenchmark("SmallNoBayes", b, input, traceFile, opts)
 }
 
 // BenchmarkSmallYesBayes runs both algorithms on small text
@@ -124,7 +122,7 @@ func BenchmarkSmallYesBayes(b *testing.B) {
 	}
 	traceFile := "small-bayes.trace"
 	input := []byte("Pardosa moesta")
-	runBenchmark(b, input, traceFile, opts)
+	runBenchmark("SmallYesBayes", b, input, traceFile, opts)
 }
 
 // BenchmarkSmallYesBayesLangDetect runs both algorithms on small text
@@ -137,7 +135,7 @@ func BenchmarkSmallYesBayesLangDetect(b *testing.B) {
 	}
 	traceFile := "small-eng.trace"
 	input := []byte("Pardosa moesta")
-	runBenchmark(b, input, traceFile, opts)
+	runBenchmark("SmallYesBayesLangDetect", b, input, traceFile, opts)
 }
 
 // BenchmarkBigNoBayes runs only heuristic algorithm on large text
@@ -152,7 +150,7 @@ func BenchmarkBigNoBayes(b *testing.B) {
 	if err != nil {
 		panic(err)
 	}
-	runBenchmark(b, input, traceFile, opts)
+	runBenchmark("BigNoBayes", b, input, traceFile, opts)
 }
 
 // BenchmarkBigYesBayes runs both algorithms on large text
@@ -167,7 +165,7 @@ func BenchmarkBigYesBayes(b *testing.B) {
 	if err != nil {
 		panic(err)
 	}
-	runBenchmark(b, input, traceFile, opts)
+	runBenchmark("BigYesBayes", b, input, traceFile, opts)
 }
 
 // BenchmarkBigYesBayesLangDetect runs both algorithms on large text
@@ -183,10 +181,10 @@ func BenchmarkBigYesBayesLangDetect(b *testing.B) {
 	if err != nil {
 		panic(err)
 	}
-	runBenchmark(b, input, traceFile, opts)
+	runBenchmark("BigYesBayesLangDetect", b, input, traceFile, opts)
 }
 
-func runBenchmark(b *testing.B, input []byte, traceFile string,
+func runBenchmark(n string, b *testing.B, input []byte, traceFile string,
 	opts []Option) {
 	gnf := NewGNfinder(opts...)
 	f, err := os.Create(traceFile)
@@ -201,11 +199,12 @@ func runBenchmark(b *testing.B, input []byte, traceFile string,
 	defer b.StopTimer()
 	defer trace.Stop()
 
-	var o *output.Output
+	b.Run(n, func(b *testing.B) {
+		var o *output.Output
+		for i := 0; i < b.N; i++ {
+			o = gnf.FindNames(input)
+		}
 
-	for i := 0; i < b.N; i++ {
-		o = gnf.FindNames(input)
-	}
-
-	_ = fmt.Sprintf("%d", len(o.Names))
+		_ = fmt.Sprintf("%d", len(o.Names))
+	})
 }

@@ -8,7 +8,6 @@ FLAG_MODULE = GO111MODULE=on
 FLAGS_SHARED = $(FLAG_MODULE) CGO_ENABLED=0 GOARCH=amd64
 VERSION=`git describe --tags`
 VER=`git describe --tags --abbrev=0`
-DATE=`date -u '+%Y-%m-%d_%I:%M:%S%p'`
 
 all: install
 
@@ -26,7 +25,6 @@ version:
 	echo "package gnfinder" > version.go
 	echo "" >> version.go
 	echo "const Version = \"$(VERSION)"\" >> version.go
-	echo "const Build = \"$(DATE)\"" >> version.go
 
 asset:
 	cd fs; \
@@ -38,7 +36,7 @@ build: grpc version asset
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=linux $(GOBUILD);
 
-release: grpc version asset dockerhub
+release: grpc version dockerhub
 	cd gnfinder; \
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=linux $(GOBUILD); \

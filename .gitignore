@@ -10,6 +10,4 @@ t.json
 .idea
 .vscode
 *.tar.gz
-protob.pb.go
 bench*.txt
-version.go
