@@ -50,7 +50,7 @@ var rootCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if version {
-			fmt.Printf("\nversion: %s\n\n", gnfinder.Version)
+			fmt.Printf("\nversion: %s\nbuild: %s\n\n", gnfinder.Version, gnfinder.Build)
 			os.Exit(0)
 		}
 

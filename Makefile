@@ -1,13 +1,16 @@
+VERSION = $(shell git describe --tags)
+VER = $(shell git describe --tags --abbrev=0)
+DATE = $(shell date -u '+%Y-%m-%d_%H:%M:%S%Z')
+FLAG_MODULE = GO111MODULE=on
+FLAGS_SHARED = $(FLAG_MODULE) CGO_ENABLED=0 GOARCH=amd64
+FLAGS_LD=-ldflags "-X github.com/gnames/gnfinder.Build=${DATE} \
+                  -X github.com/gnames/gnfinder.Version=${VERSION}"
 GOCMD=go
-GOINSTALL=$(GOCMD) install
-GOBUILD=$(GOCMD) build
+GOINSTALL=$(GOCMD) install $(FLAGS_LD)
+GOBUILD=$(GOCMD) build $(FLAGS_LD)
 GOCLEAN=$(GOCMD) clean
 GOGENERATE=$(GOCMD) generate
 GOGET = $(GOCMD) get
-FLAG_MODULE = GO111MODULE=on
-FLAGS_SHARED = $(FLAG_MODULE) CGO_ENABLED=0 GOARCH=amd64
-VERSION=`git describe --tags`
-VER=`git describe --tags --abbrev=0`
 
 all: install
 
@@ -21,22 +24,17 @@ deps:
 	$(FLAG_MODULE) $(GOGET) github.com/golang/protobuf/protoc-gen-go@347cf4a; \
 	$(GOGENERATE)
 
-version:
-	echo "package gnfinder" > version.go
-	echo "" >> version.go
-	echo "const Version = \"$(VERSION)"\" >> version.go
-
 asset:
 	cd fs; \
 	$(FLAGS_SHARED) go run -tags=dev assets_gen.go
 
-build: grpc version asset
+build: grpc asset
 	$(GOGENERATE)
 	cd gnfinder; \
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=linux $(GOBUILD);
 
-release: grpc version dockerhub
+release: grpc dockerhub
 	cd gnfinder; \
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=linux $(GOBUILD); \
@@ -49,7 +47,7 @@ release: grpc version dockerhub
 	zip -9 /tmp/gnfinder-${VER}-win-64.zip gnfinder.exe; \
 	$(GOCLEAN);
 
-install: grpc version asset
+install: grpc asset
 	$(GOGENERATE)
 	cd gnfinder; \
 	$(FLAGS_SHARED) $(GOINSTALL);

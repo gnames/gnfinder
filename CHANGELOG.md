@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add better handling of version.
+
 ## [v0.8.11]
 
 - Add [#36]: Refactor GNfinder options.
