@@ -11,3 +11,5 @@ t.json
 .vscode
 *.tar.gz
 bench*.txt
+binding/*.so
+binding/*.h

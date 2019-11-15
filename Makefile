@@ -65,3 +65,7 @@ docker: build
 dockerhub: docker
 	docker push gnames/gnfinder; \
 	docker push gnames/gnfinder:${VERSION}
+
+clib:
+	cd binding; \
+	$(GOBUILD) -buildmode=c-shared -o libgnfinder.so;

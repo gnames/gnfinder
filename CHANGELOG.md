@@ -2,10 +2,14 @@
 
 ## Unreleased
 
-- Add better handling of version.
+## [v0.9.1]
 
-## [v0.8.11]
+- Add [#39]: Export to C shared library.
+- Add better handling of the version.
 
+## [v0.9.0]
+
+- Add [#37]: add to git protob and version files.
 - Add [#36]: Refactor GNfinder options.
 - Add [#35]: Add version info to gRPC server.
 - Add [#34]: Better language detection.
@@ -121,7 +125,8 @@
 
 This document follows [changelog guidelines]
 
-[v0.8.11]: https://github.com/gnames/gnfinder/compare/v0.8.10...v0.8.11
+[v0.9.1]: https://github.com/gnames/gnfinder/compare/v0.9.0...v0.9.1
+[v0.9.0]: https://github.com/gnames/gnfinder/compare/v0.8.10...v0.9.0
 [v0.8.10]: https://github.com/gnames/gnfinder/compare/v0.8.9...v0.8.10
 [v0.8.9]: https://github.com/gnames/gnfinder/compare/v0.8.8...v0.8.9
 [v0.8.8]: https://github.com/gnames/gnfinder/compare/v0.8.7...v0.8.8
@@ -139,6 +144,9 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#39]: https://github.com/gnames/gnfinder/issues/39
+[#38]: https://github.com/gnames/gnfinder/issues/38
+[#37]: https://github.com/gnames/gnfinder/issues/37
 [#36]: https://github.com/gnames/gnfinder/issues/36
 [#35]: https://github.com/gnames/gnfinder/issues/35
 [#34]: https://github.com/gnames/gnfinder/issues/34
