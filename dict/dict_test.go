@@ -12,7 +12,7 @@ var _ = Describe("Dictionary", func() {
 	Describe("GreyUninomials", func() {
 		It("has grey uninomials list", func() {
 			l := len(dictionary.GreyUninomials)
-			Expect(l).To(Equal(186))
+			Expect(l).To(Equal(213))
 			_, ok := dictionary.GreyUninomials["Minimi"]
 			Expect(ok).To(Equal(true))
 		})
@@ -30,7 +30,7 @@ var _ = Describe("Dictionary", func() {
 	Describe("WhiteGenera", func() {
 		It("has white genus list", func() {
 			l := len(dictionary.WhiteGenera)
-			Expect(l).To(Equal(436485))
+			Expect(l).To(Equal(436484))
 			_, ok := dictionary.WhiteGenera["Plantago"]
 			Expect(ok).To(Equal(true))
 		})

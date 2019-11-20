@@ -170,7 +170,7 @@ var _ = Describe("Verifier", func() {
 			nameOutputs := v.Run([]string{name})
 			result := nameOutputs[name].BestResult
 			Expect(result.MatchType).To(Equal("FuzzyCanonicalMatch"))
-			Expect(result.MatchedName).To(Equal("Anthriscus sylvestris"))
+			Expect(result.MatchedName).To(Equal("Anthriscus sylvestris (L.) Hoffm."))
 			Expect(result.EditDistance).To(Equal(1))
 		})
 
