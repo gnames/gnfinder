@@ -5,7 +5,9 @@
 ## [v0.9.1]
 
 - Add [#39]: Export to C shared library.
-- Add better handling of the version.
+- Add better Handling of the version.
+- Fix [#42]: No null pointers in verifier results.
+- Fix [#41]: More words in black list.
 
 ## [v0.9.0]
 
@@ -144,6 +146,9 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#42]: https://github.com/gnames/gnfinder/issues/42
+[#41]: https://github.com/gnames/gnfinder/issues/41
+[#40]: https://github.com/gnames/gnfinder/issues/40
 [#39]: https://github.com/gnames/gnfinder/issues/39
 [#38]: https://github.com/gnames/gnfinder/issues/38
 [#37]: https://github.com/gnames/gnfinder/issues/37

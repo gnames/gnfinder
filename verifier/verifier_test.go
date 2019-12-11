@@ -1,12 +1,11 @@
-package verifier_test
+package verifier
 
 import (
+	"errors"
 	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-
-	. "github.com/gnames/gnfinder/verifier"
 )
 
 var _ = Describe("Verifier", func() {
@@ -55,13 +54,37 @@ var _ = Describe("Verifier", func() {
 	})
 
 	Describe("Run()", func() {
-		It("Runs a query and returns result", func() {
+		It("runs a query and returns result", func() {
 			v := NewVerifier()
 			name := []string{"Pardosa moesta"}
 			o := v.Run(name)["Pardosa moesta"]
 			Expect(o.BestResult.MatchedCanonical).To(Equal("Pardosa moesta"))
 			Expect(len(o.BestResult.ClassificationIDs)).To(BeNumerically(">", 10))
 			Expect(len(o.PreferredResults)).To(Equal(3))
+		})
+	})
+
+	// Issue #42
+	Describe("processError()", func() {
+		It("creates a record without null pointers", func() {
+			name := "Somename"
+			errString := "SomeError"
+			output := make(Output)
+			var resp *graphqlResponse
+			batch := &BatchResult{
+				Names:    []string{name},
+				Response: resp,
+				Retries:  3,
+				Error:    errors.New(errString),
+			}
+			processError(output, batch)
+			sn := output[name]
+			br := sn.BestResult
+			Expect(br.DataSourceID).To(Equal(0))
+			Expect(br.MatchedName).To(Equal(""))
+			Expect(sn.DataSourcesNum).To(Equal(0))
+			Expect(len(sn.PreferredResults)).To(Equal(0))
+			Expect(sn.Error).To(Equal(errString))
 		})
 	})
 })

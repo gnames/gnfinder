@@ -149,8 +149,9 @@ func processResult(verResult Output, res <-chan *BatchResult,
 func processError(verResult Output, result *BatchResult) {
 	for _, n := range result.Names {
 		verResult[n] = &Verification{
-			Retries: result.Retries,
-			Error:   result.Error.Error(),
+			BestResult: &ResultData{},
+			Retries:    result.Retries,
+			Error:      result.Error.Error(),
 		}
 	}
 }
