@@ -99,7 +99,8 @@ Getting data from a pipe forcing English language and verification
 echo "Pomatomus saltator and Parus major" | gnfinder find -c -l eng
 ```
 
-Verifying data against ``NCBI`` and ``Encyclopedia of Life``
+Displaying matches from ``NCBI`` and ``Encyclopedia of Life``, if exist.
+For the list of data source ids go [gnresolver].
 
 ```bash
 echo "Pomatomus saltator and Parus major" | gnfinder find -c -l eng -s "4,12"
@@ -199,3 +200,4 @@ make test
 [gnfinder gem]: https://rubygems.org/gems/gnfinder
 [go-report-img]: https://goreportcard.com/badge/github.com/gnames/gnfinder
 [go-report]: https://goreportcard.com/report/github.com/gnames/gnfinder
+[gnresolver]: https://resolver.globalnames.org/data_sources

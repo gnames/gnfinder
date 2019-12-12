@@ -111,8 +111,8 @@ func init() {
 	findCmd.Flags().BoolP("no-bayes", "n", false, "do not run Bayes algorithms.")
 	findCmd.Flags().BoolP("check-names", "c", false, "verify found name-strings.")
 	findCmd.Flags().StringP("lang", "l", "", "text's language or 'detect' for automatic detection.")
-	findCmd.Flags().IntSliceP("sources", "s", []int{1, 11, 179},
-		"IDs of data sources used in verification.")
+	findCmd.Flags().IntSliceP("sources", "s", []int{},
+		"IDs of data sources to display for matches, for example '1,11,179'")
 }
 
 func findNames(data []byte, langString string, noBayes bool,
