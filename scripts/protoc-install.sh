@@ -2,7 +2,7 @@
 # ensure that the specified version of protoc is installed in
 # /tmp/proto$PROTO_VERSION/bin/protoc, which maybe cached
 
-# bash scripts/protoc-install.sh 3.6.1
+# bash scripts/protoc-install.sh 3.11.1
 
 
 # make bash more robust.
