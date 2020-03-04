@@ -59,6 +59,11 @@ var findCmd = &cobra.Command{
 			log.Println(err)
 			os.Exit(1)
 		}
+		tokensNum, err := cmd.Flags().GetInt("tokens-around")
+		if err != nil {
+			log.Println(err)
+			os.Exit(1)
+		}
 		noBayes, err := cmd.Flags().GetBool("no-bayes")
 		if err != nil {
 			log.Println(err)
@@ -74,7 +79,7 @@ var findCmd = &cobra.Command{
 		switch len(args) {
 		case 0:
 			if !checkStdin() {
-				cmd.Help()
+				_ = cmd.Help()
 				os.Exit(0)
 			}
 			data, err = ioutil.ReadAll(os.Stdin)
@@ -88,11 +93,11 @@ var findCmd = &cobra.Command{
 				os.Exit(1)
 			}
 		default:
-			cmd.Help()
+			_ = cmd.Help()
 			os.Exit(0)
 		}
 
-		findNames(data, lang, noBayes, verify, sources)
+		findNames(data, lang, noBayes, verify, sources, tokensNum)
 	},
 }
 
@@ -107,16 +112,16 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// findCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	findCmd.Flags().BoolP("no-bayes", "n", false, "do not run Bayes algorithms.")
 	findCmd.Flags().BoolP("check-names", "c", false, "verify found name-strings.")
 	findCmd.Flags().StringP("lang", "l", "", "text's language or 'detect' for automatic detection.")
 	findCmd.Flags().IntSliceP("sources", "s", []int{},
 		"IDs of data sources to display for matches, for example '1,11,179'")
+	findCmd.Flags().IntP("tokens-around", "t", 0, "number of tokens kept around name-strings")
 }
 
 func findNames(data []byte, langString string, noBayes bool,
-	verify bool, sources []int) {
+	verify bool, sources []int, tokensNum int) {
 	var opts []gnfinder.Option
 
 	opts = append(opts, gnfinder.OptDict(dict.LoadDictionary()))
@@ -135,6 +140,10 @@ func findNames(data []byte, langString string, noBayes bool,
 
 	if verify {
 		opts = append(opts, gnfinder.OptVerify(verifier.OptSources(sources)))
+	}
+
+	if tokensNum > 0 {
+		opts = append(opts, gnfinder.OptTokensAround(tokensNum))
 	}
 
 	opts = append(opts, gnfinder.OptBayes(!noBayes))

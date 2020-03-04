@@ -11,8 +11,8 @@ import (
 )
 
 // TokensToOutput takes tagged tokens and assembles output out of them.
-func TokensToOutput(ts []token.Token, text []rune, l lang.Language,
-	code string, version string) *Output {
+func TokensToOutput(ts []token.Token, text []rune, tokensAround int,
+	l lang.Language, code string, version string) *Output {
 	var names []Name
 	for i := range ts {
 		u := &ts[i]
@@ -22,11 +22,38 @@ func TokensToOutput(ts []token.Token, text []rune, l lang.Language,
 		name := tokensToName(ts[i:token.UpperIndex(i, len(ts))], text)
 		if name.Odds == 0.0 || name.Odds > 1.0 || name.Type == "Binomial" ||
 			name.Type == "Trinomial" {
+			if tokensAround > 0 {
+				getTokensAround(ts, i, &name, tokensAround)
+			}
 			names = append(names, name)
 		}
 	}
 
 	return newOutput(names, ts, l, code, version)
+}
+
+func getTokensAround(ts []token.Token, index int, name *Name, tokensAround int) {
+	before := index - tokensAround
+	if before < 0 {
+		before = 0
+	}
+	name.WordsBefore = make([]string, index-before)
+	for i, t := range ts[before:index] {
+		name.WordsBefore[i] = t.Cleaned
+	}
+	name.WordsAfter = make([]string, 0, tokensAround)
+	count := tokensAround
+	for _, t := range ts[index:] {
+		if count == 0 {
+			break
+		}
+		if name.OffsetEnd > t.Start {
+			continue
+		}
+		count--
+		name.WordsAfter = append(name.WordsAfter, t.Cleaned)
+	}
+
 }
 
 // UniqueNameStrings takes a list of names, and returns a list of unique

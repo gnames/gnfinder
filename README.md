@@ -106,6 +106,12 @@ For the list of data source ids go [gnresolver].
 echo "Pomatomus saltator and Parus major" | gnfinder find -c -l eng -s "4,12"
 ```
 
+Returning 5 words before and after found name-candidate.
+
+```bash
+gnfinder find -t 5 file_with_names.txt
+```
+
 Getting data from a file and redirecting result to another file
 
 ```bash

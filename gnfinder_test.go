@@ -22,6 +22,7 @@ var _ = Describe("GNfinder", func() {
 			gnf := NewGNfinder()
 			Expect(gnf.Language).To(Equal(lang.DefaultLanguage))
 			Expect(gnf.LanguageDetected).To(Equal(""))
+			Expect(gnf.TokensAround).To(Equal(0))
 			Expect(gnf.Bayes).To(BeTrue())
 			Expect(gnf.Verifier).To(BeNil())
 			// dictionary is loaded internally
@@ -39,6 +40,18 @@ var _ = Describe("GNfinder", func() {
 		It("sets bayes", func() {
 			gnf := NewGNfinder(OptBayes(false))
 			Expect(gnf.Bayes).To(BeFalse())
+		})
+
+		It("sets tokens number", func() {
+			gnf := NewGNfinder(OptTokensAround(4))
+			Expect(gnf.TokensAround).To(Equal(4))
+		})
+
+		It("does not set 'bad' tokens number", func() {
+			gnf := NewGNfinder(OptTokensAround(-1))
+			Expect(gnf.TokensAround).To(Equal(0))
+			gnf = NewGNfinder(OptTokensAround(10))
+			Expect(gnf.TokensAround).To(Equal(5))
 		})
 
 		It("sets bayes' threshold", func() {

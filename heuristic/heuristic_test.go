@@ -19,7 +19,7 @@ var _ = Describe("Heuristic", func() {
          (Sophophora) melanogaster disagrees!`)
 			ts := token.Tokenize(text)
 			heuristic.TagTokens(ts, dictionary)
-			o := output.TokensToOutput(ts, text, lang.English, "eng", "v0.0.0")
+			o := output.TokensToOutput(ts, text, 0, lang.English, "eng", "v0.0.0")
 			res := make([]string, 0, 7)
 			for _, n := range o.Names {
 				res = append(res, n.Name)

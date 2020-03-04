@@ -1,6 +1,8 @@
 package gnfinder
 
 import (
+	"log"
+
 	"github.com/gnames/bayes"
 	"github.com/gnames/gnfinder/dict"
 	"github.com/gnames/gnfinder/lang"
@@ -27,6 +29,9 @@ type GNfinder struct {
 	// number of names in text. We use it when we do not have local conentration
 	// of names in a region of text.
 	TextOdds bayes.LabelFreq
+	// TokensAround gives number of tokens kepts before and after each
+	// name-candidate.
+	TokensAround int
 
 	// NameDistribution keeps data about position of names candidates and
 	// their value according to heuristic and Bayes name-finding algorithms.
@@ -78,6 +83,22 @@ func OptBayesThreshold(odds float64) Option {
 	}
 }
 
+// OptTokensAround sets number of tokens rememberred on the left and right
+// side of a name-candidate.
+func OptTokensAround(tokensNum int) Option {
+	return func(gnf *GNfinder) {
+		if tokensNum < 0 {
+			log.Println("tokens number around name must be positive")
+			tokensNum = 0
+		}
+		if tokensNum > 5 {
+			log.Println("tokens number around name must be in between 0 and 5")
+			tokensNum = 5
+		}
+		gnf.TokensAround = tokensNum
+	}
+}
+
 // OptVerify is sets Verifier that will be used for validation of
 // name-strings against https://index.globalnames.org service.
 func OptVerify(opts ...verifier.Option) Option {
@@ -111,7 +132,9 @@ func NewGNfinder(opts ...Option) *GNfinder {
 		Language:           lang.DefaultLanguage,
 		Bayes:              true,
 		BayesOddsThreshold: 100.0,
+		TokensAround:       0,
 	}
+
 	for _, opt := range opts {
 		opt(gnf)
 	}

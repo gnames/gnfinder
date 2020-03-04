@@ -18,6 +18,33 @@ var _ = Describe("Output", func() {
 			Expect(len(o.Names)).To(Equal(4))
 			Expect(o.Names[0].Name).To(Equal("Pardosa moesta"))
 		})
+
+		It("creates before/after words if tokensAround > 0", func() {
+			txt := "Pardosa moesta, Pomatomus saltator and Bubo bubo " +
+				"decided to get a cup of Camelia sinensis on Sunday."
+			tokensAround := 4
+			o := makeTokenAroundOutput(tokensAround, txt)
+			ns := o.Names
+			Expect(ns[0].Name).To(Equal("Pardosa moesta"))
+			Expect(ns[0].WordsBefore).To(Equal([]string{}))
+			Expect(ns[0].WordsAfter).To(Equal([]string{
+				"Pomatomus", "saltator", "and", "Bubo",
+			}))
+			Expect(ns[2].Name).To(Equal("Bubo bubo"))
+			Expect(ns[2].WordsBefore).To(Equal([]string{
+				"moesta", "Pomatomus", "saltator", "and",
+			}))
+			Expect(ns[2].WordsAfter).To(Equal([]string{
+				"decided", "to", "get", "a",
+			}))
+			Expect(ns[3].Name).To(Equal("Camelia sinensis"))
+			Expect(ns[3].WordsBefore).To(Equal([]string{
+				"get", "a", "cup", "of",
+			}))
+			Expect(ns[3].WordsAfter).To(Equal([]string{
+				"on", "Sunday",
+			}))
+		})
 	})
 
 	Describe("Output.ToJSON", func() {
@@ -55,6 +82,12 @@ Conostylis Americana, 2i. 6d.
 		})
 	})
 })
+
+func makeTokenAroundOutput(tokensAround int, s string) *output.Output {
+	gnf := gnfinder.NewGNfinder(gnfinder.OptDict(dictionary), gnfinder.OptTokensAround(tokensAround))
+	output := gnf.FindNames([]byte(s))
+	return output
+}
 
 func makeOutput() *output.Output {
 	s := `Pardosa moesta, Pomatomus saltator and Bubo bubo decided to get a

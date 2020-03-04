@@ -75,6 +75,8 @@ type Name struct {
 	OffsetStart  int                    `json:"start"`
 	OffsetEnd    int                    `json:"end"`
 	Annotation   string                 `json:"annotation"`
+	WordsBefore  []string               `json:"words_before,omitempty"`
+	WordsAfter   []string               `json:"words_after,omitempty"`
 	Verification *verifier.Verification `json:"verification,omitempty"`
 }
 

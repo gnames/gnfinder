@@ -5,7 +5,7 @@ package protob;
 message Void {}
 
 message Pong {
-	string value = 1;
+  string value = 1;
 }
 
 message Version {
@@ -14,72 +14,72 @@ message Version {
 }
 
 message Params {
-	string text = 1;
-	bool no_bayes = 3; // has to make it negative because of false default value.
-	string language = 4;
-	bool detect_language = 5;
-	bool verification = 6;
-	repeated int32 sources = 7;
+  string text = 1;
+  bool no_bayes = 3; // has to make it negative because of false default value.
+  string language = 4;
+  bool detect_language = 5;
+  bool verification = 6;
+  repeated int32 sources = 7;
 }
 
 message Output {
-	string date = 1;
-	string finder_version = 2;
-	string language = 3;
-	string language_detected = 4;
-	bool detect_language = 5;
-	int32 total_tokens = 6;
-	int32 total_candidates = 7;
-	int32 total_names = 8;
-	repeated NameString names = 9;
+  string date = 1;
+  string finder_version = 2;
+  string language = 3;
+  string language_detected = 4;
+  bool detect_language = 5;
+  int32 total_tokens = 6;
+  int32 total_candidates = 7;
+  int32 total_names = 8;
+  repeated NameString names = 9;
 }
 
 message NameString {
-	string type = 1;
-	string verbatim = 2;
-	string name = 3;
-	float odds = 4;
-	int32 offset_start = 5;
-	int32 offset_end = 6;
+  string type = 1;
+  string verbatim = 2;
+  string name = 3;
+  float odds = 4;
+  int32 offset_start = 5;
+  int32 offset_end = 6;
 
-	Verification verification = 7;
+  Verification verification = 7;
 }
 
 message Verification {
-	ResultData	best_result = 1;
-	repeated ResultData preferred_results = 2;
-	int32 data_sources_num = 3;
-	string data_source_quality = 4;
-	int32 retries = 5;
-	string error = 6;
+  ResultData  best_result = 1;
+  repeated ResultData preferred_results = 2;
+  int32 data_sources_num = 3;
+  string data_source_quality = 4;
+  int32 retries = 5;
+  string error = 6;
 }
 
 message ResultData {
-	int32 data_source_id = 1;
-	string data_source_title = 2;
-	string taxon_id = 3;
-	string matched_name = 4;
-	string matched_canonical = 5;
-	string current_name = 6;
-	bool synonym = 7;
-	string classification_path = 8;
-	string classification_rank = 9;
-	string classification_ids = 10;
-	int32 edit_distance = 11;
-	int32 stem_edit_distance = 12;
-	MatchType match_type = 13;
+  int32 data_source_id = 1;
+  string data_source_title = 2;
+  string taxon_id = 3;
+  string matched_name = 4;
+  string matched_canonical = 5;
+  string current_name = 6;
+  bool synonym = 7;
+  string classification_path = 8;
+  string classification_rank = 9;
+  string classification_ids = 10;
+  int32 edit_distance = 11;
+  int32 stem_edit_distance = 12;
+  MatchType match_type = 13;
 }
 
 enum MatchType {
-	NONE = 0;
-	EXACT = 1;
-	FUZZY = 2;
-	PARTIAL_EXACT = 3;
-	PARTIAL_FUZZY = 4;
+  NONE = 0;
+  EXACT = 1;
+  FUZZY = 2;
+  PARTIAL_EXACT = 3;
+  PARTIAL_FUZZY = 4;
 }
 
 service GNFinder {
-	rpc Ping(Void) returns(Pong) {}
+  rpc Ping(Void) returns(Pong) {}
   rpc Ver(Void) returns(Version) {}
-	rpc FindNames(Params) returns(Output) {}
+  rpc FindNames(Params) returns(Output) {}
 }

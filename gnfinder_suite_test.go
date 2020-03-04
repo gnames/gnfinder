@@ -2,6 +2,7 @@ package gnfinder_test
 
 import (
 	"io/ioutil"
+	"log"
 
 	"github.com/gnames/bayes"
 	. "github.com/gnames/gnfinder"
@@ -33,6 +34,7 @@ var _ = BeforeSuite(func() {
 	Expect(len(book)).To(BeNumerically(">", 1000000))
 	dictionary = dict.LoadDictionary()
 	weights = nlp.BayesWeights()
+	log.SetOutput(ioutil.Discard)
 })
 
 var _ = BeforeEach(func() {
