@@ -1,6 +1,7 @@
 package gnfinder_test
 
 import (
+	"strings"
 	"time"
 
 	"github.com/gnames/gnfinder"
@@ -12,7 +13,10 @@ import (
 var _ = Describe("Output", func() {
 	Describe("NewOutput", func() {
 		It("creates an Output object", func() {
-			o := makeOutput()
+			txt := "Pardosa moesta, Pomatomus saltator and Bubo bubo " +
+				"decided to get a cup of Camelia sinensis on Sunday."
+			tokensAround := 0
+			o := makeOutput(tokensAround, txt)
 			Expect(o.Meta.Date.Year()).To(BeNumerically("~", time.Now().Year(), 1))
 			Expect(o.Meta.FinderVersion).To(MatchRegexp(`^v\d\.\d\.\d`))
 			Expect(len(o.Names)).To(Equal(4))
@@ -23,7 +27,7 @@ var _ = Describe("Output", func() {
 			txt := "Pardosa moesta, Pomatomus saltator and Bubo bubo " +
 				"decided to get a cup of Camelia sinensis on Sunday."
 			tokensAround := 4
-			o := makeTokenAroundOutput(tokensAround, txt)
+			o := makeOutput(tokensAround, txt)
 			ns := o.Names
 			Expect(ns[0].Name).To(Equal("Pardosa moesta"))
 			Expect(ns[0].WordsBefore).To(Equal([]string{}))
@@ -45,11 +49,50 @@ var _ = Describe("Output", func() {
 				"on", "Sunday",
 			}))
 		})
+
+		It("looks for nomenclatural annotations", func() {
+			tokensAround := 5
+			txts := []string{
+				"Pardosa moesta sp n|sp n",
+				"Pardosa moesta sp. n.|sp. n.",
+				"Pardosa moesta sp nov|sp nov",
+				"Pardosa moesta n. subsp.|n. subsp.",
+				"Pardosa moesta ssp. nv.|ssp. nv.",
+				"Pardosa moesta ssp. n.|ssp. n.",
+				"Pardosa moesta comb. n.|comb. n.",
+				"Pardosa moesta nov comb|nov comb",
+				"Pardosa moesta and then something ssp. n.|ssp. n.",
+				"Pardosa moesta one two three sp. n.|sp. n.",
+			}
+			for _, txt := range txts {
+				txt := strings.Split(txt, "|")
+				o := makeOutput(tokensAround, txt[0])
+				Expect(o.Names[0].AnnotNomen).To(Equal(txt[1]))
+			}
+		})
+
+		It("does not return nomenclatural fake nomenclatural annotations", func() {
+			tokensAround := 5
+			txts := []string{
+				"Pardosa moesta sp. and n.",
+				"Pardosa moesta one two three four sp. n.",
+				"Pardosa moesta barmasp. nov.",
+				"Parsoda moesta nova sp.",
+				"Pardosa moesta n. and sp.",
+			}
+			for _, txt := range txts {
+				o := makeOutput(tokensAround, txt)
+				Expect(o.Names[0].AnnotNomen).To(Equal(""))
+			}
+		})
 	})
 
 	Describe("Output.ToJSON", func() {
 		It("converts output object to JSON", func() {
-			o := makeOutput()
+			txt := "Pardosa moesta, Pomatomus saltator and Bubo bubo " +
+				"decided to get a cup of Camelia sinensis on Sunday."
+			tokensAround := 0
+			o := makeOutput(tokensAround, txt)
 			j := o.ToJSON()
 			Expect(string(j)[0:17]).To(Equal("{\n  \"metadata\": {"))
 		})
@@ -74,7 +117,10 @@ Conostylis Americana, 2i. 6d.
 
 	Describe("Output.FromJSON", func() {
 		It("creates output object from JSON", func() {
-			o := makeOutput()
+			txt := "Pardosa moesta, Pomatomus saltator and Bubo bubo " +
+				"decided to get a cup of Camelia sinensis on Sunday."
+			tokensAround := 0
+			o := makeOutput(tokensAround, txt)
 			j := o.ToJSON()
 			o2 := &output.Output{}
 			o2.FromJSON(j)
@@ -83,16 +129,8 @@ Conostylis Americana, 2i. 6d.
 	})
 })
 
-func makeTokenAroundOutput(tokensAround int, s string) *output.Output {
-	gnf := gnfinder.NewGNfinder(gnfinder.OptDict(dictionary), gnfinder.OptTokensAround(tokensAround))
-	output := gnf.FindNames([]byte(s))
-	return output
-}
-
-func makeOutput() *output.Output {
-	s := `Pardosa moesta, Pomatomus saltator and Bubo bubo decided to get a
-		a cup of Camelia sinensis on a nice Sunday evening.`
-	gnf := gnfinder.NewGNfinder(gnfinder.OptDict(dictionary), gnfinder.OptBayes(true))
+func makeOutput(tokensAround int, s string) *output.Output {
+	gnf := gnfinder.NewGNfinder(gnfinder.OptDict(dictionary), gnfinder.OptBayes(false), gnfinder.OptTokensAround(tokensAround))
 	output := gnf.FindNames([]byte(s))
 	return output
 }

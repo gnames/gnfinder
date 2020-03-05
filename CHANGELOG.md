@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add [#44]: save nomenclatural annotation for new species, combinations,
+             subscpecies etc.
 - Add [#45]: return desired number of words before and after a name-candidate.
 
 ## [v0.9.1]

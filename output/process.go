@@ -22,9 +22,7 @@ func TokensToOutput(ts []token.Token, text []rune, tokensAround int,
 		name := tokensToName(ts[i:token.UpperIndex(i, len(ts))], text)
 		if name.Odds == 0.0 || name.Odds > 1.0 || name.Type == "Binomial" ||
 			name.Type == "Trinomial" {
-			if tokensAround > 0 {
-				getTokensAround(ts, i, &name, tokensAround)
-			}
+			getTokensAround(ts, i, &name, tokensAround)
 			names = append(names, name)
 		}
 	}
@@ -33,7 +31,9 @@ func TokensToOutput(ts []token.Token, text []rune, tokensAround int,
 }
 
 func getTokensAround(ts []token.Token, index int, name *Name, tokensAround int) {
+	limit := 5
 	before := index - tokensAround
+	after := make([]token.Token, 0, limit)
 	if before < 0 {
 		before = 0
 	}
@@ -42,18 +42,41 @@ func getTokensAround(ts []token.Token, index int, name *Name, tokensAround int) 
 		name.WordsBefore[i] = t.Cleaned
 	}
 	name.WordsAfter = make([]string, 0, tokensAround)
-	count := tokensAround
+	count := 0
 	for _, t := range ts[index:] {
-		if count == 0 {
+		if count == limit {
 			break
 		}
 		if name.OffsetEnd > t.Start {
 			continue
 		}
-		count--
-		name.WordsAfter = append(name.WordsAfter, t.Cleaned)
+		if count < tokensAround {
+			name.WordsAfter = append(name.WordsAfter, t.Cleaned)
+		}
+		after = append(after, t)
+		count++
 	}
+	name.AnnotNomen = annotNomen(after)
+}
 
+func annotNomen(after []token.Token) string {
+	annot := make([]string, 0, 2)
+	for _, v := range after {
+		if len(annot) > 1 {
+			break
+		}
+		c := v.Cleaned
+		if c == "n" || c == "nv" || c == "nov" || c == "sp" || c == "comb" ||
+			c == "subsp" || c == "ssp" {
+			annot = append(annot, string(v.Raw))
+		} else {
+			annot = annot[0:0]
+		}
+	}
+	if len(annot) == 2 {
+		return strings.Join(annot, " ")
+	}
+	return ""
 }
 
 // UniqueNameStrings takes a list of names, and returns a list of unique

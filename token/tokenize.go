@@ -33,7 +33,7 @@ func Tokenize(text []rune) []Token {
 			start = i + 1
 		}
 	}
-	if len(text)-start > 1 {
+	if len(text)-start > 0 {
 		t := NewToken(text, start, len(text))
 		res = append(res, t)
 	}

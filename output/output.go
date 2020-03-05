@@ -67,16 +67,29 @@ type OddsDatum struct {
 
 // Name represents one found name.
 type Name struct {
-	Type         string                 `json:"type"`
-	Verbatim     string                 `json:"verbatim"`
-	Name         string                 `json:"name"`
-	Odds         float64                `json:"odds,omitempty"`
-	OddsDetails  token.OddsDetails      `json:"odds_details,omitempty"`
-	OffsetStart  int                    `json:"start"`
-	OffsetEnd    int                    `json:"end"`
-	Annotation   string                 `json:"annotation"`
-	WordsBefore  []string               `json:"words_before,omitempty"`
-	WordsAfter   []string               `json:"words_after,omitempty"`
+	// Type is a string description for found name.
+	Type string `json:"type"`
+	// Verbatim shows name the way it was in the text.
+	Verbatim string `json:"verbatim"`
+	// Name is a normalized version of a name.
+	Name string `json:"name"`
+	// Odds show a probability that name detection was correct.
+	Odds float64 `json:"odds,omitempty"`
+	// OddsDetails desrive how Odds were calculated.
+	OddsDetails token.OddsDetails `json:"odds_details,omitempty"`
+	// OffsetStart is a start of a name on a page.
+	OffsetStart int `json:"start"`
+	// OffsetEnd is the end of the name on a page.
+	OffsetEnd int `json:"end"`
+	// AnnotNomen is a nomenclatural annotation for new species or combination.
+	AnnotNomen string `json:"annotation_nomen,omitempty"`
+	// Annotation is a placeholder to add more information about name.
+	Annotation string `json:"annotation"`
+	// WordsBefore are words that happened before the name.
+	WordsBefore []string `json:"words_before,omitempty"`
+	// WordsAfter are words that happened right after the name.
+	WordsAfter []string `json:"words_after,omitempty"`
+	// Verification gives results of verification process of the name.
 	Verification *verifier.Verification `json:"verification,omitempty"`
 }
 
