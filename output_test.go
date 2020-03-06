@@ -50,6 +50,25 @@ var _ = Describe("Output", func() {
 			}))
 		})
 
+		It("does not save huge before/after words", func() {
+			txt := "Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa " +
+				"Pardosa moesta " +
+				"Bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+			tokensAround := 4
+			o := makeOutput(tokensAround, txt)
+			n := o.Names[0]
+			Expect(n.Name).To(Equal("Pardosa moesta"))
+			Expect(len(n.WordsBefore)).To(Equal(0))
+			Expect(len(n.WordsAfter)).To(Equal(0))
+			txt = "Aaaaaaaaaaaaaaaaaaaaaaa Pardosa moesta " +
+				"bbbbbbbbbbbbbbbbbbbbbbb"
+			o = makeOutput(tokensAround, txt)
+			n = o.Names[0]
+			Expect(n.Name).To(Equal("Pardosa moesta"))
+			Expect(len(n.WordsBefore)).To(Equal(1))
+			Expect(len(n.WordsAfter)).To(Equal(1))
+		})
+
 		It("looks for nomenclatural annotations", func() {
 			tokensAround := 5
 			txts := []string{
@@ -75,6 +94,8 @@ var _ = Describe("Output", func() {
 			tokensAround := 5
 			txts := []string{
 				"Pardosa moesta sp. and n.",
+				"Pardosa moesta nov. n.",
+				"Pardosa moesta subsp. sp.",
 				"Pardosa moesta one two three four sp. n.",
 				"Pardosa moesta barmasp. nov.",
 				"Parsoda moesta nova sp.",

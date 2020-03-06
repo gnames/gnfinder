@@ -32,14 +32,17 @@ func TokensToOutput(ts []token.Token, text []rune, tokensAround int,
 
 func getTokensAround(ts []token.Token, index int, name *Name, tokensAround int) {
 	limit := 5
+	tooBig := 30
 	before := index - tokensAround
 	after := make([]token.Token, 0, limit)
 	if before < 0 {
 		before = 0
 	}
-	name.WordsBefore = make([]string, index-before)
-	for i, t := range ts[before:index] {
-		name.WordsBefore[i] = t.Cleaned
+	name.WordsBefore = make([]string, 0, index-before)
+	for _, t := range ts[before:index] {
+		if len(t.Cleaned) < tooBig {
+			name.WordsBefore = append(name.WordsBefore, t.Cleaned)
+		}
 	}
 	name.WordsAfter = make([]string, 0, tokensAround)
 	count := 0
@@ -50,7 +53,7 @@ func getTokensAround(ts []token.Token, index int, name *Name, tokensAround int) 
 		if name.OffsetEnd > t.Start {
 			continue
 		}
-		if count < tokensAround {
+		if count < tokensAround && len(t.Cleaned) < 30 {
 			name.WordsAfter = append(name.WordsAfter, t.Cleaned)
 		}
 		after = append(after, t)
@@ -61,19 +64,25 @@ func getTokensAround(ts []token.Token, index int, name *Name, tokensAround int) 
 
 func annotNomen(after []token.Token) string {
 	annot := make([]string, 0, 2)
+	nNum := 0
 	for _, v := range after {
 		if len(annot) > 1 {
 			break
 		}
 		c := v.Cleaned
-		if c == "n" || c == "nv" || c == "nov" || c == "sp" || c == "comb" ||
-			c == "subsp" || c == "ssp" {
+		isN := (c == "n" || c == "nv" || c == "nov")
+		if isN {
+			nNum++
+		}
+		isSp := (c == "sp" || c == "comb" || c == "subsp" || c == "ssp")
+		if isN || isSp {
 			annot = append(annot, string(v.Raw))
 		} else {
 			annot = annot[0:0]
+			nNum = 0
 		}
 	}
-	if len(annot) == 2 {
+	if len(annot) == 2 && nNum == 1 {
 		return strings.Join(annot, " ")
 	}
 	return ""
