@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [v0.10.0]
+
 - Add [#44]: save nomenclatural annotation for new species, combinations,
              subscpecies etc.
 - Add [#45]: return desired number of words before and after a name-candidate.
@@ -131,6 +133,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.10.0]: https://github.com/gnames/gnfinder/compare/v0.9.1...v0.10.0
 [v0.9.1]: https://github.com/gnames/gnfinder/compare/v0.9.0...v0.9.1
 [v0.9.0]: https://github.com/gnames/gnfinder/compare/v0.8.10...v0.9.0
 [v0.8.10]: https://github.com/gnames/gnfinder/compare/v0.8.9...v0.8.10
@@ -150,6 +153,10 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#50]: https://github.com/gnames/gnfinder/issues/50
+[#49]: https://github.com/gnames/gnfinder/issues/49
+[#48]: https://github.com/gnames/gnfinder/issues/48
+[#47]: https://github.com/gnames/gnfinder/issues/47
 [#46]: https://github.com/gnames/gnfinder/issues/46
 [#45]: https://github.com/gnames/gnfinder/issues/45
 [#44]: https://github.com/gnames/gnfinder/issues/44
