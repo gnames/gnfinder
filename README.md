@@ -32,6 +32,8 @@ Finds scientific names using dictionary and nlp approaches.
   option that can override this rule.
 * Optionally verifies found names against multiple biodiversity databases using
   [gnindex] service.
+* Detection of nomenclatural annotations like `sp. nov.`, `comb. nov.`,
+  `ssp. nov.` and their variants.
 * The library can be used concurrently to **significantly improve speed**.
   On a server with 40threads it is able to detect names on 50 million pages
   in approximately 3 hours using both heuristic and Bayes algorithms. Check
@@ -116,6 +118,12 @@ Getting data from a file and redirecting result to another file
 
 ```bash
 gnfinder find file1.txt > file2.json
+```
+
+Detection of nomenclatural annotations
+
+```bash
+echo "Parus major sp. n." | gnfinder find
 ```
 
 ### Usage as gRPC service

@@ -18,7 +18,7 @@ var _ = Describe("Output", func() {
 			tokensAround := 0
 			o := makeOutput(tokensAround, txt)
 			Expect(o.Meta.Date.Year()).To(BeNumerically("~", time.Now().Year(), 1))
-			Expect(o.Meta.FinderVersion).To(MatchRegexp(`^v\d\.\d\.\d`))
+			Expect(o.Meta.FinderVersion).To(MatchRegexp(`^v\d+\.\d+\.\d+`))
 			Expect(len(o.Names)).To(Equal(4))
 			Expect(o.Names[0].Name).To(Equal("Pardosa moesta"))
 		})
@@ -72,21 +72,23 @@ var _ = Describe("Output", func() {
 		It("looks for nomenclatural annotations", func() {
 			tokensAround := 5
 			txts := []string{
-				"Pardosa moesta sp n|sp n",
-				"Pardosa moesta sp. n.|sp. n.",
-				"Pardosa moesta sp nov|sp nov",
-				"Pardosa moesta n. subsp.|n. subsp.",
-				"Pardosa moesta ssp. nv.|ssp. nv.",
-				"Pardosa moesta ssp. n.|ssp. n.",
-				"Pardosa moesta comb. n.|comb. n.",
-				"Pardosa moesta nov comb|nov comb",
-				"Pardosa moesta and then something ssp. n.|ssp. n.",
-				"Pardosa moesta one two three sp. n.|sp. n.",
+				"Pardosa moesta sp n|sp n|SP_NOV",
+				"Pardosa moesta sp. n.|sp. n.|SP_NOV",
+				"Pardosa moesta sp nov|sp nov|SP_NOV",
+				"Pardosa moesta n. subsp.|n. subsp.|SUBSP_NOV",
+				"Pardosa moesta ssp. nv.|ssp. nv.|SUBSP_NOV",
+				"Pardosa moesta ssp. n.|ssp. n.|SUBSP_NOV",
+				"Pardosa moesta comb. n.|comb. n.|COMB_NOV",
+				"Pardosa moesta nov comb|nov comb|COMB_NOV",
+				"Pardosa moesta and then something ssp. n.|ssp. n.|SUBSP_NOV",
+				"Pardosa moesta one two three sp. n.|sp. n.|SP_NOV",
+				"Pardosa moesta||NO_ANNOT",
 			}
 			for _, txt := range txts {
 				txt := strings.Split(txt, "|")
 				o := makeOutput(tokensAround, txt[0])
 				Expect(o.Names[0].AnnotNomen).To(Equal(txt[1]))
+				Expect(o.Names[0].AnnotNomenType).To(Equal(txt[2]))
 			}
 		})
 
@@ -104,6 +106,7 @@ var _ = Describe("Output", func() {
 			for _, txt := range txts {
 				o := makeOutput(tokensAround, txt)
 				Expect(o.Names[0].AnnotNomen).To(Equal(""))
+				Expect(o.Names[0].AnnotNomenType).To(Equal("NO_ANNOT"))
 			}
 		})
 	})

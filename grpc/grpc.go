@@ -93,6 +93,10 @@ func setOpts(params *protob.Params) []gnfinder.Option {
 		}
 	}
 
+	if params.TokensAround > 0 {
+		opts = append(opts, gnfinder.OptTokensAround(int(params.TokensAround)))
+	}
+
 	return opts
 }
 
@@ -100,12 +104,17 @@ func protobNameStrings(out *output.Output) protob.Output {
 	var names []*protob.NameString
 	for _, n := range out.Names {
 		name := &protob.NameString{
-			Type:         n.Type,
-			Verbatim:     n.Verbatim,
-			Name:         n.Name,
-			Odds:         float32(n.Odds),
-			OffsetStart:  int32(n.OffsetStart),
-			OffsetEnd:    int32(n.OffsetEnd),
+			Type:           n.Type,
+			Verbatim:       n.Verbatim,
+			Name:           n.Name,
+			Odds:           float32(n.Odds),
+			AnnotNomen:     n.AnnotNomen,
+			AnnotNomenType: getAnnotNomenType(n.AnnotNomenType),
+			OffsetStart:    int32(n.OffsetStart),
+			OffsetEnd:      int32(n.OffsetEnd),
+			WordsBefore:    n.WordsBefore,
+			WordsAfter:     n.WordsAfter,
+
 			Verification: verification(n.Verification),
 		}
 		names = append(names, name)
@@ -167,6 +176,18 @@ func preferredResults(ver *verifier.Verification) []*protob.ResultData {
 		res[i] = buildResult(v)
 	}
 	return res
+}
+
+func getAnnotNomenType(match string) protob.AnnotNomenType {
+	switch match {
+	case "SP_NOV":
+		return protob.AnnotNomenType_SP_NOV
+	case "COMB_NOV":
+		return protob.AnnotNomenType_COMB_NOV
+	case "SUBSP_NOV":
+		return protob.AnnotNomenType_SUBSP_NOV
+	}
+	return protob.AnnotNomenType_NO_ANNOT
 }
 
 func getMatchType(match string) protob.MatchType {

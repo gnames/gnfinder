@@ -19,7 +19,8 @@ message Params {
   string language = 4;
   bool detect_language = 5;
   bool verification = 6;
-  repeated int32 sources = 7;
+  int32 tokens_around = 7;
+  repeated int32 sources = 8;
 }
 
 message Output {
@@ -39,10 +40,14 @@ message NameString {
   string verbatim = 2;
   string name = 3;
   float odds = 4;
-  int32 offset_start = 5;
-  int32 offset_end = 6;
+  string annot_nomen = 5;
+  AnnotNomenType annot_nomen_type = 6;
+  int32 offset_start = 7;
+  int32 offset_end = 8;
+  repeated string words_before = 9;
+  repeated string words_after = 10;
 
-  Verification verification = 7;
+  Verification verification = 11;
 }
 
 message Verification {
@@ -76,6 +81,13 @@ enum MatchType {
   FUZZY = 2;
   PARTIAL_EXACT = 3;
   PARTIAL_FUZZY = 4;
+}
+
+enum AnnotNomenType {
+  NO_ANNOT = 0;
+  SP_NOV = 1;
+  COMB_NOV = 2;
+  SUBSP_NOV = 3;
 }
 
 service GNFinder {

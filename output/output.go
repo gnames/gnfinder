@@ -83,6 +83,8 @@ type Name struct {
 	OffsetEnd int `json:"end"`
 	// AnnotNomen is a nomenclatural annotation for new species or combination.
 	AnnotNomen string `json:"annotation_nomen,omitempty"`
+	// AnnotNomenType is normalized nomenclatural annotation.
+	AnnotNomenType string `json:"annotation_nomen_type,omitempty"`
 	// Annotation is a placeholder to add more information about name.
 	Annotation string `json:"annotation"`
 	// WordsBefore are words that happened before the name.

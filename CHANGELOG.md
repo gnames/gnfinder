@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [v0.10.1]
+
+- Add [#46]: gRPC serves nomenclatural annotation and words surrounding
+             name-strings.
+
 ## [v0.10.0]
 
 - Add [#44]: save nomenclatural annotation for new species, combinations,
@@ -133,6 +138,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.10.1]: https://github.com/gnames/gnfinder/compare/v0.10.0...v0.10.1
 [v0.10.0]: https://github.com/gnames/gnfinder/compare/v0.9.1...v0.10.0
 [v0.9.1]: https://github.com/gnames/gnfinder/compare/v0.9.0...v0.9.1
 [v0.9.0]: https://github.com/gnames/gnfinder/compare/v0.8.10...v0.9.0

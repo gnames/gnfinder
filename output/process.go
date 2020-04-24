@@ -60,6 +60,27 @@ func getTokensAround(ts []token.Token, index int, name *Name, tokensAround int) 
 		count++
 	}
 	name.AnnotNomen = annotNomen(after)
+	name.AnnotNomenType = normalizeAnnotNomen(name.AnnotNomen)
+}
+
+func normalizeAnnotNomen(annot string) string {
+	if len(annot) == 0 {
+		return "NO_ANNOT"
+	}
+
+	if strings.Contains(annot, "subsp") || strings.Contains(annot, "ssp") {
+		return "SUBSP_NOV"
+	}
+
+	if strings.Contains(annot, "sp") {
+		return "SP_NOV"
+	}
+
+	if strings.Contains(annot, "comb") {
+		return "COMB_NOV"
+	}
+
+	return "NO_ANNOT"
 }
 
 func annotNomen(after []token.Token) string {
