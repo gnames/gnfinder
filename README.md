@@ -3,37 +3,42 @@
 [![Build Status][travis-img]][travis] [![Doc Status][doc-img]][doc] [![Go Report Card][go-report-img]][go-report]
 
 Finds scientific names using dictionary and nlp approaches.
-- [Global Names Finder](#global-names-finder)
-  - [Features](#features)
-  - [Install as a command line app](#install-as-a-command-line-app)
-    - [Linux or OS X](#linux-or-os-x)
-    - [Windows](#windows)
-    - [Go](#go)
-  - [Usage](#usage)
-    - [Usage as a command line app](#usage-as-a-command-line-app)
-    - [Usage as gRPC service](#usage-as-grpc-service)
-    - [Usage as a library](#usage-as-a-library)
-    - [Usage as a docker container](#usage-as-a-docker-container)
-  - [Development](#development)
-  - [Testing](#testing)
+
+
+<!-- vim-markdown-toc GFM -->
+
+* [Features](#features)
+* [Install as a command line app](#install-as-a-command-line-app)
+  * [Linux or OS X](#linux-or-os-x)
+  * [Windows](#windows)
+  * [Go](#go)
+* [Usage](#usage)
+  * [Usage as a command line app](#usage-as-a-command-line-app)
+  * [Usage as gRPC service](#usage-as-grpc-service)
+  * [Usage as a library](#usage-as-a-library)
+  * [Usage as a docker container](#usage-as-a-docker-container)
+* [Development](#development)
+* [Testing](#testing)
+
+<!-- vim-markdown-toc -->
 
 ## Features
 
 * Multiplatform packages (Linux, Windows, Mac OS X).
 * Self-contained, no external dependencies, only binary `gnfinder` or
-  `gnfinder.exe` (~15Mb) is needed.
+  `gnfinder.exe` (~15Mb) is needed. However the internet connection is
+  required for name-verification.
 * Takes UTF8-encoded text and returns back JSON-formatted output that contains
   detected scientific names.
 * Optionally, automatically detects the language of the text, and adjusts Bayes
   algorithm for the language. English and German languages are currently
   supported.
 * Uses complementary heuristic and natural language processing algorithms.
-* Does not use Bayes algorithm if language cannot be detected. There is an
-  option that can override this rule.
 * Optionally verifies found names against multiple biodiversity databases using
   [gnindex] service.
 * Detection of nomenclatural annotations like `sp. nov.`, `comb. nov.`,
   `ssp. nov.` and their variants.
+* Ability to see words that surround detected name-strings.
 * The library can be used concurrently to **significantly improve speed**.
   On a server with 40threads it is able to detect names on 50 million pages
   in approximately 3 hours using both heuristic and Bayes algorithms. Check
@@ -172,6 +177,9 @@ docker run -d -p 8888:8778 --name gnfinder gnames/gnfinder
 
 To install latest gnfinder
 
+Download ``protoc`` binary compiled for your OS from
+[protobuffers releases] and move it to ``/usr/local/bin``
+
 ```
 go get github.com/gnames/gnfinder
 cd $GOPATH/src/github.com/gnames/gnfinder
@@ -215,3 +223,4 @@ make test
 [go-report-img]: https://goreportcard.com/badge/github.com/gnames/gnfinder
 [go-report]: https://goreportcard.com/report/github.com/gnames/gnfinder
 [gnresolver]: https://resolver.globalnames.org/data_sources
+[protobuffers releases]: https://github.com/protocolbuffers/protobuf/releases

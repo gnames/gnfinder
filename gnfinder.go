@@ -24,6 +24,8 @@ type GNfinder struct {
 	// BayesOddsThreshold sets the limit of posterior odds. Everything bigger
 	// that this limit will go to the names output.
 	BayesOddsThreshold float64
+	// BayesOddsDetails show odds calculation details in the CLI output.
+	BayesOddsDetails bool
 	// TextOdds captures "concentration" of names as it is found for the whole
 	// text by heuristic name-finding. It should be close enough for real
 	// number of names in text. We use it when we do not have local conentration
@@ -80,6 +82,13 @@ func OptBayes(b bool) Option {
 func OptBayesThreshold(odds float64) Option {
 	return func(gnf *GNfinder) {
 		gnf.BayesOddsThreshold = odds
+	}
+}
+
+// OptBayesOddsDetails option to show details of odds calculations.
+func OptBayesOddsDetails(o bool) Option {
+	return func(gnf *GNfinder) {
+		gnf.BayesOddsDetails = o
 	}
 }
 

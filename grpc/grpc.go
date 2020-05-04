@@ -103,8 +103,9 @@ func setOpts(params *protob.Params) []gnfinder.Option {
 func protobNameStrings(out *output.Output) protob.Output {
 	var names []*protob.NameString
 	for _, n := range out.Names {
+		cardinality := int32(n.Cardinality)
 		name := &protob.NameString{
-			Type:           n.Type,
+			Cardinality:    cardinality,
 			Verbatim:       n.Verbatim,
 			Name:           n.Name,
 			Odds:           float32(n.Odds),
@@ -122,6 +123,8 @@ func protobNameStrings(out *output.Output) protob.Output {
 	ns := protob.Output{
 		Date:             out.Date.String(),
 		FinderVersion:    out.FinderVersion,
+		Approach:         getApproaches(out.WithBayes),
+		TokensAround:     int32(out.TokensAround),
 		Language:         out.Language,
 		LanguageDetected: out.LanguageDetected,
 		DetectLanguage:   out.DetectLanguage,
@@ -153,18 +156,23 @@ func verification(ver *verifier.Verification) *protob.Verification {
 
 func buildResult(res *verifier.ResultData) *protob.ResultData {
 	rd := &protob.ResultData{
-		DataSourceId:       int32(res.DataSourceID),
-		DataSourceTitle:    res.DataSourceTitle,
-		TaxonId:            res.TaxonID,
-		MatchedName:        res.MatchedName,
-		MatchedCanonical:   res.MatchedCanonical,
-		CurrentName:        res.CurrentName,
-		ClassificationPath: res.ClassificationPath,
-		ClassificationRank: res.ClassificationRank,
-		ClassificationIds:  res.ClassificationIDs,
-		EditDistance:       int32(res.EditDistance),
-		StemEditDistance:   int32(res.StemEditDistance),
-		MatchType:          getMatchType(res.MatchType),
+		DataSourceId:           int32(res.DataSourceID),
+		DataSourceTitle:        res.DataSourceTitle,
+		TaxonId:                res.TaxonID,
+		MatchedName:            res.MatchedName,
+		MatchedCardinality:     int32(res.MatchedCardinality),
+		MatchedCanonicalSimple: res.MatchedCanonicalSimple,
+		MatchedCanonicalFull:   res.MatchedCanonicalFull,
+		CurrentName:            res.CurrentName,
+		CurrentCardinality:     int32(res.CurrentCardinality),
+		CurrentCanonicalSimple: res.CurrentCanonicalSimple,
+		CurrentCanonicalFull:   res.CurrentCanonicalFull,
+		ClassificationPath:     res.ClassificationPath,
+		ClassificationRank:     res.ClassificationRank,
+		ClassificationIds:      res.ClassificationIDs,
+		EditDistance:           int32(res.EditDistance),
+		StemEditDistance:       int32(res.StemEditDistance),
+		MatchType:              getMatchType(res.MatchType),
 	}
 
 	return rd
@@ -204,4 +212,13 @@ func getMatchType(match string) protob.MatchType {
 		return protob.MatchType_PARTIAL_FUZZY
 	}
 	return protob.MatchType_NONE
+}
+
+func getApproaches(bayes bool) []protob.Approach {
+	res := make([]protob.Approach, 0, 2)
+	res = append(res, protob.Approach_HEURISTIC)
+	if bayes {
+		res = append(res, protob.Approach_BAYES)
+	}
+	return res
 }

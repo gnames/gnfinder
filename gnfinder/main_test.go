@@ -27,7 +27,7 @@ var _ = Describe("Main", func() {
 			c.SetStdin(stdin)
 			c.Run()
 			Expect(c.Success()).To(BeTrue())
-			Expect(c.Stdout()).To(ContainSubstring(`"type": "Binomial"`))
+			Expect(c.Stdout()).To(ContainSubstring(`"cardinality": 2`))
 		})
 		It("finds verified names with -c flag", func() {
 			c := testcli.Command("gnfinder", "find", "-c")

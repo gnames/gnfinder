@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## [v0.11.0]
+
+- Add [#49]: Cleanup protobuf and JSON outputs. Introducing backward
+             incompatible changes in the output. Standardising CLI JSON
+             to camelcase, introducing cardinality instead of string for
+             a name type, adding canonical simple and full canonical foms
+             for matched and current names. Removing current name unless
+             it is a synonym.
+
 ## [v0.10.1]
 
 - Add [#46]: gRPC serves nomenclatural annotation and words surrounding

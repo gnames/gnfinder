@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gnames/gnfinder/lang"
 	"github.com/gnames/gnfinder/nlp"
 	"github.com/gnames/gnfinder/token"
 	"github.com/gnames/gnfinder/verifier"
@@ -12,22 +11,21 @@ import (
 
 // TokensToOutput takes tagged tokens and assembles output out of them.
 func TokensToOutput(ts []token.Token, text []rune, tokensAround int,
-	l lang.Language, code string, version string) *Output {
+	oddsDetails bool, opts ...Option) *Output {
 	var names []Name
 	for i := range ts {
 		u := &ts[i]
 		if u.Decision == token.NotName {
 			continue
 		}
-		name := tokensToName(ts[i:token.UpperIndex(i, len(ts))], text)
-		if name.Odds == 0.0 || name.Odds > 1.0 || name.Type == "Binomial" ||
-			name.Type == "Trinomial" {
+		name := tokensToName(ts[i:token.UpperIndex(i, len(ts))], text, oddsDetails)
+		if name.Odds == 0.0 || name.Odds > 1.0 || name.Cardinality == 2 ||
+			name.Cardinality == 3 {
 			getTokensAround(ts, i, &name, tokensAround)
 			names = append(names, name)
 		}
 	}
-
-	return newOutput(names, ts, l, code, version)
+	return newOutput(names, ts, opts...)
 }
 
 func getTokensAround(ts []token.Token, index int, name *Name, tokensAround int) {
@@ -136,30 +134,30 @@ func (o *Output) MergeVerification(v verifier.Output) {
 	}
 }
 
-func tokensToName(ts []token.Token, text []rune) Name {
+func tokensToName(ts []token.Token, text []rune, oddsDetails bool) Name {
 	u := &ts[0]
 	switch u.Decision.Cardinality() {
 	case 1:
-		return uninomialName(u, text)
+		return uninomialName(u, text, oddsDetails)
 	case 2:
-		return speciesName(u, &ts[u.Indices.Species], text)
+		return speciesName(u, &ts[u.Indices.Species], text, oddsDetails)
 	case 3:
-		return infraspeciesName(ts, text)
+		return infraspeciesName(ts, text, oddsDetails)
 	default:
 		panic(fmt.Errorf("unkown Decision: %s", u.Decision))
 	}
 }
 
-func uninomialName(u *token.Token, text []rune) Name {
+func uninomialName(u *token.Token, text []rune, oddsDetails bool) Name {
 	name := Name{
-		Type:        u.Decision.String(),
+		Cardinality: u.Decision.Cardinality(),
 		Verbatim:    string(text[u.Start:u.End]),
 		Name:        u.Cleaned,
 		OffsetStart: u.Start,
 		OffsetEnd:   u.End,
 		Odds:        u.Odds,
 	}
-	if len(u.OddsDetails) == 0 {
+	if len(u.OddsDetails) == 0 || !oddsDetails {
 		return name
 	}
 	if l, ok := u.OddsDetails[nlp.Name.String()]; ok {
@@ -169,9 +167,10 @@ func uninomialName(u *token.Token, text []rune) Name {
 	return name
 }
 
-func speciesName(g *token.Token, s *token.Token, text []rune) Name {
+func speciesName(g *token.Token, s *token.Token, text []rune,
+	oddsDetails bool) Name {
 	name := Name{
-		Type:        g.Decision.String(),
+		Cardinality: g.Decision.Cardinality(),
 		Verbatim:    string(text[g.Start:s.End]),
 		Name:        fmt.Sprintf("%s %s", g.Cleaned, strings.ToLower(s.Cleaned)),
 		OffsetStart: g.Start,
@@ -179,7 +178,7 @@ func speciesName(g *token.Token, s *token.Token, text []rune) Name {
 		Odds:        g.Odds * s.Odds,
 	}
 	if len(g.OddsDetails) == 0 || len(s.OddsDetails) == 0 ||
-		len(g.LabelFreq) == 0 {
+		len(g.LabelFreq) == 0 || !oddsDetails {
 		return name
 	}
 	if lg, ok := g.OddsDetails[nlp.Name.String()]; ok {
@@ -194,7 +193,7 @@ func speciesName(g *token.Token, s *token.Token, text []rune) Name {
 	return name
 }
 
-func infraspeciesName(ts []token.Token, text []rune) Name {
+func infraspeciesName(ts []token.Token, text []rune, oddsDetails bool) Name {
 	g := &ts[0]
 	sp := &ts[g.Indices.Species]
 	isp := &ts[g.Indices.Infraspecies]
@@ -205,7 +204,7 @@ func infraspeciesName(ts []token.Token, text []rune) Name {
 	}
 
 	name := Name{
-		Type:        g.Decision.String(),
+		Cardinality: g.Decision.Cardinality(),
 		Verbatim:    string(text[g.Start:isp.End]),
 		Name:        infraspeciesString(g, sp, rank, isp),
 		OffsetStart: g.Start,
@@ -213,7 +212,7 @@ func infraspeciesName(ts []token.Token, text []rune) Name {
 		Odds:        g.Odds * sp.Odds * isp.Odds,
 	}
 	if len(g.OddsDetails) == 0 || len(sp.OddsDetails) == 0 ||
-		len(isp.OddsDetails) == 0 || len(g.LabelFreq) == 0 {
+		len(isp.OddsDetails) == 0 || len(g.LabelFreq) == 0 || !oddsDetails {
 		return name
 	}
 	if lg, ok := g.OddsDetails[nlp.Name.String()]; ok {

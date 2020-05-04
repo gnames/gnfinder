@@ -59,9 +59,10 @@ var _ = Describe("Verifier", func() {
 			Expect(match.MatchType).To(Equal("ExactCanonicalMatch"))
 			Expect(match.DataSourceID).To(BeNumerically(">", 0))
 			Expect(match.MatchedName).To(Equal("Homo sapiens Linnaeus, 1758"))
-			Expect(match.MatchedCanonical).To(Equal("Homo sapiens"))
+			Expect(match.MatchedCanonicalSimple).To(Equal("Homo sapiens"))
 			Expect(match.ClassificationPath).To(Equal("Animalia|Chordata|Mammalia|Primates|Hominoidea|Hominidae|Homo|Homo sapiens"))
-			Expect(match.CurrentName).To(Equal("Homo sapiens Linnaeus, 1758"))
+			Expect(match.MatchedName).To(Equal("Homo sapiens Linnaeus, 1758"))
+			Expect(match.MatchedCanonicalFull).To(Equal("Homo sapiens"))
 		})
 
 		It("finds exact match", func() {
@@ -118,7 +119,7 @@ var _ = Describe("Verifier", func() {
 			nameOutputs := v.Run([]string{name})
 			result := nameOutputs[name].BestResult
 			Expect(result.MatchType).To(Equal("ExactPartialMatch"))
-			Expect(result.CurrentName).To(Equal("Drosophila"))
+			Expect(result.MatchedName).To(Equal("Drosophila"))
 		})
 
 		It("calculates edit and stem edit distances correctly", func() {

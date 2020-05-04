@@ -69,6 +69,11 @@ var findCmd = &cobra.Command{
 			log.Println(err)
 			os.Exit(1)
 		}
+		oddsDetails, err := cmd.Flags().GetBool("odds-details")
+		if err != nil {
+			log.Println(err)
+			os.Exit(1)
+		}
 		verify, err :=
 			cmd.Flags().GetBool("check-names")
 		if err != nil {
@@ -97,7 +102,7 @@ var findCmd = &cobra.Command{
 			os.Exit(0)
 		}
 
-		findNames(data, lang, noBayes, verify, sources, tokensNum)
+		findNames(data, lang, noBayes, verify, sources, tokensNum, oddsDetails)
 	},
 }
 
@@ -114,6 +119,7 @@ func init() {
 	// is called directly, e.g.:
 	findCmd.Flags().BoolP("no-bayes", "n", false, "do not run Bayes algorithms.")
 	findCmd.Flags().BoolP("check-names", "c", false, "verify found name-strings.")
+	findCmd.Flags().BoolP("odds-details", "o", false, "show details of odds calculation.")
 	findCmd.Flags().StringP("lang", "l", "", "text's language or 'detect' for automatic detection.")
 	findCmd.Flags().IntSliceP("sources", "s", []int{},
 		"IDs of data sources to display for matches, for example '1,11,179'")
@@ -121,7 +127,7 @@ func init() {
 }
 
 func findNames(data []byte, langString string, noBayes bool,
-	verify bool, sources []int, tokensNum int) {
+	verify bool, sources []int, tokensNum int, oddsDetails bool) {
 	var opts []gnfinder.Option
 
 	opts = append(opts, gnfinder.OptDict(dict.LoadDictionary()))
@@ -144,6 +150,10 @@ func findNames(data []byte, langString string, noBayes bool,
 
 	if tokensNum > 0 {
 		opts = append(opts, gnfinder.OptTokensAround(tokensNum))
+	}
+
+	if oddsDetails {
+		opts = append(opts, gnfinder.OptBayesOddsDetails(oddsDetails))
 	}
 
 	opts = append(opts, gnfinder.OptBayes(!noBayes))

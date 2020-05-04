@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/machinebox/graphql"
+	"gitlab.com/gogna/gnparser"
 )
 
 func (v *Verifier) Run(names []string) Output {
@@ -65,8 +66,8 @@ func try(fn func(int) (bool, error)) (int, error) {
 	var (
 		err        error
 		tryAgain   bool
-		maxRetries = 3
-		attempt    = 1
+		maxRetries int = 3
+		attempt    int = 1
 	)
 	for {
 		tryAgain, err = fn(attempt)
@@ -129,6 +130,7 @@ func createResult(names []string, resp *graphqlResponse, attempts int,
 
 func processResult(verResult Output, res <-chan *BatchResult,
 	done chan<- bool) {
+	gnp := gnparser.NewGNparser()
 	for r := range res {
 		if r.Response.NameResolver.Responses == nil {
 			processError(verResult, r)
@@ -137,7 +139,7 @@ func processResult(verResult Output, res <-chan *BatchResult,
 
 		for _, resp := range r.Response.NameResolver.Responses {
 			if resp.MatchedDataSources > 0 && len(resp.Results) > 0 {
-				processMatch(verResult, resp, r.Retries, r.Error)
+				processMatch(gnp, verResult, resp, r.Retries, r.Error)
 			} else {
 				processNoMatch(verResult, resp, r.Retries, r.Error)
 			}
@@ -156,32 +158,62 @@ func processError(verResult Output, result *BatchResult) {
 	}
 }
 
-func processMatch(verResult Output, resp response, retries int,
-	err error) {
+type nameData struct {
+	name          string
+	cardinality   int
+	canonical     string
+	canonicalFull string
+}
+
+func processMatch(gnp gnparser.GNparser, verResult Output, resp response,
+	retries int, err error) {
 	result := resp.Results[0]
+	n := getNameData(gnp, result.Name.Value)
+	cn := nameData{}
+	if result.Synonym {
+		cn = getNameData(gnp, result.AcceptedName.Name.Value)
+	}
 	v := &Verification{
 		BestResult: &ResultData{
-			DataSourceID:       result.DataSource.ID,
-			TaxonID:            result.TaxonID,
-			DataSourceTitle:    result.DataSource.Title,
-			MatchedName:        result.Name.Value,
-			MatchedCanonical:   result.CanonicalName.ValueRanked,
-			CurrentName:        result.AcceptedName.Name.Value,
-			Synonym:            result.Synonym,
-			ClassificationPath: result.Classification.Path,
-			ClassificationRank: result.Classification.PathRanks,
-			ClassificationIDs:  result.Classification.PathIDs,
-			MatchType:          result.MatchType.Kind,
-			EditDistance:       result.MatchType.VerbatimEditDistance,
-			StemEditDistance:   result.MatchType.StemEditDistance,
+			DataSourceID:           result.DataSource.ID,
+			TaxonID:                result.TaxonID,
+			DataSourceTitle:        result.DataSource.Title,
+			MatchedName:            n.name,
+			MatchedCardinality:     n.cardinality,
+			MatchedCanonicalSimple: n.canonical,
+			MatchedCanonicalFull:   n.canonicalFull,
+			CurrentName:            cn.name,
+			CurrentCardinality:     cn.cardinality,
+			CurrentCanonicalSimple: cn.canonical,
+			CurrentCanonicalFull:   cn.canonicalFull,
+			Synonym:                result.Synonym,
+			ClassificationPath:     result.Classification.Path,
+			ClassificationRank:     result.Classification.PathRanks,
+			ClassificationIDs:      result.Classification.PathIDs,
+			MatchType:              result.MatchType.Kind,
+			EditDistance:           result.MatchType.VerbatimEditDistance,
+			StemEditDistance:       result.MatchType.StemEditDistance,
 		},
 		DataSourcesNum:    resp.MatchedDataSources,
 		DataSourceQuality: resp.QualitySummary,
-		PreferredResults:  getPreferredResults(resp.PreferredResults),
+		PreferredResults:  getPreferredResults(gnp, resp.PreferredResults),
 		Retries:           retries,
 		Error:             errorString(err),
 	}
 	verResult[resp.SuppliedInput] = v
+}
+
+func getNameData(gnp gnparser.GNparser, name string) nameData {
+	parsed := gnp.ParseToObject(name)
+	if !parsed.Parsed {
+		return nameData{name: name}
+	}
+	return nameData{
+		name:          name,
+		cardinality:   int(parsed.Cardinality),
+		canonical:     parsed.Canonical.GetSimple(),
+		canonicalFull: parsed.Canonical.GetFull(),
+	}
 }
 
 func errorString(err error) string {
@@ -191,6 +223,7 @@ func errorString(err error) string {
 	}
 	return res
 }
+
 func processNoMatch(verResult Output, resp response, retries int,
 	err error) {
 	verResult[resp.SuppliedInput] =
@@ -203,23 +236,34 @@ func processNoMatch(verResult Output, resp response, retries int,
 		}
 }
 
-func getPreferredResults(results []dataResult) []*ResultData {
+func getPreferredResults(gnp gnparser.GNparser,
+	results []dataResult) []*ResultData {
 	var prs []*ResultData
 	for _, r := range results {
+		n := getNameData(gnp, r.Name.Value)
+		cn := nameData{}
+		if r.Synonym {
+			cn = getNameData(gnp, r.AcceptedName.Name.Value)
+		}
 		pr := &ResultData{
-			DataSourceID:       r.DataSource.ID,
-			TaxonID:            r.TaxonID,
-			DataSourceTitle:    r.DataSource.Title,
-			MatchedName:        r.Name.Value,
-			MatchedCanonical:   r.CanonicalName.ValueRanked,
-			CurrentName:        r.AcceptedName.Name.Value,
-			Synonym:            r.Synonym,
-			ClassificationPath: r.Classification.Path,
-			ClassificationRank: r.Classification.PathRanks,
-			ClassificationIDs:  r.Classification.PathIDs,
-			MatchType:          r.MatchType.Kind,
-			EditDistance:       r.MatchType.VerbatimEditDistance,
-			StemEditDistance:   r.MatchType.StemEditDistance,
+			DataSourceID:           r.DataSource.ID,
+			TaxonID:                r.TaxonID,
+			DataSourceTitle:        r.DataSource.Title,
+			MatchedName:            n.name,
+			MatchedCardinality:     n.cardinality,
+			MatchedCanonicalSimple: n.canonical,
+			MatchedCanonicalFull:   n.canonicalFull,
+			CurrentName:            cn.name,
+			CurrentCardinality:     cn.cardinality,
+			CurrentCanonicalSimple: cn.canonical,
+			CurrentCanonicalFull:   cn.canonicalFull,
+			Synonym:                r.Synonym,
+			ClassificationPath:     r.Classification.Path,
+			ClassificationRank:     r.Classification.PathRanks,
+			ClassificationIDs:      r.Classification.PathIDs,
+			MatchType:              r.MatchType.Kind,
+			EditDistance:           r.MatchType.VerbatimEditDistance,
+			StemEditDistance:       r.MatchType.StemEditDistance,
 		}
 		prs = append(prs, pr)
 	}

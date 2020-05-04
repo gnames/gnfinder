@@ -2,7 +2,6 @@ package heuristic_test
 
 import (
 	"github.com/gnames/gnfinder/heuristic"
-	"github.com/gnames/gnfinder/lang"
 	"github.com/gnames/gnfinder/output"
 	"github.com/gnames/gnfinder/token"
 	. "github.com/onsi/ginkgo"
@@ -19,7 +18,7 @@ var _ = Describe("Heuristic", func() {
          (Sophophora) melanogaster disagrees!`)
 			ts := token.Tokenize(text)
 			heuristic.TagTokens(ts, dictionary)
-			o := output.TokensToOutput(ts, text, 0, lang.English, "eng", "v0.0.0")
+			o := output.TokensToOutput(ts, text, 0, false)
 			res := make([]string, 0, 7)
 			for _, n := range o.Names {
 				res = append(res, n.Name)

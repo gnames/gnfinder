@@ -58,7 +58,7 @@ var _ = Describe("Verifier", func() {
 			v := NewVerifier()
 			name := []string{"Pardosa moesta"}
 			o := v.Run(name)["Pardosa moesta"]
-			Expect(o.BestResult.MatchedCanonical).To(Equal("Pardosa moesta"))
+			Expect(o.BestResult.MatchedCanonicalSimple).To(Equal("Pardosa moesta"))
 			Expect(len(o.BestResult.ClassificationIDs)).To(BeNumerically(">", 10))
 			Expect(len(o.PreferredResults)).To(Equal(3))
 		})

@@ -24,4 +24,5 @@ if [ ! -f "${PROTO_DIR}/bin/protoc" ]; then
   unzip -o "${PROTO_FILE}" -d "${PROTO_DIR}"
   rm "${PROTO_FILE}"
   sudo cp "${PROTO_DIR}/bin/protoc" /usr/local/bin
+  sudo chmod +x /usr/local/bin/protoc
 fi
