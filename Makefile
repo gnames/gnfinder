@@ -18,10 +18,10 @@ test: deps install
 	$(FLAG_MODULE) go test ./...
 
 deps:
-	$(FLAG_MODULE) $(GOGET) github.com/spf13/cobra/cobra@1.0.0; \
-	$(FLAG_MODULE) $(GOGET) github.com/onsi/ginkgo/ginkgo@1.12.0; \
-	$(FLAG_MODULE) $(GOGET) github.com/onsi/gomega@1.10.0; \
-	$(FLAG_MODULE) $(GOGET) github.com/golang/protobuf/protoc-gen-go@0.1.0; \
+	$(FLAG_MODULE) $(GOGET) github.com/spf13/cobra/cobra@v1.0.0; \
+	$(FLAG_MODULE) $(GOGET) github.com/onsi/ginkgo/ginkgo@v1.12.0; \
+	$(FLAG_MODULE) $(GOGET) github.com/onsi/gomega@v1.10.0; \
+	$(FLAG_MODULE) $(GOGET) github.com/golang/protobuf/protoc-gen-go@v1.4.1; \
 	$(GOGENERATE)
 
 asset:
