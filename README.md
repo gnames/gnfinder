@@ -18,6 +18,9 @@ Finds scientific names using dictionary and nlp approaches.
   * [Usage as a library](#usage-as-a-library)
   * [Usage as a docker container](#usage-as-a-docker-container)
 * [Development](#development)
+  * [Install protobuf on Mac](#install-protobuf-on-mac)
+  * [Install protobuf on Linux](#install-protobuf-on-linux)
+  * [Install gnfinder](#install-gnfinder)
 * [Testing](#testing)
 
 <!-- vim-markdown-toc -->
@@ -175,10 +178,51 @@ docker run -d -p 8888:8778 --name gnfinder gnames/gnfinder
 
 ## Development
 
-To install latest gnfinder
+To install the latest gnfinder
 
 Download ``protoc`` binary compiled for your OS from
-[protobuffers releases] and move it to ``/usr/local/bin``
+[protobuf releases].
+
+### Install protobuf on Mac
+
+```{.bash}
+brew install protobuf
+```
+
+If you see any error messages, run ``brew doctor``, follow any recommended
+fixes, and try again. If it still fails, try instead:
+
+```{.bash}
+brew upgrade protobuf
+```
+
+Alternately, run the following commands:
+
+```{.bash}
+PROTOC_ZIP=protoc-3.11.4-osx-x86_64.zip
+curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.11.4/$PROTOC_ZIP
+sudo unzip -o $PROTOC_ZIP -d /usr/local bin/protoc
+sudo unzip -o $PROTOC_ZIP -d /usr/local 'include/*'
+rm -f $PROTOC_ZIP
+```
+
+Or manually download and install protoc from [protobuf releases].
+
+### Install protobuf on Linux
+
+Run the following commands:
+
+```{.bash}
+PROTOC_ZIP=protoc-3.11.4-linux-x86_64.zip
+curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.11.4/$PROTOC_ZIP
+sudo unzip -o $PROTOC_ZIP -d /usr/local bin/protoc
+sudo unzip -o $PROTOC_ZIP -d /usr/local 'include/*'
+rm -f $PROTOC_ZIP
+```
+
+Or manually download and install protoc from [protobuf releases].
+
+### Install gnfinder
 
 ```
 go get github.com/gnames/gnfinder
@@ -187,6 +231,7 @@ make deps
 make
 gnfinder -h
 ```
+
 
 ## Testing
 
@@ -223,4 +268,4 @@ make test
 [go-report-img]: https://goreportcard.com/badge/github.com/gnames/gnfinder
 [go-report]: https://goreportcard.com/report/github.com/gnames/gnfinder
 [gnresolver]: https://resolver.globalnames.org/data_sources
-[protobuffers releases]: https://github.com/protocolbuffers/protobuf/releases
+[protobuf releases]: https://github.com/protocolbuffers/protobuf/releases

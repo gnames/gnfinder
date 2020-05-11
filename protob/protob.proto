@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package protob;
+option go_package = "github.com/gnames/gnfinder/protob";
 
 message Void {}
 
