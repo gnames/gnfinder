@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix [#51]:  Remove 'Piper' from black list, add new words to dictionaries.
+
 ## [v0.11.0]
 
 - Add [#49]: Cleanup protobuf and JSON outputs. Introducing backward
@@ -147,6 +149,8 @@
 
 This document follows [changelog guidelines]
 
+[v0.11.1]: https://github.com/gnames/gnfinder/compare/v0.11.0...v0.11.1
+[v0.11.0]: https://github.com/gnames/gnfinder/compare/v0.10.1...v0.11.0
 [v0.10.1]: https://github.com/gnames/gnfinder/compare/v0.10.0...v0.10.1
 [v0.10.0]: https://github.com/gnames/gnfinder/compare/v0.9.1...v0.10.0
 [v0.9.1]: https://github.com/gnames/gnfinder/compare/v0.9.0...v0.9.1
@@ -168,6 +172,8 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#52]: https://github.com/gnames/gnfinder/issues/52
+[#51]: https://github.com/gnames/gnfinder/issues/51
 [#50]: https://github.com/gnames/gnfinder/issues/50
 [#49]: https://github.com/gnames/gnfinder/issues/49
 [#48]: https://github.com/gnames/gnfinder/issues/48

@@ -7,6 +7,7 @@ import (
 	"github.com/gnames/gnfinder"
 	"github.com/gnames/gnfinder/output"
 	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 )
 
@@ -22,6 +23,17 @@ var _ = Describe("Output", func() {
 			Expect(len(o.Names)).To(Equal(4))
 			Expect(o.Names[0].Name).To(Equal("Pardosa moesta"))
 		})
+
+		DescribeTable("Finds names", func(r string, expected int) {
+			Expect(len(makeOutput(0, r).Names)).To(Equal(expected))
+		},
+			Entry("Piper notname", "Piper smokes", 0),
+			Entry("Piper ovalifolium", "Piper ovalifolium", 1),
+			Entry("Piper alba", "Piper alba", 0),
+			Entry("Bovine alba", "Bovine alba", 0),
+			Entry("Japaneese yew", "Japaneese yew", 0),
+			Entry("Candidatus alba", "Candidatus alba", 0),
+		)
 
 		It("creates before/after words if tokensAround > 0", func() {
 			txt := "Pardosa moesta, Pomatomus saltator and Bubo bubo " +
