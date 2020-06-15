@@ -146,7 +146,7 @@ Conostylis Americana, 2i. 6d.
 			gnf := gnfinder.NewGNfinder(gnfinder.OptDict(dictionary),
 				gnfinder.OptBayes(true))
 			output := gnf.FindNames([]byte(str))
-			Expect(output.Names[1].Verbatim).
+			Expect(output.Names[2].Verbatim).
 				To(Equal("Cymbidium pul-\n\n\ncheilum,"))
 		})
 	})
