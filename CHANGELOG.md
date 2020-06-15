@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## [v0.11.1]
+
+- Add: Update dictionaries.
 - Fix [#51]:  Remove 'Piper' from black list, add new words to dictionaries.
 
 ## [v0.11.0]
