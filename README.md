@@ -152,19 +152,20 @@ Use a gRPC client for gnfinder. To learn how to make one, check a
 ### Usage as a library
 
 ```bash
-cd $GOPATH/srs/github.com/gnames/gnfinder
+cd $GOPATH/src/github.com/gnames/gnfinder
 make deps
 ```
 
 ```go
 import (
   "github.com/gnames/gnfinder"
-  "github.com/gnames/gnfinder/dict"
 )
 
 bytesText := []byte(utfText)
 
-jsonNames := FindNamesJSON(bytesText)
+gnf := gnfinder.NewGNfinder()
+jsonNames := gnf.FindNamesJSON(bytesText)
+fmt.Println(string(output))
 ```
 
 ### Usage as a docker container
