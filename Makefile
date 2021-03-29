@@ -28,13 +28,13 @@ asset:
 	cd fs; \
 	$(FLAGS_SHARED) go run -tags=dev assets_gen.go
 
-build: grpc asset
+build: asset
 	$(GOGENERATE)
 	cd gnfinder; \
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=linux $(GOBUILD);
 
-release: grpc dockerhub
+release: dockerhub
 	cd gnfinder; \
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=linux $(GOBUILD); \
@@ -47,15 +47,10 @@ release: grpc dockerhub
 	zip -9 /tmp/gnfinder-${VER}-win-64.zip gnfinder.exe; \
 	$(GOCLEAN);
 
-install: grpc asset
+install: asset
 	$(GOGENERATE)
 	cd gnfinder; \
 	$(FLAGS_SHARED) $(GOINSTALL);
-
-.PHONY:grpc
-grpc:
-	cd protob; \
-	protoc -I . ./protob.proto --go_out=plugins=grpc:.;
 
 docker: build
 	docker build -t gnames/gnfinder:latest -t gnames/gnfinder:${VERSION} .; \
