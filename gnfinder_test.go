@@ -9,7 +9,6 @@ import (
 
 	"github.com/gnames/gnfinder/lang"
 	"github.com/gnames/gnfinder/output"
-	"github.com/gnames/gnfinder/verifier"
 
 	. "github.com/gnames/gnfinder"
 	. "github.com/onsi/ginkgo"
@@ -24,7 +23,6 @@ var _ = Describe("GNfinder", func() {
 			Expect(gnf.LanguageDetected).To(Equal(""))
 			Expect(gnf.TokensAround).To(Equal(0))
 			Expect(gnf.Bayes).To(BeTrue())
-			Expect(gnf.Verifier).To(BeNil())
 			// dictionary is loaded internally
 			Expect(len(gnf.Dict.Ranks)).To(BeNumerically(">", 5))
 		})
@@ -61,21 +59,13 @@ var _ = Describe("GNfinder", func() {
 		})
 
 		It("sets several options", func() {
-			url := "http://example.org"
-			vOpts := []verifier.Option{
-				verifier.OptURL(url),
-				verifier.OptWorkers(10),
-			}
 			opts := []Option{
 				OptDict(dictionary),
 				OptBayesWeights(weights),
-				OptVerify(vOpts...),
 				OptBayes(true),
 				OptLanguage(lang.German),
 			}
 			gnf := NewGNfinder(opts...)
-			Expect(gnf.Verifier.Workers).To(Equal(10))
-			Expect(gnf.Verifier.URL).To(Equal(url))
 			Expect(gnf.Language).To(Equal(lang.German))
 			Expect(gnf.DetectLanguage).To(BeFalse())
 			Expect(gnf.Bayes).To(BeTrue())

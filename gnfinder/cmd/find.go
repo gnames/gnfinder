@@ -30,7 +30,6 @@ import (
 	"github.com/gnames/gnfinder"
 	"github.com/gnames/gnfinder/dict"
 	"github.com/gnames/gnfinder/lang"
-	"github.com/gnames/gnfinder/verifier"
 	"github.com/spf13/cobra"
 )
 
@@ -144,10 +143,6 @@ func findNames(data []byte, langString string, noBayes bool,
 		opts = append(opts, gnfinder.OptLanguage(l))
 	}
 
-	if verify {
-		opts = append(opts, gnfinder.OptVerify(verifier.OptSources(sources)))
-	}
-
 	if tokensNum > 0 {
 		opts = append(opts, gnfinder.OptTokensAround(tokensNum))
 	}
@@ -162,7 +157,7 @@ func findNames(data []byte, langString string, noBayes bool,
 	res := gnf.FindNames(data)
 
 	if gnf.Verifier != nil {
-		verifiedNames := gnf.Verifier.Run(res.UniqueNameStrings())
+		verifiedNames := gnf.Verifier.Verify(res.UniqueNameStrings())
 		res.MergeVerification(verifiedNames)
 	}
 	fmt.Println(string(res.ToJSON()))

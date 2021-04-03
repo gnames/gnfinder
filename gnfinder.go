@@ -40,7 +40,7 @@ type GNfinder struct {
 	// NameDistribution.
 
 	// Verifier for scientific names.
-	Verifier *verifier.Verifier
+	Verifier verifier.Verifier
 	// Dict contains black, grey, and white list dictionaries.
 	Dict *dict.Dictionary
 	// BayesTrained contains training for all supported bayes dictionaries.
@@ -108,14 +108,6 @@ func OptTokensAround(tokensNum int) Option {
 	}
 }
 
-// OptVerify is sets Verifier that will be used for validation of
-// name-strings against https://index.globalnames.org service.
-func OptVerify(opts ...verifier.Option) Option {
-	return func(gnf *GNfinder) {
-		gnf.Verifier = verifier.NewVerifier(opts...)
-	}
-}
-
 // OptDict allows to set already created dictionary for GNfinder.
 // It saves time, because then dictionary does not have to be loaded at
 // the construction time.
@@ -142,6 +134,7 @@ func NewGNfinder(opts ...Option) *GNfinder {
 		Bayes:              true,
 		BayesOddsThreshold: 100.0,
 		TokensAround:       0,
+		Verifier:           verifier.New(),
 	}
 
 	for _, opt := range opts {

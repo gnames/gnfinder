@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/gnames/gnfinder/token"
-	"github.com/gnames/gnfinder/verifier"
+	vlib "github.com/gnames/gnlib/ent/verifier"
 	jsoniter "github.com/json-iterator/go"
 )
 
@@ -136,7 +136,7 @@ type Name struct {
 	// WordsAfter are words that happened right after the name.
 	WordsAfter []string `json:"wordsAfter,omitempty"`
 	// Verification gives results of verification process of the name.
-	Verification *verifier.Verification `json:"verification,omitempty"`
+	Verification vlib.Verification `json:"verification,omitempty"`
 }
 
 // ToJSON converts Output to JSON representation.

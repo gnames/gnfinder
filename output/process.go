@@ -6,7 +6,7 @@ import (
 
 	"github.com/gnames/gnfinder/nlp"
 	"github.com/gnames/gnfinder/token"
-	"github.com/gnames/gnfinder/verifier"
+	vlib "github.com/gnames/gnlib/ent/verifier"
 )
 
 // TokensToOutput takes tagged tokens and assembles output out of them.
@@ -126,9 +126,9 @@ func (o *Output) UniqueNameStrings() []string {
 
 // MergeVerification takes a map with verified names and
 // incorporates into output.
-func (o *Output) MergeVerification(v verifier.Output) {
-	for i, n := range o.Names {
-		if v, ok := v[n.Name]; ok {
+func (o *Output) MergeVerification(v map[string]vlib.Verification) {
+	for i := range o.Names {
+		if v, ok := v[o.Names[i].Name]; ok {
 			o.Names[i].Verification = v
 		}
 	}
