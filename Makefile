@@ -25,7 +25,7 @@ deps:
 	$(GOGENERATE)
 
 asset:
-	cd fs; \
+	cd io/fs; \
 	$(FLAGS_SHARED) go run -tags=dev assets_gen.go
 
 build: asset

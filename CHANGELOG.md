@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add: [#68]: Refactor the code with interfaces to be consistent with other
+              projects.
+
 ## [v0.11.1]
 
 - Add: Update dictionaries.

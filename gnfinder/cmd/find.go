@@ -27,9 +27,11 @@ import (
 	"os"
 	"strings"
 
+	"github.com/gnames/bayes"
 	"github.com/gnames/gnfinder"
-	"github.com/gnames/gnfinder/dict"
-	"github.com/gnames/gnfinder/lang"
+	"github.com/gnames/gnfinder/ent/lang"
+	"github.com/gnames/gnfinder/ent/nlp"
+	"github.com/gnames/gnfinder/io/dict"
 	"github.com/spf13/cobra"
 )
 
@@ -125,13 +127,21 @@ func init() {
 	findCmd.Flags().IntP("tokens-around", "t", 0, "number of tokens kept around name-strings")
 }
 
-func findNames(data []byte, langString string, noBayes bool,
-	verify bool, sources []int, tokensNum int, oddsDetails bool) {
+func findNames(
+	data []byte,
+	langString string,
+	noBayes bool,
+	verify bool,
+	sources []int,
+	tokensNum int,
+	oddsDetails bool,
+) {
+	dict := dict.LoadDictionary()
 	var opts []gnfinder.Option
+	var weights map[lang.Language]*bayes.NaiveBayes
 
-	opts = append(opts, gnfinder.OptDict(dict.LoadDictionary()))
 	if langString == "detect" {
-		opts = append(opts, gnfinder.OptDetectLanguage(true))
+		opts = append(opts, gnfinder.OptWithLanguageDetection(true))
 	} else if langString != "" {
 		l, err := lang.NewLanguage(langString)
 		if err != nil {
@@ -148,16 +158,23 @@ func findNames(data []byte, langString string, noBayes bool,
 	}
 
 	if oddsDetails {
-		opts = append(opts, gnfinder.OptBayesOddsDetails(oddsDetails))
+		opts = append(opts, gnfinder.OptWithBayesOddsDetails(oddsDetails))
 	}
 
-	opts = append(opts, gnfinder.OptBayes(!noBayes))
+	opts = append(opts, gnfinder.OptPreferredSources(sources))
 
-	gnf := gnfinder.NewGNfinder(opts...)
+	if !noBayes {
+		weights = nlp.BayesWeights()
+	}
+	opts = append(opts, gnfinder.OptWithBayes(!noBayes))
+	opts = append(opts, gnfinder.OptWithVerification(verify))
+
+	cfg := gnfinder.NewConfig(opts...)
+	gnf := gnfinder.New(cfg, dict, weights)
 	res := gnf.FindNames(data)
 
-	if gnf.Verifier != nil {
-		verifiedNames := gnf.Verifier.Verify(res.UniqueNameStrings())
+	if gnf.GetConfig().WithVerification {
+		verifiedNames := gnf.Verify(res.UniqueNameStrings())
 		res.MergeVerification(verifiedNames)
 	}
 	fmt.Println(string(res.ToJSON()))

@@ -5,12 +5,12 @@ import (
 	"log"
 	"path/filepath"
 
-	"github.com/gnames/gnfinder/dict"
-	"github.com/gnames/gnfinder/nlp"
+	"github.com/gnames/gnfinder/ent/nlp"
+	"github.com/gnames/gnfinder/io/dict"
 )
 
 func main() {
-	dir := filepath.Join("..", "..", "data")
+	dir := filepath.Join("..", "..", "io", "data")
 	data := nlp.NewTrainingLanguageData(filepath.Join(dir, "training"))
 	output := filepath.Join(dir, "files", "nlp")
 	d := dict.LoadDictionary()

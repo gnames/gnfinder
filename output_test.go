@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/gnames/gnfinder"
-	"github.com/gnames/gnfinder/output"
+	"github.com/gnames/gnfinder/ent/output"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
@@ -143,8 +143,8 @@ Calopogon, or Cymbidium pul-
 cheilum, 1 5s. per doz.
 Conostylis Americana, 2i. 6d.
 			`
-			gnf := gnfinder.NewGNfinder(gnfinder.OptDict(dictionary),
-				gnfinder.OptBayes(true))
+			cfg := gnfinder.NewConfig(gnfinder.OptWithBayes(true))
+			gnf := gnfinder.New(cfg, dictionary, weights)
 			output := gnf.FindNames([]byte(str))
 			Expect(output.Names[2].Verbatim).
 				To(Equal("Cymbidium pul-\n\n\ncheilum,"))
@@ -166,7 +166,8 @@ Conostylis Americana, 2i. 6d.
 })
 
 func makeOutput(tokensAround int, s string) *output.Output {
-	gnf := gnfinder.NewGNfinder(gnfinder.OptDict(dictionary), gnfinder.OptBayes(false), gnfinder.OptTokensAround(tokensAround))
+	cfg := gnfinder.NewConfig(gnfinder.OptWithBayes(false), gnfinder.OptTokensAround(tokensAround))
+	gnf := gnfinder.New(cfg, dictionary, weights)
 	output := gnf.FindNames([]byte(s))
 	return output
 }

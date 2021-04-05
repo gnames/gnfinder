@@ -7,8 +7,11 @@ import (
 	"runtime/trace"
 	"testing"
 
-	"github.com/gnames/gnfinder/lang"
-	"github.com/gnames/gnfinder/output"
+	"github.com/gnames/bayes"
+	"github.com/gnames/gnfinder/ent/lang"
+	"github.com/gnames/gnfinder/ent/nlp"
+	"github.com/gnames/gnfinder/ent/output"
+	"github.com/gnames/gnfinder/io/dict"
 
 	. "github.com/gnames/gnfinder"
 	. "github.com/onsi/ginkgo"
@@ -18,85 +21,51 @@ import (
 var _ = Describe("GNfinder", func() {
 	Describe("NewGNfinder()", func() {
 		It("returns new GNfinder object", func() {
-			gnf := NewGNfinder()
-			Expect(gnf.Language).To(Equal(lang.DefaultLanguage))
-			Expect(gnf.LanguageDetected).To(Equal(""))
-			Expect(gnf.TokensAround).To(Equal(0))
-			Expect(gnf.Bayes).To(BeTrue())
-			// dictionary is loaded internally
-			Expect(len(gnf.Dict.Ranks)).To(BeNumerically(">", 5))
+			cfg := NewConfig()
+			Expect(cfg.Language).To(Equal(lang.DefaultLanguage))
+			Expect(cfg.LanguageDetected).To(Equal(""))
+			Expect(cfg.TokensAround).To(Equal(0))
+			Expect(cfg.WithBayes).To(BeTrue())
 		})
 
 		It("takes language", func() {
-			gnf := NewGNfinder(OptDict(dictionary), OptBayesWeights(weights),
-				OptLanguage(lang.English))
-			Expect(gnf.Language).To(Equal(lang.English))
-			Expect(gnf.DetectLanguage).To(BeFalse())
-			Expect(gnf.LanguageDetected).To(Equal(""))
+			cfg := NewConfig(OptLanguage(lang.English))
+			Expect(cfg.Language).To(Equal(lang.English))
+			Expect(cfg.WithLanguageDetection).To(BeFalse())
+			Expect(cfg.LanguageDetected).To(Equal(""))
 		})
 
 		It("sets bayes", func() {
-			gnf := NewGNfinder(OptBayes(false))
-			Expect(gnf.Bayes).To(BeFalse())
+			cfg := NewConfig(OptWithBayes(false))
+			Expect(cfg.WithBayes).To(BeFalse())
 		})
 
 		It("sets tokens number", func() {
-			gnf := NewGNfinder(OptTokensAround(4))
-			Expect(gnf.TokensAround).To(Equal(4))
+			cfg := NewConfig(OptTokensAround(4))
+			Expect(cfg.TokensAround).To(Equal(4))
 		})
 
 		It("does not set 'bad' tokens number", func() {
-			gnf := NewGNfinder(OptTokensAround(-1))
-			Expect(gnf.TokensAround).To(Equal(0))
-			gnf = NewGNfinder(OptTokensAround(10))
-			Expect(gnf.TokensAround).To(Equal(5))
+			cfg := NewConfig(OptTokensAround(-1))
+			Expect(cfg.TokensAround).To(Equal(0))
+			cfg = NewConfig(OptTokensAround(10))
+			Expect(cfg.TokensAround).To(Equal(5))
 		})
 
 		It("sets bayes' threshold", func() {
-			gnf := NewGNfinder(OptDict(dictionary), OptBayesWeights(weights),
-				OptBayesThreshold(200))
-			Expect(gnf.BayesOddsThreshold).To(Equal(200.0))
+			cfg := NewConfig(OptBayesThreshold(200))
+			Expect(cfg.BayesOddsThreshold).To(Equal(200.0))
 		})
 
 		It("sets several options", func() {
 			opts := []Option{
-				OptDict(dictionary),
-				OptBayesWeights(weights),
-				OptBayes(true),
+				OptWithBayes(true),
 				OptLanguage(lang.German),
 			}
-			gnf := NewGNfinder(opts...)
-			Expect(gnf.Language).To(Equal(lang.German))
-			Expect(gnf.DetectLanguage).To(BeFalse())
-			Expect(gnf.Bayes).To(BeTrue())
-		})
-
-		Describe("Update", func() {
-			It("updates gnf returning backup", func() {
-				opts := []Option{
-					OptDict(dictionary),
-					OptBayesWeights(weights),
-					OptLanguage(lang.German),
-				}
-				gnf := NewGNfinder(opts...)
-				Expect(gnf.Language).To(Equal(lang.German))
-				Expect(gnf.DetectLanguage).To(BeFalse())
-				Expect(gnf.Bayes).To(BeTrue())
-				opts2 := []Option{
-					OptDetectLanguage(true),
-					OptBayes(false),
-				}
-				backup := gnf.Update(opts2...)
-				Expect(gnf.Language).To(Equal(lang.NotSet))
-				Expect(gnf.DetectLanguage).To(BeTrue())
-				Expect(gnf.Bayes).To(BeFalse())
-				for _, opt := range backup {
-					opt(gnf)
-				}
-				Expect(gnf.Language).To(Equal(lang.German))
-				Expect(gnf.DetectLanguage).To(BeFalse())
-				Expect(gnf.Bayes).To(BeTrue())
-			})
+			cfg := NewConfig(opts...)
+			Expect(cfg.Language).To(Equal(lang.German))
+			Expect(cfg.WithLanguageDetection).To(BeFalse())
+			Expect(cfg.WithBayes).To(BeTrue())
 		})
 	})
 })
@@ -104,93 +73,120 @@ var _ = Describe("GNfinder", func() {
 // Benchmarks. To run all of them use
 // go test ./... -bench=. -benchmem -count=10 -run=XXX > bench.txt && benchstat bench.txt
 
+type inputs struct {
+	input     []byte
+	opts      []Option
+	weights   map[lang.Language]*bayes.NaiveBayes
+	traceFile string
+}
+
 // BenchmarkSmallNoBayes runs only heuristic algorithm on small text
 // without language detection
 func BenchmarkSmallNoBayes(b *testing.B) {
-	opts := []Option{
-		OptBayes(false),
-		OptDict(dictionary),
+	args := inputs{
+		input: []byte("Pardosa moesta"),
+		opts: []Option{
+			OptWithBayes(false),
+		},
+		traceFile: "small.trace",
 	}
-	traceFile := "small.trace"
-	input := []byte("Pardosa moesta")
-	runBenchmark("SmallNoBayes", b, input, traceFile, opts)
+	runBenchmark("SmallNoBayes", b, args)
 }
 
 // BenchmarkSmallYesBayes runs both algorithms on small text
 // without language detection
 func BenchmarkSmallYesBayes(b *testing.B) {
-	opts := []Option{
-		OptDict(dictionary),
-		OptBayesWeights(weights),
+	args := inputs{
+		input:     []byte("Pardosa moesta"),
+		opts:      []Option{OptWithBayes(true)},
+		weights:   weights,
+		traceFile: "small-bayes.trace",
 	}
-	traceFile := "small-bayes.trace"
-	input := []byte("Pardosa moesta")
-	runBenchmark("SmallYesBayes", b, input, traceFile, opts)
+	runBenchmark("SmallYesBayes", b, args)
 }
 
 // BenchmarkSmallYesBayesLangDetect runs both algorithms on small text
 // with language detection
 func BenchmarkSmallYesBayesLangDetect(b *testing.B) {
-	opts := []Option{
-		OptDict(dictionary),
-		OptBayesWeights(weights),
-		OptDetectLanguage(true),
+	args := inputs{
+		opts: []Option{
+			OptWithBayes(true),
+			OptWithLanguageDetection(true),
+		},
+		weights:   weights,
+		traceFile: "small-eng.trace",
+		input:     []byte("Pardosa moesta"),
 	}
-	traceFile := "small-eng.trace"
-	input := []byte("Pardosa moesta")
-	runBenchmark("SmallYesBayesLangDetect", b, input, traceFile, opts)
+	runBenchmark("SmallYesBayesLangDetect", b, args)
 }
 
 // BenchmarkBigNoBayes runs only heuristic algorithm on large text
 // without language detection
 func BenchmarkBigNoBayes(b *testing.B) {
-	opts := []Option{
-		OptBayes(false),
-		OptDict(dictionary),
-	}
-	traceFile := "big.trace"
 	input, err := ioutil.ReadFile("testdata/seashells_book.txt")
 	if err != nil {
 		panic(err)
 	}
-	runBenchmark("BigNoBayes", b, input, traceFile, opts)
+	args := inputs{
+		opts: []Option{
+			OptWithBayes(false),
+		},
+		input:     input,
+		traceFile: "big.trace",
+	}
+	runBenchmark("BigNoBayes", b, args)
 }
 
 // BenchmarkBigYesBayes runs both algorithms on large text
 // without language detection
 func BenchmarkBigYesBayes(b *testing.B) {
-	opts := []Option{
-		OptDict(dictionary),
-		OptBayesWeights(weights),
-	}
-	traceFile := "big.trace"
 	input, err := ioutil.ReadFile("testdata/seashells_book.txt")
 	if err != nil {
 		panic(err)
 	}
-	runBenchmark("BigYesBayes", b, input, traceFile, opts)
+	args := inputs{
+		opts: []Option{
+			OptWithBayes(true),
+		},
+		weights:   weights,
+		traceFile: "big.trace",
+		input:     input,
+	}
+	runBenchmark("BigYesBayes", b, args)
 }
 
 // BenchmarkBigYesBayesLangDetect runs both algorithms on large text
 // with language detection
 func BenchmarkBigYesBayesLangDetect(b *testing.B) {
-	opts := []Option{
-		OptDetectLanguage(true),
-		OptDict(dictionary),
-		OptBayesWeights(weights),
-	}
-	traceFile := "big.trace"
 	input, err := ioutil.ReadFile("testdata/seashells_book.txt")
 	if err != nil {
 		panic(err)
 	}
-	runBenchmark("BigYesBayesLangDetect", b, input, traceFile, opts)
+	args := inputs{
+		opts: []Option{
+			OptWithBayes(true),
+			OptWithLanguageDetection(true),
+		},
+		weights:   weights,
+		input:     input,
+		traceFile: "big.trace",
+	}
+	runBenchmark("BigYesBayesLangDetect", b, args)
 }
 
-func runBenchmark(n string, b *testing.B, input []byte, traceFile string,
-	opts []Option) {
-	gnf := NewGNfinder(opts...)
-	f, err := os.Create(traceFile)
+func beforeBench() {
+	if dictionary != nil {
+		return
+	}
+	dictionary = dict.LoadDictionary()
+	weights = nlp.BayesWeights()
+}
+
+func runBenchmark(n string, b *testing.B, args inputs) {
+	beforeBench()
+	cfg := NewConfig(args.opts...)
+	gnf := New(cfg, dictionary, args.weights)
+	f, err := os.Create(args.traceFile)
 	if err != nil {
 		panic(err)
 	}
@@ -205,7 +201,7 @@ func runBenchmark(n string, b *testing.B, input []byte, traceFile string,
 	b.Run(n, func(b *testing.B) {
 		var o *output.Output
 		for i := 0; i < b.N; i++ {
-			o = gnf.FindNames(input)
+			o = gnf.FindNames(args.input)
 		}
 
 		_ = fmt.Sprintf("%d", len(o.Names))

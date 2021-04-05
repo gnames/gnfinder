@@ -6,6 +6,7 @@ require (
 	github.com/abadojack/whatlanggo v1.0.1
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/gnames/bayes v0.1.0
+	github.com/gnames/gnfmt v0.1.0
 	github.com/gnames/gnlib v0.2.1
 	github.com/gnames/gnverifier v0.2.5
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
@@ -16,6 +17,8 @@ require (
 	github.com/onsi/gomega v1.10.3
 	github.com/pelletier/go-toml v1.7.0 // indirect
 	github.com/rendon/testcli v0.0.0-20161027181003-6283090d169f
+	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
+	github.com/shurcool/vfsgen v0.0.0-20200824052919-0d455de96546 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/smartystreets/assertions v1.1.0 // indirect
 	github.com/spf13/afero v1.2.2 // indirect

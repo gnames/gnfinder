@@ -6,9 +6,9 @@ import (
 
 	"github.com/gnames/bayes"
 	. "github.com/gnames/gnfinder"
-	"github.com/gnames/gnfinder/dict"
-	"github.com/gnames/gnfinder/lang"
-	"github.com/gnames/gnfinder/nlp"
+	"github.com/gnames/gnfinder/ent/lang"
+	"github.com/gnames/gnfinder/ent/nlp"
+	"github.com/gnames/gnfinder/io/dict"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -19,7 +19,7 @@ var (
 	book       []byte
 	dictionary *dict.Dictionary
 	weights    map[lang.Language]*bayes.NaiveBayes
-	gnf        *GNfinder
+	gnf        *Config
 )
 
 func TestGnfinder(t *testing.T) {
@@ -35,8 +35,4 @@ var _ = BeforeSuite(func() {
 	dictionary = dict.LoadDictionary()
 	weights = nlp.BayesWeights()
 	log.SetOutput(ioutil.Discard)
-})
-
-var _ = BeforeEach(func() {
-	gnf = NewGNfinder(OptDict(dictionary))
 })
