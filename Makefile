@@ -24,12 +24,7 @@ deps:
 	$(FLAG_MODULE) $(GOGET) github.com/golang/protobuf/protoc-gen-go@v1.4.1; \
 	$(GOGENERATE)
 
-asset:
-	cd io/fs; \
-	$(FLAGS_SHARED) go run -tags=dev assets_gen.go
-
-build: asset
-	$(GOGENERATE)
+build:
 	cd gnfinder; \
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=linux $(GOBUILD);
@@ -47,8 +42,7 @@ release: dockerhub
 	zip -9 /tmp/gnfinder-${VER}-win-64.zip gnfinder.exe; \
 	$(GOCLEAN);
 
-install: asset
-	$(GOGENERATE)
+install:
 	cd gnfinder; \
 	$(FLAGS_SHARED) $(GOINSTALL);
 

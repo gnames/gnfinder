@@ -122,7 +122,7 @@ func OptPreferredSources(is []int) Option {
 func NewConfig(opts ...Option) Config {
 	cfg := Config{
 		WithBayes:          true,
-		BayesOddsThreshold: 100.0,
+		BayesOddsThreshold: 80.0,
 		TokensAround:       0,
 	}
 

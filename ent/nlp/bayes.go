@@ -9,11 +9,15 @@ import (
 	"github.com/gnames/gnfinder/ent/lang"
 	"github.com/gnames/gnfinder/ent/token"
 	"github.com/gnames/gnfinder/io/dict"
-	"github.com/gnames/gnfinder/io/fs"
+	"github.com/gnames/gnfinder/io/nlpfs"
 )
 
-func TagTokens(ts []token.Token, d *dict.Dictionary, nb *bayes.NaiveBayes,
-	thr float64) {
+func TagTokens(
+	ts []token.Token,
+	d *dict.Dictionary,
+	nb *bayes.NaiveBayes,
+	thr float64,
+) {
 	for i := range ts {
 		t := &ts[i]
 		if !t.Features.Capitalized || t.UninomialDict == dict.BlackUninomial {
@@ -29,8 +33,13 @@ func TagTokens(ts []token.Token, d *dict.Dictionary, nb *bayes.NaiveBayes,
 	}
 }
 
-func processBayesResults(odds []bayes.Posterior, ts []token.Token, i int,
-	oddsThreshold float64, d *dict.Dictionary) {
+func processBayesResults(
+	odds []bayes.Posterior,
+	ts []token.Token,
+	i int,
+	oddsThreshold float64,
+	d *dict.Dictionary,
+) {
 	uni := &ts[i]
 	decideUninomial(odds, uni, oddsThreshold)
 
@@ -49,8 +58,13 @@ func processBayesResults(odds []bayes.Posterior, ts []token.Token, i int,
 	decideInfraspeces(odds, uni, isp, oddsThreshold, d)
 }
 
-func decideInfraspeces(odds []bayes.Posterior, uni *token.Token,
-	isp *token.Token, oddsThreshold float64, d *dict.Dictionary) {
+func decideInfraspeces(
+	odds []bayes.Posterior,
+	uni *token.Token,
+	isp *token.Token,
+	oddsThreshold float64,
+	d *dict.Dictionary,
+) {
 	isp.SetSpeciesDict(d)
 	if isp.SpeciesDict == dict.BlackSpecies {
 		return
@@ -63,8 +77,13 @@ func decideInfraspeces(odds []bayes.Posterior, uni *token.Token,
 	}
 }
 
-func decideSpeces(odds []bayes.Posterior, uni *token.Token, sp *token.Token,
-	oddsThreshold float64, d *dict.Dictionary) {
+func decideSpeces(
+	odds []bayes.Posterior,
+	uni *token.Token,
+	sp *token.Token,
+	oddsThreshold float64,
+	d *dict.Dictionary,
+) {
 	sp.SetSpeciesDict(d)
 	if sp.SpeciesDict == dict.BlackSpecies {
 		return
@@ -77,8 +96,11 @@ func decideSpeces(odds []bayes.Posterior, uni *token.Token, sp *token.Token,
 	}
 }
 
-func decideUninomial(odds []bayes.Posterior, uni *token.Token,
-	oddsThreshold float64) {
+func decideUninomial(
+	odds []bayes.Posterior,
+	uni *token.Token,
+	oddsThreshold float64,
+) {
 	if odds[0].MaxLabel == Name {
 		uni.Odds = odds[0].MaxOdds
 	} else {
@@ -95,8 +117,12 @@ func decideUninomial(odds []bayes.Posterior, uni *token.Token,
 	}
 }
 
-func predictOdds(nb *bayes.NaiveBayes, t *token.Token, fs *FeatureSet,
-	odds bayes.LabelFreq) []bayes.Posterior {
+func predictOdds(
+	nb *bayes.NaiveBayes,
+	t *token.Token,
+	fs *FeatureSet,
+	odds bayes.LabelFreq,
+) []bayes.Posterior {
 	evenOdds := map[bayes.Labeler]float64{Name: 1.0, NotName: 1.0}
 	oddsUni, err := nb.Predict(features(fs.Uninomial), bayes.WithPriorOdds(odds))
 	if err != nil {
@@ -141,8 +167,8 @@ func BayesWeights() map[lang.Language]*bayes.NaiveBayes {
 func naiveBayesFromDump(l lang.Language) *bayes.NaiveBayes {
 	nb := bayes.NewNaiveBayes()
 	bayes.RegisterLabel(labelMap)
-	dir := fmt.Sprintf("/nlp/%s/bayes.json", l.String())
-	f, err := fs.Files.Open(dir)
+	dir := fmt.Sprintf("data/files/%s/bayes.json", l.String())
+	f, err := nlpfs.Data.Open(dir)
 	if err != nil {
 		log.Fatal(err)
 	}

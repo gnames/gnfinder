@@ -17,8 +17,6 @@ require (
 	github.com/onsi/gomega v1.10.3
 	github.com/pelletier/go-toml v1.7.0 // indirect
 	github.com/rendon/testcli v0.0.0-20161027181003-6283090d169f
-	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
-	github.com/shurcool/vfsgen v0.0.0-20200824052919-0d455de96546 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/smartystreets/assertions v1.1.0 // indirect
 	github.com/spf13/afero v1.2.2 // indirect

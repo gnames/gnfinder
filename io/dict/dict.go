@@ -2,12 +2,14 @@
 package dict
 
 import (
+	"embed"
 	"encoding/csv"
 	"io"
 	"log"
-
-	"github.com/gnames/gnfinder/io/fs"
 )
+
+//go:embed data
+var data embed.FS
 
 // DictionaryType describes available dictionaries
 type DictionaryType int
@@ -53,16 +55,16 @@ type Dictionary struct {
 // LoadDictionary contain most popular words in European languages.
 func LoadDictionary() *Dictionary {
 	d := &Dictionary{
-		BlackUninomials: readData("/black/uninomials.csv"),
-		BlackSpecies:    readData("/black/species.csv"),
-		CommonWords:     readData("/common/eu.csv"),
-		GreyGenera:      readData("/grey/genera.csv"),
-		GreyGeneraSp:    readData("/grey/genera_species.csv"),
-		GreySpecies:     readData("/grey/species.csv"),
-		GreyUninomials:  readData("/grey/uninomials.csv"),
-		WhiteGenera:     readData("/white/genera.csv"),
-		WhiteSpecies:    readData("/white/species.csv"),
-		WhiteUninomials: readData("/white/uninomials.csv"),
+		BlackUninomials: readData("data/black/uninomials.csv"),
+		BlackSpecies:    readData("data/black/species.csv"),
+		CommonWords:     readData("data/common/eu.csv"),
+		GreyGenera:      readData("data/grey/genera.csv"),
+		GreyGeneraSp:    readData("data/grey/genera_species.csv"),
+		GreySpecies:     readData("data/grey/species.csv"),
+		GreyUninomials:  readData("data/grey/uninomials.csv"),
+		WhiteGenera:     readData("data/white/genera.csv"),
+		WhiteSpecies:    readData("data/white/species.csv"),
+		WhiteUninomials: readData("data/white/uninomials.csv"),
 		Ranks:           setRanks(),
 	}
 	return d
@@ -70,7 +72,7 @@ func LoadDictionary() *Dictionary {
 
 func readData(path string) map[string]struct{} {
 	res := make(map[string]struct{})
-	f, err := fs.Files.Open(path)
+	f, err := data.Open(path)
 	if err != nil {
 		log.Fatal(err)
 	}
