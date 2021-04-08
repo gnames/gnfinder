@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add: [#69]: Output Odds as a log10.
 - Add: [#68]: Refactor the code with interfaces to be consistent with other
               projects.
 

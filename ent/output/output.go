@@ -3,6 +3,7 @@ package output
 import (
 	"bytes"
 	"log"
+	"math"
 	"time"
 
 	"github.com/gnames/gnfinder/ent/token"
@@ -57,6 +58,14 @@ func OptTokensAround(t int) Option {
 
 // newOutput is a constructor for Output type.
 func newOutput(names []Name, ts []token.Token, opts ...Option) *Output {
+	for i := range names {
+		lg := math.Log10(names[i].Odds)
+		if math.IsInf(lg, 0) {
+			log.Println("Log10 of 0")
+			lg = -10000000000000000000000.0
+		}
+		names[i].OddsLog10 = lg
+	}
 	meta := Meta{
 		Date:        time.Now(),
 		TotalTokens: len(ts), TotalNameCandidates: candidatesNum(ts),
@@ -118,8 +127,10 @@ type Name struct {
 	// Name is a normalized version of a name.
 	Name string `json:"name"`
 	// Odds show a probability that name detection was correct.
-	Odds float64 `json:"odds,omitempty"`
-	// OddsDetails desrive how Odds were calculated.
+	Odds float64 `json:"-"`
+	// OddsLog10 show a Log10 of Odds.
+	OddsLog10 float64 `json:"oddsLog10,omitempty"`
+	// OddsDetails descibes how Odds were calculated.
 	OddsDetails token.OddsDetails `json:"oddsDetails,omitempty"`
 	// OffsetStart is a start of a name on a page.
 	OffsetStart int `json:"start"`

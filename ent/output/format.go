@@ -22,7 +22,7 @@ func (o *Output) Format(f gnfmt.Format) string {
 // CSVHeader returns the header string for CSV output format.
 func CSVHeader(withVerification bool) string {
 	verif := ",VerifMatchType,VerifEditDistance,VerifMatchedName,VerifMatchedCanonical,VerifTaxonId,VerifDataSourceId,VerifDataSourceTitle,VerifError"
-	res := "Index,Verbatim,Name,Start,End,Odds,Cardinality,AnnotNomenType,WordsBefore,WordsAfter"
+	res := "Index,Verbatim,Name,Start,End,OddsLog10,Cardinality,AnnotNomenType,WordsBefore,WordsAfter"
 	if withVerification {
 		res = res + verif
 	}
@@ -40,7 +40,7 @@ func (o *Output) csvOutput() string {
 }
 
 func csvRow(name Name, i int) string {
-	odds := strconv.FormatFloat(name.Odds, 'f', 2, 64)
+	odds := strconv.FormatFloat(name.OddsLog10, 'f', 2, 64)
 	wrdsBefore := strings.Join(name.WordsBefore, ", ")
 	wrdsAfter := strings.Join(name.WordsAfter, ", ")
 	s := []string{

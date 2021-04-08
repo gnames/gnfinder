@@ -22,6 +22,11 @@ func New(sources []int) Verifier {
 
 func (gnv *verif) Verify(names []string) map[string]vlib.Verification {
 	res := make(map[string]vlib.Verification)
+
+	if len(names) == 0 {
+		return res
+	}
+
 	names = unique(names)
 	verif := gnv.VerifyBatch(names)
 	for _, v := range verif {
