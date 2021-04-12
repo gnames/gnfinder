@@ -1,9 +1,6 @@
 language: go
 
 go:
-  - 1.14.x
-
-before_install:
-  - bash scripts/protoc-install.sh 3.11.4
+  - 1.16.x
 
 script: make test
