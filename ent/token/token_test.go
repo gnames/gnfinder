@@ -1,90 +1,44 @@
 package token_test
 
 import (
-	"github.com/gnames/gnfinder/ent/token"
+	"testing"
 
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"github.com/gnames/gnfinder/ent/token"
+	"github.com/tj/assert"
 )
 
-var _ = Describe("Decision", func() {
-	Describe("String", func() {
-		It("creates decision", func() {
-			var t token.Decision
-			Expect(t).To(Equal(token.NotName))
-			t = token.PossibleBinomial
-			Expect(t.String()).To(Equal("PossibleBinomial"))
-		})
-	})
+func TestTokenize(t *testing.T) {
+	str := "one\vtwo poma-  \t\r\ntomus " +
+		"dash -\nstandalone " +
+		"Tora-\nBora\n\rthree \n"
+	tokens, err := token.Tokenize([]rune(str))
+	assert.Nil(t, err)
+	assert.Equal(t, len(tokens), 8)
+	assert.Equal(t, tokens[2].Cleaned(), "pomatomus")
+	assert.Equal(t, tokens[4].Cleaned(), "-")
+	assert.Equal(t, tokens[6].Cleaned(), "Tora-bora")
+	token := tokens[6]
+	runes := []rune(str)
+	assert.Equal(t, token.Raw()[0], runes[token.Start()])
+	assert.Equal(t, token.Raw()[len(token.Raw())-1], runes[token.End()-1])
+}
 
-	Describe("In", func() {
-		It("checks if a decision one of the given decisions", func() {
-			t := token.Trinomial
-			Expect(t.In(token.Binomial, token.BayesUninomial)).
-				To(BeFalse())
-			Expect(t.In(token.Binomial, token.BayesUninomial, token.Trinomial)).
-				To(BeTrue())
-		})
-	})
-})
+func TestTokenizeNoNewLine(t *testing.T) {
+	str := "hello there"
+	tokens, err := token.Tokenize([]rune(str))
+	assert.Nil(t, err)
+	ts := tokens[1]
+	rn := []rune(str)
+	assert.Equal(t, ts.Cleaned(), "there")
+	assert.Equal(t, rn[ts.End()-1], ts.Raw()[len(ts.Raw())-1])
+}
 
-var _ = Describe("Token", func() {
-	Describe("NewToken", func() {
-		It("creates new token with reasonable defaults", func() {
-			text := []rune("One, two, (three)")
-			t := token.NewToken(text, 5, 9)
-			Expect(t.Cleaned).To(Equal("two"))
-			Expect(string(t.Raw)).To(Equal("two,"))
-			Expect(t.InParentheses()).To(BeFalse())
-			t = token.NewToken(text, 10, 17)
-			Expect(string(t.Raw)).To(Equal("(three)"))
-			Expect(t.InParentheses()).To(BeTrue())
-		})
-	})
-})
-
-var _ = Describe("Tokenize()", func() {
-	It("splits strings into Tokens", func() {
-		str := "one\vtwo poma-  \t\r\ntomus " +
-			"dash -\nstandalone " +
-			"Tora-\nBora\n\rthree \n"
-		tokens := token.Tokenize([]rune(str))
-		Expect(len(tokens)).To(Equal(8))
-		Expect(tokens[2].Cleaned).To(Equal("pomatomus"))
-		Expect(tokens[4].Cleaned).To(Equal("-"))
-		Expect(tokens[6].Cleaned).To(Equal("Tora-bora"))
-		t := tokens[6]
-		r := []rune(str)
-		Expect(t.Raw[0]).To(Equal(r[t.Start]))
-		Expect(t.Raw[len(t.Raw)-1]).To(Equal(r[t.End-1]))
-	})
-
-	It("behaves consistently if string's end has no new line", func() {
-		str := "hello there"
-		tokens := token.Tokenize([]rune(str))
-		t := tokens[1]
-		r := []rune(str)
-		Expect(t.Cleaned).To(Equal("there"))
-		Expect(r[t.End-1]).To(Equal(t.Raw[len(t.Raw)-1]))
-	})
-
-	It("strips outer non-letters, and converts inner non-letters", func() {
-		str := "(l33te hax0r]...$ S0me.. Ida's"
-		ts := token.Tokenize([]rune(str))
-		Expect(ts[0].Cleaned).To(Equal("l��te"))
-		Expect(ts[1].Cleaned).To(Equal("hax�r"))
-		Expect(ts[2].Cleaned).To(Equal("S�me"))
-		Expect(ts[3].Cleaned).To(Equal("Ida�s"))
-	})
-
-	It("tokenizes a large string", func() {
-		tokens := token.Tokenize([]rune(string(book)))
-		Expect(len(tokens)).To(Equal(171020))
-	})
-
-	It("does not break on texts that end with a dash", func() {
-		str := "text sometimes\nends with a dash- "
-		tokens := token.Tokenize([]rune(str))
-		Expect(len(tokens)).To(Equal(6))
-	})
-})
+func TestTokenizeBadLetters(t *testing.T) {
+	str := "(l33te hax0r]...$ S0me.. Ida's"
+	ts, err := token.Tokenize([]rune(str))
+	assert.Nil(t, err)
+	assert.Equal(t, ts[0].Cleaned(), "l��te")
+	assert.Equal(t, ts[1].Cleaned(), "hax�r")
+	assert.Equal(t, ts[2].Cleaned(), "S�me")
+	assert.Equal(t, ts[3].Cleaned(), "Ida�s")
+}

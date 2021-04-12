@@ -17,16 +17,19 @@ all: install
 test: deps install
 	$(FLAG_MODULE) go test ./...
 
+tools: deps
+	@echo Installing tools from tools.go
+	@cat gnfinder/tools.go | grep _ | awk -F'"' '{print $$2}' | xargs -tI % go install %
+
+
 deps:
-	$(FLAG_MODULE) $(GOGET) github.com/spf13/cobra/cobra@v1.0.0; \
-	$(FLAG_MODULE) $(GOGET) github.com/onsi/ginkgo/ginkgo@v1.12.0; \
-	$(FLAG_MODULE) $(GOGET) github.com/onsi/gomega@v1.10.0; \
-	$(FLAG_MODULE) $(GOGET) github.com/golang/protobuf/protoc-gen-go@v1.4.1; \
-	$(GOGENERATE)
+	@echo Download go.mod dependencies
+	$(GOCMD) mod download; \
 
 build:
 	cd gnfinder; \
 	$(GOCLEAN); \
+	$(GOGENERATE) ./...
 	$(FLAGS_SHARED) GOOS=linux $(GOBUILD);
 
 release: dockerhub

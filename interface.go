@@ -8,7 +8,7 @@ import (
 type GNfinder interface {
 	verifier.Verifier
 
-	FindNames(data []byte) *output.Output
+	Find(data []byte) *output.Output
 
 	GetConfig() Config
 

@@ -171,7 +171,7 @@ func findNames(
 
 	cfg := gnfinder.NewConfig(opts...)
 	gnf := gnfinder.New(cfg, dict, weights)
-	res := gnf.FindNames(data)
+	res := gnf.Find(data)
 
 	if gnf.GetConfig().WithVerification {
 		verifiedNames := gnf.Verify(res.UniqueNameStrings())
