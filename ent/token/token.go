@@ -44,22 +44,24 @@ func (t *tokenSN) ProcessRaw() {
 	p.HasStartParens = raw[0] == rune('(')
 	p.HasEndParens = raw[l-1] == rune(')')
 
-	res, startEnd := normalize(raw, &p)
+	res, start, end := normalize(raw, &p)
 
-	feat.setAbbr(t.Raw(), startEnd)
+	feat.setAbbr(t.Raw(), start, end)
 	if p.IsCapitalized {
 		res[0] = unicode.ToUpper(res[0])
-		feat.setPotentialBinomialGenus(t.Raw(), startEnd)
+		feat.setPotentialBinomialGenus(t.Raw(), start, end)
 		if feat.Abbr {
 			res = append(res, rune('.'))
 		}
 	} else {
 		// makes it impossible to have capitalized species
-		feat.setStartsWithLetter(startEnd)
-		feat.setEndsWithLetter(startEnd, t.Raw())
+		feat.setStartsWithLetter(start, end)
+		feat.setEndsWithLetter(t.Raw(), start, end)
 	}
 
-	gner.CalculateProperties(t.Raw(), res, &p)
+	// probably 'fake' optimization, if we are lucky and this is not important,
+	// we gain speed.
+	// gner.CalculateProperties(t.Raw(), res, &p)
 	t.SetProperties(&p)
 	t.SetCleaned(string(res))
 }
@@ -67,26 +69,26 @@ func (t *tokenSN) ProcessRaw() {
 // normalize returns cleaned up name and indices of their start and end.
 // The normalization includes removal of non-letters from the start
 // and the end, substitutin of internal non-letters with '�'.
-func normalize(raw []rune, p *gner.Properties) ([]rune, *[2]int) {
-	var res []rune
+func normalize(raw []rune, p *gner.Properties) ([]rune, int, int) {
+	res := make([]rune, len(raw))
 	firstLetter := true
-	var startEnd [2]int
-	for i, v := range raw {
-		hasDash := v == rune('-')
-		if unicode.IsLetter(v) || hasDash {
+	var start, end int
+	for i := range raw {
+		hasDash := raw[i] == rune('-')
+		if unicode.IsLetter(raw[i]) || hasDash {
 			if firstLetter {
-				startEnd[0] = i
-				p.IsCapitalized = unicode.IsUpper(v)
+				start = i
+				p.IsCapitalized = unicode.IsUpper(raw[i])
 				firstLetter = false
 			}
-			startEnd[1] = i
-			res = append(res, unicode.ToLower(v))
+			end = i
+			res[i] = unicode.ToLower(raw[i])
 		} else {
-			res = append(res, rune('�'))
+			res[i] = rune('�')
 		}
 		if hasDash {
 			p.HasDash = true
 		}
 	}
-	return res[startEnd[0] : startEnd[1]+1], &startEnd
+	return res[start : end+1], start, end
 }

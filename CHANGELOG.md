@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add: [#73]: benchmark and optimize tokenizer.
 - Add: [#71]: use `embed` introduced in Go v1.16.
 - Add: [#70]: migrate code to use gner tokenizer.
 - Add: [#69]: Output Odds as a log10.

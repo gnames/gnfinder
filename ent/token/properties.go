@@ -23,10 +23,10 @@ type PropertiesSN struct {
 	EndsWithLetter bool
 }
 
-func (p *PropertiesSN) setAbbr(raw []rune, startEnd *[2]int) {
+func (p *PropertiesSN) setAbbr(raw []rune, start, end int) {
 	var abbr bool
 	l := len(raw)
-	lenClean := startEnd[1] - startEnd[0] + 1
+	lenClean := end - start + 1
 	if lenClean < 4 && l > 1 && unicode.IsLetter(raw[l-2]) &&
 		raw[l-1] == rune('.') {
 		abbr = true
@@ -36,12 +36,12 @@ func (p *PropertiesSN) setAbbr(raw []rune, startEnd *[2]int) {
 
 func (p *PropertiesSN) setPotentialBinomialGenus(
 	raw []rune,
-	startEnd *[2]int,
+	start, end int,
 ) {
 	// Assumes a precondition that the first letter is capitalized.
 	lenRaw := len(raw)
-	lenClean := startEnd[1] - startEnd[0] + 1
-	cleanEnd := lenRaw == startEnd[1]+1
+	lenClean := end - start + 1
+	cleanEnd := lenRaw == end+1
 	switch lenClean {
 	case 0:
 		p.PotentialBinomialGenus = false
@@ -54,14 +54,14 @@ func (p *PropertiesSN) setPotentialBinomialGenus(
 	}
 }
 
-func (f *PropertiesSN) setStartsWithLetter(startEnd *[2]int) {
-	lenClean := startEnd[1] - startEnd[0] + 1
-	if lenClean >= 2 && startEnd[0] == 0 {
+func (f *PropertiesSN) setStartsWithLetter(start, end int) {
+	lenClean := end - start + 1
+	if lenClean >= 2 && start == 0 {
 		f.StartsWithLetter = true
 	}
 }
 
-func (f *PropertiesSN) setEndsWithLetter(startEnd *[2]int, raw []rune) {
-	cleanEnd := len(raw) == startEnd[1]+1
+func (f *PropertiesSN) setEndsWithLetter(raw []rune, start, end int) {
+	cleanEnd := len(raw) == end+1
 	f.EndsWithLetter = cleanEnd
 }

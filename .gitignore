@@ -6,6 +6,7 @@ t.json
 *.pprof
 *.trace
 *.test
+*.out
 *test
 .idea
 .vscode

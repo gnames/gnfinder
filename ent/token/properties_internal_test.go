@@ -31,11 +31,11 @@ func TestAbbr(t *testing.T) {
 	psn := &PropertiesSN{}
 	for _, v := range tests {
 		raw := []rune(v.raw)
-		_, startEnd := normalize(raw, p)
+		_, start, end := normalize(raw, p)
 		t.Run(v.msg, func(t *testing.T) {
-			psn.setAbbr(raw, startEnd)
-			assert.Equal(t, startEnd[0], v.start)
-			assert.Equal(t, startEnd[1], v.end)
+			psn.setAbbr(raw, start, end)
+			assert.Equal(t, start, v.start)
+			assert.Equal(t, end, v.end)
 			assert.Equal(t, psn.Abbr, v.abbr)
 		})
 	}
@@ -64,12 +64,12 @@ func TestPotentialBinomialGenus(t *testing.T) {
 	psn := &PropertiesSN{}
 	for _, v := range tests {
 		raw := []rune(v.raw)
-		_, startEnd := normalize(raw, p)
-		psn.setAbbr(raw, startEnd)
-		psn.setPotentialBinomialGenus(raw, startEnd)
+		_, start, end := normalize(raw, p)
+		psn.setAbbr(raw, start, end)
+		psn.setPotentialBinomialGenus(raw, start, end)
 		t.Run(v.msg, func(t *testing.T) {
-			assert.Equal(t, startEnd[0], v.start)
-			assert.Equal(t, startEnd[1], v.end)
+			assert.Equal(t, start, v.start)
+			assert.Equal(t, end, v.end)
 			assert.Equal(t, psn.PotentialBinomialGenus, v.res)
 		})
 	}
@@ -92,11 +92,11 @@ func TestStartsWithLetter(t *testing.T) {
 	psn := &PropertiesSN{}
 	for _, v := range tests {
 		raw := []rune(v.raw)
-		_, startEnd := normalize(raw, p)
-		psn.setStartsWithLetter(startEnd)
+		_, start, end := normalize(raw, p)
+		psn.setStartsWithLetter(start, end)
 		t.Run(v.msg, func(t *testing.T) {
-			assert.Equal(t, startEnd[0], v.start)
-			assert.Equal(t, startEnd[1], v.end)
+			assert.Equal(t, start, v.start)
+			assert.Equal(t, end, v.end)
 			assert.Equal(t, psn.StartsWithLetter, v.res)
 		})
 	}
@@ -121,11 +121,11 @@ func TestEndsWithLetter(t *testing.T) {
 	psn := &PropertiesSN{}
 	for _, v := range tests {
 		raw := []rune(v.raw)
-		_, startEnd := normalize(raw, p)
-		psn.setEndsWithLetter(startEnd, raw)
+		_, start, end := normalize(raw, p)
+		psn.setEndsWithLetter(raw, start, end)
 		t.Run(v.msg, func(t *testing.T) {
-			assert.Equal(t, startEnd[0], v.start)
-			assert.Equal(t, startEnd[1], v.end)
+			assert.Equal(t, start, v.start)
+			assert.Equal(t, end, v.end)
 			assert.Equal(t, psn.EndsWithLetter, v.res)
 		})
 	}
