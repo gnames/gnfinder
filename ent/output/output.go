@@ -57,12 +57,11 @@ func OptTokensAround(t int) Option {
 }
 
 // newOutput is a constructor for Output type.
-func newOutput(names []Name, ts []token.Token, opts ...Option) *Output {
+func newOutput(names []Name, ts []token.TokenSN, opts ...Option) *Output {
 	for i := range names {
 		lg := math.Log10(names[i].Odds)
 		if math.IsInf(lg, 0) {
-			log.Println("Log10 of 0")
-			lg = -10000000000000000000000.0
+			lg = 0
 		}
 		names[i].OddsLog10 = lg
 	}

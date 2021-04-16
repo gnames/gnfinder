@@ -11,13 +11,12 @@ import (
 // tokens and sets up token's indices. Indices determine if a token is a
 // potential unimonial, binomial or trinomial. Then if fills out signfificant
 // number of features pertained to the token.
-func TagTokens(ts []token.Token, d *dict.Dictionary) {
+func TagTokens(ts []token.TokenSN, d *dict.Dictionary) {
 	l := len(ts)
 
 	for i := range ts {
-		t := &ts[i]
 
-		if !t.Features.Capitalized {
+		if !ts[i].Properties().IsCapitalized {
 			continue
 		}
 		nameTs := ts[i:token.UpperIndex(i, l)]
@@ -26,17 +25,18 @@ func TagTokens(ts []token.Token, d *dict.Dictionary) {
 	}
 }
 
-func exploreNameCandidate(ts []token.Token, d *dict.Dictionary) bool {
+func exploreNameCandidate(ts []token.TokenSN, d *dict.Dictionary) bool {
 
-	u := &ts[0]
+	u := ts[0]
 
-	if u.Features.UninomialDict == dict.WhiteUninomial ||
-		(u.Indices.Species == 0 && u.Features.UninomialDict == dict.WhiteGenus) {
-		u.Decision = token.Uninomial
+	if u.PropertiesSN().UninomialDict == dict.WhiteUninomial ||
+		(u.Indices().Species == 0 &&
+			u.PropertiesSN().UninomialDict == dict.WhiteGenus) {
+		u.SetDecision(token.Uninomial)
 		return true
 	}
 
-	if u.Indices.Species == 0 || u.UninomialDict == dict.BlackUninomial {
+	if u.Indices().Species == 0 || u.PropertiesSN().UninomialDict == dict.BlackUninomial {
 		return false
 	}
 
@@ -44,7 +44,7 @@ func exploreNameCandidate(ts []token.Token, d *dict.Dictionary) bool {
 		return false
 	}
 
-	if u.Decision.In(token.Binomial, token.PossibleBinomial,
+	if u.Decision().In(token.Binomial, token.PossibleBinomial,
 		token.BayesBinomial) {
 		checkInfraspecies(ts, d)
 	}
@@ -52,58 +52,63 @@ func exploreNameCandidate(ts []token.Token, d *dict.Dictionary) bool {
 	return true
 }
 
-func checkAsSpecies(t *token.Token, d *dict.Dictionary) bool {
-	if !t.Capitalized &&
-		(t.SpeciesDict == dict.WhiteSpecies || t.SpeciesDict == dict.GreySpecies) {
+func checkAsSpecies(t token.TokenSN, d *dict.Dictionary) bool {
+	if !t.Properties().IsCapitalized &&
+		(t.PropertiesSN().SpeciesDict == dict.WhiteSpecies ||
+			t.PropertiesSN().SpeciesDict == dict.GreySpecies) {
 		return true
 	}
 	return false
 }
 
-func checkAsGenusSpecies(ts []token.Token, d *dict.Dictionary) bool {
-	g := &ts[0]
-	s := &ts[g.Indices.Species]
+func checkAsGenusSpecies(ts []token.TokenSN, d *dict.Dictionary) bool {
+	g := ts[0]
+	s := ts[g.Indices().Species]
 
 	if !checkAsSpecies(s, d) {
-		if g.UninomialDict == dict.WhiteGenus {
-			g.Decision = token.Uninomial
+		if g.PropertiesSN().UninomialDict == dict.WhiteGenus {
+			g.SetDecision(token.Uninomial)
 			return true
 		}
 		return false
 	}
 
-	if g.UninomialDict == dict.WhiteGenus {
-		g.Decision = token.Binomial
+	if g.PropertiesSN().UninomialDict == dict.WhiteGenus {
+		g.SetDecision(token.Binomial)
 		return true
 	}
 
 	if checkGreyGeneraSp(g, s, d) {
-		g.Decision = token.Binomial
+		g.SetDecision(token.Binomial)
 		return true
 	}
 
-	if s.Features.SpeciesDict == dict.WhiteSpecies && !s.Capitalized {
-		g.Decision = token.PossibleBinomial
+	if s.PropertiesSN().SpeciesDict == dict.WhiteSpecies &&
+		!s.Properties().IsCapitalized {
+		g.SetDecision(token.PossibleBinomial)
 		return true
 	}
 	return false
 }
 
-func checkGreyGeneraSp(g *token.Token, s *token.Token,
-	d *dict.Dictionary) bool {
-	sp := fmt.Sprintf("%s %s", g.Cleaned, s.Cleaned)
+func checkGreyGeneraSp(
+	g token.TokenSN,
+	s token.TokenSN,
+	d *dict.Dictionary,
+) bool {
+	sp := fmt.Sprintf("%s %s", g.Cleaned(), s.Cleaned())
 	if _, ok := d.GreyGeneraSp[sp]; ok {
 		return true
 	}
 	return false
 }
 
-func checkInfraspecies(ts []token.Token, d *dict.Dictionary) {
-	i := ts[0].Indices.Infraspecies
+func checkInfraspecies(ts []token.TokenSN, d *dict.Dictionary) {
+	i := ts[0].Indices().Infraspecies
 	if i == 0 {
 		return
 	}
-	if checkAsSpecies(&ts[i], d) {
-		ts[0].Decision = token.Trinomial
+	if checkAsSpecies(ts[i], d) {
+		ts[0].SetDecision(token.Trinomial)
 	}
 }

@@ -1,7 +1,10 @@
 package token
 
 import (
+	"strings"
 	"unicode"
+
+	"github.com/gnames/gnfinder/io/dict"
 )
 
 // PropPropertiesSN keep properties of a token as a possible candidate for a
@@ -21,6 +24,16 @@ type PropertiesSN struct {
 	// EndsWithLetter feature: the token has necessary quality to be a species
 	// part of trinomial.
 	EndsWithLetter bool
+
+	// RankLike is true if token is a known infraspecific rank
+	RankLike bool
+
+	// UninomialDict defines which Genera or Uninomials dictionary (if any)
+	// contained the token.
+	UninomialDict dict.DictionaryType
+
+	// SpeciesDict defines which Species dictionary (if any) contained the token.
+	SpeciesDict dict.DictionaryType
 }
 
 func (p *PropertiesSN) setAbbr(raw []rune, start, end int) {
@@ -54,14 +67,67 @@ func (p *PropertiesSN) setPotentialBinomialGenus(
 	}
 }
 
-func (f *PropertiesSN) setStartsWithLetter(start, end int) {
+func (p *PropertiesSN) setStartsWithLetter(start, end int) {
 	lenClean := end - start + 1
 	if lenClean >= 2 && start == 0 {
-		f.StartsWithLetter = true
+		p.StartsWithLetter = true
 	}
 }
 
-func (f *PropertiesSN) setEndsWithLetter(raw []rune, start, end int) {
+func (p *PropertiesSN) setEndsWithLetter(raw []rune, start, end int) {
 	cleanEnd := len(raw) == end+1
-	f.EndsWithLetter = cleanEnd
+	p.EndsWithLetter = cleanEnd
+}
+
+func (p *PropertiesSN) SetUninomialDict(cleaned string, d *dict.Dictionary) {
+	if p.UninomialDict != dict.NotSet {
+		return
+	}
+	in := func(dict map[string]struct{}) bool { _, ok := dict[cleaned]; return ok }
+	inlow := func(dict map[string]struct{}) bool {
+		_, ok := dict[strings.ToLower(cleaned)]
+		return ok
+	}
+
+	switch {
+	case in(d.WhiteGenera):
+		p.UninomialDict = dict.WhiteGenus
+	case in(d.GreyGenera):
+		p.UninomialDict = dict.GreyGenus
+	case in(d.WhiteUninomials):
+		p.UninomialDict = dict.WhiteUninomial
+	case in(d.GreyUninomials):
+		p.UninomialDict = dict.GreyUninomial
+	case inlow(d.BlackUninomials):
+		p.UninomialDict = dict.BlackUninomial
+	case inlow(d.CommonWords):
+		p.UninomialDict = dict.CommonWords
+	default:
+		p.UninomialDict = dict.NotInDictionary
+	}
+}
+
+func (p *PropertiesSN) SetSpeciesDict(cleaned string, d *dict.Dictionary) {
+	if p.SpeciesDict != dict.NotSet {
+		return
+	}
+	in := func(dict map[string]struct{}) bool { _, ok := dict[cleaned]; return ok }
+	switch {
+	case in(d.WhiteSpecies):
+		p.SpeciesDict = dict.WhiteSpecies
+	case in(d.GreySpecies):
+		p.SpeciesDict = dict.GreySpecies
+	case in(d.BlackSpecies):
+		p.SpeciesDict = dict.BlackSpecies
+	case in(d.CommonWords):
+		p.SpeciesDict = dict.CommonWords
+	default:
+		p.SpeciesDict = dict.NotInDictionary
+	}
+}
+
+func (p *PropertiesSN) SetRank(raw string, d *dict.Dictionary) {
+	if _, ok := d.Ranks[raw]; ok {
+		p.RankLike = true
+	}
 }

@@ -15,8 +15,7 @@ func TestTokenize(t *testing.T) {
 	str := "one\vtwo poma-  \t\r\ntomus " +
 		"dash -\nstandalone " +
 		"Tora-\nBora\n\rthree \n"
-	tokens, err := token.Tokenize([]rune(str))
-	assert.Nil(t, err)
+	tokens := token.Tokenize([]rune(str))
 	assert.Equal(t, len(tokens), 8)
 	assert.Equal(t, tokens[2].Cleaned(), "pomatomus")
 	assert.Equal(t, tokens[4].Cleaned(), "-")
@@ -29,8 +28,7 @@ func TestTokenize(t *testing.T) {
 
 func TestTokenizeNoNewLine(t *testing.T) {
 	str := "hello there"
-	tokens, err := token.Tokenize([]rune(str))
-	assert.Nil(t, err)
+	tokens := token.Tokenize([]rune(str))
 	ts := tokens[1]
 	rn := []rune(str)
 	assert.Equal(t, ts.Cleaned(), "there")
@@ -39,8 +37,7 @@ func TestTokenizeNoNewLine(t *testing.T) {
 
 func TestTokenizeBadLetters(t *testing.T) {
 	str := "(l33te hax0r]...$ S0me.. Ida's"
-	ts, err := token.Tokenize([]rune(str))
-	assert.Nil(t, err)
+	ts := token.Tokenize([]rune(str))
 	assert.Equal(t, ts[0].Cleaned(), "l��te")
 	assert.Equal(t, ts[1].Cleaned(), "hax�r")
 	assert.Equal(t, ts[2].Cleaned(), "S�me")
@@ -69,11 +66,7 @@ func BenchmarkTokenize(b *testing.B) {
 	b.Run("Tokenize book", func(b *testing.B) {
 		var ts []token.TokenSN
 		for i := 0; i < b.N; i++ {
-			ts, err = token.Tokenize(runes)
-			if err != nil {
-				panic(err)
-			}
-
+			ts = token.Tokenize(runes)
 		}
 		_ = fmt.Sprintf("%v", len(ts))
 	})
@@ -81,11 +74,7 @@ func BenchmarkTokenize(b *testing.B) {
 	b.Run("Tokenize small text", func(b *testing.B) {
 		var ts []token.TokenSN
 		for i := 0; i < b.N; i++ {
-			ts, err = token.Tokenize(smallText)
-			if err != nil {
-				panic(err)
-			}
-
+			ts = token.Tokenize(smallText)
 		}
 		_ = fmt.Sprintf("%v", len(ts))
 	})

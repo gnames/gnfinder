@@ -13,18 +13,19 @@ import (
 )
 
 func TagTokens(
-	ts []token.Token,
+	ts []token.TokenSN,
 	d *dict.Dictionary,
 	nb *bayes.NaiveBayes,
 	thr float64,
 ) {
 	for i := range ts {
-		t := &ts[i]
-		if !t.Features.Capitalized || t.UninomialDict == dict.BlackUninomial {
+		t := ts[i]
+		if !t.Properties().IsCapitalized ||
+			t.PropertiesSN().UninomialDict == dict.BlackUninomial {
 			continue
 		}
 
-		t.SetUninomialDict(d)
+		t.PropertiesSN().SetUninomialDict(t.Cleaned(), d)
 		ts2 := ts[i:token.UpperIndex(i, len(ts))]
 		fs := NewFeatureSet(ts2)
 		priorOdds := nameFrequency()
@@ -35,91 +36,91 @@ func TagTokens(
 
 func processBayesResults(
 	odds []bayes.Posterior,
-	ts []token.Token,
+	ts []token.TokenSN,
 	i int,
 	oddsThreshold float64,
 	d *dict.Dictionary,
 ) {
-	uni := &ts[i]
+	uni := ts[i]
 	decideUninomial(odds, uni, oddsThreshold)
 
-	if uni.Indices.Species == 0 || (odds[1].MaxLabel != Name &&
-		uni.Decision.In(token.NotName, token.Uninomial)) {
+	if uni.Indices().Species == 0 || (odds[1].MaxLabel != Name &&
+		uni.Decision().In(token.NotName, token.Uninomial)) {
 		return
 	}
 
-	sp := &ts[i+uni.Indices.Species]
+	sp := ts[i+uni.Indices().Species]
 	decideSpeces(odds, uni, sp, oddsThreshold, d)
-	if uni.Indices.Infraspecies == 0 || (odds[2].MaxLabel != Name &&
-		!uni.Decision.In(token.Trinomial, token.BayesTrinomial)) {
+	if uni.Indices().Infraspecies == 0 || (odds[2].MaxLabel != Name &&
+		!uni.Decision().In(token.Trinomial, token.BayesTrinomial)) {
 		return
 	}
-	isp := &ts[i+uni.Indices.Infraspecies]
+	isp := ts[i+uni.Indices().Infraspecies]
 	decideInfraspeces(odds, uni, isp, oddsThreshold, d)
 }
 
 func decideInfraspeces(
 	odds []bayes.Posterior,
-	uni *token.Token,
-	isp *token.Token,
+	uni token.TokenSN,
+	isp token.TokenSN,
 	oddsThreshold float64,
 	d *dict.Dictionary,
 ) {
-	isp.SetSpeciesDict(d)
-	if isp.SpeciesDict == dict.BlackSpecies {
+	isp.PropertiesSN().SetSpeciesDict(isp.Cleaned(), d)
+	if isp.PropertiesSN().SpeciesDict == dict.BlackSpecies {
 		return
 	}
-	isp.Odds = odds[2].MaxOdds
-	isp.OddsDetails = token.NewOddsDetails(odds[2].Likelihoods)
-	if isp.Odds >= oddsThreshold && uni.Decision.In(token.NotName,
+	isp.NLP().Odds = odds[2].MaxOdds
+	isp.NLP().OddsDetails = token.NewOddsDetails(odds[2].Likelihoods)
+	if isp.NLP().Odds >= oddsThreshold && uni.Decision().In(token.NotName,
 		token.PossibleBinomial, token.Binomial, token.BayesBinomial) {
-		uni.Decision = token.BayesTrinomial
+		uni.SetDecision(token.BayesTrinomial)
 	}
 }
 
 func decideSpeces(
 	odds []bayes.Posterior,
-	uni *token.Token,
-	sp *token.Token,
+	uni token.TokenSN,
+	sp token.TokenSN,
 	oddsThreshold float64,
 	d *dict.Dictionary,
 ) {
-	sp.SetSpeciesDict(d)
-	if sp.SpeciesDict == dict.BlackSpecies {
+	sp.PropertiesSN().SetSpeciesDict(sp.Cleaned(), d)
+	if sp.PropertiesSN().SpeciesDict == dict.BlackSpecies {
 		return
 	}
-	sp.Odds = odds[1].MaxOdds
-	sp.OddsDetails = token.NewOddsDetails(odds[1].Likelihoods)
-	if sp.Odds >= oddsThreshold && uni.Odds > 1 &&
-		uni.Decision.In(token.NotName, token.Uninomial, token.PossibleBinomial) {
-		uni.Decision = token.BayesBinomial
+	sp.NLP().Odds = odds[1].MaxOdds
+	sp.NLP().OddsDetails = token.NewOddsDetails(odds[1].Likelihoods)
+	if sp.NLP().Odds >= oddsThreshold && uni.NLP().Odds > 1 &&
+		uni.Decision().In(token.NotName, token.Uninomial, token.PossibleBinomial) {
+		uni.SetDecision(token.BayesBinomial)
 	}
 }
 
 func decideUninomial(
 	odds []bayes.Posterior,
-	uni *token.Token,
+	uni token.TokenSN,
 	oddsThreshold float64,
 ) {
 	if odds[0].MaxLabel == Name {
-		uni.Odds = odds[0].MaxOdds
+		uni.NLP().Odds = odds[0].MaxOdds
 	} else {
-		uni.Odds = 1 / odds[0].MaxOdds
+		uni.NLP().Odds = 1 / odds[0].MaxOdds
 	}
-	uni.OddsDetails = token.NewOddsDetails(odds[0].Likelihoods)
-	uni.LabelFreq = odds[0].LabelFreq
+	uni.NLP().OddsDetails = token.NewOddsDetails(odds[0].Likelihoods)
+	uni.NLP().LabelFreq = odds[0].LabelFreq
 	if odds[0].MaxLabel == Name &&
 		odds[0].MaxOdds >= oddsThreshold &&
-		uni.Decision == token.NotName &&
-		uni.UninomialDict != dict.BlackUninomial &&
-		!uni.Abbr {
-		uni.Decision = token.BayesUninomial
+		uni.Decision() == token.NotName &&
+		uni.PropertiesSN().UninomialDict != dict.BlackUninomial &&
+		!uni.PropertiesSN().Abbr {
+		uni.SetDecision(token.BayesUninomial)
 	}
 }
 
 func predictOdds(
 	nb *bayes.NaiveBayes,
-	t *token.Token,
+	t token.TokenSN,
 	fs *FeatureSet,
 	odds bayes.LabelFreq,
 ) []bayes.Posterior {
@@ -128,7 +129,7 @@ func predictOdds(
 	if err != nil {
 		log.Fatal(err)
 	}
-	if t.Indices.Species == 0 {
+	if t.Indices().Species == 0 {
 		return []bayes.Posterior{oddsUni}
 	}
 
@@ -137,7 +138,7 @@ func predictOdds(
 		log.Fatal(err)
 	}
 	delete(oddsSp.Likelihoods[Name], "PriorOdds")
-	if t.Indices.Infraspecies == 0 {
+	if t.Indices().Infraspecies == 0 {
 		return []bayes.Posterior{oddsUni, oddsSp}
 	}
 	f := features(fs.InfraSp)

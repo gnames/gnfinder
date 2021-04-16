@@ -130,20 +130,20 @@ func processText(t *TextData, d *dict.Dictionary) []bayes.LabeledFeatures {
 // known name. It takes index of the first token to traverse, tokens, and
 // currenly available name metadata, if any. It returns all the features
 // and a new index to continue collecting data.
-func getFeatures(i int, ts []token.Token,
+func getFeatures(i int, ts []token.TokenSN,
 	nd *NameData) (int, []bayes.LabeledFeatures) {
 	var lfs []bayes.LabeledFeatures
 	label := nlp.NotName
 
 	for j := i; j < len(ts); j++ {
-		t := &ts[j]
-		if !t.Capitalized {
+		t := ts[j]
+		if !t.Properties().IsCapitalized {
 			continue
 		}
 
 		upperIndex := token.UpperIndex(j, len(ts))
 		featureSet := nlp.NewFeatureSet(ts[j:upperIndex])
-		if nd.Name != "" && t.End > nd.Start {
+		if nd.Name != "" && t.End() > nd.Start {
 			label = nlp.Name
 			lfs = append(lfs, bayes.LabeledFeatures{Features: featureSet.Flatten(),
 				Label: label})

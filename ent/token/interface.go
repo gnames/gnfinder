@@ -7,4 +7,8 @@ import (
 type TokenSN interface {
 	gner.TokenNER
 	PropertiesSN() *PropertiesSN
+	NLP() *NLP
+	Indices() *Indices
+	Decision() Decision
+	SetDecision(d Decision)
 }
