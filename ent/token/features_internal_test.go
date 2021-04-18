@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	gner "github.com/gnames/gner/ent/token"
 	"github.com/tj/assert"
 )
 
@@ -27,16 +26,15 @@ func TestAbbr(t *testing.T) {
 		{"not abbr", "A", 0, 0, false},
 	}
 
-	p := &gner.Properties{}
-	psn := &PropertiesSN{}
+	f := &Features{}
 	for _, v := range tests {
 		raw := []rune(v.raw)
-		_, start, end := normalize(raw, p)
+		_, start, end := normalize(raw, f)
 		t.Run(v.msg, func(t *testing.T) {
-			psn.setAbbr(raw, start, end)
+			f.setAbbr(raw, start, end)
 			assert.Equal(t, start, v.start)
 			assert.Equal(t, end, v.end)
-			assert.Equal(t, psn.Abbr, v.abbr)
+			assert.Equal(t, f.Abbr, v.abbr)
 		})
 	}
 }
@@ -60,17 +58,16 @@ func TestPotentialBinomialGenus(t *testing.T) {
 		{"caps 4 letters", "Abcd", 0, 3, true},
 	}
 
-	p := &gner.Properties{}
-	psn := &PropertiesSN{}
+	f := &Features{}
 	for _, v := range tests {
 		raw := []rune(v.raw)
-		_, start, end := normalize(raw, p)
-		psn.setAbbr(raw, start, end)
-		psn.setPotentialBinomialGenus(raw, start, end)
+		_, start, end := normalize(raw, f)
+		f.setAbbr(raw, start, end)
+		f.setPotentialBinomialGenus(raw, start, end)
 		t.Run(v.msg, func(t *testing.T) {
 			assert.Equal(t, start, v.start)
 			assert.Equal(t, end, v.end)
-			assert.Equal(t, psn.PotentialBinomialGenus, v.res)
+			assert.Equal(t, f.PotentialBinomialGenus, v.res)
 		})
 	}
 }
@@ -88,16 +85,15 @@ func TestStartsWithLetter(t *testing.T) {
 		{"word", "abcd", 0, 3, true},
 	}
 
-	p := &gner.Properties{}
-	psn := &PropertiesSN{}
+	f := &Features{}
 	for _, v := range tests {
 		raw := []rune(v.raw)
-		_, start, end := normalize(raw, p)
-		psn.setStartsWithLetter(start, end)
+		_, start, end := normalize(raw, f)
+		f.setStartsWithLetter(start, end)
 		t.Run(v.msg, func(t *testing.T) {
 			assert.Equal(t, start, v.start)
 			assert.Equal(t, end, v.end)
-			assert.Equal(t, psn.StartsWithLetter, v.res)
+			assert.Equal(t, f.StartsWithLetter, v.res)
 		})
 	}
 }
@@ -117,19 +113,19 @@ func TestEndsWithLetter(t *testing.T) {
 		{"word", "abcd", 0, 3, true},
 	}
 
-	p := &gner.Properties{}
-	psn := &PropertiesSN{}
+	f := &Features{}
 	for _, v := range tests {
 		raw := []rune(v.raw)
-		_, start, end := normalize(raw, p)
-		psn.setEndsWithLetter(raw, start, end)
+		_, start, end := normalize(raw, f)
+		f.setEndsWithLetter(raw, start, end)
 		t.Run(v.msg, func(t *testing.T) {
 			assert.Equal(t, start, v.start)
 			assert.Equal(t, end, v.end)
-			assert.Equal(t, psn.EndsWithLetter, v.res)
+			assert.Equal(t, f.EndsWithLetter, v.res)
 		})
 	}
 }
+
 func randInt() int {
 	rand.Seed(time.Now().UnixNano())
 	min := 0

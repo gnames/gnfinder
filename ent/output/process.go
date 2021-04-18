@@ -11,7 +11,7 @@ import (
 
 // TokensToOutput takes tagged tokens and assembles output out of them.
 func TokensToOutput(ts []token.TokenSN, text []rune, tokensAround int,
-	oddsDetails bool, opts ...Option) *Output {
+	oddsDetails bool, opts ...Option) Output {
 	var names []Name
 	for i := range ts {
 		u := ts[i]
@@ -258,7 +258,7 @@ func infraspeciesString(
 func candidatesNum(ts []token.TokenSN) int {
 	var num int
 	for _, v := range ts {
-		if v.Properties().IsCapitalized {
+		if v.Features().IsCapitalized {
 			num++
 		}
 	}

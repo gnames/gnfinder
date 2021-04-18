@@ -49,7 +49,7 @@ func New(
 	return gnf
 }
 
-func (gnf *gnfinder) Find(data []byte) *output.Output {
+func (gnf *gnfinder) Find(data []byte) output.Output {
 	text := []rune(string(data))
 	tokens := token.Tokenize(text)
 

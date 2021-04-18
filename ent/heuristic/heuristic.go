@@ -16,7 +16,7 @@ func TagTokens(ts []token.TokenSN, d *dict.Dictionary) {
 
 	for i := range ts {
 
-		if !ts[i].Properties().IsCapitalized {
+		if !ts[i].Features().IsCapitalized {
 			continue
 		}
 		nameTs := ts[i:token.UpperIndex(i, l)]
@@ -29,14 +29,15 @@ func exploreNameCandidate(ts []token.TokenSN, d *dict.Dictionary) bool {
 
 	u := ts[0]
 
-	if u.PropertiesSN().UninomialDict == dict.WhiteUninomial ||
+	if u.Features().UninomialDict == dict.WhiteUninomial ||
 		(u.Indices().Species == 0 &&
-			u.PropertiesSN().UninomialDict == dict.WhiteGenus) {
+			u.Features().UninomialDict == dict.WhiteGenus) {
 		u.SetDecision(token.Uninomial)
 		return true
 	}
 
-	if u.Indices().Species == 0 || u.PropertiesSN().UninomialDict == dict.BlackUninomial {
+	if u.Indices().Species == 0 ||
+		u.Features().UninomialDict == dict.BlackUninomial {
 		return false
 	}
 
@@ -53,9 +54,9 @@ func exploreNameCandidate(ts []token.TokenSN, d *dict.Dictionary) bool {
 }
 
 func checkAsSpecies(t token.TokenSN, d *dict.Dictionary) bool {
-	if !t.Properties().IsCapitalized &&
-		(t.PropertiesSN().SpeciesDict == dict.WhiteSpecies ||
-			t.PropertiesSN().SpeciesDict == dict.GreySpecies) {
+	if !t.Features().IsCapitalized &&
+		(t.Features().SpeciesDict == dict.WhiteSpecies ||
+			t.Features().SpeciesDict == dict.GreySpecies) {
 		return true
 	}
 	return false
@@ -66,14 +67,14 @@ func checkAsGenusSpecies(ts []token.TokenSN, d *dict.Dictionary) bool {
 	s := ts[g.Indices().Species]
 
 	if !checkAsSpecies(s, d) {
-		if g.PropertiesSN().UninomialDict == dict.WhiteGenus {
+		if g.Features().UninomialDict == dict.WhiteGenus {
 			g.SetDecision(token.Uninomial)
 			return true
 		}
 		return false
 	}
 
-	if g.PropertiesSN().UninomialDict == dict.WhiteGenus {
+	if g.Features().UninomialDict == dict.WhiteGenus {
 		g.SetDecision(token.Binomial)
 		return true
 	}
@@ -83,8 +84,8 @@ func checkAsGenusSpecies(ts []token.TokenSN, d *dict.Dictionary) bool {
 		return true
 	}
 
-	if s.PropertiesSN().SpeciesDict == dict.WhiteSpecies &&
-		!s.Properties().IsCapitalized {
+	if s.Features().SpeciesDict == dict.WhiteSpecies &&
+		!s.Features().IsCapitalized {
 		g.SetDecision(token.PossibleBinomial)
 		return true
 	}

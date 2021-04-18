@@ -20,12 +20,12 @@ func TagTokens(
 ) {
 	for i := range ts {
 		t := ts[i]
-		if !t.Properties().IsCapitalized ||
-			t.PropertiesSN().UninomialDict == dict.BlackUninomial {
+		if !t.Features().IsCapitalized ||
+			t.Features().UninomialDict == dict.BlackUninomial {
 			continue
 		}
 
-		t.PropertiesSN().SetUninomialDict(t.Cleaned(), d)
+		t.Features().SetUninomialDict(t.Cleaned(), d)
 		ts2 := ts[i:token.UpperIndex(i, len(ts))]
 		fs := NewFeatureSet(ts2)
 		priorOdds := nameFrequency()
@@ -66,8 +66,8 @@ func decideInfraspeces(
 	oddsThreshold float64,
 	d *dict.Dictionary,
 ) {
-	isp.PropertiesSN().SetSpeciesDict(isp.Cleaned(), d)
-	if isp.PropertiesSN().SpeciesDict == dict.BlackSpecies {
+	isp.Features().SetSpeciesDict(isp.Cleaned(), d)
+	if isp.Features().SpeciesDict == dict.BlackSpecies {
 		return
 	}
 	isp.NLP().Odds = odds[2].MaxOdds
@@ -85,8 +85,8 @@ func decideSpeces(
 	oddsThreshold float64,
 	d *dict.Dictionary,
 ) {
-	sp.PropertiesSN().SetSpeciesDict(sp.Cleaned(), d)
-	if sp.PropertiesSN().SpeciesDict == dict.BlackSpecies {
+	sp.Features().SetSpeciesDict(sp.Cleaned(), d)
+	if sp.Features().SpeciesDict == dict.BlackSpecies {
 		return
 	}
 	sp.NLP().Odds = odds[1].MaxOdds
@@ -112,8 +112,8 @@ func decideUninomial(
 	if odds[0].MaxLabel == Name &&
 		odds[0].MaxOdds >= oddsThreshold &&
 		uni.Decision() == token.NotName &&
-		uni.PropertiesSN().UninomialDict != dict.BlackUninomial &&
-		!uni.PropertiesSN().Abbr {
+		uni.Features().UninomialDict != dict.BlackUninomial &&
+		!uni.Features().Abbr {
 		uni.SetDecision(token.BayesUninomial)
 	}
 }

@@ -57,7 +57,7 @@ func OptTokensAround(t int) Option {
 }
 
 // newOutput is a constructor for Output type.
-func newOutput(names []Name, ts []token.TokenSN, opts ...Option) *Output {
+func newOutput(names []Name, ts []token.TokenSN, opts ...Option) Output {
 	for i := range names {
 		lg := math.Log10(names[i].Odds)
 		if math.IsInf(lg, 0) {
@@ -70,10 +70,10 @@ func newOutput(names []Name, ts []token.TokenSN, opts ...Option) *Output {
 		TotalTokens: len(ts), TotalNameCandidates: candidatesNum(ts),
 		TotalNames: len(names),
 	}
-	o := &Output{Meta: meta, Names: names}
+	o := Output{Meta: meta, Names: names}
 
 	for _, opt := range opts {
-		opt(o)
+		opt(&o)
 	}
 	o.DetectLanguage = o.LanguageDetected != ""
 	return o

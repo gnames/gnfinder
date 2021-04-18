@@ -137,7 +137,7 @@ func getFeatures(i int, ts []token.TokenSN,
 
 	for j := i; j < len(ts); j++ {
 		t := ts[j]
-		if !t.Properties().IsCapitalized {
+		if !t.Features().IsCapitalized {
 			continue
 		}
 

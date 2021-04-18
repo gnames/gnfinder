@@ -7,9 +7,21 @@ import (
 	"github.com/gnames/gnfinder/io/dict"
 )
 
-// PropPropertiesSN keep properties of a token as a possible candidate for a
+// Features keep properties of a token as a possible candidate for a
 // name part.
-type PropertiesSN struct {
+type Features struct {
+	// IsCapitalized is true if the first rune that is letter, is capitalized.
+	IsCapitalized bool
+
+	// HasDash is true if token tontains dash
+	HasDash bool
+
+	// HasStartParens is true if token start with '('
+	HasStartParens bool
+
+	// HasEndParens is true if token ends with ')'
+	HasEndParens bool
+
 	// Abbr feature: token ends with a period.
 	Abbr bool
 
@@ -36,7 +48,7 @@ type PropertiesSN struct {
 	SpeciesDict dict.DictionaryType
 }
 
-func (p *PropertiesSN) setAbbr(raw []rune, start, end int) {
+func (p *Features) setAbbr(raw []rune, start, end int) {
 	var abbr bool
 	l := len(raw)
 	lenClean := end - start + 1
@@ -47,7 +59,7 @@ func (p *PropertiesSN) setAbbr(raw []rune, start, end int) {
 	p.Abbr = abbr
 }
 
-func (p *PropertiesSN) setPotentialBinomialGenus(
+func (p *Features) setPotentialBinomialGenus(
 	raw []rune,
 	start, end int,
 ) {
@@ -67,19 +79,19 @@ func (p *PropertiesSN) setPotentialBinomialGenus(
 	}
 }
 
-func (p *PropertiesSN) setStartsWithLetter(start, end int) {
+func (p *Features) setStartsWithLetter(start, end int) {
 	lenClean := end - start + 1
 	if lenClean >= 2 && start == 0 {
 		p.StartsWithLetter = true
 	}
 }
 
-func (p *PropertiesSN) setEndsWithLetter(raw []rune, start, end int) {
+func (p *Features) setEndsWithLetter(raw []rune, start, end int) {
 	cleanEnd := len(raw) == end+1
 	p.EndsWithLetter = cleanEnd
 }
 
-func (p *PropertiesSN) SetUninomialDict(cleaned string, d *dict.Dictionary) {
+func (p *Features) SetUninomialDict(cleaned string, d *dict.Dictionary) {
 	if p.UninomialDict != dict.NotSet {
 		return
 	}
@@ -107,7 +119,7 @@ func (p *PropertiesSN) SetUninomialDict(cleaned string, d *dict.Dictionary) {
 	}
 }
 
-func (p *PropertiesSN) SetSpeciesDict(cleaned string, d *dict.Dictionary) {
+func (p *Features) SetSpeciesDict(cleaned string, d *dict.Dictionary) {
 	if p.SpeciesDict != dict.NotSet {
 		return
 	}
@@ -126,7 +138,7 @@ func (p *PropertiesSN) SetSpeciesDict(cleaned string, d *dict.Dictionary) {
 	}
 }
 
-func (p *PropertiesSN) SetRank(raw string, d *dict.Dictionary) {
+func (p *Features) SetRank(raw string, d *dict.Dictionary) {
 	if _, ok := d.Ranks[raw]; ok {
 		p.RankLike = true
 	}

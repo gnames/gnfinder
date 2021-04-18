@@ -44,7 +44,7 @@ func NewFeatureSet(ts []token.TokenSN) FeatureSet {
 	var u, sp, isp, rank token.TokenSN
 	u = ts[0]
 
-	if !u.Properties().IsCapitalized {
+	if !u.Features().IsCapitalized {
 		return fs
 	}
 
@@ -70,24 +70,24 @@ func (fs *FeatureSet) convertFeatures(
 	isp token.TokenSN,
 	rank token.TokenSN,
 ) {
-	if !u.PropertiesSN().Abbr {
+	if !u.Features().Abbr {
 		fs.Uninomial = append(fs.Uninomial,
 			BayesF{"uniLen", strconv.Itoa(len(u.Cleaned()))},
-			BayesF{"uniDict", u.PropertiesSN().UninomialDict.String()},
+			BayesF{"uniDict", u.Features().UninomialDict.String()},
 			BayesF{"abbr", "false"},
 		)
 	} else {
 		fs.Uninomial = append(fs.Uninomial, BayesF{"abbr", "true"})
 	}
-	if w3 := wordEnd(u); !u.PropertiesSN().Abbr && w3 != "" {
+	if w3 := wordEnd(u); !u.Features().Abbr && w3 != "" {
 		fs.Uninomial = append(fs.Uninomial, BayesF{"uniEnd3", w3})
 	}
 	if u.Indices().Species > 0 {
 		fs.Species = append(fs.Species,
 			BayesF{"spLen", strconv.Itoa(len(sp.Cleaned()))},
-			BayesF{"spDict", sp.PropertiesSN().SpeciesDict.String()},
+			BayesF{"spDict", sp.Features().SpeciesDict.String()},
 		)
-		if sp.Properties().HasDash {
+		if sp.Features().HasDash {
 			fs.Species = append(fs.Species, BayesF{"hasDash", "true"})
 		}
 		if w3 := wordEnd(sp); w3 != "" {
@@ -103,9 +103,9 @@ func (fs *FeatureSet) convertFeatures(
 	if u.Indices().Infraspecies > 0 {
 		fs.InfraSp = append(fs.InfraSp,
 			BayesF{"ispLen", strconv.Itoa(len(isp.Cleaned()))},
-			BayesF{"ispDict", isp.PropertiesSN().SpeciesDict.String()},
+			BayesF{"ispDict", isp.Features().SpeciesDict.String()},
 		)
-		if isp.Properties().HasDash {
+		if isp.Features().HasDash {
 			fs.InfraSp = append(fs.InfraSp, BayesF{"hasDash", "true"})
 		}
 		if w3 := wordEnd(isp); w3 != "" {

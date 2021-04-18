@@ -17,9 +17,9 @@ import (
 type tokenSN struct {
 	gner.TokenNER
 
-	// propertiesSN is a collection of properties associated with the tokenSN.
+	// features is a collection of properties associated with the tokenSN.
 	// They differ from properties coming from TokenNER.
-	propertiesSN PropertiesSN
+	features Features
 
 	// nlp contains NLP-related data.
 	nlp NLP
@@ -43,10 +43,6 @@ type NLP struct {
 	// LabelFreq is used to calculate prior odds of names appearing in a
 	// document.
 	LabelFreq bayes.LabelFreq
-}
-
-func (t tokenSN) NLP() *NLP {
-	return &t.nlp
 }
 
 // OddsDetails are elements from which Odds are calculated
@@ -76,10 +72,19 @@ func NewTokenSN(token gner.TokenNER) gner.TokenNER {
 	return t
 }
 
-// PropertiesSN returns properties that are specific to scientific name
+// Features returns features that are specific to scientific name
 // finding.
-func (t *tokenSN) PropertiesSN() *PropertiesSN {
-	return &t.propertiesSN
+func (t *tokenSN) Features() *Features {
+	return &t.features
+}
+
+// NLP returns natural language processing features of a scientific name.
+func (t *tokenSN) NLP() *NLP {
+	return &t.nlp
+}
+
+func (t *tokenSN) Indices() *Indices {
+	return &t.indices
 }
 
 // Decision returns the decision for a name candidate.
@@ -95,41 +100,36 @@ func (t *tokenSN) SetDecision(d Decision) {
 // ProcessRaw overrides the function in TokenNER and introduces logic that is
 // needed for scientific names finding. The function sets cleand up version of
 // raw token value and computes several properties of a token.
-func (t *tokenSN) ProcessRaw() {
+func (t *tokenSN) ProcessToken() {
 	raw := t.Raw()
-	l := len(t.Raw())
-	p := gner.Properties{}
-	feat := &t.propertiesSN
+	l := len(raw)
+	f := &t.features
 
-	p.HasStartParens = raw[0] == rune('(')
-	p.HasEndParens = raw[l-1] == rune(')')
+	f.HasStartParens = raw[0] == rune('(')
+	f.HasEndParens = raw[l-1] == rune(')')
 
-	res, start, end := normalize(raw, &p)
+	res, start, end := normalize(raw, f)
 
-	feat.setAbbr(t.Raw(), start, end)
-	if p.IsCapitalized {
+	f.setAbbr(t.Raw(), start, end)
+	if f.IsCapitalized {
 		res[0] = unicode.ToUpper(res[0])
-		feat.setPotentialBinomialGenus(t.Raw(), start, end)
-		if feat.Abbr {
+		f.setPotentialBinomialGenus(t.Raw(), start, end)
+		if f.Abbr {
 			res = append(res, rune('.'))
 		}
 	} else {
 		// makes it impossible to have capitalized species
-		feat.setStartsWithLetter(start, end)
-		feat.setEndsWithLetter(t.Raw(), start, end)
+		f.setStartsWithLetter(start, end)
+		f.setEndsWithLetter(t.Raw(), start, end)
 	}
 
-	// probably 'fake' optimization, if we are lucky and this is not important,
-	// we gain speed.
-	// gner.CalculateProperties(t.Raw(), res, &p)
-	t.SetProperties(&p)
 	t.SetCleaned(string(res))
 }
 
 // normalize returns cleaned up name and indices of their start and end.
 // The normalization includes removal of non-letters from the start
 // and the end, substitutin of internal non-letters with '�'.
-func normalize(raw []rune, p *gner.Properties) ([]rune, int, int) {
+func normalize(raw []rune, f *Features) ([]rune, int, int) {
 	res := make([]rune, len(raw))
 	firstLetter := true
 	var start, end int
@@ -138,7 +138,7 @@ func normalize(raw []rune, p *gner.Properties) ([]rune, int, int) {
 		if unicode.IsLetter(raw[i]) || hasDash {
 			if firstLetter {
 				start = i
-				p.IsCapitalized = unicode.IsUpper(raw[i])
+				f.IsCapitalized = unicode.IsUpper(raw[i])
 				firstLetter = false
 			}
 			end = i
@@ -147,14 +147,10 @@ func normalize(raw []rune, p *gner.Properties) ([]rune, int, int) {
 			res[i] = rune('�')
 		}
 		if hasDash {
-			p.HasDash = true
+			f.HasDash = true
 		}
 	}
 	return res[start : end+1], start, end
-}
-
-func (t *tokenSN) Indices() *Indices {
-	return &t.indices
 }
 
 // SetIndices takes a slice of tokens that correspond to a name candidate.
@@ -163,41 +159,41 @@ func (t *tokenSN) Indices() *Indices {
 // a possible species, ranks, and infraspecies.
 func SetIndices(ts []TokenSN, d *dict.Dictionary) {
 	u := ts[0]
-	psnU := u.PropertiesSN()
-	psnU.SetUninomialDict(u.Cleaned(), d)
+	uF := u.Features()
+	uF.SetUninomialDict(u.Cleaned(), d)
 	l := len(ts)
 
-	if !psnU.PotentialBinomialGenus || l == 1 {
+	if !uF.PotentialBinomialGenus || l == 1 {
 		return
 	}
 
 	if l == 2 {
 		sp := ts[1]
-		pSP := sp.Properties()
-		psnSP := sp.PropertiesSN()
-		if !psnSP.StartsWithLetter || pSP.IsCapitalized || len(sp.Cleaned()) < 3 {
+		spF := sp.Features()
+		if !spF.StartsWithLetter || spF.IsCapitalized || len(sp.Cleaned()) < 3 {
 			return
 		}
 		u.Indices().Species = 1
-		psnSP.SetSpeciesDict(sp.Cleaned(), d)
+		spF.SetSpeciesDict(sp.Cleaned(), d)
 		return
 	}
 
-	pSP := ts[1].Properties()
+	spF := ts[1].Features()
 	iSp := 1
-	if pSP.HasStartParens && pSP.HasEndParens {
+	if spF.HasStartParens && spF.HasEndParens {
 		iSp = 2
 	}
 	sp := ts[iSp]
-	if !sp.PropertiesSN().StartsWithLetter ||
-		sp.Properties().IsCapitalized || len(sp.Cleaned()) < 3 {
+	spF = sp.Features()
+	if !spF.StartsWithLetter ||
+		spF.IsCapitalized || len(sp.Cleaned()) < 3 {
 		return
 	}
 
 	u.Indices().Species = iSp
-	sp.PropertiesSN().SetSpeciesDict(sp.Cleaned(), d)
+	sp.Features().SetSpeciesDict(sp.Cleaned(), d)
 
-	if !sp.PropertiesSN().EndsWithLetter || l == iSp+1 {
+	if !sp.Features().EndsWithLetter || l == iSp+1 {
 		return
 	}
 
@@ -210,20 +206,20 @@ func SetIndices(ts []TokenSN, d *dict.Dictionary) {
 	tIsp := ts[iIsp]
 
 	if l <= iIsp ||
-		tIsp.Properties().IsCapitalized ||
-		!tIsp.PropertiesSN().StartsWithLetter ||
+		tIsp.Features().IsCapitalized ||
+		!tIsp.Features().StartsWithLetter ||
 		len(tIsp.Cleaned()) < 3 {
 		return
 	}
 
 	u.Indices().Infraspecies = iIsp
 	isp := ts[iIsp]
-	isp.PropertiesSN().SetSpeciesDict(isp.Cleaned(), d)
+	isp.Features().SetSpeciesDict(isp.Cleaned(), d)
 }
 
 func checkRank(t TokenSN, d *dict.Dictionary) bool {
-	t.PropertiesSN().SetRank(string(t.Raw()), d)
-	return t.PropertiesSN().RankLike
+	t.Features().SetRank(string(t.Raw()), d)
+	return t.Features().RankLike
 }
 
 // UpperIndex takes an index of a token and length of the tokens slice and
