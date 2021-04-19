@@ -1,8 +1,9 @@
 package main
 
 import (
-	"io/ioutil"
+	"encoding/json"
 	"log"
+	"os"
 	"path/filepath"
 
 	"github.com/gnames/gnfinder/io/dict"
@@ -16,7 +17,11 @@ func main() {
 	for lang, v := range data {
 		path := filepath.Join(output, lang.String(), "bayes.json")
 		nb := Train(v, d)
-		err := ioutil.WriteFile(path, nb.Dump(), 0644)
+		dump, err := json.MarshalIndent(nb, "", " ")
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = os.WriteFile(path, dump, 0644)
 		if err != nil {
 			log.Fatal(err)
 		}

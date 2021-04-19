@@ -1,38 +1,31 @@
 package dict_test
 
 import (
+	"testing"
+
 	"github.com/gnames/gnfinder/io/dict"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"github.com/tj/assert"
 )
 
 var dictionary = dict.LoadDictionary()
 
-var _ = Describe("Dictionary", func() {
-	Describe("GreyUninomials", func() {
-		It("has grey uninomials list", func() {
-			l := len(dictionary.GreyUninomials)
-			Expect(l).To(Equal(154))
-			_, ok := dictionary.GreyUninomials["Minimi"]
-			Expect(ok).To(Equal(true))
-		})
-	})
+func TestGreyUninomials(t *testing.T) {
+	l := len(dictionary.GreyUninomials)
+	assert.Equal(t, l, 154)
+	_, ok := dictionary.GreyUninomials["Minimi"]
+	assert.True(t, ok)
+}
 
-	Describe("CommonWords", func() {
-		It("has common words list", func() {
-			l := len(dictionary.CommonWords)
-			Expect(l).To(Equal(70415))
-			_, ok := dictionary.CommonWords["all"]
-			Expect(ok).To(Equal(true))
-		})
-	})
+func TestCommonWords(t *testing.T) {
+	l := len(dictionary.CommonWords)
+	assert.Equal(t, l, 70415)
+	_, ok := dictionary.CommonWords["all"]
+	assert.True(t, ok)
+}
 
-	Describe("WhiteGenera", func() {
-		It("has white genus list", func() {
-			l := len(dictionary.WhiteGenera)
-			Expect(l).To(Equal(462371))
-			_, ok := dictionary.WhiteGenera["Plantago"]
-			Expect(ok).To(Equal(true))
-		})
-	})
-})
+func TestWhiteGenera(t *testing.T) {
+	l := len(dictionary.WhiteGenera)
+	assert.Equal(t, l, 462371)
+	_, ok := dictionary.WhiteGenera["Plantago"]
+	assert.True(t, ok)
+}

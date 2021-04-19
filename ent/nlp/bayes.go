@@ -2,7 +2,7 @@ package nlp
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 
 	"github.com/gnames/bayes"
@@ -181,7 +181,7 @@ func naiveBayesFromDump(l lang.Language) *bayes.NaiveBayes {
 		}
 	}()
 
-	json, err := ioutil.ReadAll(f)
+	json, err := io.ReadAll(f)
 	if err != nil {
 		log.Fatal(err)
 	}

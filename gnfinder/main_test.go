@@ -2,40 +2,53 @@ package main
 
 import (
 	"bytes"
+	"log"
+	"net"
+	"testing"
+	"time"
 
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"github.com/rendon/testcli"
+	"github.com/tj/assert"
 )
 
 // Run make install before these tests to get meaningful
 // results.
 
-var _ = Describe("Main", func() {
-	Describe("--version flag", func() {
-		It("returns version", func() {
-			c := testcli.Command("gnfinder", "-v")
-			c.Run()
-			Expect(c.Success()).To(BeTrue())
-			Expect(c.Stdout()).To(ContainSubstring("version:"))
-		})
-	})
-	Describe("find command", func() {
-		It("finds names", func() {
-			c := testcli.Command("gnfinder", "find")
-			stdin := bytes.NewBuffer([]byte("Pardosa moesta is a spider"))
-			c.SetStdin(stdin)
-			c.Run()
-			Expect(c.Success()).To(BeTrue())
-			Expect(c.Stdout()).To(ContainSubstring(`"cardinality": 2`))
-		})
-		It("finds verified names with -c flag", func() {
-			c := testcli.Command("gnfinder", "find", "-c")
-			stdin := bytes.NewBuffer([]byte("Pardosa moesta is a spider"))
-			c.SetStdin(stdin)
-			c.Run()
-			Expect(c.Success()).To(BeTrue())
-			Expect(c.Stdout()).To(ContainSubstring(`"matchType": "Exact`))
-		})
-	})
-})
+func TestVersion(t *testing.T) {
+	c := testcli.Command("gnfinder", "-v")
+	c.Run()
+	if !c.Success() {
+		log.Println("Run `make install` for CLI tests to work")
+	}
+	assert.True(t, c.Success())
+	assert.Contains(t, c.Stdout(), "version:")
+}
+
+func TestFind(t *testing.T) {
+	c := testcli.Command("gnfinder", "find")
+	stdin := bytes.NewBuffer([]byte("Pardosa moesta is a spider"))
+	c.SetStdin(stdin)
+	c.Run()
+	if !c.Success() {
+		log.Println("Run `make install` for CLI tests to work")
+	}
+	assert.True(t, c.Success())
+	assert.Contains(t, c.Stdout(), `cardinality": 2`)
+	assert.NotContains(t, c.Stdout(), `"matchType": "Exact`)
+
+	if hasRemote() {
+		c = testcli.Command("gnfinder", "find", "-c")
+		stdin = bytes.NewBuffer([]byte("Pardosa moesta is a spider"))
+		c.SetStdin(stdin)
+		c.Run()
+		assert.True(t, c.Success())
+		assert.Contains(t, c.Stdout(), `"matchType": "Exact`)
+	}
+}
+
+func hasRemote() bool {
+	timeout := 1 * time.Second
+	_, err := net.DialTimeout("tcp", "goolge.com", timeout)
+	log.Println("WARNING: Cannot connect to internet, skipping some tests")
+	return err == nil
+}

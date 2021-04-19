@@ -22,7 +22,7 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -31,6 +31,7 @@ import (
 	"github.com/gnames/gnfinder"
 	"github.com/gnames/gnfinder/ent/lang"
 	"github.com/gnames/gnfinder/ent/nlp"
+	"github.com/gnames/gnfinder/ent/verifier"
 	"github.com/gnames/gnfinder/io/dict"
 	"github.com/spf13/cobra"
 )
@@ -88,12 +89,12 @@ var findCmd = &cobra.Command{
 				_ = cmd.Help()
 				os.Exit(0)
 			}
-			data, err = ioutil.ReadAll(os.Stdin)
+			data, err = io.ReadAll(os.Stdin)
 			if err != nil {
 				log.Println(err)
 			}
 		case 1:
-			data, err = ioutil.ReadFile(args[0])
+			data, err = os.ReadFile(args[0])
 			if err != nil {
 				log.Println(err)
 				os.Exit(1)
@@ -174,7 +175,8 @@ func findNames(
 	res := gnf.Find(data)
 
 	if gnf.GetConfig().WithVerification {
-		verifiedNames := gnf.Verify(res.UniqueNameStrings())
+		verif := verifier.New(gnf.GetConfig().PreferredSources)
+		verifiedNames := verif.Verify(res.UniqueNameStrings())
 		res.MergeVerification(verifiedNames)
 	}
 	fmt.Println(string(res.ToJSON()))

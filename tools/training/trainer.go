@@ -3,8 +3,8 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 
 	"github.com/gnames/gnfinder/ent/heuristic"
@@ -67,7 +67,7 @@ func NewTrainingData(path string) TrainingData {
 	for _, v := range files {
 		txt := fmt.Sprintf("%s.txt", v)
 		txtPath := filepath.Join(path, txt)
-		txtBytes, err := ioutil.ReadFile(txtPath)
+		txtBytes, err := os.ReadFile(txtPath)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -75,7 +75,7 @@ func NewTrainingData(path string) TrainingData {
 
 		json := fmt.Sprintf("%s.json", v)
 		jsonPath := filepath.Join(path, json)
-		namesBytes, err := ioutil.ReadFile(jsonPath)
+		namesBytes, err := os.ReadFile(jsonPath)
 		if err != nil {
 			log.Fatal(err)
 		}

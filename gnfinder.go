@@ -7,7 +7,6 @@ import (
 	"github.com/gnames/gnfinder/ent/nlp"
 	"github.com/gnames/gnfinder/ent/output"
 	"github.com/gnames/gnfinder/ent/token"
-	"github.com/gnames/gnfinder/ent/verifier"
 	"github.com/gnames/gnfinder/io/dict"
 )
 
@@ -19,9 +18,6 @@ type gnfinder struct {
 	// number of names in text. We use it when we do not have local conentration
 	// of names in a region of text.
 	TextOdds bayes.LabelFreq
-
-	// Verifier for scientific names.
-	verifier.Verifier
 
 	// Dictionary contains black, grey, and white list dictionaries.
 	*dict.Dictionary
@@ -39,9 +35,6 @@ func New(
 		Config:       cfg,
 		Dictionary:   dictionaries,
 		bayesWeights: weights,
-	}
-	if gnf.WithVerification {
-		gnf.Verifier = verifier.New(cfg.PreferredSources)
 	}
 	if gnf.WithBayes && gnf.bayesWeights == nil {
 		gnf.bayesWeights = nlp.BayesWeights()
