@@ -54,6 +54,13 @@ func OptLanguage(l lang.Language) Option {
 	}
 }
 
+// OptFormat sets output format
+func OptFormat(f gnfmt.Format) Option {
+	return func(cnf *Config) {
+		cnf.Format = f
+	}
+}
+
 // OptWithLanguageDetection when true sets automatic detection of text's
 // language.
 func OptWithLanguageDetection(b bool) Option {
@@ -121,6 +128,7 @@ func OptPreferredSources(is []int) Option {
 // from opts.
 func NewConfig(opts ...Option) Config {
 	cfg := Config{
+		Format:             gnfmt.CSV,
 		WithBayes:          true,
 		BayesOddsThreshold: 80.0,
 		TokensAround:       0,

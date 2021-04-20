@@ -1,6 +1,7 @@
 package gnfinder_test
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"regexp"
@@ -255,4 +256,23 @@ func genFinder(opts ...gnfinder.Option) gnfinder.GNfinder {
 	}
 	cfg := gnfinder.NewConfig(opts...)
 	return gnfinder.New(cfg, dictionary, weights)
+}
+
+func Example() {
+	txt := []byte(`Blue Adussel (Mytilus edulis) grows to about two
+inches the first year,Pardosa moesta Banks, 1892`)
+	cfg := gnfinder.NewConfig()
+	dictionary := dict.LoadDictionary()
+	weights := nlp.BayesWeights()
+	gnf := gnfinder.New(cfg, dictionary, weights)
+	res := gnf.Find(txt)
+	name := res.Names[0]
+	fmt.Printf(
+		"Name: %s, start: %d, end: %d",
+		name.Name,
+		name.OffsetStart,
+		name.OffsetEnd,
+	)
+	// Output:
+	// Name: Mytilus edulis, start: 13, end: 29
 }

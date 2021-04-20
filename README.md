@@ -1,9 +1,10 @@
 # Global Names Finder
 
-[![Build Status][travis-img]][travis] [![Doc Status][doc-img]][doc] [![Go Report Card][go-report-img]][go-report]
+[![Build Status][travis-img]][travis]
+[![Doc Status][doc-img]][doc]
+[![Go Report Card][go-report-img]][go-report]
 
 Finds scientific names using dictionary and nlp approaches.
-
 
 <!-- vim-markdown-toc GFM -->
 
@@ -14,13 +15,9 @@ Finds scientific names using dictionary and nlp approaches.
   * [Go](#go)
 * [Usage](#usage)
   * [Usage as a command line app](#usage-as-a-command-line-app)
-  * [Usage as gRPC service](#usage-as-grpc-service)
   * [Usage as a library](#usage-as-a-library)
   * [Usage as a docker container](#usage-as-a-docker-container)
 * [Development](#development)
-  * [Install protobuf on Mac](#install-protobuf-on-mac)
-  * [Install protobuf on Linux](#install-protobuf-on-linux)
-  * [Install gnfinder](#install-gnfinder)
 * [Testing](#testing)
 
 <!-- vim-markdown-toc -->
@@ -63,7 +60,8 @@ sudo mv path_to/gnfinder /usr/local/bin
 
 ### Windows
 
-One possible way would be to create a default folder for executables and place ``gnfinder`` there.
+One possible way would be to create a default folder for executables and place
+``gnfinder`` there.
 
 Use ``Windows+R`` keys
 combination and type "``cmd``". In the appeared terminal window type:
@@ -77,9 +75,12 @@ copy path_to\gnfinder.exe C:\bin
 
 ### Go
 
+Install Go >= v1.16
+
 ```bash
-go get github.com/gnames/gnfinder
-cd $GOPATH/src/github.com/gnames/gnfinder
+git clone git@github.com:/gnames/gnfinder
+cd gnfinder
+make tools
 make install
 ```
 
@@ -98,7 +99,7 @@ gnfinder
 To see the version of its binary:
 
 ```bash
-gnfinder -v
+gnfinder -V
 ```
 
 Examples:
@@ -106,66 +107,62 @@ Examples:
 Getting data from a pipe forcing English language and verification
 
 ```bash
-echo "Pomatomus saltator and Parus major" | gnfinder find -c -l eng
+echo "Pomatomus saltator and Parus major" | gnfinder -v -l eng
+echo "Pomatomus saltator and Parus major" | gnfinder --verify --lang eng
 ```
 
-Displaying matches from ``NCBI`` and ``Encyclopedia of Life``, if exist.
-For the list of data source ids go [gnresolver].
+Displaying matches from ``NCBI`` and ``Encyclopedia of Life``, if exist.  For
+the list of data source ids go to [gnverifier's data sources page][gnverifier].
 
 ```bash
-echo "Pomatomus saltator and Parus major" | gnfinder find -c -l eng -s "4,12"
+echo "Pomatomus saltator and Parus major" | gnfinder -v -l eng -s "4,12"
+echo "Pomatomus saltator and Parus major" | gnfinder --verify --lang eng --sources "4,12"
 ```
 
 Returning 5 words before and after found name-candidate.
 
 ```bash
-gnfinder find -t 5 file_with_names.txt
+gnfinder -w 5 file_with_names.txt
+gnfinder --words-around 5 file_with_names.txt
 ```
 
 Getting data from a file and redirecting result to another file
 
 ```bash
-gnfinder find file1.txt > file2.json
+gnfinder file1.txt > file2.json
 ```
 
 Detection of nomenclatural annotations
 
 ```bash
-echo "Parus major sp. n." | gnfinder find
+echo "Parus major sp. n." | gnfinder
 ```
-
-### Usage as gRPC service
-
-Start gnfinder as a gRPC server:
-
-```bash
-# using default 8778 port
-gnfinder grpc
-
-# using some other port
-gnfinder grpc -p 8901
-```
-
-Use a gRPC client for gnfinder. To learn how to make one, check a
-[```Ruby implementation```][gnfinder gem] of a client.
 
 ### Usage as a library
-
-```bash
-cd $GOPATH/src/github.com/gnames/gnfinder
-make deps
-```
 
 ```go
 import (
   "github.com/gnames/gnfinder"
 )
 
-bytesText := []byte(utfText)
-
-gnf := gnfinder.NewGNfinder()
-jsonNames := gnf.FindNamesJSON(bytesText)
-fmt.Println(string(output))
+func Example() {
+  txt := []byte(`Blue Adussel (Mytilus edulis) grows to about two
+inches the first year,Pardosa moesta Banks, 1892`)
+  cfg := gnfinder.NewConfig()
+  dictionary := dict.LoadDictionary()
+  weights := nlp.BayesWeights()
+  gnf := gnfinder.New(cfg, dictionary, weights)
+  res := gnf.Find(txt)
+  name := res.Names[0]
+  fmt.Printf(
+    "Name: %s, start: %d, end: %d",
+    name.Name,
+    name.OffsetStart,
+    name.OffsetEnd,
+  )
+  // Output:
+  // Name: Mytilus edulis, start: 13, end: 29
+}
 ```
 
 ### Usage as a docker container
@@ -181,75 +178,25 @@ docker run -d -p 8888:8778 --name gnfinder gnames/gnfinder
 
 To install the latest gnfinder
 
-Download ``protoc`` binary compiled for your OS from
-[protobuf releases].
-
-### Install protobuf on Mac
-
-```{.bash}
-brew install protobuf
+```bash
+git clone git@github.com:/gnames/gnfinder
+cd gnfinder
+make tools
+make install
 ```
-
-If you see any error messages, run ``brew doctor``, follow any recommended
-fixes, and try again. If it still fails, try instead:
-
-```{.bash}
-brew upgrade protobuf
-```
-
-Alternately, run the following commands:
-
-```{.bash}
-PROTOC_ZIP=protoc-3.11.4-osx-x86_64.zip
-curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.11.4/$PROTOC_ZIP
-sudo unzip -o $PROTOC_ZIP -d /usr/local bin/protoc
-sudo unzip -o $PROTOC_ZIP -d /usr/local 'include/*'
-rm -f $PROTOC_ZIP
-```
-
-Or manually download and install protoc from [protobuf releases].
-
-### Install protobuf on Linux
-
-Run the following commands:
-
-```{.bash}
-PROTOC_ZIP=protoc-3.11.4-linux-x86_64.zip
-curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.11.4/$PROTOC_ZIP
-sudo unzip -o $PROTOC_ZIP -d /usr/local bin/protoc
-sudo unzip -o $PROTOC_ZIP -d /usr/local 'include/*'
-rm -f $PROTOC_ZIP
-```
-
-Or manually download and install protoc from [protobuf releases].
-
-### Install gnfinder
-
-```
-go get github.com/gnames/gnfinder
-cd $GOPATH/src/github.com/gnames/gnfinder
-make deps
-make
-gnfinder -h
-```
-
 
 ## Testing
 
-Install [ginkgo], a [BDD] testing framefork for Go.
-
 ```bash
-make deps
+make tools
+# run make install for CLI testing
+make install
 ```
 
-To run tests go to root directory of the project and run
+To run tests go to the root directory of the project and run
 
 ```bash
-ginkgo
-
-#or
-
-go test
+go test ./...
 
 #or
 
@@ -268,5 +215,5 @@ make test
 [gnfinder gem]: https://rubygems.org/gems/gnfinder
 [go-report-img]: https://goreportcard.com/badge/github.com/gnames/gnfinder
 [go-report]: https://goreportcard.com/report/github.com/gnames/gnfinder
-[gnresolver]: https://resolver.globalnames.org/data_sources
+[gnverifier]: https://verifier.globalnames.org/data_sources
 [protobuf releases]: https://github.com/protocolbuffers/protobuf/releases

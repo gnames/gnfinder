@@ -15,7 +15,7 @@ import (
 // results.
 
 func TestVersion(t *testing.T) {
-	c := testcli.Command("gnfinder", "-v")
+	c := testcli.Command("gnfinder", "-V")
 	c.Run()
 	if !c.Success() {
 		log.Println("Run `make install` for CLI tests to work")
@@ -25,7 +25,7 @@ func TestVersion(t *testing.T) {
 }
 
 func TestFind(t *testing.T) {
-	c := testcli.Command("gnfinder", "find")
+	c := testcli.Command("gnfinder")
 	stdin := bytes.NewBuffer([]byte("Pardosa moesta is a spider"))
 	c.SetStdin(stdin)
 	c.Run()
@@ -37,7 +37,7 @@ func TestFind(t *testing.T) {
 	assert.NotContains(t, c.Stdout(), `"matchType": "Exact`)
 
 	if hasRemote() {
-		c = testcli.Command("gnfinder", "find", "-c")
+		c = testcli.Command("gnfinder", "find", "-v")
 		stdin = bytes.NewBuffer([]byte("Pardosa moesta is a spider"))
 		c.SetStdin(stdin)
 		c.Run()
