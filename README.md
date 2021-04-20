@@ -143,6 +143,8 @@ echo "Parus major sp. n." | gnfinder
 ```go
 import (
   "github.com/gnames/gnfinder"
+  "github.com/gnames/gnfinder/ent/nlp"
+  "github.com/gnames/gnfinder/io/dict"
 )
 
 func Example() {
