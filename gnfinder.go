@@ -58,6 +58,7 @@ func (gnf *gnfinder) Find(data []byte) output.Output {
 	outOpts := []output.Option{
 		output.OptVersion(Version),
 		output.OptWithBayes(gnf.WithBayes),
+		output.OptWithVerification(gnf.WithVerification),
 		output.OptLanguage(gnf.Language.String()),
 		output.OptLanguageDetected(gnf.LanguageDetected),
 		output.OptTokensAround(gnf.TokensAround),

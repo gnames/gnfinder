@@ -118,6 +118,8 @@ func OptTokensAround(i int) Option {
 	}
 }
 
+// OptPOptPreferredSources sets data sources that will always be checked
+// during verification process.
 func OptPreferredSources(is []int) Option {
 	return func(cfg *Config) {
 		cfg.PreferredSources = is
@@ -136,6 +138,10 @@ func NewConfig(opts ...Option) Config {
 
 	for _, opt := range opts {
 		opt(&cfg)
+	}
+
+	if len(cfg.PreferredSources) > 0 {
+		cfg.WithVerification = true
 	}
 	return cfg
 }

@@ -1,14 +1,11 @@
 package output
 
 import (
-	"bytes"
-	"log"
 	"math"
 	"time"
 
 	"github.com/gnames/gnfinder/ent/token"
 	vlib "github.com/gnames/gnlib/ent/verifier"
-	jsoniter "github.com/json-iterator/go"
 )
 
 // Output type is the result of name-finding.
@@ -31,6 +28,13 @@ func OptVersion(v string) Option {
 func OptWithBayes(b bool) Option {
 	return func(o *Output) {
 		o.WithBayes = b
+	}
+}
+
+// OptWithVerification sets WithBayes field
+func OptWithVerification(b bool) Option {
+	return func(o *Output) {
+		o.WithVerification = b
 	}
 }
 
@@ -83,26 +87,39 @@ func newOutput(names []Name, ts []token.TokenSN, opts ...Option) Output {
 type Meta struct {
 	// Date represents time when output was generated.
 	Date time.Time `json:"date"`
+
 	// FinderVersion the version of gnfinder
 	FinderVersion string `json:"gnfinderVersion"`
+
 	// WithBayes use of bayes during name-finding
 	WithBayes bool `json:"withBayes"`
+
+	// WithVerification is true if results are checked by verification service.
+	WithVerification bool `json:"withVerification"`
+
 	// TokensAround shows number of tokens preserved before and after
 	// a name-string candidate.
 	TokensAround int `json:"tokensAround"`
+
 	// Language inside name-finding algorithm
 	Language string `json:"language"`
+
 	// LanguageDetected automatically for the text
 	LanguageDetected string `json:"languageDetected,omitempty"`
+
 	// LanguageForced by language option
 	DetectLanguage bool `json:"detectLanguage"`
+
 	// TotalTokens is a number of 'normalized' words in the text
 	TotalTokens int `json:"totalWords"`
+
 	// TotalNameCandidates is a number of words that might be a start of
 	// a scientific name
 	TotalNameCandidates int `json:"totalCandidates"`
+
 	// TotalNames is a number of scientific names found
 	TotalNames int `json:"totalNames"`
+
 	// CurrentName (optional) is the index of the names array that designates a
 	// "position of a cursor". It is used by programs like gntagger that allow
 	// to work on the list of found names interactively.
@@ -147,22 +164,4 @@ type Name struct {
 	WordsAfter []string `json:"wordsAfter,omitempty"`
 	// Verification gives results of verification process of the name.
 	Verification *vlib.Verification `json:"verification,omitempty"`
-}
-
-// ToJSON converts Output to JSON representation.
-func (o *Output) ToJSON() []byte {
-	res, err := jsoniter.MarshalIndent(o, "", "  ")
-	if err != nil {
-		log.Fatal(err)
-	}
-	return res
-}
-
-// FromJSON converts JSON representation of Outout to Output object.
-func (o *Output) FromJSON(data []byte) {
-	r := bytes.NewReader(data)
-	err := jsoniter.NewDecoder(r).Decode(o)
-	if err != nil {
-		log.Fatal(err)
-	}
 }

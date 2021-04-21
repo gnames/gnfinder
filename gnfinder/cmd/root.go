@@ -25,18 +25,14 @@ import (
 	"io"
 	"log"
 	"os"
-	"strconv"
 	"strings"
 
-	"github.com/gnames/bayes"
 	"github.com/gnames/gnfinder"
 	"github.com/gnames/gnfinder/ent/lang"
 	"github.com/gnames/gnfinder/ent/nlp"
 	"github.com/gnames/gnfinder/ent/verifier"
 	"github.com/gnames/gnfinder/io/dict"
-	"github.com/gnames/gnfmt"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -58,64 +54,23 @@ specific datasets are important for verification, they can be set with '-s'
 	// Uncomment the following line if your bare application has an action
 	// associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		version, err := cmd.Flags().GetBool("version")
-		if err != nil {
-			log.Println(err)
-			os.Exit(1)
-		}
-		if version {
-			fmt.Printf("\nversion: %s\nbuild: %s\n\n", gnfinder.Version, gnfinder.Build)
+		var err error
+		vflag := versionFlag(cmd)
+		if vflag {
 			os.Exit(0)
 		}
 
+		opts := []gnfinder.Option{
+			formatFlag(cmd),
+			langFlag(cmd),
+			wordsFlag(cmd),
+			bayesFlag(cmd),
+			oddsDetailsFlag(cmd),
+			verifFlag(cmd),
+			sourcesFlag(cmd),
+		}
+
 		var data []byte
-		var sources []int
-		data_sources, _ := cmd.Flags().GetString("sources")
-		if data_sources != "" {
-			sources = parseDataSources(data_sources)
-		}
-		format := gnfmt.CSV
-		formatString, _ := cmd.Flags().GetString("format")
-		if formatString != "csv" {
-			format, _ = gnfmt.NewFormat(formatString)
-			if format == gnfmt.FormatNone {
-				log.Printf(
-					"Cannot set format from '%s', setting format to csv",
-					formatString,
-				)
-			}
-		}
-		lang, err := cmd.Flags().GetString("lang")
-		if err != nil {
-			log.Println(err)
-			os.Exit(1)
-		}
-		wordsNum, err := cmd.Flags().GetInt("words-around")
-		if err != nil {
-			log.Println(err)
-			os.Exit(1)
-		}
-		noBayes, err := cmd.Flags().GetBool("no-bayes")
-		if err != nil {
-			log.Println(err)
-			os.Exit(1)
-		}
-		oddsDetails, err := cmd.Flags().GetBool("details-odds")
-		if err != nil {
-			log.Println(err)
-			os.Exit(1)
-		}
-
-		verify, err :=
-			cmd.Flags().GetBool("verify")
-		if err != nil {
-			log.Println(err)
-			os.Exit(1)
-		}
-		if len(sources) > 0 {
-			verify = true
-		}
-
 		switch len(args) {
 		case 0:
 			if !checkStdin() {
@@ -137,8 +92,7 @@ specific datasets are important for verification, they can be set with '-s'
 			os.Exit(0)
 		}
 
-		findNames(data, format, lang, noBayes,
-			verify, sources, wordsNum, oddsDetails)
+		findNames(data, opts)
 	},
 }
 
@@ -185,68 +139,11 @@ To find IDs refer to "https://resolver.globalnames.org/data_sources".
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	cfgFile := "gnfinder"
-	// Find home directory.
-	home, err := os.UserConfigDir()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	// Search config in home directory with name ".gnfinder" (without extension).
-	viper.AddConfigPath(home)
-	viper.SetConfigFile(cfgFile)
-
-	viper.AutomaticEnv() // read in environment variables that match
-
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	}
 }
 
-func findNames(
-	data []byte,
-	format gnfmt.Format,
-	langString string,
-	noBayes bool,
-	verify bool,
-	sources []int,
-	tokensNum int,
-	oddsDetails bool,
-) {
+func findNames(data []byte, opts []gnfinder.Option) {
 	dict := dict.LoadDictionary()
-	opts := []gnfinder.Option{gnfinder.OptFormat(format)}
-	var weights map[lang.Language]*bayes.NaiveBayes
-
-	if langString == "detect" {
-		opts = append(opts, gnfinder.OptWithLanguageDetection(true))
-	} else if langString != "" {
-		l, err := lang.NewLanguage(langString)
-		if err != nil {
-			log.Printf("Error: %s\n", err)
-			log.Printf("Supported language codes: %s.\n", langsToString())
-			log.Printf("To detect language automatically use '-l detect'.")
-			os.Exit(1)
-		}
-		opts = append(opts, gnfinder.OptLanguage(l))
-	}
-
-	if tokensNum > 0 {
-		opts = append(opts, gnfinder.OptTokensAround(tokensNum))
-	}
-
-	if oddsDetails {
-		opts = append(opts, gnfinder.OptWithBayesOddsDetails(oddsDetails))
-	}
-
-	opts = append(opts, gnfinder.OptPreferredSources(sources))
-
-	if !noBayes {
-		weights = nlp.BayesWeights()
-	}
-	opts = append(opts, gnfinder.OptWithBayes(!noBayes))
-	opts = append(opts, gnfinder.OptWithVerification(verify))
+	weights := nlp.BayesWeights()
 
 	cfg := gnfinder.NewConfig(opts...)
 	gnf := gnfinder.New(cfg, dict, weights)
@@ -257,7 +154,7 @@ func findNames(
 		verifiedNames := verif.Verify(res.UniqueNameStrings())
 		res.MergeVerification(verifiedNames)
 	}
-	fmt.Println(string(res.ToJSON()))
+	fmt.Println(res.Format(cfg.Format))
 }
 
 func langsToString() string {
@@ -276,29 +173,4 @@ func checkStdin() bool {
 		log.Panic(err)
 	}
 	return (stat.Mode() & os.ModeCharDevice) == 0
-}
-
-func parseDataSources(s string) []int {
-	if s == "" {
-		return nil
-	}
-	dss := strings.Split(s, ",")
-	res := make([]int, 0, len(dss))
-	for _, v := range dss {
-		v = strings.Trim(v, " ")
-		ds, err := strconv.Atoi(v)
-		if err != nil {
-			log.Printf("Cannot convert data-source '%s' to list, skipping", v)
-			return nil
-		}
-		if ds < 1 {
-			log.Printf("Data source ID %d is less than one, skipping", ds)
-		} else {
-			res = append(res, int(ds))
-		}
-	}
-	if len(res) > 0 {
-		return res
-	}
-	return nil
 }

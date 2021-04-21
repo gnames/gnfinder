@@ -25,7 +25,7 @@ func TestVersion(t *testing.T) {
 }
 
 func TestFind(t *testing.T) {
-	c := testcli.Command("gnfinder")
+	c := testcli.Command("gnfinder", "-f", "pretty")
 	stdin := bytes.NewBuffer([]byte("Pardosa moesta is a spider"))
 	c.SetStdin(stdin)
 	c.Run()
@@ -37,7 +37,7 @@ func TestFind(t *testing.T) {
 	assert.NotContains(t, c.Stdout(), `"matchType": "Exact`)
 
 	if hasRemote() {
-		c = testcli.Command("gnfinder", "find", "-v")
+		c = testcli.Command("gnfinder", "-v", "-f", "pretty")
 		stdin = bytes.NewBuffer([]byte("Pardosa moesta is a spider"))
 		c.SetStdin(stdin)
 		c.Run()

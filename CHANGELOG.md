@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## [v.0.12.0]
+
+- Add: [#80]: use CSV, JSON, JSON pretty for output.
 - Add: [#76]: remove subcommands from CLI.
 - Add: [#75]: update tests, remove ginkgo depencency for tests.
 - Add: [#73]: benchmark and optimize tokenizer.
@@ -161,6 +164,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.12.0]: https://github.com/gnames/gnfinder/compare/v0.11.1...v0.12.0
 [v0.11.1]: https://github.com/gnames/gnfinder/compare/v0.11.0...v0.11.1
 [v0.11.0]: https://github.com/gnames/gnfinder/compare/v0.10.1...v0.11.0
 [v0.10.1]: https://github.com/gnames/gnfinder/compare/v0.10.0...v0.10.1
@@ -184,6 +188,44 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#90]: https://github.com/gnames/gnfinder/issues/90
+[#89]: https://github.com/gnames/gnfinder/issues/89
+[#88]: https://github.com/gnames/gnfinder/issues/88
+[#87]: https://github.com/gnames/gnfinder/issues/87
+[#86]: https://github.com/gnames/gnfinder/issues/86
+[#85]: https://github.com/gnames/gnfinder/issues/85
+[#84]: https://github.com/gnames/gnfinder/issues/84
+[#83]: https://github.com/gnames/gnfinder/issues/83
+[#82]: https://github.com/gnames/gnfinder/issues/82
+[#81]: https://github.com/gnames/gnfinder/issues/81
+[#80]: https://github.com/gnames/gnfinder/issues/80
+[#79]: https://github.com/gnames/gnfinder/issues/79
+[#78]: https://github.com/gnames/gnfinder/issues/78
+[#77]: https://github.com/gnames/gnfinder/issues/77
+[#76]: https://github.com/gnames/gnfinder/issues/76
+[#75]: https://github.com/gnames/gnfinder/issues/75
+[#74]: https://github.com/gnames/gnfinder/issues/74
+[#73]: https://github.com/gnames/gnfinder/issues/73
+[#72]: https://github.com/gnames/gnfinder/issues/72
+[#71]: https://github.com/gnames/gnfinder/issues/71
+[#70]: https://github.com/gnames/gnfinder/issues/70
+[#69]: https://github.com/gnames/gnfinder/issues/69
+[#68]: https://github.com/gnames/gnfinder/issues/68
+[#67]: https://github.com/gnames/gnfinder/issues/67
+[#66]: https://github.com/gnames/gnfinder/issues/66
+[#65]: https://github.com/gnames/gnfinder/issues/65
+[#64]: https://github.com/gnames/gnfinder/issues/64
+[#63]: https://github.com/gnames/gnfinder/issues/63
+[#62]: https://github.com/gnames/gnfinder/issues/62
+[#61]: https://github.com/gnames/gnfinder/issues/61
+[#60]: https://github.com/gnames/gnfinder/issues/60
+[#59]: https://github.com/gnames/gnfinder/issues/59
+[#58]: https://github.com/gnames/gnfinder/issues/58
+[#57]: https://github.com/gnames/gnfinder/issues/57
+[#56]: https://github.com/gnames/gnfinder/issues/56
+[#55]: https://github.com/gnames/gnfinder/issues/55
+[#54]: https://github.com/gnames/gnfinder/issues/54
+[#53]: https://github.com/gnames/gnfinder/issues/53
 [#52]: https://github.com/gnames/gnfinder/issues/52
 [#51]: https://github.com/gnames/gnfinder/issues/51
 [#50]: https://github.com/gnames/gnfinder/issues/50

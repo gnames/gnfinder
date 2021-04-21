@@ -30,10 +30,11 @@ func CSVHeader(withVerification bool) string {
 }
 
 func (o *Output) csvOutput() string {
-	var res []string
+	res := make([]string, len(o.Names)+1)
+	res[0] = CSVHeader(o.Meta.WithVerification)
 	for i := range o.Names {
 		pref := csvRow(o.Names[i], i)
-		res = append(res, pref)
+		res[i+1] = pref
 	}
 
 	return strings.Join(res, "\n")
