@@ -32,6 +32,7 @@ import (
 	"github.com/gnames/gnfinder/ent/nlp"
 	"github.com/gnames/gnfinder/ent/verifier"
 	"github.com/gnames/gnfinder/io/dict"
+	"github.com/gnames/gnfinder/io/rest"
 	"github.com/spf13/cobra"
 )
 
@@ -55,8 +56,18 @@ specific datasets are important for verification, they can be set with '-s'
 	// associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
 		var err error
-		vflag := versionFlag(cmd)
-		if vflag {
+		if versionFlag(cmd) {
+			os.Exit(0)
+		}
+
+		if port := portFlag(cmd); port > 0 {
+			dict := dict.LoadDictionary()
+			weights := nlp.BayesWeights()
+
+			cfg := gnfinder.NewConfig()
+			gnf := gnfinder.New(cfg, dict, weights)
+			rest.Run(gnf, port)
+
 			os.Exit(0)
 		}
 
@@ -129,8 +140,10 @@ To find IDs refer to "https://resolver.globalnames.org/data_sources".
 170 - Arctos
 172 - PaleoBioDB
 181 - IRMNG`)
+	rootCmd.Flags().IntP("port",
+		"p", 0, "port to run the gnfinder's RESTful API service.")
 	rootCmd.Flags().IntP("words-around",
-		"w", 0, "show this many words surrounding name-strings")
+		"w", 0, "show this many words surrounding name-strings.")
 	rootCmd.Flags().BoolP("version", "V", false, "show version.")
 	rootCmd.Flags().BoolP("verify", "v", false, "verify found name-strings.")
 	log.SetFlags(0)

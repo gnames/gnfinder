@@ -5,6 +5,7 @@
 ## [v.0.12.0]
 
 - Add: [#80]: use CSV, JSON, JSON pretty for output.
+- Add: [#77]: add RESTful interface.
 - Add: [#76]: remove subcommands from CLI.
 - Add: [#75]: update tests, remove ginkgo depencency for tests.
 - Add: [#73]: benchmark and optimize tokenizer.

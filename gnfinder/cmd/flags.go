@@ -21,6 +21,11 @@ func versionFlag(cmd *cobra.Command) bool {
 	return false
 }
 
+func portFlag(cmd *cobra.Command) int {
+	port, _ := cmd.Flags().GetInt("port")
+	return port
+}
+
 func sourcesFlag(cmd *cobra.Command) gnfinder.Option {
 	sources, _ := cmd.Flags().GetString("sources")
 	return gnfinder.OptPreferredSources(parseDataSources(sources))

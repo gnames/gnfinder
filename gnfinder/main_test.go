@@ -3,10 +3,9 @@ package main
 import (
 	"bytes"
 	"log"
-	"net"
 	"testing"
-	"time"
 
+	"github.com/gnames/gnfinder/ent/verifier"
 	"github.com/rendon/testcli"
 	"github.com/tj/assert"
 )
@@ -36,19 +35,14 @@ func TestFind(t *testing.T) {
 	assert.Contains(t, c.Stdout(), `cardinality": 2`)
 	assert.NotContains(t, c.Stdout(), `"matchType": "Exact`)
 
-	if hasRemote() {
+	if verifier.HasRemote() {
 		c = testcli.Command("gnfinder", "-v", "-f", "pretty")
 		stdin = bytes.NewBuffer([]byte("Pardosa moesta is a spider"))
 		c.SetStdin(stdin)
 		c.Run()
 		assert.True(t, c.Success())
 		assert.Contains(t, c.Stdout(), `"matchType": "Exact`)
+	} else {
+		log.Println("WARNING: Cannot connect to internet, skipping some tests")
 	}
-}
-
-func hasRemote() bool {
-	timeout := 1 * time.Second
-	_, err := net.DialTimeout("tcp", "goolge.com", timeout)
-	log.Println("WARNING: Cannot connect to internet, skipping some tests")
-	return err == nil
 }

@@ -1,6 +1,9 @@
 package verifier
 
 import (
+	"net"
+	"time"
+
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnverifier"
 	gnvconfig "github.com/gnames/gnverifier/config"
@@ -47,4 +50,10 @@ func unique(names []string) []string {
 		count++
 	}
 	return res
+}
+
+func HasRemote() bool {
+	timeout := 1 * time.Second
+	_, err := net.DialTimeout("tcp", "google.com", timeout)
+	return err == nil
 }

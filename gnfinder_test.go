@@ -248,6 +248,13 @@ func TestFakeAnnot(t *testing.T) {
 	}
 }
 
+func TestChangeConfig(t *testing.T) {
+	gnf := genFinder()
+	assert.True(t, gnf.GetConfig().WithBayes)
+	gnf = gnf.ChangeConfig(gnfinder.OptWithBayes(false))
+	assert.False(t, gnf.GetConfig().WithBayes)
+}
+
 func genFinder(opts ...gnfinder.Option) gnfinder.GNfinder {
 	if dictionary == nil {
 		dictionary = dict.LoadDictionary()

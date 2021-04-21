@@ -12,11 +12,11 @@ require (
 	github.com/gnames/gnverifier v0.3.0
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
 	github.com/json-iterator/go v1.1.10
+	github.com/labstack/echo v3.3.10+incompatible
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.4.1
 	github.com/rendon/testcli v0.0.0-20161027181003-6283090d169f
 	github.com/smartystreets/assertions v1.1.0 // indirect
 	github.com/spf13/cobra v1.1.3
-	github.com/spf13/viper v1.7.1
 	github.com/tj/assert v0.0.3
 	golang.org/x/perf v0.0.0-20210220033136-40a54f11e909
 	golang.org/x/sys v0.0.0-20210420072515-93ed5bcd2bfe // indirect

@@ -8,6 +8,7 @@ import (
 	"github.com/gnames/gnfinder/ent/output"
 	"github.com/gnames/gnfinder/ent/token"
 	"github.com/gnames/gnfinder/io/dict"
+	"github.com/gnames/gnlib/ent/gnvers"
 )
 
 type gnfinder struct {
@@ -42,7 +43,9 @@ func New(
 	return gnf
 }
 
-func (gnf *gnfinder) Find(data []byte) output.Output {
+// Find takes a text as a slice of bytes, detects names and returns the found
+// names.
+func (gnf gnfinder) Find(data []byte) output.Output {
 	text := []rune(string(data))
 	tokens := token.Tokenize(text)
 
@@ -66,13 +69,20 @@ func (gnf *gnfinder) Find(data []byte) output.Output {
 	return output.TokensToOutput(tokens, text, gnf.TokensAround, gnf.WithBayesOddsDetails, outOpts...)
 }
 
-func (gnf *gnfinder) GetConfig() Config {
+// GetConfig returns the configuration object.
+func (gnf gnfinder) GetConfig() Config {
 	return gnf.Config
 }
 
-// Update allows to modify Config fields.
-func (gnf *gnfinder) UpdateConfig(opts ...Option) {
+// ChangeConfig allows to modify Config fields.
+func (gnf gnfinder) ChangeConfig(opts ...Option) GNfinder {
 	for _, opt := range opts {
 		opt(&gnf.Config)
 	}
+	return gnf
+}
+
+// GetVersion returns version of gnfinder.
+func (gnf gnfinder) GetVersion() gnvers.Version {
+	return gnvers.Version{Version: Version, Build: Build}
 }
