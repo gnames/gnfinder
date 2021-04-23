@@ -4,6 +4,7 @@
 
 ## [v.0.12.0]
 
+- Add: [#81]: represent new lines in verbatim output as "\n".
 - Add: [#80]: use CSV, JSON, JSON pretty for output.
 - Add: [#77]: add RESTful interface.
 - Add: [#76]: remove subcommands from CLI.

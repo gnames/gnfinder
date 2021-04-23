@@ -156,7 +156,7 @@ func tokensToName(ts []token.TokenSN, text []rune, oddsDetails bool) Name {
 func uninomialName(u token.TokenSN, text []rune, oddsDetails bool) Name {
 	name := Name{
 		Cardinality: u.Decision().Cardinality(),
-		Verbatim:    string(text[u.Start():u.End()]),
+		Verbatim:    verbatim(text[u.Start():u.End()]),
 		Name:        u.Cleaned(),
 		OffsetStart: u.Start(),
 		OffsetEnd:   u.End(),
@@ -176,7 +176,7 @@ func speciesName(g token.TokenSN, s token.TokenSN, text []rune,
 	oddsDetails bool) Name {
 	name := Name{
 		Cardinality: g.Decision().Cardinality(),
-		Verbatim:    string(text[g.Start():s.End()]),
+		Verbatim:    verbatim(text[g.Start():s.End()]),
 		Name:        fmt.Sprintf("%s %s", g.Cleaned(), strings.ToLower(s.Cleaned())),
 		OffsetStart: g.Start(),
 		OffsetEnd:   s.End(),
@@ -214,7 +214,7 @@ func infraspeciesName(
 
 	name := Name{
 		Cardinality: g.Decision().Cardinality(),
-		Verbatim:    string(text[g.Start():isp.End()]),
+		Verbatim:    verbatim(text[g.Start():isp.End()]),
 		Name:        infraspeciesString(g, sp, rank, isp),
 		OffsetStart: g.Start(),
 		OffsetEnd:   isp.End(),
@@ -263,4 +263,15 @@ func candidatesNum(ts []token.TokenSN) int {
 		}
 	}
 	return num
+}
+
+func verbatim(raw []rune) string {
+	res := make([]rune, len(raw))
+	for i, v := range raw {
+		if v == '\n' || v == '\r' {
+			v = '␤'
+		}
+		res[i] = v
+	}
+	return string(res)
 }

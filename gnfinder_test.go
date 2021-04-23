@@ -78,24 +78,32 @@ Conostylis americana, 2i. 6d.
 			`)
 
 	tests := []struct {
-		msg     string
-		bayes   bool
-		nameIdx int
-		name    string
-		odds    float64
-		card    int
+		msg      string
+		bayes    bool
+		nameIdx  int
+		verbatim string
+		name     string
+		odds     float64
+		card     int
 	}{
-		{"nobayes 0", false, 0, "Thalictroides", 0, 1},
-		{"bayes 0", true, 0, "Thalictroides", 1000, 1},
+		{"nobayes 0", false, 0, "Thalictroides,", "Thalictroides", 0, 1},
 
-		{"nobayes 1", false, 1, "Calopogon", 0, 1},
-		{"bayes 1", true, 1, "Calopogon", 1000, 1},
+		{"bayes 0", true, 0, "Thalictroides,", "Thalictroides", 1000, 1},
 
-		{"nobayes 2", false, 2, "Cymbidium", 0, 1},
-		{"bayes 2", true, 2, "Cymbidium pulcheilum", 100000, 2},
+		{"nobayes 1", false, 1, "Calopogon,", "Calopogon", 0, 1},
 
-		{"nobayes 3", false, 3, "Conostylis americana", 0, 2},
-		{"bayes 3", true, 3, "Conostylis americana", 100000, 2},
+		{"bayes 1", true, 1, "Calopogon,", "Calopogon", 1000, 1},
+
+		{"nobayes 2", false, 2, "Cymbidium", "Cymbidium", 0, 1},
+
+		{"bayes 2", true, 2, "Cymbidium pul-␤␤cheilum,",
+			"Cymbidium pulcheilum", 100000, 2},
+
+		{"nobayes 3", false, 3, "Conostylis americana,",
+			"Conostylis americana", 0, 2},
+
+		{"bayes 3", true, 3, "Conostylis americana,",
+			"Conostylis americana", 100000, 2},
 	}
 
 	for _, v := range tests {
@@ -105,6 +113,7 @@ Conostylis americana, 2i. 6d.
 
 		assert.Equal(t, res.Meta.TotalNameCandidates, 5)
 		assert.Equal(t, res.Meta.TotalNames, 4)
+		assert.Equal(t, name.Verbatim, v.verbatim)
 		assert.Equal(t, name.Name, v.name)
 
 		if v.bayes {
