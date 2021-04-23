@@ -29,7 +29,7 @@ func TagTokens(
 		ts2 := ts[i:token.UpperIndex(i, len(ts))]
 		fs := NewFeatureSet(ts2)
 		priorOdds := nameFrequency()
-		odds := predictOdds(nb, t, &fs, priorOdds)
+		odds := calcOdds(nb, t, &fs, priorOdds)
 		processBayesResults(odds, ts, i, thr, d)
 	}
 }
@@ -118,22 +118,28 @@ func decideUninomial(
 	}
 }
 
-func predictOdds(
+func calcOdds(
 	nb *bayes.NaiveBayes,
 	t token.TokenSN,
 	fs *FeatureSet,
 	odds bayes.LabelFreq,
 ) []bayes.Posterior {
 	evenOdds := map[bayes.Labeler]float64{Name: 1.0, NotName: 1.0}
-	oddsUni, err := nb.Predict(features(fs.Uninomial), bayes.WithPriorOdds(odds))
+
+	oddsUni, err := nb.PosteriorOdds(
+		features(fs.Uninomial),
+		bayes.WithPriorOdds(odds),
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
 	if t.Indices().Species == 0 {
 		return []bayes.Posterior{oddsUni}
 	}
-
-	oddsSp, err := nb.Predict(features(fs.Species), bayes.WithPriorOdds(evenOdds))
+	oddsSp, err := nb.PosteriorOdds(
+		features(fs.Species),
+		bayes.WithPriorOdds(evenOdds),
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -142,7 +148,7 @@ func predictOdds(
 		return []bayes.Posterior{oddsUni, oddsSp}
 	}
 	f := features(fs.InfraSp)
-	oddsInfraSp, err := nb.Predict(f, bayes.WithPriorOdds(evenOdds))
+	oddsInfraSp, err := nb.PosteriorOdds(f, bayes.WithPriorOdds(evenOdds))
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -46,6 +46,12 @@ type Features struct {
 
 	// SpeciesDict defines which Species dictionary (if any) contained the token.
 	SpeciesDict dict.DictionaryType
+
+	// GenSpGreyDict shows how many specific/infraspecific epithets of a putative
+	// name matched bi-/tri- nomials in a full name dictionary for grey genera.
+	// For example "Bubo bubo" name would set it to 1, and "Bubo bubo bubo" would
+	// set it to 2.
+	GenSpGreyDict int
 }
 
 func (p *Features) setAbbr(raw []rune, start, end int) {

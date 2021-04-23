@@ -99,6 +99,19 @@ func checkGreyGeneraSp(
 ) bool {
 	sp := fmt.Sprintf("%s %s", g.Cleaned(), s.Cleaned())
 	if _, ok := d.GreyGeneraSp[sp]; ok {
+		g.Features().GenSpGreyDict += 1
+		return true
+	}
+	return false
+}
+
+func checkGreyGeneraIsp(
+	g, s, isp token.TokenSN,
+	d *dict.Dictionary,
+) bool {
+	name := fmt.Sprintf("%s %s %s", g.Cleaned(), s.Cleaned(), isp.Cleaned())
+	if _, ok := d.GreyGeneraSp[name]; ok {
+		g.Features().GenSpGreyDict += 1
 		return true
 	}
 	return false
@@ -109,7 +122,11 @@ func checkInfraspecies(ts []token.TokenSN, d *dict.Dictionary) {
 	if i == 0 {
 		return
 	}
-	if checkAsSpecies(ts[i], d) {
+	g := ts[0]
+	s := ts[ts[0].Indices().Species]
+	isp := ts[i]
+
+	if checkGreyGeneraIsp(g, s, isp, d) || checkAsSpecies(ts[i], d) {
 		ts[0].SetDecision(token.Trinomial)
 	}
 }

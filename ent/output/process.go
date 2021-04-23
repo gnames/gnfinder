@@ -18,14 +18,33 @@ func TokensToOutput(ts []token.TokenSN, text []rune, tokensAround int,
 		if u.Decision() == token.NotName {
 			continue
 		}
-		name := tokensToName(ts[i:token.UpperIndex(i, len(ts))], text, oddsDetails)
+		name := tokensToName(ts[i:token.UpperIndex(i, len(ts))], text)
+		name.Odds = calculateOdds(name.OddsDetails)
+		if !oddsDetails {
+			name.OddsDetails = nil
+		}
 		if name.Odds == 0.0 || name.Odds > 1.0 || name.Cardinality == 2 ||
 			name.Cardinality == 3 {
 			getTokensAround(ts, i, &name, tokensAround)
 			names = append(names, name)
 		}
 	}
-	return newOutput(names, ts, opts...)
+	out := newOutput(names, ts, opts...)
+	return out
+}
+
+func calculateOdds(det token.OddsDetails) float64 {
+	res := 1.0
+	nameDetails, ok := det["Name"]
+	if !ok {
+		return 0
+	}
+	for _, v := range nameDetails {
+		for _, vv := range v {
+			res *= vv
+		}
+	}
+	return res
 }
 
 func getTokensAround(
@@ -139,30 +158,29 @@ func (o *Output) MergeVerification(v map[string]vlib.Verification) {
 	}
 }
 
-func tokensToName(ts []token.TokenSN, text []rune, oddsDetails bool) Name {
+func tokensToName(ts []token.TokenSN, text []rune) Name {
 	u := ts[0]
 	switch u.Decision().Cardinality() {
 	case 1:
-		return uninomialName(u, text, oddsDetails)
+		return uninomialName(u, text)
 	case 2:
-		return speciesName(u, ts[u.Indices().Species], text, oddsDetails)
+		return speciesName(u, ts[u.Indices().Species], text)
 	case 3:
-		return infraspeciesName(ts, text, oddsDetails)
+		return infraspeciesName(ts, text)
 	default:
 		panic(fmt.Errorf("unkown Decision: %s", u.Decision()))
 	}
 }
 
-func uninomialName(u token.TokenSN, text []rune, oddsDetails bool) Name {
+func uninomialName(u token.TokenSN, text []rune) Name {
 	name := Name{
 		Cardinality: u.Decision().Cardinality(),
 		Verbatim:    verbatim(text[u.Start():u.End()]),
 		Name:        u.Cleaned(),
 		OffsetStart: u.Start(),
 		OffsetEnd:   u.End(),
-		Odds:        u.NLP().Odds,
 	}
-	if len(u.NLP().OddsDetails) == 0 || !oddsDetails {
+	if len(u.NLP().OddsDetails) == 0 {
 		return name
 	}
 	if l, ok := u.NLP().OddsDetails[nlp.Name.String()]; ok {
@@ -172,18 +190,20 @@ func uninomialName(u token.TokenSN, text []rune, oddsDetails bool) Name {
 	return name
 }
 
-func speciesName(g token.TokenSN, s token.TokenSN, text []rune,
-	oddsDetails bool) Name {
+func speciesName(
+	g token.TokenSN,
+	s token.TokenSN,
+	text []rune,
+) Name {
 	name := Name{
 		Cardinality: g.Decision().Cardinality(),
 		Verbatim:    verbatim(text[g.Start():s.End()]),
 		Name:        fmt.Sprintf("%s %s", g.Cleaned(), strings.ToLower(s.Cleaned())),
 		OffsetStart: g.Start(),
 		OffsetEnd:   s.End(),
-		Odds:        g.NLP().Odds * s.NLP().Odds,
 	}
 	if len(g.NLP().OddsDetails) == 0 || len(s.NLP().OddsDetails) == 0 ||
-		len(g.NLP().LabelFreq) == 0 || !oddsDetails {
+		len(g.NLP().LabelFreq) == 0 {
 		return name
 	}
 	if lg, ok := g.NLP().OddsDetails[nlp.Name.String()]; ok {
@@ -201,7 +221,6 @@ func speciesName(g token.TokenSN, s token.TokenSN, text []rune,
 func infraspeciesName(
 	ts []token.TokenSN,
 	text []rune,
-	oddsDetails bool,
 ) Name {
 	g := ts[0]
 	sp := ts[g.Indices().Species]
@@ -218,11 +237,9 @@ func infraspeciesName(
 		Name:        infraspeciesString(g, sp, rank, isp),
 		OffsetStart: g.Start(),
 		OffsetEnd:   isp.End(),
-		Odds:        g.NLP().Odds * sp.NLP().Odds * isp.NLP().Odds,
 	}
 	if len(g.NLP().OddsDetails) == 0 || len(sp.NLP().OddsDetails) == 0 ||
-		len(isp.NLP().OddsDetails) == 0 || len(g.NLP().LabelFreq) == 0 ||
-		!oddsDetails {
+		len(isp.NLP().OddsDetails) == 0 || len(g.NLP().LabelFreq) == 0 {
 		return name
 	}
 	if lg, ok := g.NLP().OddsDetails[nlp.Name.String()]; ok {

@@ -5,6 +5,7 @@ import (
 
 	"github.com/gnames/bayes"
 	"github.com/gnames/gnfinder/ent/token"
+	"github.com/gnames/gnfinder/io/dict"
 )
 
 // BayesF implements bayes.Featurer
@@ -65,28 +66,33 @@ func NewFeatureSet(ts []token.TokenSN) FeatureSet {
 }
 
 func (fs *FeatureSet) convertFeatures(
-	u token.TokenSN,
+	uni token.TokenSN,
 	sp token.TokenSN,
 	isp token.TokenSN,
 	rank token.TokenSN,
 ) {
-	if !u.Features().Abbr {
+	var uniDict, spDict, ispDict string
+	if !uni.Features().Abbr {
+		uniDict = uni.Features().UninomialDict.String()
 		fs.Uninomial = append(fs.Uninomial,
-			BayesF{"uniLen", strconv.Itoa(len(u.Cleaned()))},
-			BayesF{"uniDict", u.Features().UninomialDict.String()},
+			BayesF{"uniLen", strconv.Itoa(len(uni.Cleaned()))},
 			BayesF{"abbr", "false"},
 		)
 	} else {
 		fs.Uninomial = append(fs.Uninomial, BayesF{"abbr", "true"})
 	}
-	if w3 := wordEnd(u); !u.Features().Abbr && w3 != "" {
+	if w3 := wordEnd(uni); !uni.Features().Abbr && w3 != "" {
 		fs.Uninomial = append(fs.Uninomial, BayesF{"uniEnd3", w3})
 	}
-	if u.Indices().Species > 0 {
+	if uni.Indices().Species > 0 {
+		spDict = sp.Features().SpeciesDict.String()
 		fs.Species = append(fs.Species,
 			BayesF{"spLen", strconv.Itoa(len(sp.Cleaned()))},
-			BayesF{"spDict", sp.Features().SpeciesDict.String()},
 		)
+		if uni.Features().GenSpGreyDict > 0 {
+			uniDict = dict.GreyGenusSp.String()
+			spDict = dict.GreyGenusSp.String()
+		}
 		if sp.Features().HasDash {
 			fs.Species = append(fs.Species, BayesF{"hasDash", "true"})
 		}
@@ -94,23 +100,35 @@ func (fs *FeatureSet) convertFeatures(
 			fs.Species = append(fs.Species, BayesF{"spEnd3", w3})
 		}
 	}
-	if u.Indices().Rank > 0 {
+	if uni.Indices().Rank > 0 {
 		fs.InfraSp = []BayesF{
 			{"ispRank", "true"},
 		}
 	}
 
-	if u.Indices().Infraspecies > 0 {
+	if uni.Indices().Infraspecies > 0 {
+		ispDict = isp.Features().SpeciesDict.String()
 		fs.InfraSp = append(fs.InfraSp,
 			BayesF{"ispLen", strconv.Itoa(len(isp.Cleaned()))},
-			BayesF{"ispDict", isp.Features().SpeciesDict.String()},
 		)
+		if uni.Features().GenSpGreyDict > 1 {
+			ispDict = dict.GreyGenusSp.String()
+		}
 		if isp.Features().HasDash {
 			fs.InfraSp = append(fs.InfraSp, BayesF{"hasDash", "true"})
 		}
 		if w3 := wordEnd(isp); w3 != "" {
 			fs.InfraSp = append(fs.InfraSp, BayesF{"ispEnd3", w3})
 		}
+	}
+	if uniDict != "" {
+		fs.Uninomial = append(fs.Uninomial, BayesF{"uniDict", uniDict})
+	}
+	if spDict != "" {
+		fs.Species = append(fs.Species, BayesF{"spDict", spDict})
+	}
+	if ispDict != "" {
+		fs.InfraSp = append(fs.InfraSp, BayesF{"ispDict", ispDict})
 	}
 }
 

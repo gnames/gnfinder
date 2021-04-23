@@ -111,17 +111,17 @@ Conostylis americana, 2i. 6d.
 		res := gnf.Find(txt)
 		name := res.Names[v.nameIdx]
 
-		assert.Equal(t, res.Meta.TotalNameCandidates, 5)
-		assert.Equal(t, res.Meta.TotalNames, 4)
-		assert.Equal(t, name.Verbatim, v.verbatim)
-		assert.Equal(t, name.Name, v.name)
+		assert.Equal(t, res.Meta.TotalNameCandidates, 5, v.msg)
+		assert.Equal(t, res.Meta.TotalNames, 4, v.msg)
+		assert.Equal(t, name.Verbatim, v.verbatim, v.msg)
+		assert.Equal(t, name.Name, v.name, v.msg)
 
 		if v.bayes {
-			assert.True(t, gnf.GetConfig().WithBayes)
-			assert.Greater(t, name.Odds, v.odds)
+			assert.True(t, gnf.GetConfig().WithBayes, v.msg)
+			assert.Greater(t, name.Odds, v.odds, v.msg)
 		} else {
-			assert.False(t, gnf.GetConfig().WithBayes)
-			assert.Equal(t, name.Odds, 0.0)
+			assert.False(t, gnf.GetConfig().WithBayes, v.msg)
+			assert.Equal(t, name.Odds, 0.0, v.msg)
 		}
 	}
 }
@@ -211,6 +211,42 @@ func TestLastName(t *testing.T) {
 	name = res.Names[0]
 	assert.Equal(t, name.Name, "Pardosa moesta")
 	assert.Greater(t, name.Odds, 10000.0)
+}
+
+// TestTestAllGrey checks if names with all elements from grey dictionary show
+// reasonable output.
+func TestAllGrey(t *testing.T) {
+	tests := []struct {
+		msg       string
+		namesNum  int
+		txt, name string
+		odds      float64
+		card      int
+	}{
+		{"Bubo bubo", 1, "trying Bubo bubo name", "Bubo bubo", 1000, 2},
+		{"Bubo bubo bubo", 1, "trying Bubo bubo bubo name", "Bubo bubo bubo",
+			10000, 3},
+		{"Bubo bubo alba", 1, "trying Bubo bubo alba name", "Bubo bubo alba",
+			1000, 3},
+		{"Bubo alba bubo", 0, "Trying Bubo alba bubo name", "", 0, 0},
+		{"Bubo", 0, "Trying Bubo name", "", 0, 0},
+	}
+
+	for _, v := range tests {
+		gnf := genFinder()
+		res := gnf.Find([]byte(v.txt))
+		namesNum := len(res.Names)
+
+		assert.Equal(t, namesNum, v.namesNum, v.msg)
+
+		if namesNum > 0 {
+			name := res.Names[0]
+			assert.Equal(t, name.Name, v.name, v.msg)
+			assert.Equal(t, name.Cardinality, v.card)
+			assert.Greater(t, name.Odds, v.odds, v.msg)
+		}
+	}
+
 }
 
 // TestNomenAnnot tests detection of new species descriptions.

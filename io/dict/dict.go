@@ -15,7 +15,7 @@ var data embed.FS
 type DictionaryType int
 
 func (d DictionaryType) String() string {
-	types := [...]string{"NotSet", "WhiteGenus", "GreyGenus",
+	types := [...]string{"NotSet", "WhiteGenus", "GreyGenus", "GreyGenusSp",
 		"WhiteUninomial", "GreyUninomial", "BlackUninomial", "WhiteSpecies",
 		"GreySpecies", "BlackSpecies", "CommonWords", "Rank", "NotInDictionary"}
 	return types[d]
@@ -26,6 +26,7 @@ const (
 	NotSet DictionaryType = iota
 	WhiteGenus
 	GreyGenus
+	GreyGenusSp
 	WhiteUninomial
 	GreyUninomial
 	BlackUninomial

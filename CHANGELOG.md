@@ -6,6 +6,7 @@
 
 - Add: [#81]: represent new lines in verbatim output as "\n".
 - Add: [#80]: use CSV, JSON, JSON pretty for output.
+- Add: [#78]: fix Odds value for names with 'grey' genus and species.
 - Add: [#77]: add RESTful interface.
 - Add: [#76]: remove subcommands from CLI.
 - Add: [#75]: update tests, remove ginkgo depencency for tests.
