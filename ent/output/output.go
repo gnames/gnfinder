@@ -4,6 +4,7 @@ import (
 	"math"
 	"time"
 
+	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/token"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 )
@@ -12,75 +13,6 @@ import (
 type Output struct {
 	Meta  `json:"metadata"`
 	Names []Name `json:"names"`
-}
-
-// Options type for modifying settings for the Output
-type Option func(*Output)
-
-// OptVersion sets gnfinder version to the output.
-func OptVersion(v string) Option {
-	return func(o *Output) {
-		o.FinderVersion = v
-	}
-}
-
-// OptWithBayes sets WithBayes field
-func OptWithBayes(b bool) Option {
-	return func(o *Output) {
-		o.WithBayes = b
-	}
-}
-
-// OptWithVerification sets WithBayes field
-func OptWithVerification(b bool) Option {
-	return func(o *Output) {
-		o.WithVerification = b
-	}
-}
-
-// OptLanguage sets a string representation of a language
-func OptLanguage(l string) Option {
-	return func(o *Output) {
-		o.Language = l
-	}
-}
-
-// OptLanguageDetected sets LanguageDetected field
-func OptLanguageDetected(ld string) Option {
-	return func(o *Output) {
-		o.LanguageDetected = ld
-	}
-}
-
-// OptTokensAround sets configuration for how many tokens should surround
-// a found name.
-func OptTokensAround(t int) Option {
-	return func(o *Output) {
-		o.TokensAround = t
-	}
-}
-
-// newOutput is a constructor for Output type.
-func newOutput(names []Name, ts []token.TokenSN, opts ...Option) Output {
-	for i := range names {
-		lg := math.Log10(names[i].Odds)
-		if math.IsInf(lg, 0) {
-			lg = 0
-		}
-		names[i].OddsLog10 = lg
-	}
-	meta := Meta{
-		Date:        time.Now(),
-		TotalTokens: len(ts), TotalNameCandidates: candidatesNum(ts),
-		TotalNames: len(names),
-	}
-	o := Output{Meta: meta, Names: names}
-
-	for _, opt := range opts {
-		opt(&o)
-	}
-	o.DetectLanguage = o.LanguageDetected != ""
-	return o
 }
 
 // Meta contains meta-information of name-finding result.
@@ -93,6 +25,10 @@ type Meta struct {
 
 	// WithBayes use of bayes during name-finding
 	WithBayes bool `json:"withBayes"`
+
+	// WithOddsAdjustment to adjust prior odds according to the dencity of
+	// scientific names in the text.
+	WithOddsAdjustment bool `json:"withOddsAdjustment"`
 
 	// WithVerification is true if results are checked by verification service.
 	WithVerification bool `json:"withVerification"`
@@ -145,7 +81,8 @@ type Name struct {
 	// Odds show a probability that name detection was correct.
 	Odds float64 `json:"-"`
 	// OddsLog10 show a Log10 of Odds.
-	OddsLog10 float64 `json:"oddsLog10,omitempty"`
+	OddsLog10    float64 `json:"oddsLog10,omitempty"`
+	OddsAdjLog10 float64 `json:"oddsAdjLog10,omitempty"`
 	// OddsDetails descibes how Odds were calculated.
 	OddsDetails token.OddsDetails `json:"oddsDetails,omitempty"`
 	// OffsetStart is a start of a name on a page.
@@ -164,4 +101,70 @@ type Name struct {
 	WordsAfter []string `json:"wordsAfter,omitempty"`
 	// Verification gives results of verification process of the name.
 	Verification *vlib.Verification `json:"verification,omitempty"`
+}
+
+func postprocessNames(
+	names []Name,
+	candidates int,
+	cfg config.Config,
+) {
+	lenNames := len(names)
+	if lenNames == 0 {
+		return
+	}
+	var prior float64
+	if candidates > 10 {
+		prior = float64(lenNames) / float64(candidates-lenNames)
+	}
+	for i := range names {
+		det := names[i].OddsDetails
+		if len(det) == 0 {
+			continue
+		}
+		if prior > 0 && cfg.WithOddsAdjustment {
+			names[i].OddsDetails["name"]["priorOdds"]["true"] = prior
+			names[i].Odds = calculateOdds(names[i].OddsDetails)
+		}
+
+		if !cfg.WithBayesOddsDetails {
+			names[i].OddsDetails = nil
+		}
+	}
+}
+
+// newOutput is a constructor for Output type.
+func newOutput(
+	names []Name,
+	ts []token.TokenSN,
+	version string,
+	cfg config.Config,
+) Output {
+	for i := range names {
+		lg := math.Log10(names[i].Odds)
+		if math.IsInf(lg, 0) {
+			lg = 0
+		}
+		names[i].OddsLog10 = lg
+	}
+	meta := Meta{
+		Date:                time.Now(),
+		FinderVersion:       version,
+		WithBayes:           cfg.WithBayes,
+		WithOddsAdjustment:  cfg.WithOddsAdjustment,
+		WithVerification:    cfg.WithVerification,
+		TokensAround:        cfg.TokensAround,
+		Language:            cfg.Language.String(),
+		LanguageDetected:    cfg.LanguageDetected,
+		TotalTokens:         len(ts),
+		TotalNameCandidates: candidatesNum(ts),
+		TotalNames:          len(names),
+	}
+
+	if !cfg.WithBayesOddsDetails || cfg.WithOddsAdjustment {
+		postprocessNames(names, meta.TotalNameCandidates, cfg)
+	}
+	o := Output{Meta: meta, Names: names}
+	o.DetectLanguage = o.LanguageDetected != ""
+
+	return o
 }

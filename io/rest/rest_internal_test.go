@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/gnames/gnfinder"
+	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/api"
 	"github.com/gnames/gnfinder/ent/nlp"
 	"github.com/gnames/gnfinder/ent/output"
@@ -30,7 +31,7 @@ func TestGet(t *testing.T) {
 	e := echo.New()
 	c := e.NewContext(req, rec)
 
-	cfg := gnfinder.NewConfig()
+	cfg := config.New()
 	gnf := gnfinder.New(cfg, dictionary, weights)
 
 	t.Run("test ping", func(t *testing.T) {
@@ -50,7 +51,7 @@ func TestGet(t *testing.T) {
 }
 
 func TestPost(t *testing.T) {
-	cfg := gnfinder.NewConfig()
+	cfg := config.New()
 	gnf := gnfinder.New(cfg, dictionary, weights)
 	text := `
 	Thalictroides, 18s per doz.

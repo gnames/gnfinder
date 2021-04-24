@@ -4,14 +4,18 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/nlp"
 	"github.com/gnames/gnfinder/ent/token"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 )
 
 // TokensToOutput takes tagged tokens and assembles output out of them.
-func TokensToOutput(ts []token.TokenSN, text []rune, tokensAround int,
-	oddsDetails bool, opts ...Option) Output {
+func TokensToOutput(
+	ts []token.TokenSN,
+	text []rune,
+	version string,
+	cfg config.Config) Output {
 	var names []Name
 	for i := range ts {
 		u := ts[i]
@@ -20,22 +24,19 @@ func TokensToOutput(ts []token.TokenSN, text []rune, tokensAround int,
 		}
 		name := tokensToName(ts[i:token.UpperIndex(i, len(ts))], text)
 		name.Odds = calculateOdds(name.OddsDetails)
-		if !oddsDetails {
-			name.OddsDetails = nil
-		}
 		if name.Odds == 0.0 || name.Odds > 1.0 || name.Cardinality == 2 ||
 			name.Cardinality == 3 {
-			getTokensAround(ts, i, &name, tokensAround)
+			getTokensAround(ts, i, &name, cfg.TokensAround)
 			names = append(names, name)
 		}
 	}
-	out := newOutput(names, ts, opts...)
+	out := newOutput(names, ts, version, cfg)
 	return out
 }
 
 func calculateOdds(det token.OddsDetails) float64 {
 	res := 1.0
-	nameDetails, ok := det["Name"]
+	nameDetails, ok := det["name"]
 	if !ok {
 		return 0
 	}

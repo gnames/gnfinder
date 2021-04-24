@@ -143,7 +143,7 @@ func calcOdds(
 	if err != nil {
 		log.Fatal(err)
 	}
-	delete(oddsSp.Likelihoods[Name], "PriorOdds")
+	delete(oddsSp.Likelihoods[Name], "priorOdds")
 	if t.Indices().Infraspecies == 0 {
 		return []bayes.Posterior{oddsUni, oddsSp}
 	}
@@ -152,7 +152,7 @@ func calcOdds(
 	if err != nil {
 		log.Fatal(err)
 	}
-	delete(oddsInfraSp.Likelihoods[Name], "PriorOdds")
+	delete(oddsInfraSp.Likelihoods[Name], "priorOdds")
 	return []bayes.Posterior{oddsUni, oddsSp, oddsInfraSp}
 }
 

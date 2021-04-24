@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/gnames/gnfinder"
+	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/lang"
 	"github.com/gnames/gnfmt"
 	"github.com/spf13/cobra"
@@ -26,12 +27,12 @@ func portFlag(cmd *cobra.Command) int {
 	return port
 }
 
-func sourcesFlag(cmd *cobra.Command) gnfinder.Option {
+func sourcesFlag(cmd *cobra.Command) config.Option {
 	sources, _ := cmd.Flags().GetString("sources")
-	return gnfinder.OptPreferredSources(parseDataSources(sources))
+	return config.OptPreferredSources(parseDataSources(sources))
 }
 
-func formatFlag(cmd *cobra.Command) gnfinder.Option {
+func formatFlag(cmd *cobra.Command) config.Option {
 	format := gnfmt.CSV
 	formatString, _ := cmd.Flags().GetString("format")
 	if formatString != "csv" {
@@ -43,18 +44,18 @@ func formatFlag(cmd *cobra.Command) gnfinder.Option {
 			)
 		}
 	}
-	return gnfinder.OptFormat(format)
+	return config.OptFormat(format)
 }
 
-func langFlag(cmd *cobra.Command) gnfinder.Option {
+func langFlag(cmd *cobra.Command) config.Option {
 	langString, _ := cmd.Flags().GetString("lang")
 
 	if langString == "" {
-		return gnfinder.OptWithLanguageDetection(false)
+		return config.OptWithLanguageDetection(false)
 	}
 
 	if langString == "detect" {
-		return gnfinder.OptWithLanguageDetection(true)
+		return config.OptWithLanguageDetection(true)
 	}
 
 	l, err := lang.NewLanguage(langString)
@@ -64,27 +65,32 @@ func langFlag(cmd *cobra.Command) gnfinder.Option {
 		log.Printf("Supported language codes: %s.", langsToString())
 		log.Printf("To detect language automatically use '-l detect'.")
 	}
-	return gnfinder.OptLanguage(l)
+	return config.OptLanguage(l)
 }
 
-func wordsFlag(cmd *cobra.Command) gnfinder.Option {
+func wordsFlag(cmd *cobra.Command) config.Option {
 	wordsNum, _ := cmd.Flags().GetInt("words-around")
-	return gnfinder.OptTokensAround(wordsNum)
+	return config.OptTokensAround(wordsNum)
 }
 
-func bayesFlag(cmd *cobra.Command) gnfinder.Option {
+func bayesFlag(cmd *cobra.Command) config.Option {
 	noBayes, _ := cmd.Flags().GetBool("no-bayes")
-	return gnfinder.OptWithBayes(!noBayes)
+	return config.OptWithBayes(!noBayes)
 }
 
-func oddsDetailsFlag(cmd *cobra.Command) gnfinder.Option {
+func adjustOddsFlag(cmd *cobra.Command) config.Option {
+	adj, _ := cmd.Flags().GetBool("adjust-odds")
+	return config.OptWithOddsAdjustment(adj)
+}
+
+func oddsDetailsFlag(cmd *cobra.Command) config.Option {
 	oddsDetails, _ := cmd.Flags().GetBool("details-odds")
-	return gnfinder.OptWithBayesOddsDetails(oddsDetails)
+	return config.OptWithBayesOddsDetails(oddsDetails)
 }
 
-func verifFlag(cmd *cobra.Command) gnfinder.Option {
+func verifFlag(cmd *cobra.Command) config.Option {
 	verif, _ := cmd.Flags().GetBool("verify")
-	return gnfinder.OptWithVerification(verif)
+	return config.OptWithVerification(verif)
 }
 
 func parseDataSources(s string) []int {

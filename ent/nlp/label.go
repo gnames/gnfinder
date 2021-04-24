@@ -11,7 +11,7 @@ const (
 	Name
 )
 
-var label = [...]string{"NotName", "Name"}
+var label = [...]string{"notName", "name"}
 
 var labelMap = func() map[string]bayes.Labeler {
 	m := make(map[string]bayes.Labeler)

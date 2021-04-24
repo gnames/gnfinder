@@ -15,9 +15,9 @@ var data embed.FS
 type DictionaryType int
 
 func (d DictionaryType) String() string {
-	types := [...]string{"NotSet", "WhiteGenus", "GreyGenus", "GreyGenusSp",
-		"WhiteUninomial", "GreyUninomial", "BlackUninomial", "WhiteSpecies",
-		"GreySpecies", "BlackSpecies", "CommonWords", "Rank", "NotInDictionary"}
+	types := [...]string{"notSet", "whiteGenus", "greyGenus", "greyGenusSp",
+		"whiteUninomial", "greyUninomial", "blackUninomial", "whiteSpecies",
+		"greySpecies", "blackSpecies", "commonWords", "rank", "notInDictionary"}
 	return types[d]
 }
 
@@ -113,7 +113,7 @@ func setRanks() map[string]struct{} {
 		"variety": empty, "var": empty, "var.": empty, "forma": empty, "fm": empty,
 		"forma.": empty, "fma": empty, "fma.": empty, "form": empty, "form.": empty,
 		"fo": empty, "fo.": empty, "f": empty, "f.": empty, "ssp": empty,
-		"ssp.": empty, "subsp": empty, "subsp.": empty,
+		"ssp.": empty, "subsp": empty, "subsp.": empty, "subspecies": empty,
 	}
 	return ranks
 }

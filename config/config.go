@@ -1,4 +1,4 @@
-package gnfinder
+package config
 
 import (
 	"log"
@@ -24,6 +24,10 @@ type Config struct {
 
 	// WithBayes is true when we run WithBayes algorithm, and false when we dont.
 	WithBayes bool
+
+	// WithOddsAdjustment is true if we use the density of found names to
+	// recalculate odds.
+	WithOddsAdjustment bool
 
 	// WithBayesOddsDetails show odds calculation details in the CLI output.
 	WithBayesOddsDetails bool
@@ -78,6 +82,14 @@ func OptWithBayes(b bool) Option {
 	}
 }
 
+// OptWithOddsAdjustment is an option that triggers recalculation of prior odds
+// using number of found names divided by number of all name candidates.
+func OptWithOddsAdjustment(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithOddsAdjustment = b
+	}
+}
+
 // OptBayesThreshold is an option for name finding, that sets new threshold
 // for results from the Bayes name-finding. All the name candidates that have a
 // higher threshold will appear in the resulting names output.
@@ -126,9 +138,9 @@ func OptPreferredSources(is []int) Option {
 	}
 }
 
-// NewConfig creates GNfinder object with default data, or with data coming
+// New creates GNfinder object with default data, or with data coming
 // from opts.
-func NewConfig(opts ...Option) Config {
+func New(opts ...Option) Config {
 	cfg := Config{
 		Format:             gnfmt.CSV,
 		WithBayes:          true,

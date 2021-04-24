@@ -119,6 +119,15 @@ echo "Pomatomus saltator and Parus major" | gnfinder -v -l eng -s "4,12"
 echo "Pomatomus saltator and Parus major" | gnfinder --verify --lang eng --sources "4,12"
 ```
 
+Adjusting Prior Odds using information about found names. They are calculated
+as "found names number / (capitalized words number - found names number)".
+Such adjustment will decrease Odds for texts with very few names, and increase
+odds for texts with a lot of found names.
+
+```bash
+gnfinder -a -d -f pretty file_with_names.txt
+```
+
 Returning 5 words before and after found name-candidate.
 
 ```bash

@@ -28,6 +28,7 @@ import (
 	"strings"
 
 	"github.com/gnames/gnfinder"
+	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/lang"
 	"github.com/gnames/gnfinder/ent/nlp"
 	"github.com/gnames/gnfinder/ent/verifier"
@@ -64,14 +65,14 @@ specific datasets are important for verification, they can be set with '-s'
 			dict := dict.LoadDictionary()
 			weights := nlp.BayesWeights()
 
-			cfg := gnfinder.NewConfig()
+			cfg := config.New()
 			gnf := gnfinder.New(cfg, dict, weights)
 			rest.Run(gnf, port)
 
 			os.Exit(0)
 		}
 
-		opts := []gnfinder.Option{
+		opts := []config.Option{
 			formatFlag(cmd),
 			langFlag(cmd),
 			wordsFlag(cmd),
@@ -79,6 +80,7 @@ specific datasets are important for verification, they can be set with '-s'
 			oddsDetailsFlag(cmd),
 			verifFlag(cmd),
 			sourcesFlag(cmd),
+			adjustOddsFlag(cmd),
 		}
 
 		var data []byte
@@ -119,6 +121,7 @@ func Execute(ver string) {
 func init() {
 	cobra.OnInitialize(initConfig)
 
+	rootCmd.Flags().BoolP("adjust-odds", "a", false, "adjust Bayes odds using density of found names.")
 	rootCmd.Flags().BoolP("details-odds", "d", false, "show details of odds calculation.")
 	rootCmd.Flags().StringP("lang", "l", "", "text's language or 'detect' for automatic detection.")
 	rootCmd.Flags().StringP("format", "f", "csv", `Format of the output: "compact", "pretty", "csv".
@@ -154,11 +157,11 @@ To find IDs refer to "https://resolver.globalnames.org/data_sources".
 func initConfig() {
 }
 
-func findNames(data []byte, opts []gnfinder.Option) {
+func findNames(data []byte, opts []config.Option) {
 	dict := dict.LoadDictionary()
 	weights := nlp.BayesWeights()
 
-	cfg := gnfinder.NewConfig(opts...)
+	cfg := config.New(opts...)
 	gnf := gnfinder.New(cfg, dict, weights)
 	res := gnf.Find(data)
 

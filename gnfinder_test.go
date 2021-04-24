@@ -10,6 +10,7 @@ import (
 
 	"github.com/gnames/bayes"
 	"github.com/gnames/gnfinder"
+	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/lang"
 	"github.com/gnames/gnfinder/ent/nlp"
 	"github.com/gnames/gnfinder/io/dict"
@@ -107,7 +108,7 @@ Conostylis americana, 2i. 6d.
 	}
 
 	for _, v := range tests {
-		gnf := genFinder(gnfinder.OptWithBayes(v.bayes))
+		gnf := genFinder(config.OptWithBayes(v.bayes))
 		res := gnf.Find(txt)
 		name := res.Names[v.nameIdx]
 
@@ -136,7 +137,7 @@ cheilum, 1 5s. per doz.
 Conostylis americana, 2i. 6d.
 			`)
 
-	gnf := genFinder(gnfinder.OptTokensAround(2))
+	gnf := genFinder(config.OptTokensAround(2))
 	res := gnf.Find(txt)
 	assert.Equal(t, res.Meta.TokensAround, 2)
 	tests := []struct {
@@ -176,7 +177,7 @@ func TextTokensAroundSizeLimit(t *testing.T) {
 	txt := []byte("Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa " +
 		"Pardosa moesta " +
 		"Bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
-	gnf := genFinder(gnfinder.OptTokensAround(2))
+	gnf := genFinder(config.OptTokensAround(2))
 	res := gnf.Find(txt)
 	assert.Equal(t, res.Meta.TokensAround, 2)
 
@@ -186,7 +187,7 @@ func TextTokensAroundSizeLimit(t *testing.T) {
 
 	txt = []byte("Aaaaaaaaaaaaaaaaaaaaaaa Pardosa moesta " +
 		"bbbbbbbbbbbbbbbbbbbbbbb")
-	gnf = genFinder(gnfinder.OptTokensAround(2))
+	gnf = genFinder(config.OptTokensAround(2))
 	res = gnf.Find(txt)
 	assert.Equal(t, res.Meta.TokensAround, 2)
 	n = res.Names[0]
@@ -198,7 +199,7 @@ func TextTokensAroundSizeLimit(t *testing.T) {
 // document.
 func TestLastName(t *testing.T) {
 	txt := []byte("Pardosa moesta")
-	gnf := genFinder(gnfinder.OptWithBayes(false))
+	gnf := genFinder(config.OptWithBayes(false))
 	res := gnf.Find(txt)
 	assert.Equal(t, res.Meta.TotalNames, 1)
 
@@ -206,7 +207,7 @@ func TestLastName(t *testing.T) {
 	assert.Equal(t, name.Name, "Pardosa moesta")
 	assert.Equal(t, name.Odds, 0.0)
 
-	gnf = genFinder(gnfinder.OptWithBayes(true))
+	gnf = genFinder(config.OptWithBayes(true))
 	res = gnf.Find(txt)
 	name = res.Names[0]
 	assert.Equal(t, name.Name, "Pardosa moesta")
@@ -296,24 +297,24 @@ func TestFakeAnnot(t *testing.T) {
 func TestChangeConfig(t *testing.T) {
 	gnf := genFinder()
 	assert.True(t, gnf.GetConfig().WithBayes)
-	gnf = gnf.ChangeConfig(gnfinder.OptWithBayes(false))
+	gnf = gnf.ChangeConfig(config.OptWithBayes(false))
 	assert.False(t, gnf.GetConfig().WithBayes)
 }
 
-func genFinder(opts ...gnfinder.Option) gnfinder.GNfinder {
+func genFinder(opts ...config.Option) gnfinder.GNfinder {
 	if dictionary == nil {
 		dictionary = dict.LoadDictionary()
 		weights = nlp.BayesWeights()
 		log.SetOutput(io.Discard)
 	}
-	cfg := gnfinder.NewConfig(opts...)
+	cfg := config.New(opts...)
 	return gnfinder.New(cfg, dictionary, weights)
 }
 
 func Example() {
 	txt := []byte(`Blue Adussel (Mytilus edulis) grows to about two
 inches the first year,Pardosa moesta Banks, 1892`)
-	cfg := gnfinder.NewConfig()
+	cfg := config.New()
 	dictionary := dict.LoadDictionary()
 	weights := nlp.BayesWeights()
 	gnf := gnfinder.New(cfg, dictionary, weights)

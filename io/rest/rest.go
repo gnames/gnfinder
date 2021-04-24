@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gnames/gnfinder"
+	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/api"
 	"github.com/gnames/gnfinder/ent/lang"
 	"github.com/gnames/gnfinder/ent/output"
@@ -68,17 +69,17 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 			err = c.Bind(&params)
 
 			if err == nil {
-				opts := []gnfinder.Option{
-					gnfinder.OptWithBayesOddsDetails(params.OddsDetails),
-					gnfinder.OptFormat(getFormat(params.Format)),
-					gnfinder.OptLanguage(getLanguage(params.Language)),
-					gnfinder.OptWithLanguageDetection(params.LanguageDetection),
-					gnfinder.OptWithBayes(!params.NoBayes),
-					gnfinder.OptPreferredSources(params.Sources),
-					gnfinder.OptWithVerification(
+				opts := []config.Option{
+					config.OptWithBayesOddsDetails(params.OddsDetails),
+					config.OptFormat(getFormat(params.Format)),
+					config.OptLanguage(getLanguage(params.Language)),
+					config.OptWithLanguageDetection(params.LanguageDetection),
+					config.OptWithBayes(!params.NoBayes),
+					config.OptPreferredSources(params.Sources),
+					config.OptWithVerification(
 						params.Verification || len(params.Sources) > 0,
 					),
-					gnfinder.OptTokensAround(params.WordsAround),
+					config.OptTokensAround(params.WordsAround),
 				}
 				gnf = gnf.ChangeConfig(opts...)
 				out = gnf.Find(params.Text)

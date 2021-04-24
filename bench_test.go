@@ -8,6 +8,7 @@ import (
 
 	"github.com/gnames/bayes"
 	"github.com/gnames/gnfinder"
+	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/lang"
 	"github.com/gnames/gnfinder/ent/nlp"
 	"github.com/gnames/gnfinder/ent/output"
@@ -19,7 +20,7 @@ import (
 
 type inputs struct {
 	input     []byte
-	opts      []gnfinder.Option
+	opts      []config.Option
 	weights   map[lang.Language]*bayes.NaiveBayes
 	traceFile string
 }
@@ -29,8 +30,8 @@ type inputs struct {
 func BenchmarkSmallNoBayes(b *testing.B) {
 	args := inputs{
 		input: []byte("Pardosa moesta"),
-		opts: []gnfinder.Option{
-			gnfinder.OptWithBayes(false),
+		opts: []config.Option{
+			config.OptWithBayes(false),
 		},
 		traceFile: "small.trace",
 	}
@@ -42,7 +43,7 @@ func BenchmarkSmallNoBayes(b *testing.B) {
 func BenchmarkSmallYesBayes(b *testing.B) {
 	args := inputs{
 		input:     []byte("Pardosa moesta"),
-		opts:      []gnfinder.Option{gnfinder.OptWithBayes(true)},
+		opts:      []config.Option{config.OptWithBayes(true)},
 		weights:   weights,
 		traceFile: "small-bayes.trace",
 	}
@@ -53,9 +54,9 @@ func BenchmarkSmallYesBayes(b *testing.B) {
 // with language detection
 func BenchmarkSmallYesBayesLangDetect(b *testing.B) {
 	args := inputs{
-		opts: []gnfinder.Option{
-			gnfinder.OptWithBayes(true),
-			gnfinder.OptWithLanguageDetection(true),
+		opts: []config.Option{
+			config.OptWithBayes(true),
+			config.OptWithLanguageDetection(true),
 		},
 		weights:   weights,
 		traceFile: "small-eng.trace",
@@ -72,8 +73,8 @@ func BenchmarkBigNoBayes(b *testing.B) {
 		panic(err)
 	}
 	args := inputs{
-		opts: []gnfinder.Option{
-			gnfinder.OptWithBayes(false),
+		opts: []config.Option{
+			config.OptWithBayes(false),
 		},
 		input:     input,
 		traceFile: "big.trace",
@@ -89,8 +90,8 @@ func BenchmarkBigYesBayes(b *testing.B) {
 		panic(err)
 	}
 	args := inputs{
-		opts: []gnfinder.Option{
-			gnfinder.OptWithBayes(true),
+		opts: []config.Option{
+			config.OptWithBayes(true),
 		},
 		weights:   weights,
 		traceFile: "big.trace",
@@ -107,9 +108,9 @@ func BenchmarkBigYesBayesLangDetect(b *testing.B) {
 		panic(err)
 	}
 	args := inputs{
-		opts: []gnfinder.Option{
-			gnfinder.OptWithBayes(true),
-			gnfinder.OptWithLanguageDetection(true),
+		opts: []config.Option{
+			config.OptWithBayes(true),
+			config.OptWithLanguageDetection(true),
 		},
 		weights:   weights,
 		input:     input,
@@ -128,7 +129,7 @@ func beforeBench() {
 
 func runBenchmark(n string, b *testing.B, args inputs) {
 	beforeBench()
-	cfg := gnfinder.NewConfig(args.opts...)
+	cfg := config.New(args.opts...)
 	gnf := gnfinder.New(cfg, dictionary, args.weights)
 	f, err := os.Create(args.traceFile)
 	if err != nil {

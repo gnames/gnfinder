@@ -2,6 +2,7 @@ package gnfinder
 
 import (
 	"github.com/gnames/bayes"
+	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/heuristic"
 	"github.com/gnames/gnfinder/ent/lang"
 	"github.com/gnames/gnfinder/ent/nlp"
@@ -12,7 +13,7 @@ import (
 )
 
 type gnfinder struct {
-	Config
+	config.Config
 
 	// TextOdds captures "concentration" of names as it is found for the whole
 	// text by heuristic name-finding. It should be close enough for real
@@ -28,7 +29,7 @@ type gnfinder struct {
 }
 
 func New(
-	cfg Config,
+	cfg config.Config,
 	dictionaries *dict.Dictionary,
 	weights map[lang.Language]*bayes.NaiveBayes,
 ) GNfinder {
@@ -58,24 +59,17 @@ func (gnf gnfinder) Find(data []byte) output.Output {
 		nb := gnf.bayesWeights[gnf.Language]
 		nlp.TagTokens(tokens, gnf.Dictionary, nb, gnf.BayesOddsThreshold)
 	}
-	outOpts := []output.Option{
-		output.OptVersion(Version),
-		output.OptWithBayes(gnf.WithBayes),
-		output.OptWithVerification(gnf.WithVerification),
-		output.OptLanguage(gnf.Language.String()),
-		output.OptLanguageDetected(gnf.LanguageDetected),
-		output.OptTokensAround(gnf.TokensAround),
-	}
-	return output.TokensToOutput(tokens, text, gnf.TokensAround, gnf.WithBayesOddsDetails, outOpts...)
+
+	return output.TokensToOutput(tokens, text, Version, gnf.GetConfig())
 }
 
 // GetConfig returns the configuration object.
-func (gnf gnfinder) GetConfig() Config {
+func (gnf gnfinder) GetConfig() config.Config {
 	return gnf.Config
 }
 
 // ChangeConfig allows to modify Config fields.
-func (gnf gnfinder) ChangeConfig(opts ...Option) GNfinder {
+func (gnf gnfinder) ChangeConfig(opts ...config.Option) GNfinder {
 	for _, opt := range opts {
 		opt(&gnf.Config)
 	}
