@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:3.13
 
 MAINTAINER Dmitry Mozzherin
 
@@ -8,4 +8,6 @@ WORKDIR /bin
 
 COPY ./gnfinder/gnfinder /bin
 
-CMD ["gnfinder", "grpc"]
+ENTRYPOINT [ "gnfinder" ]
+
+CMD ["-p", "8999"]

@@ -5,11 +5,11 @@ FLAG_MODULE = GO111MODULE=on
 FLAGS_SHARED = $(FLAG_MODULE) CGO_ENABLED=0 GOARCH=amd64
 FLAGS_LD=-ldflags "-X github.com/gnames/gnfinder.Build=${DATE} \
                   -X github.com/gnames/gnfinder.Version=${VERSION}"
+NO_C = CGO_ENABLED=0
 GOCMD=go
 GOINSTALL=$(GOCMD) install $(FLAGS_LD)
 GOBUILD=$(GOCMD) build $(FLAGS_LD)
 GOCLEAN=$(GOCMD) clean
-GOGENERATE=$(GOCMD) generate
 GOGET = $(GOCMD) get
 
 all: install
@@ -29,8 +29,7 @@ deps:
 build:
 	cd gnfinder; \
 	$(GOCLEAN); \
-	$(GOGENERATE) ./...
-	$(FLAGS_SHARED) GOOS=linux $(GOBUILD);
+	$(FLAGS_SHARED) $(NO_C) $(GOBUILD);
 
 release: dockerhub
 	cd gnfinder; \
