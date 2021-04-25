@@ -86,6 +86,116 @@ func TestFindEdgeCases(t *testing.T) {
 	}
 }
 
+// TestHumanNames checks detection and non-detection of names that are
+// similar to scientific names.
+func TestHumanNames(t *testing.T) {
+	tests := []struct {
+		name  string
+		found bool
+	}{
+		{"Elsa", false},
+		{"Paula", false},
+		{"Gabriella", false},
+		{"Lisa", false},
+		{"Alfaro", false},
+		{"Cullen", false},
+		{"Plana", false},
+		{"Idris", false},
+		{"Barbosa", false},
+		{"Rana", false},
+		{"Garreta", false},
+		{"Cano", false},
+		{"Yamada", false},
+		{"Barbosa", false},
+		{"Theron", false},
+		{"Berta", false},
+		{"Moreno", false},
+		{"Moreno", false},
+		{"Vizcaino", false},
+		{"Talavera", false},
+		{"Crosa", false},
+		{"Pinon", false},
+		{"Graus", false},
+		{"Caterino", false},
+		{"Casas", false},
+		{"Ades", false},
+		{"Narum", false},
+		{"Ikeda", false},
+		{"Camara", false},
+		{"Abila", false},
+		{"Simo", false},
+		{"Fraga", false},
+		{"Verma", false},
+		{"Moreno", false},
+		{"Vitalis", false},
+		{"Imber", false},
+		{"Luca", false},
+		{"Ziminia", false},
+		{"Lara", false},
+		{"Darda", false},
+		{"Luca", false},
+		{"Kukalova", false},
+		{"Leis", false},
+		{"Mossman", false},
+		{"Vitalis", false},
+		{"Fontanella", false},
+		{"Nason", false},
+		{"Ferna", false},
+		{"Beleza", false},
+		{"Mona", false},
+		{"Pereira", false},
+		{"Talavera", false},
+		{"Luzuriaga", false},
+		{"Vila", false},
+		{"Mona", false},
+		{"Tella", false},
+		{"Ferna", false},
+		{"Gaeta", false},
+		{"Civetta", false},
+		{"Ojeda", false},
+		{"Piras", false},
+		{"Oyama", false},
+		{"Narum", false},
+		{"Vitalis", false},
+		{"Colla", false},
+		{"Moreno", false},
+		{"Narita", false},
+		{"Roche", false},
+		{"Gaeta", false},
+		{"Alfaro", false},
+		{"Barbosa", false},
+		{"Tanada", false},
+		{"Sasa", false},
+		{"Carmona", false},
+		{"Momot", false},
+		{"Quesada", false},
+		{"Moya", false},
+		{"Tarka", false},
+		{"Tobias", false},
+		{"Pereira", false},
+		{"Narum", false},
+		{"Rubini", false},
+		{"Nason", false},
+		{"Tella", false},
+		{"Narum", false},
+		{"Talavera", false},
+		{"Egea", false},
+		{"Vila", false},
+		{"Gregorius", false},
+		{"Moreno", false},
+		{"Vila", false},
+		{"Vitalis", false},
+		{"Tsukada", false},
+		{"Gregorius", false},
+	}
+
+	gnf := genFinder()
+	for _, v := range tests {
+		res := gnf.Find([]byte(v.name))
+		assert.Equal(t, len(res.Names) > 0, v.found, v.name)
+	}
+}
+
 // TestGeoNames checks detection and non-detection of names that are
 // similar to scientific names.
 func TestGeoNames(t *testing.T) {

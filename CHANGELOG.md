@@ -17,6 +17,9 @@
 - Add: [#69]: Output Odds as a log10.
 - Add: [#68]: Refactor the code with interfaces to be consistent with
               other projects.
+- Add: [#64]: Remove common words from species.
+- Add: [#63]: Remove geo-names as uninomials.
+- Add: [#62]: Remove human names as uninomials.
 
 ## [v0.11.1]
 
