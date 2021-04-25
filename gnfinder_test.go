@@ -86,6 +86,94 @@ func TestFindEdgeCases(t *testing.T) {
 	}
 }
 
+// TestGeoNames checks detection and non-detection of names that are
+// similar to scientific names.
+func TestGeoNames(t *testing.T) {
+	tests := []struct {
+		name  string
+		found bool
+	}{
+		{"Alexandrina", false},
+		{"Amapa", false},
+		{"Angra", false},
+		{"Astra", false},
+		{"Atacama", false},
+		{"Atoyac", false},
+		{"Balclutha", false},
+		{"Ballena", false},
+		{"Balsas", false},
+		{"Beringia", false},
+		{"Bogota", false},
+		{"Brea", false},
+		{"Cabrera", false},
+		{"Caleta", false},
+		{"Campana", false},
+		{"Casas", false},
+		{"Cassine", false},
+		{"Castilla", false},
+		{"Catarina", false},
+		{"Caura", false},
+		{"Chiricahua", false},
+		{"Cirella", false},
+		{"Cuernavaca", false},
+		{"Emilia", false},
+		{"Eungella", false},
+		{"Gonga", false},
+		{"Gora", false},
+		{"Gorgora", false},
+		{"Harena", false},
+		{"Kaala", false},
+		{"Kahua", false},
+		{"Knysna", false},
+		{"Lana", false},
+		{"Lema", false},
+		{"Maderia", false},
+		{"Malleco", false},
+		{"Manengouba", false},
+		{"Manoa", false},
+		{"Mariposa", false},
+		{"Mona", false},
+		{"Moorea", false},
+		{"Nicola", false},
+		{"Noumea", false},
+		{"Osaka", false},
+		{"Paria", false},
+		{"Pesotum", false},
+		{"Pima", false},
+		{"Pina", false},
+		{"Potos", false},
+		{"Punta", false},
+		{"Ringaringa", false},
+		{"Rioja", false},
+		{"Rita", false},
+		{"Roche", false},
+		{"Roraima", false},
+		{"Rosalia", false},
+		{"Rungwe-kitulo kipunji", false},
+		{"Sanda", false},
+		{"Tagua", false},
+		{"Taita", false},
+		{"Tapajos", false},
+		{"Tulsa", false},
+		{"Tyson", false},
+		{"Ucla", false},
+		{"Uinta", false},
+		{"Valdivia", false},
+		{"Valpara", false},
+		{"Vasco", false},
+		{"Visaya", false},
+		{"Wakulla", false},
+		{"Yarra", false},
+		{"Yulong", false},
+	}
+
+	gnf := genFinder()
+	for _, v := range tests {
+		res := gnf.Find([]byte(v.name))
+		assert.Equal(t, len(res.Names) > 0, v.found, v.name)
+	}
+}
+
 // TestFindBayes checks how WithBayes option affects the name-finding.
 func TestFindBayes(t *testing.T) {
 	txt := []byte(`
