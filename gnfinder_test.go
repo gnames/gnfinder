@@ -49,21 +49,40 @@ func TestMeta(t *testing.T) {
 // similar to scientific names.
 func TestFindEdgeCases(t *testing.T) {
 	tests := []struct {
-		msg, name string
-		found     bool
+		name        string
+		cardinality int
+		found       bool
 	}{
-		{"Piper notname", "Piper smokes", false},
-		{"Piper ovalifolium", "Piper ovalifolium", true},
-		{"Piper alba", "Piper alba", false},
-		{"Bovine alba", "Bovine alba", false},
-		{"Japaneese yew", "Japaneese yew", false},
-		{"Candidatus alba", "Candidatus alba", false},
+		{"Piper smokes", 0, false},
+		{"Piper ovalifolium", 2, true},
+		{"Piper alba", 0, false},
+		{"Bovine alba", 0, false},
+		{"Japaneese yew", 0, false},
+		{"Candidatus alba", 0, false},
+		{"American concolor", 0, false},
+		{"Asian concolor", 0, false},
+		{"Giardia lamblia genome", 2, true},
+		{"R. antirrhini complex", 2, true},
+		{"Alaskan broweri", 0, false},
+		{"Tamiasciurus lineages", 1, true},
+		{"Rungwecebus specimen", 1, true},
+		{"Acanthopagrus schlegeli after", 2, true},
+		{"Afrotheria clades", 0, false},
+		{"Boechera stricta collection", 2, true},
+		{"A. tumefaciens confer", 2, true},
+		{"Drosophila genes", 1, true},
+		{"Drosophila melanogaster larvae", 2, true},
+		{"Heliocidaris subspecies moesta", 1, true},
+		{"Awsa lineages", 0, false},
 	}
 
 	gnf := genFinder()
 	for _, v := range tests {
 		res := gnf.Find([]byte(v.name))
-		assert.Equal(t, len(res.Names) > 0, v.found)
+		assert.Equal(t, len(res.Names) > 0, v.found, v.name)
+		if len(res.Names) > 0 {
+			assert.Equal(t, res.Names[0].Cardinality, v.cardinality, v.name)
+		}
 	}
 }
 

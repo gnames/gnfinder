@@ -113,7 +113,7 @@ func setRanks() map[string]struct{} {
 		"variety": empty, "var": empty, "var.": empty, "forma": empty, "fm": empty,
 		"forma.": empty, "fma": empty, "fma.": empty, "form": empty, "form.": empty,
 		"fo": empty, "fo.": empty, "f": empty, "f.": empty, "ssp": empty,
-		"ssp.": empty, "subsp": empty, "subsp.": empty, "subspecies": empty,
+		"ssp.": empty, "subsp": empty, "subsp.": empty,
 	}
 	return ranks
 }
