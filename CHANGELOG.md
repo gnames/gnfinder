@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [v0.12.1]
+
+- Add: gnf.Find now takes string instead of []byte.
+- Fix: veification for REST interface
+
 ## [v.0.12.0]
 
 - Add: [#81]: represent new lines in verbatim output as "\n".
