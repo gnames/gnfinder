@@ -18,6 +18,7 @@ Finds scientific names using dictionary and nlp approaches.
   * [Usage as a library](#usage-as-a-library)
   * [Usage as a docker container](#usage-as-a-docker-container)
 * [Development](#development)
+  * [Modify OpenAPI documentation](#modify-openapi-documentation)
 * [Testing](#testing)
 
 <!-- vim-markdown-toc -->
@@ -157,8 +158,8 @@ import (
 )
 
 func Example() {
-  txt := []byte(`Blue Adussel (Mytilus edulis) grows to about two
-inches the first year,Pardosa moesta Banks, 1892`)
+  txt := `Blue Adussel (Mytilus edulis) grows to about two
+inches the first year,Pardosa moesta Banks, 1892`
   cfg := gnfinder.NewConfig()
   dictionary := dict.LoadDictionary()
   weights := nlp.BayesWeights()
@@ -196,7 +197,15 @@ make tools
 make install
 ```
 
+### Modify OpenAPI documentation
+
+```bash
+docker run -d -p 80:8080 swaggerapi/swagger-editor
+```
+
 ## Testing
+
+From the root of the project:
 
 ```bash
 make tools

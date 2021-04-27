@@ -67,13 +67,13 @@ func TestPost(t *testing.T) {
 		verif       bool
 		cardinality []int
 	}{
-		{api.FinderParams{Text: []byte(text)},
+		{api.FinderParams{Text: text},
 			true, false, []int{1, 1, 2, 2}},
 
-		{api.FinderParams{Text: []byte(text), NoBayes: true},
+		{api.FinderParams{Text: text, NoBayes: true},
 			false, false, []int{1, 1, 1, 2}},
 
-		{api.FinderParams{Text: []byte(text), Verification: true},
+		{api.FinderParams{Text: text, Verification: true},
 			true, true, []int{1, 1, 2, 2}},
 	}
 

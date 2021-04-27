@@ -105,7 +105,7 @@ specific datasets are important for verification, they can be set with '-s'
 			os.Exit(0)
 		}
 
-		findNames(data, opts)
+		findNames(string(data), opts)
 	},
 }
 
@@ -157,7 +157,7 @@ To find IDs refer to "https://resolver.globalnames.org/data_sources".
 func initConfig() {
 }
 
-func findNames(data []byte, opts []config.Option) {
+func findNames(data string, opts []config.Option) {
 	dict := dict.LoadDictionary()
 	weights := nlp.BayesWeights()
 

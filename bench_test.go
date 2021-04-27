@@ -19,7 +19,7 @@ import (
 // go test ./... -bench=. -benchmem -count=10 -run=XXX > bench.txt && benchstat bench.txt
 
 type inputs struct {
-	input     []byte
+	input     string
 	opts      []config.Option
 	weights   map[lang.Language]*bayes.NaiveBayes
 	traceFile string
@@ -29,7 +29,7 @@ type inputs struct {
 // without language detection
 func BenchmarkSmallNoBayes(b *testing.B) {
 	args := inputs{
-		input: []byte("Pardosa moesta"),
+		input: "Pardosa moesta",
 		opts: []config.Option{
 			config.OptWithBayes(false),
 		},
@@ -42,7 +42,7 @@ func BenchmarkSmallNoBayes(b *testing.B) {
 // without language detection
 func BenchmarkSmallYesBayes(b *testing.B) {
 	args := inputs{
-		input:     []byte("Pardosa moesta"),
+		input:     "Pardosa moesta",
 		opts:      []config.Option{config.OptWithBayes(true)},
 		weights:   weights,
 		traceFile: "small-bayes.trace",
@@ -60,7 +60,7 @@ func BenchmarkSmallYesBayesLangDetect(b *testing.B) {
 		},
 		weights:   weights,
 		traceFile: "small-eng.trace",
-		input:     []byte("Pardosa moesta"),
+		input:     "Pardosa moesta",
 	}
 	runBenchmark("SmallYesBayesLangDetect", b, args)
 }
@@ -76,7 +76,7 @@ func BenchmarkBigNoBayes(b *testing.B) {
 		opts: []config.Option{
 			config.OptWithBayes(false),
 		},
-		input:     input,
+		input:     string(input),
 		traceFile: "big.trace",
 	}
 	runBenchmark("BigNoBayes", b, args)
@@ -95,7 +95,7 @@ func BenchmarkBigYesBayes(b *testing.B) {
 		},
 		weights:   weights,
 		traceFile: "big.trace",
-		input:     input,
+		input:     string(input),
 	}
 	runBenchmark("BigYesBayes", b, args)
 }
@@ -113,7 +113,7 @@ func BenchmarkBigYesBayesLangDetect(b *testing.B) {
 			config.OptWithLanguageDetection(true),
 		},
 		weights:   weights,
-		input:     input,
+		input:     string(input),
 		traceFile: "big.trace",
 	}
 	runBenchmark("BigYesBayesLangDetect", b, args)

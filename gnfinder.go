@@ -46,8 +46,8 @@ func New(
 
 // Find takes a text as a slice of bytes, detects names and returns the found
 // names.
-func (gnf gnfinder) Find(data []byte) output.Output {
-	text := []rune(string(data))
+func (gnf gnfinder) Find(txt string) output.Output {
+	text := []rune(string(txt))
 	tokens := token.Tokenize(text)
 
 	if gnf.WithLanguageDetection {

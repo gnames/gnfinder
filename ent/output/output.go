@@ -33,9 +33,9 @@ type Meta struct {
 	// WithVerification is true if results are checked by verification service.
 	WithVerification bool `json:"withVerification"`
 
-	// TokensAround shows number of tokens preserved before and after
+	// WordsAround shows the number of tokens preserved before and after
 	// a name-string candidate.
-	TokensAround int `json:"tokensAround"`
+	WordsAround int `json:"wordsAround"`
 
 	// Language inside name-finding algorithm
 	Language string `json:"language"`
@@ -81,8 +81,7 @@ type Name struct {
 	// Odds show a probability that name detection was correct.
 	Odds float64 `json:"-"`
 	// OddsLog10 show a Log10 of Odds.
-	OddsLog10    float64 `json:"oddsLog10,omitempty"`
-	OddsAdjLog10 float64 `json:"oddsAdjLog10,omitempty"`
+	OddsLog10 float64 `json:"oddsLog10,omitempty"`
 	// OddsDetails descibes how Odds were calculated.
 	OddsDetails token.OddsDetails `json:"oddsDetails,omitempty"`
 	// OffsetStart is a start of a name on a page.
@@ -152,7 +151,7 @@ func newOutput(
 		WithBayes:           cfg.WithBayes,
 		WithOddsAdjustment:  cfg.WithOddsAdjustment,
 		WithVerification:    cfg.WithVerification,
-		TokensAround:        cfg.TokensAround,
+		WordsAround:         cfg.TokensAround,
 		Language:            cfg.Language.String(),
 		LanguageDetected:    cfg.LanguageDetected,
 		TotalTokens:         len(ts),
