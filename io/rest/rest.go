@@ -13,6 +13,7 @@ import (
 	"github.com/gnames/gnfinder/ent/api"
 	"github.com/gnames/gnfinder/ent/lang"
 	"github.com/gnames/gnfinder/ent/output"
+	"github.com/gnames/gnfinder/ent/verifier"
 	"github.com/gnames/gnfmt"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -82,6 +83,11 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 				}
 				gnf = gnf.ChangeConfig(opts...)
 				out = gnf.Find(params.Text)
+				if gnf.GetConfig().WithVerification {
+					verif := verifier.New(gnf.GetConfig().PreferredSources)
+					verifiedNames := verif.Verify(out.UniqueNameStrings())
+					out.MergeVerification(verifiedNames)
+				}
 			}
 
 			if err == nil {
