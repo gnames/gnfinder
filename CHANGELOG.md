@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## [v0.13.1]
+## [v0.13.0]
 
 - Add [#84]: metadata about file and name-finding duration.
 
@@ -180,6 +180,8 @@
 
 This document follows [changelog guidelines]
 
+[v0.13.0]: https://github.com/gnames/gnfinder/compare/v0.12.1...v0.13.0
+[v0.12.1]: https://github.com/gnames/gnfinder/compare/v0.12.0...v0.12.1
 [v0.12.0]: https://github.com/gnames/gnfinder/compare/v0.11.1...v0.12.0
 [v0.11.1]: https://github.com/gnames/gnfinder/compare/v0.11.0...v0.11.1
 [v0.11.0]: https://github.com/gnames/gnfinder/compare/v0.10.1...v0.11.0
