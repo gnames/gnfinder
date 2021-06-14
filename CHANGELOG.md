@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.13.1]
+
+- Add [#84]: metadata about file and name-finding duration.
+
 ## [v0.12.1]
 
 - Add: gnf.Find now takes string instead of []byte.
@@ -9,22 +13,22 @@
 
 ## [v.0.12.0]
 
-- Add: [#81]: represent new lines in verbatim output as "\n".
-- Add: [#80]: use CSV, JSON, JSON pretty for output.
-- Add: [#79]: adjust prior odds using the density of found names in a text.
-- Add: [#78]: fix Odds value for names with 'grey' genus and species.
-- Add: [#77]: add RESTful interface.
-- Add: [#76]: remove subcommands from CLI.
-- Add: [#75]: update tests, remove ginkgo depencency for tests.
-- Add: [#73]: benchmark and optimize tokenizer.
-- Add: [#71]: use `embed` introduced in Go v1.16.
-- Add: [#70]: migrate code to use gner tokenizer.
-- Add: [#69]: Output Odds as a log10.
-- Add: [#68]: Refactor the code with interfaces to be consistent with
-              other projects.
-- Add: [#64]: Remove common words from species.
-- Add: [#63]: Remove geo-names as uninomials.
-- Add: [#62]: Remove human names as uninomials.
+- Add [#81]: represent new lines in verbatim output as "\n".
+- Add [#80]: use CSV, JSON, JSON pretty for output.
+- Add [#79]: adjust prior odds using the density of found names in a text.
+- Add [#78]: fix Odds value for names with 'grey' genus and species.
+- Add [#77]: add RESTful interface.
+- Add [#76]: remove subcommands from CLI.
+- Add [#75]: update tests, remove ginkgo depencency for tests.
+- Add [#73]: benchmark and optimize tokenizer.
+- Add [#71]: use `embed` introduced in Go v1.16.
+- Add [#70]: migrate code to use gner tokenizer.
+- Add [#69]: Output Odds as a log10.
+- Add [#68]: Refactor the code with interfaces to be consistent with
+             other projects.
+- Add [#64]: Remove common words from species.
+- Add [#63]: Remove geo-names as uninomials.
+- Add [#62]: Remove human names as uninomials.
 
 ## [v0.11.1]
 
