@@ -146,7 +146,7 @@ func runBenchmark(n string, b *testing.B, args inputs) {
 	b.Run(n, func(b *testing.B) {
 		var o output.Output
 		for i := 0; i < b.N; i++ {
-			o = gnf.Find(args.input)
+			o = gnf.Find("", args.input)
 		}
 
 		_ = fmt.Sprintf("%d", len(o.Names))

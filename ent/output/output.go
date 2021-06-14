@@ -17,10 +17,23 @@ type Output struct {
 
 // Meta contains meta-information of name-finding result.
 type Meta struct {
+	// InputFile is the name of the source file.
+	InputFile string `json:"inputFile,omitempty"`
+
+	// FileConversionSec is the time spent on converting the file
+	// into UTF8-encoded text.
+	FileConversionSec float32 `json:"fileConvSec,omitempty"`
+
+	// NameFindingSec is the time spent on name-finding.
+	NameFindingSec float32 `json:"nameFindingSec"`
+
+	// NameVerifSec is the time spent on name-verification.
+	NameVerifSec float32 `json:"nameVerifSec,omitempty"`
+
 	// Date represents time when output was generated.
 	Date time.Time `json:"date"`
 
-	// FinderVersion the version of gnfinder
+	// FinderVersion the version of gnfinder.
 	FinderVersion string `json:"gnfinderVersion"`
 
 	// WithBayes use of bayes during name-finding

@@ -82,11 +82,13 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 					config.OptTokensAround(params.WordsAround),
 				}
 				gnf = gnf.ChangeConfig(opts...)
-				out = gnf.Find(params.Text)
+				out = gnf.Find("", params.Text)
 				if gnf.GetConfig().WithVerification {
 					verif := verifier.New(gnf.GetConfig().PreferredSources)
+					start := time.Now()
 					verifiedNames := verif.Verify(out.UniqueNameStrings())
-					out.MergeVerification(verifiedNames)
+					dur := float32(time.Now().Sub(start)) / float32(time.Second)
+					out.MergeVerification(verifiedNames, dur)
 				}
 			}
 

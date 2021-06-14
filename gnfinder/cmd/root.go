@@ -26,6 +26,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/gnames/gnfinder"
 	"github.com/gnames/gnfinder/config"
@@ -83,29 +84,34 @@ specific datasets are important for verification, they can be set with '-s'
 			adjustOddsFlag(cmd),
 		}
 
-		var data []byte
+		var data, file string
+		var rawData []byte
 		switch len(args) {
 		case 0:
 			if !checkStdin() {
 				_ = cmd.Help()
 				os.Exit(0)
 			}
-			data, err = io.ReadAll(os.Stdin)
+			rawData, err = io.ReadAll(os.Stdin)
 			if err != nil {
 				log.Println(err)
 			}
+			data = string(rawData)
+			file = "STDIN"
 		case 1:
-			data, err = os.ReadFile(args[0])
+			rawData, err = os.ReadFile(args[0])
 			if err != nil {
 				log.Println(err)
 				os.Exit(1)
 			}
+			data = string(rawData)
+			file = args[0]
 		default:
 			_ = cmd.Help()
 			os.Exit(0)
 		}
 
-		findNames(string(data), opts)
+		findNames(data, opts, file)
 	},
 }
 
@@ -157,18 +163,20 @@ To find IDs refer to "https://resolver.globalnames.org/data_sources".
 func initConfig() {
 }
 
-func findNames(data string, opts []config.Option) {
+func findNames(data string, opts []config.Option, file string) {
 	dict := dict.LoadDictionary()
 	weights := nlp.BayesWeights()
 
 	cfg := config.New(opts...)
 	gnf := gnfinder.New(cfg, dict, weights)
-	res := gnf.Find(data)
+	res := gnf.Find(file, data)
 
 	if gnf.GetConfig().WithVerification {
 		verif := verifier.New(gnf.GetConfig().PreferredSources)
+		start := time.Now()
 		verifiedNames := verif.Verify(res.UniqueNameStrings())
-		res.MergeVerification(verifiedNames)
+		dur := float32(time.Now().Sub(start)) / float32(time.Second)
+		res.MergeVerification(verifiedNames, dur)
 	}
 	fmt.Println(res.Format(cfg.Format))
 }

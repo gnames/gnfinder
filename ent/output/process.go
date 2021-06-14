@@ -151,12 +151,16 @@ func (o *Output) UniqueNameStrings() []string {
 
 // MergeVerification takes a map with verified names and
 // incorporates into output.
-func (o *Output) MergeVerification(v map[string]vlib.Verification) {
+func (o *Output) MergeVerification(
+	v map[string]vlib.Verification,
+	dur float32,
+) {
 	for i := range o.Names {
 		if v, ok := v[o.Names[i].Name]; ok {
 			o.Names[i].Verification = &v
 		}
 	}
+	o.Meta.NameVerifSec = dur
 }
 
 func tokensToName(ts []token.TokenSN, text []rune) Name {

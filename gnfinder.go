@@ -1,6 +1,8 @@
 package gnfinder
 
 import (
+	"time"
+
 	"github.com/gnames/bayes"
 	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/heuristic"
@@ -46,7 +48,8 @@ func New(
 
 // Find takes a text as a slice of bytes, detects names and returns the found
 // names.
-func (gnf gnfinder) Find(txt string) output.Output {
+func (gnf gnfinder) Find(file, txt string) output.Output {
+	start := time.Now()
 	text := []rune(string(txt))
 	tokens := token.Tokenize(text)
 
@@ -60,7 +63,11 @@ func (gnf gnfinder) Find(txt string) output.Output {
 		nlp.TagTokens(tokens, gnf.Dictionary, nb, gnf.BayesOddsThreshold)
 	}
 
-	return output.TokensToOutput(tokens, text, Version, gnf.GetConfig())
+	o := output.TokensToOutput(tokens, text, Version, gnf.GetConfig())
+	o.Meta.InputFile = file
+	dur := time.Now().Sub(start)
+	o.NameFindingSec = float32(dur) / float32(time.Second)
+	return o
 }
 
 // GetConfig returns the configuration object.
