@@ -11,8 +11,9 @@ import (
 
 // Output type is the result of name-finding.
 type Output struct {
-	Meta  `json:"metadata"`
-	Names []Name `json:"names"`
+	Meta      `json:"metadata"`
+	InputText string `json:"inputText,omitempty"`
+	Names     []Name `json:"names"`
 }
 
 // Meta contains meta-information of name-finding result.
