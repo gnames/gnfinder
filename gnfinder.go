@@ -1,6 +1,7 @@
 package gnfinder
 
 import (
+	"sort"
 	"time"
 
 	"github.com/gnames/bayes"
@@ -11,6 +12,7 @@ import (
 	"github.com/gnames/gnfinder/ent/output"
 	"github.com/gnames/gnfinder/ent/token"
 	"github.com/gnames/gnfinder/io/dict"
+	"github.com/gnames/gnfmt"
 	"github.com/gnames/gnlib/ent/gnvers"
 )
 
@@ -64,9 +66,18 @@ func (gnf gnfinder) Find(file, txt string) output.Output {
 	}
 
 	o := output.TokensToOutput(tokens, text, Version, gnf.GetConfig())
+
 	o.Meta.InputFile = file
+	if gnf.WithUniqueNames {
+		o = uniqueNames(o)
+	}
+	if gnf.WithInputText && gnf.Format != gnfmt.CSV {
+		o.InputText = txt
+	}
+
 	dur := time.Now().Sub(start)
 	o.NameFindingSec = float32(dur) / float32(time.Second)
+
 	return o
 }
 
@@ -86,4 +97,35 @@ func (gnf gnfinder) ChangeConfig(opts ...config.Option) GNfinder {
 // GetVersion returns version of gnfinder.
 func (gnf gnfinder) GetVersion() gnvers.Version {
 	return gnvers.Version{Version: Version, Build: Build}
+}
+
+func uniqueNames(o output.Output) output.Output {
+	if len(o.Names) == 0 {
+		return o
+	}
+
+	namesMap := make(map[string]output.Name)
+	for _, v := range o.Names {
+		if _, ok := namesMap[v.Name]; !ok {
+			name := output.Name{
+				Cardinality:  v.Cardinality,
+				Name:         v.Name,
+				OddsLog10:    v.OddsLog10,
+				OddsDetails:  v.OddsDetails,
+				Verification: v.Verification,
+			}
+			namesMap[v.Name] = name
+		}
+	}
+	names := make([]output.Name, len(namesMap))
+	var count int
+	for _, v := range namesMap {
+		names[count] = v
+		count++
+	}
+	sort.Slice(names, func(i, j int) bool {
+		return names[i].Name < names[j].Name
+	})
+	o.Names = names
+	return o
 }

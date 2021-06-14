@@ -26,7 +26,6 @@ import (
 	"log"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/gnames/gnfinder"
 	"github.com/gnames/gnfinder/config"
@@ -74,14 +73,16 @@ specific datasets are important for verification, they can be set with '-s'
 		}
 
 		opts := []config.Option{
-			formatFlag(cmd),
-			langFlag(cmd),
-			wordsFlag(cmd),
-			bayesFlag(cmd),
-			oddsDetailsFlag(cmd),
-			verifFlag(cmd),
-			sourcesFlag(cmd),
 			adjustOddsFlag(cmd),
+			bayesFlag(cmd),
+			formatFlag(cmd),
+			inputFlag(cmd),
+			langFlag(cmd),
+			oddsDetailsFlag(cmd),
+			sourcesFlag(cmd),
+			uniqueFlag(cmd),
+			verifFlag(cmd),
+			wordsFlag(cmd),
 		}
 
 		var data, file string
@@ -127,15 +128,20 @@ func Execute(ver string) {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.Flags().BoolP("adjust-odds", "a", false, "adjust Bayes odds using density of found names.")
-	rootCmd.Flags().BoolP("details-odds", "d", false, "show details of odds calculation.")
-	rootCmd.Flags().StringP("lang", "l", "", "text's language or 'detect' for automatic detection.")
-	rootCmd.Flags().StringP("format", "f", "csv", `Format of the output: "compact", "pretty", "csv".
+	rootCmd.Flags().BoolP("adjust-odds", "a", false,
+		"adjust Bayes odds using density of found names.")
+	rootCmd.Flags().BoolP("details-odds", "d", false,
+		"show details of odds calculation.")
+	rootCmd.Flags().StringP("lang", "l", "",
+		"text's language or 'detect' for automatic detection.")
+	rootCmd.Flags().StringP("format", "f", "csv",
+		`Format of the output: "compact", "pretty", "csv".
   compact: compact JSON,
   pretty: pretty JSON,
   csv: CSV (DEFAULT)`)
 	rootCmd.Flags().BoolP("no-bayes", "n", false, "do not run Bayes algorithms.")
-	rootCmd.Flags().StringP("sources", "s", "", `IDs of important data-sources to verify against (ex "1,11").
+	rootCmd.Flags().StringP("sources", "s", "",
+		`IDs of important data-sources to verify against (ex "1,11").
 If sources are set and there are matches to their data,
 such matches are returned in "preferred_result" results.
 To find IDs refer to "https://resolver.globalnames.org/data_sources".
@@ -151,6 +157,10 @@ To find IDs refer to "https://resolver.globalnames.org/data_sources".
 181 - IRMNG`)
 	rootCmd.Flags().IntP("port",
 		"p", 0, "port to run the gnfinder's RESTful API service.")
+	rootCmd.Flags().BoolP("return_input", "r", false,
+		"return given input")
+	rootCmd.Flags().BoolP("unique_names", "u", false,
+		"return unique names list")
 	rootCmd.Flags().IntP("words-around",
 		"w", 0, "show this many words surrounding name-strings.")
 	rootCmd.Flags().BoolP("version", "V", false, "show version.")
@@ -173,9 +183,7 @@ func findNames(data string, opts []config.Option, file string) {
 
 	if gnf.GetConfig().WithVerification {
 		verif := verifier.New(gnf.GetConfig().PreferredSources)
-		start := time.Now()
-		verifiedNames := verif.Verify(res.UniqueNameStrings())
-		dur := float32(time.Now().Sub(start)) / float32(time.Second)
+		verifiedNames, dur := verif.Verify(res.UniqueNameStrings())
 		res.MergeVerification(verifiedNames, dur)
 	}
 	fmt.Println(res.Format(cfg.Format))

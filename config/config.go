@@ -36,8 +36,15 @@ type Config struct {
 	// that this limit will go to the names output.
 	BayesOddsThreshold float64
 
+	// WithInputText can be set to true if the user wants to get back the text
+	// used for name-finding.
+	WithInputText bool
+
 	// WithVerification is true if names should be verified
 	WithVerification bool
+
+	// WithUniqueNames can be set to true to get a unique list of names.
+	WithUniqueNames bool
 
 	// PreferredSources is a list of data-source IDs for verification
 	PreferredSources []int
@@ -111,6 +118,21 @@ func OptWithBayesOddsDetails(b bool) Option {
 func OptWithVerification(b bool) Option {
 	return func(cfg *Config) {
 		cfg.WithVerification = b
+	}
+}
+
+// OptWithInputText indicates if to return original UTF8-encoded input.
+func OptWithInputText(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithInputText = b
+	}
+}
+
+// OptWithUniqueNames indicates if to return the unique list of names
+// instead of all occurences of names in the text.
+func OptWithUniqueNames(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithUniqueNames = b
 	}
 }
 

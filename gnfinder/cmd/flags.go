@@ -13,23 +13,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func versionFlag(cmd *cobra.Command) bool {
-	version, _ := cmd.Flags().GetBool("version")
-	if version {
-		fmt.Printf("\nversion: %s\nbuild: %s\n\n", gnfinder.Version, gnfinder.Build)
-		return true
-	}
-	return false
+func adjustOddsFlag(cmd *cobra.Command) config.Option {
+	adj, _ := cmd.Flags().GetBool("adjust-odds")
+	return config.OptWithOddsAdjustment(adj)
 }
 
-func portFlag(cmd *cobra.Command) int {
-	port, _ := cmd.Flags().GetInt("port")
-	return port
-}
-
-func sourcesFlag(cmd *cobra.Command) config.Option {
-	sources, _ := cmd.Flags().GetString("sources")
-	return config.OptPreferredSources(parseDataSources(sources))
+func bayesFlag(cmd *cobra.Command) config.Option {
+	noBayes, _ := cmd.Flags().GetBool("no-bayes")
+	return config.OptWithBayes(!noBayes)
 }
 
 func formatFlag(cmd *cobra.Command) config.Option {
@@ -45,6 +36,11 @@ func formatFlag(cmd *cobra.Command) config.Option {
 		}
 	}
 	return config.OptFormat(format)
+}
+
+func inputFlag(cmd *cobra.Command) config.Option {
+	input, _ := cmd.Flags().GetBool("return_input")
+	return config.OptWithInputText(input)
 }
 
 func langFlag(cmd *cobra.Command) config.Option {
@@ -68,19 +64,13 @@ func langFlag(cmd *cobra.Command) config.Option {
 	return config.OptLanguage(l)
 }
 
-func wordsFlag(cmd *cobra.Command) config.Option {
-	wordsNum, _ := cmd.Flags().GetInt("words-around")
-	return config.OptTokensAround(wordsNum)
-}
-
-func bayesFlag(cmd *cobra.Command) config.Option {
-	noBayes, _ := cmd.Flags().GetBool("no-bayes")
-	return config.OptWithBayes(!noBayes)
-}
-
-func adjustOddsFlag(cmd *cobra.Command) config.Option {
-	adj, _ := cmd.Flags().GetBool("adjust-odds")
-	return config.OptWithOddsAdjustment(adj)
+func versionFlag(cmd *cobra.Command) bool {
+	version, _ := cmd.Flags().GetBool("version")
+	if version {
+		fmt.Printf("\nversion: %s\nbuild: %s\n\n", gnfinder.Version, gnfinder.Build)
+		return true
+	}
+	return false
 }
 
 func oddsDetailsFlag(cmd *cobra.Command) config.Option {
@@ -116,4 +106,24 @@ func parseDataSources(s string) []int {
 		return res
 	}
 	return nil
+}
+
+func portFlag(cmd *cobra.Command) int {
+	port, _ := cmd.Flags().GetInt("port")
+	return port
+}
+
+func sourcesFlag(cmd *cobra.Command) config.Option {
+	sources, _ := cmd.Flags().GetString("sources")
+	return config.OptPreferredSources(parseDataSources(sources))
+}
+
+func uniqueFlag(cmd *cobra.Command) config.Option {
+	unique, _ := cmd.Flags().GetBool("unique_names")
+	return config.OptWithUniqueNames(unique)
+}
+
+func wordsFlag(cmd *cobra.Command) config.Option {
+	wordsNum, _ := cmd.Flags().GetInt("words-around")
+	return config.OptTokensAround(wordsNum)
 }

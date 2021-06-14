@@ -25,12 +25,12 @@ Finds scientific names using dictionary and nlp approaches.
 
 ## Features
 
-* Multiplatform packages (Linux, Windows, Mac OS X).
+* Multiplatform app (supports Linux, Windows, Mac OS X).
 * Self-contained, no external dependencies, only binary `gnfinder` or
   `gnfinder.exe` (~15Mb) is needed. However the internet connection is
   required for name-verification.
-* Takes UTF8-encoded text and returns back JSON-formatted output that contains
-  detected scientific names.
+* Takes UTF8-encoded text and returns back CSV or JSON-formatted output that
+  contains detected scientific names.
 * Optionally, automatically detects the language of the text, and adjusts Bayes
   algorithm for the language. English and German languages are currently
   supported.
@@ -76,7 +76,7 @@ copy path_to\gnfinder.exe C:\bin
 
 ### Go
 
-Install Go >= v1.16
+Install Go v1.16 or higher.
 
 ```bash
 git clone git@github.com:/gnames/gnfinder
@@ -104,6 +104,24 @@ gnfinder -V
 ```
 
 Examples:
+
+Getting names from a file in CSV  format
+
+```bash
+gnfinder file_with_names.txt
+```
+
+Getting unique names from a file in JSON format
+
+```bash
+gnfinder file_with_names.txt -u -f pretty
+```
+
+Getting names from a file in JSON format, and using `jq` to process JSON
+
+```bash
+gnfinder file_with_names.txt -f compact | jq
+```
 
 Getting data from a pipe forcing English language and verification
 

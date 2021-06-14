@@ -14,6 +14,7 @@ type verif struct {
 	gnverifier.GNverifier
 }
 
+// New creates an instance of Verifier
 func New(sources []int) Verifier {
 	opts := []gnvconfig.Option{
 		gnvconfig.OptPreferredSources(sources),
@@ -23,19 +24,22 @@ func New(sources []int) Verifier {
 	return &verif{gnverifier.New(gnvcfg, vfr)}
 }
 
-func (gnv *verif) Verify(names []string) map[string]vlib.Verification {
+// Verify method takes a slice of name-strings, matches them to a variety of
+// scientific name databases and returns reconciliation/resolution results.
+func (gnv *verif) Verify(names []string) (map[string]vlib.Verification, float32) {
 	res := make(map[string]vlib.Verification)
-
 	if len(names) == 0 {
-		return res
+		return res, 0
 	}
 
+	start := time.Now()
 	names = unique(names)
 	verif := gnv.VerifyBatch(names)
 	for _, v := range verif {
 		res[v.Input] = v
 	}
-	return res
+	dur := float32(time.Now().Sub(start)) / float32(time.Second)
+	return res, dur
 }
 
 func unique(names []string) []string {
@@ -52,6 +56,7 @@ func unique(names []string) []string {
 	return res
 }
 
+// HasRemote finds if there is an internet connection.
 func HasRemote() bool {
 	timeout := 1 * time.Second
 	_, err := net.DialTimeout("tcp", "google.com", timeout)

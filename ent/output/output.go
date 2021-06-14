@@ -89,7 +89,7 @@ type Name struct {
 	// cardinality, 1 - Uninomial, 2 - Binomial, 3 - Trinomial.
 	Cardinality int `json:"cardinality"`
 	// Verbatim shows name the way it was in the text.
-	Verbatim string `json:"verbatim"`
+	Verbatim string `json:"verbatim,omitempty"`
 	// Name is a normalized version of a name.
 	Name string `json:"name"`
 	// Odds show a probability that name detection was correct.
@@ -99,9 +99,9 @@ type Name struct {
 	// OddsDetails descibes how Odds were calculated.
 	OddsDetails token.OddsDetails `json:"oddsDetails,omitempty"`
 	// OffsetStart is a start of a name on a page.
-	OffsetStart int `json:"start"`
+	OffsetStart int `json:"start,omitempty"`
 	// OffsetEnd is the end of the name on a page.
-	OffsetEnd int `json:"end"`
+	OffsetEnd int `json:"end,omitempty"`
 	// AnnotNomen is a nomenclatural annotation for new species or combination.
 	AnnotNomen string `json:"annotationNomen,omitempty"`
 	// AnnotNomenType is normalized nomenclatural annotation.
