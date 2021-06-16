@@ -13,80 +13,139 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func adjustOddsFlag(cmd *cobra.Command) config.Option {
-	adj, _ := cmd.Flags().GetBool("adjust-odds")
-	return config.OptWithOddsAdjustment(adj)
+func adjustOddsFlag(cmd *cobra.Command) {
+	b, _ := cmd.Flags().GetBool("adjust-odds")
+	if b {
+		opts = append(opts, config.OptWithOddsAdjustment(b))
+	}
 }
 
-func bayesFlag(cmd *cobra.Command) config.Option {
-	noBayes, _ := cmd.Flags().GetBool("no-bayes")
-	return config.OptWithBayes(!noBayes)
+func bayesFlag(cmd *cobra.Command) {
+	b, _ := cmd.Flags().GetBool("no-bayes")
+	if b {
+		opts = append(opts, config.OptWithBayes(false))
+	}
 }
 
-func formatFlag(cmd *cobra.Command) config.Option {
+func formatFlag(cmd *cobra.Command) {
 	format := gnfmt.CSV
-	formatString, _ := cmd.Flags().GetString("format")
-	if formatString != "csv" {
-		format, _ = gnfmt.NewFormat(formatString)
+	s, _ := cmd.Flags().GetString("format")
+
+	if s == "" {
+		return
+	}
+	if s != "csv" {
+		format, _ = gnfmt.NewFormat(s)
 		if format == gnfmt.FormatNone {
 			log.Printf(
 				"Cannot set format from '%s', setting format to csv",
-				formatString,
+				s,
 			)
 		}
 	}
-	return config.OptFormat(format)
+	opts = append(opts, config.OptFormat(format))
 }
 
-func inputFlag(cmd *cobra.Command) config.Option {
-	input, _ := cmd.Flags().GetBool("return_input")
-	return config.OptWithInputText(input)
+func inputFlag(cmd *cobra.Command) {
+	b, _ := cmd.Flags().GetBool("return_input")
+	if b {
+		opts = append(opts, config.OptIncludeInputText(b))
+	}
 }
 
-func langFlag(cmd *cobra.Command) config.Option {
-	langString, _ := cmd.Flags().GetString("lang")
+func langFlag(cmd *cobra.Command) {
+	s, _ := cmd.Flags().GetString("lang")
 
-	if langString == "" {
-		return config.OptWithLanguageDetection(false)
+	if s == "" {
+		return
 	}
 
-	if langString == "detect" {
-		return config.OptWithLanguageDetection(true)
+	if s == "detect" {
+		opts = append(opts, config.OptWithLanguageDetection(true))
+		return
 	}
 
-	l, err := lang.NewLanguage(langString)
+	l, err := lang.NewLanguage(s)
 	if err != nil {
 		l = lang.DefaultLanguage
 		log.Print(err)
 		log.Printf("Supported language codes: %s.", langsToString())
 		log.Printf("To detect language automatically use '-l detect'.")
 	}
-	return config.OptLanguage(l)
+	opts = append(opts, config.OptLanguage(l))
+}
+
+func oddsDetailsFlag(cmd *cobra.Command) {
+	b, _ := cmd.Flags().GetBool("details-odds")
+	if b {
+		opts = append(opts, config.OptWithBayesOddsDetails(b))
+	}
+}
+
+func plainInputFlag(cmd *cobra.Command) {
+	b, _ := cmd.Flags().GetBool("utf8_input")
+	if b {
+		opts = append(opts, config.OptWithPlainInput(true))
+	}
+}
+
+func portFlag(cmd *cobra.Command) int {
+	port, _ := cmd.Flags().GetInt("port")
+	return port
+}
+
+func sourcesFlag(cmd *cobra.Command) {
+	s, _ := cmd.Flags().GetString("sources")
+	if s != "" {
+		opts = append(opts, config.OptPreferredSources(parseDataSources(s)))
+	}
+}
+
+func tikaURLFlag(cmd *cobra.Command) {
+	s, _ := cmd.Flags().GetString("tika_url")
+	if s != "" {
+		opts = append(opts, config.OptTikaURL(s))
+	}
+}
+
+func uniqueFlag(cmd *cobra.Command) {
+	b, _ := cmd.Flags().GetBool("unique_names")
+	if b {
+		opts = append(opts, config.OptWithUniqueNames(b))
+	}
+}
+
+func verifFlag(cmd *cobra.Command) {
+	b, _ := cmd.Flags().GetBool("verify")
+	if b {
+		opts = append(opts, config.OptWithVerification(b))
+	}
+}
+
+func verifURLFlag(cmd *cobra.Command) {
+	s, _ := cmd.Flags().GetString("verifier_url")
+	if s != "" {
+		opts = append(opts, config.OptVerifierURL(s))
+	}
 }
 
 func versionFlag(cmd *cobra.Command) bool {
-	version, _ := cmd.Flags().GetBool("version")
-	if version {
+	b, _ := cmd.Flags().GetBool("version")
+	if b {
 		fmt.Printf("\nversion: %s\nbuild: %s\n\n", gnfinder.Version, gnfinder.Build)
 		return true
 	}
 	return false
 }
 
-func oddsDetailsFlag(cmd *cobra.Command) config.Option {
-	oddsDetails, _ := cmd.Flags().GetBool("details-odds")
-	return config.OptWithBayesOddsDetails(oddsDetails)
-}
-
-func verifFlag(cmd *cobra.Command) config.Option {
-	verif, _ := cmd.Flags().GetBool("verify")
-	return config.OptWithVerification(verif)
+func wordsFlag(cmd *cobra.Command) {
+	i, _ := cmd.Flags().GetInt("words-around")
+	if i > 0 {
+		opts = append(opts, config.OptTokensAround(i))
+	}
 }
 
 func parseDataSources(s string) []int {
-	if s == "" {
-		return nil
-	}
 	dss := strings.Split(s, ",")
 	res := make([]int, 0, len(dss))
 	for _, v := range dss {
@@ -106,24 +165,4 @@ func parseDataSources(s string) []int {
 		return res
 	}
 	return nil
-}
-
-func portFlag(cmd *cobra.Command) int {
-	port, _ := cmd.Flags().GetInt("port")
-	return port
-}
-
-func sourcesFlag(cmd *cobra.Command) config.Option {
-	sources, _ := cmd.Flags().GetString("sources")
-	return config.OptPreferredSources(parseDataSources(sources))
-}
-
-func uniqueFlag(cmd *cobra.Command) config.Option {
-	unique, _ := cmd.Flags().GetBool("unique_names")
-	return config.OptWithUniqueNames(unique)
-}
-
-func wordsFlag(cmd *cobra.Command) config.Option {
-	wordsNum, _ := cmd.Flags().GetInt("words-around")
-	return config.OptTokensAround(wordsNum)
 }

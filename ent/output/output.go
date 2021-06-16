@@ -99,9 +99,9 @@ type Name struct {
 	// OddsDetails descibes how Odds were calculated.
 	OddsDetails token.OddsDetails `json:"oddsDetails,omitempty"`
 	// OffsetStart is a start of a name on a page.
-	OffsetStart int `json:"start,omitempty"`
+	OffsetStart int `json:"start"`
 	// OffsetEnd is the end of the name on a page.
-	OffsetEnd int `json:"end,omitempty"`
+	OffsetEnd int `json:"end"`
 	// AnnotNomen is a nomenclatural annotation for new species or combination.
 	AnnotNomen string `json:"annotationNomen,omitempty"`
 	// AnnotNomenType is normalized nomenclatural annotation.

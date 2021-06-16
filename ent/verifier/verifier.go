@@ -15,9 +15,12 @@ type verif struct {
 }
 
 // New creates an instance of Verifier
-func New(sources []int) Verifier {
+func New(url string, sources []int) Verifier {
 	opts := []gnvconfig.Option{
 		gnvconfig.OptPreferredSources(sources),
+	}
+	if url != "" {
+		opts = append(opts, gnvconfig.OptVerifierURL(url))
 	}
 	gnvcfg := gnvconfig.New(opts...)
 	vfr := verifrest.New(gnvcfg.VerifierURL)

@@ -71,7 +71,7 @@ func (gnf gnfinder) Find(file, txt string) output.Output {
 	if gnf.WithUniqueNames {
 		o = uniqueNames(o)
 	}
-	if gnf.WithInputText && gnf.Format != gnfmt.CSV {
+	if gnf.IncludeInputText && gnf.Format != gnfmt.CSV {
 		o.InputText = txt
 	}
 
@@ -112,6 +112,8 @@ func uniqueNames(o output.Output) output.Output {
 				Name:         v.Name,
 				OddsLog10:    v.OddsLog10,
 				OddsDetails:  v.OddsDetails,
+				OffsetStart:  v.OffsetStart,
+				OffsetEnd:    v.OffsetEnd,
 				Verification: v.Verification,
 			}
 			namesMap[v.Name] = name

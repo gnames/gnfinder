@@ -2,7 +2,12 @@
 
 ## Unreleased
 
+- Add [#91]: convert/extract plain texts locally
+- Add [#87]: support PDFs, MS Word, Excel, RTF, HTML, UTF16 etc via Apache Tika.
+- Add [#86]: an option to return unique found names.
+
 ## [v0.13.1]
+
 - Add [#85]: originalInput field with UTF8 text used for name-finding.
 
 ## [v0.13.0]

@@ -44,9 +44,11 @@ func csvRow(name Name, i int) string {
 	odds := strconv.FormatFloat(name.OddsLog10, 'f', 2, 64)
 	wrdsBefore := strings.Join(name.WordsBefore, ", ")
 	wrdsAfter := strings.Join(name.WordsAfter, ", ")
+	start := strconv.Itoa(name.OffsetStart)
+	end := strconv.Itoa(name.OffsetEnd)
 	s := []string{
-		strconv.Itoa(i), name.Verbatim, name.Name, strconv.Itoa(name.OffsetStart),
-		strconv.Itoa(name.OffsetEnd), odds, strconv.Itoa(name.Cardinality),
+		strconv.Itoa(i), name.Verbatim, name.Name, start,
+		end, odds, strconv.Itoa(name.Cardinality),
 		name.AnnotNomenType, wrdsBefore, wrdsAfter,
 	}
 

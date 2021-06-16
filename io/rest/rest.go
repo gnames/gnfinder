@@ -83,8 +83,9 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 				}
 				gnf = gnf.ChangeConfig(opts...)
 				out = gnf.Find("", params.Text)
-				if gnf.GetConfig().WithVerification {
-					verif := verifier.New(gnf.GetConfig().PreferredSources)
+				cfg := gnf.GetConfig()
+				if cfg.WithVerification {
+					verif := verifier.New(cfg.VerifierURL, cfg.PreferredSources)
 					verifiedNames, dur := verif.Verify(out.UniqueNameStrings())
 					out.MergeVerification(verifiedNames, dur)
 				}

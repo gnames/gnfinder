@@ -105,10 +105,19 @@ gnfinder -V
 
 Examples:
 
-Getting names from a file in CSV  format
+Getting names from a UTF8-encoded file in CSV format
 
 ```bash
-gnfinder file_with_names.txt
+# -U flag prevents use of remote Apache Tika service for file conversion to
+# UTF8-encoded plain text
+# -U flag is optional, but it removes unnecessary remote call to Tika.
+gnfinder file_with_names.txt -U
+```
+
+Getting names from a file that is not a plain UTF8-encoded text
+
+```bash
+gnfinder file.pdf
 ```
 
 Getting unique names from a file in JSON format

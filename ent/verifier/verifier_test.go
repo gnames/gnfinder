@@ -10,7 +10,7 @@ import (
 
 func TestVerifier(t *testing.T) {
 	if verifier.HasRemote() {
-		verif := verifier.New(nil)
+		verif := verifier.New("", nil)
 		res, _ := verif.Verify([]string{"Bubo bubo"})
 		assert.Equal(t, len(res), 1)
 	} else {

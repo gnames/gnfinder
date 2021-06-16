@@ -1,4 +1,4 @@
-// Copyright © 2018 Dmitry Mozzherin <dmozzherin@gmail.com>
+// Copyright © 2018-2021 Dmitry Mozzherin <dmozzherin@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/gnames/gndoc"
 	"github.com/gnames/gnfinder"
 	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/lang"
@@ -36,6 +37,8 @@ import (
 	"github.com/gnames/gnfinder/io/rest"
 	"github.com/spf13/cobra"
 )
+
+var opts []config.Option
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -72,21 +75,25 @@ specific datasets are important for verification, they can be set with '-s'
 			os.Exit(0)
 		}
 
-		opts := []config.Option{
-			adjustOddsFlag(cmd),
-			bayesFlag(cmd),
-			formatFlag(cmd),
-			inputFlag(cmd),
-			langFlag(cmd),
-			oddsDetailsFlag(cmd),
-			sourcesFlag(cmd),
-			uniqueFlag(cmd),
-			verifFlag(cmd),
-			wordsFlag(cmd),
-		}
+		adjustOddsFlag(cmd)
+		bayesFlag(cmd)
+		formatFlag(cmd)
+		inputFlag(cmd)
+		langFlag(cmd)
+		oddsDetailsFlag(cmd)
+		plainInputFlag(cmd)
+		sourcesFlag(cmd)
+		tikaURLFlag(cmd)
+		uniqueFlag(cmd)
+		verifFlag(cmd)
+		verifURLFlag(cmd)
+		wordsFlag(cmd)
+
+		cfg := config.New(opts...)
 
 		var data, file string
 		var rawData []byte
+		var convDur float32
 		switch len(args) {
 		case 0:
 			if !checkStdin() {
@@ -100,19 +107,19 @@ specific datasets are important for verification, they can be set with '-s'
 			data = string(rawData)
 			file = "STDIN"
 		case 1:
-			rawData, err = os.ReadFile(args[0])
+			file = args[0]
+			d := gndoc.New(cfg.TikaURL)
+			data, convDur, err = d.TextFromFile(file, cfg.WithPlainInput)
 			if err != nil {
 				log.Println(err)
 				os.Exit(1)
 			}
-			data = string(rawData)
-			file = args[0]
 		default:
 			_ = cmd.Help()
 			os.Exit(0)
 		}
 
-		findNames(data, opts, file)
+		findNames(data, cfg, file, convDur)
 	},
 }
 
@@ -132,14 +139,20 @@ func init() {
 		"adjust Bayes odds using density of found names.")
 	rootCmd.Flags().BoolP("details-odds", "d", false,
 		"show details of odds calculation.")
-	rootCmd.Flags().StringP("lang", "l", "",
-		"text's language or 'detect' for automatic detection.")
+	rootCmd.Flags().StringP("verifier_url", "e", "",
+		"custom URL for name-verification service.")
 	rootCmd.Flags().StringP("format", "f", "csv",
 		`Format of the output: "compact", "pretty", "csv".
   compact: compact JSON,
   pretty: pretty JSON,
   csv: CSV (DEFAULT)`)
+	rootCmd.Flags().StringP("lang", "l", "",
+		"text's language or 'detect' for automatic detection.")
 	rootCmd.Flags().BoolP("no-bayes", "n", false, "do not run Bayes algorithms.")
+	rootCmd.Flags().IntP("port",
+		"p", 0, "port to run the gnfinder's RESTful API service.")
+	rootCmd.Flags().BoolP("return_input", "r", false,
+		"return given input")
 	rootCmd.Flags().StringP("sources", "s", "",
 		`IDs of important data-sources to verify against (ex "1,11").
 If sources are set and there are matches to their data,
@@ -155,34 +168,38 @@ To find IDs refer to "https://resolver.globalnames.org/data_sources".
 170 - Arctos
 172 - PaleoBioDB
 181 - IRMNG`)
-	rootCmd.Flags().IntP("port",
-		"p", 0, "port to run the gnfinder's RESTful API service.")
-	rootCmd.Flags().BoolP("return_input", "r", false,
-		"return given input")
+	rootCmd.Flags().StringP("tika_url", "t", "",
+		"custom URL for text from file extraction service.")
+	rootCmd.Flags().BoolP("utf8_input", "U", false,
+		"input is UTF8 file")
 	rootCmd.Flags().BoolP("unique_names", "u", false,
 		"return unique names list")
+	rootCmd.Flags().BoolP("verify", "v", false, "verify found name-strings.")
+	rootCmd.Flags().BoolP("version", "V", false, "show version.")
 	rootCmd.Flags().IntP("words-around",
 		"w", 0, "show this many words surrounding name-strings.")
-	rootCmd.Flags().BoolP("version", "V", false, "show version.")
-	rootCmd.Flags().BoolP("verify", "v", false, "verify found name-strings.")
 	log.SetFlags(0)
-
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
 }
 
-func findNames(data string, opts []config.Option, file string) {
+func findNames(
+	data string,
+	cfg config.Config,
+	file string,
+	convDur float32,
+) {
 	dict := dict.LoadDictionary()
 	weights := nlp.BayesWeights()
 
-	cfg := config.New(opts...)
 	gnf := gnfinder.New(cfg, dict, weights)
 	res := gnf.Find(file, data)
-
+	res.Meta.FileConversionSec = convDur
 	if gnf.GetConfig().WithVerification {
-		verif := verifier.New(gnf.GetConfig().PreferredSources)
+		sources := gnf.GetConfig().PreferredSources
+		verif := verifier.New(cfg.VerifierURL, sources)
 		verifiedNames, dur := verif.Verify(res.UniqueNameStrings())
 		res.MergeVerification(verifiedNames, dur)
 	}

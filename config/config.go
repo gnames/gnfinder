@@ -9,8 +9,16 @@ import (
 
 // Config is responsible for name-finding operations.
 type Config struct {
+	// BayesOddsThreshold sets the limit of posterior odds. Everything bigger
+	// that this limit will go to the names output.
+	BayesOddsThreshold float64
+
 	// Format output format for finding results
 	Format gnfmt.Format
+
+	// IncludeInputText can be set to true if the user wants to get back the text
+	// used for name-finding.
+	IncludeInputText bool
 
 	// Language for name-finding in the text.
 	Language lang.Language
@@ -19,83 +27,47 @@ type Config struct {
 	// It is an empty string, if detection of language is not set.
 	LanguageDetected string
 
-	// WithLanguageDetection flag is true if we want to detect language automatically.
-	WithLanguageDetection bool
+	// PreferredSources is a list of data-source IDs for verification
+	PreferredSources []int
+
+	// TikaURL contains the URL of Apache Tika service. This service is used
+	// for extraction of UTF8-encoded texts from a variety of file formats.
+	TikaURL string
+
+	// TokensAround gives number of tokens kepts before and after each
+	// name-candidate.
+	TokensAround int
+
+	// VerifierURL contains the URL of a verification service.
+	VerifierURL string
 
 	// WithBayes is true when we run WithBayes algorithm, and false when we dont.
 	WithBayes bool
+
+	// WithBayesOddsDetails show odds calculation details in the CLI output.
+	WithBayesOddsDetails bool
+
+	// WithLanguageDetection flag is true if we want to detect language automatically.
+	WithLanguageDetection bool
 
 	// WithOddsAdjustment is true if we use the density of found names to
 	// recalculate odds.
 	WithOddsAdjustment bool
 
-	// WithBayesOddsDetails show odds calculation details in the CLI output.
-	WithBayesOddsDetails bool
-
-	// BayesOddsThreshold sets the limit of posterior odds. Everything bigger
-	// that this limit will go to the names output.
-	BayesOddsThreshold float64
-
-	// WithInputText can be set to true if the user wants to get back the text
-	// used for name-finding.
-	WithInputText bool
-
-	// WithVerification is true if names should be verified
-	WithVerification bool
+	// WithPlainInput flag can be set to true if the input is a plain
+	// UTF8-encoded text. In this case file is read directly instead of going
+	// through file type and encoding checking.
+	WithPlainInput bool
 
 	// WithUniqueNames can be set to true to get a unique list of names.
 	WithUniqueNames bool
 
-	// PreferredSources is a list of data-source IDs for verification
-	PreferredSources []int
-
-	// TokensAround gives number of tokens kepts before and after each
-	// name-candidate.
-	TokensAround int
+	// WithVerification is true if names should be verified
+	WithVerification bool
 }
 
 // Option type for changing GNfinder settings.
 type Option func(*Config)
-
-// OptLanguage sets a language of a text.
-func OptLanguage(l lang.Language) Option {
-	return func(cfg *Config) {
-		cfg.Language = l
-		cfg.WithLanguageDetection = false
-	}
-}
-
-// OptFormat sets output format
-func OptFormat(f gnfmt.Format) Option {
-	return func(cnf *Config) {
-		cnf.Format = f
-	}
-}
-
-// OptWithLanguageDetection when true sets automatic detection of text's
-// language.
-func OptWithLanguageDetection(b bool) Option {
-	return func(cfg *Config) {
-		cfg.Language = lang.DefaultLanguage
-		cfg.WithLanguageDetection = b
-	}
-}
-
-// OptWithBayes is an option that forces running bayes name-finding even when
-// the language is not supported by training sets.
-func OptWithBayes(b bool) Option {
-	return func(cfg *Config) {
-		cfg.WithBayes = b
-	}
-}
-
-// OptWithOddsAdjustment is an option that triggers recalculation of prior odds
-// using number of found names divided by number of all name candidates.
-func OptWithOddsAdjustment(b bool) Option {
-	return func(cfg *Config) {
-		cfg.WithOddsAdjustment = b
-	}
-}
 
 // OptBayesThreshold is an option for name finding, that sets new threshold
 // for results from the Bayes name-finding. All the name candidates that have a
@@ -106,33 +78,40 @@ func OptBayesThreshold(f float64) Option {
 	}
 }
 
-// OptWithBayesOddsDetails option to show details of odds calculations.
-func OptWithBayesOddsDetails(b bool) Option {
-	return func(cfg *Config) {
-		cfg.WithBayesOddsDetails = b
+// OptFormat sets output format
+func OptFormat(f gnfmt.Format) Option {
+	return func(cnf *Config) {
+		cnf.Format = f
 	}
 }
 
-// OptWithVerification indicates either to run or not to run the verification
-// process after name-finding.
-func OptWithVerification(b bool) Option {
+// OptIncludeInputText indicates if to return original UTF8-encoded input.
+func OptIncludeInputText(b bool) Option {
 	return func(cfg *Config) {
-		cfg.WithVerification = b
+		cfg.IncludeInputText = b
 	}
 }
 
-// OptWithInputText indicates if to return original UTF8-encoded input.
-func OptWithInputText(b bool) Option {
+// OptLanguage sets a language of a text.
+func OptLanguage(l lang.Language) Option {
 	return func(cfg *Config) {
-		cfg.WithInputText = b
+		cfg.Language = l
+		cfg.WithLanguageDetection = false
 	}
 }
 
-// OptWithUniqueNames indicates if to return the unique list of names
-// instead of all occurences of names in the text.
-func OptWithUniqueNames(b bool) Option {
+// OptPreferredSources sets data sources that will always be checked
+// during verification process.
+func OptPreferredSources(is []int) Option {
 	return func(cfg *Config) {
-		cfg.WithUniqueNames = b
+		cfg.PreferredSources = is
+	}
+}
+
+// OptTikaURL sets URL for UTF8 text extraction service.
+func OptTikaURL(s string) Option {
+	return func(cfg *Config) {
+		cfg.TikaURL = s
 	}
 }
 
@@ -152,11 +131,66 @@ func OptTokensAround(i int) Option {
 	}
 }
 
-// OptPOptPreferredSources sets data sources that will always be checked
-// during verification process.
-func OptPreferredSources(is []int) Option {
+// OptVerifierURL sets URL for verification service.
+func OptVerifierURL(s string) Option {
 	return func(cfg *Config) {
-		cfg.PreferredSources = is
+		cfg.VerifierURL = s
+	}
+}
+
+// OptWithBayes is an option that forces running bayes name-finding even when
+// the language is not supported by training sets.
+func OptWithBayes(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithBayes = b
+	}
+}
+
+// OptWithBayesOddsDetails option to show details of odds calculations.
+func OptWithBayesOddsDetails(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithBayesOddsDetails = b
+	}
+}
+
+// OptWithLanguageDetection when true sets automatic detection of text's
+// language.
+func OptWithLanguageDetection(b bool) Option {
+	return func(cfg *Config) {
+		cfg.Language = lang.DefaultLanguage
+		cfg.WithLanguageDetection = b
+	}
+}
+
+// OptWithOddsAdjustment is an option that triggers recalculation of prior odds
+// using number of found names divided by number of all name candidates.
+func OptWithOddsAdjustment(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithOddsAdjustment = b
+	}
+}
+
+// OptWithPlainInput sets WithPlainInput option indicating there is no need
+// to check file type and encoding, and the file can be read directly.
+func OptWithPlainInput(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithPlainInput = b
+	}
+}
+
+// OptWithUniqueNames indicates if to return the unique list of names
+// instead of all occurences of names in the text.
+func OptWithUniqueNames(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithUniqueNames = b
+	}
+}
+
+// OptWithVerification indicates either to run or not to run the verification
+// process after name-finding.
+func OptWithVerification(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithVerification = b
 	}
 }
 
@@ -168,6 +202,8 @@ func New(opts ...Option) Config {
 		WithBayes:          true,
 		BayesOddsThreshold: 80.0,
 		TokensAround:       0,
+		VerifierURL:        "https://verifier.globalnames.org",
+		TikaURL:            "https://tika.globalnames.org",
 	}
 
 	for _, opt := range opts {
