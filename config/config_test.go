@@ -47,7 +47,7 @@ func TestConfig(t *testing.T) {
 	})
 
 	t.Run("sets bayes' threshold", func(t *testing.T) {
-		cfg := config.New(config.OptBayesThreshold(200))
+		cfg := config.New(config.OptBayesOddsThreshold(200))
 		assert.Equal(t, cfg.BayesOddsThreshold, 200.0)
 	})
 

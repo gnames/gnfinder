@@ -21,10 +21,12 @@
 package cmd
 
 import (
+	_ "embed"
 	"fmt"
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/gnames/gndoc"
@@ -35,10 +37,36 @@ import (
 	"github.com/gnames/gnfinder/ent/verifier"
 	"github.com/gnames/gnfinder/io/dict"
 	"github.com/gnames/gnfinder/io/rest"
+	"github.com/gnames/gnfmt"
+	"github.com/gnames/gnsys"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
+//go:embed gnfinder.yml
+var configText string
+
 var opts []config.Option
+
+// cfgData purpose is to achieve automatic import of data from the
+// configuration file, if it exists.
+type cfgData struct {
+	BayesOddsThreshold    float64
+	Format                string
+	IncludeInputText      bool
+	Language              string
+	PreferredSources      []int
+	TikaURL               string
+	TokensAround          int
+	VerifierURL           string
+	WithBayesOddsDetails  bool
+	WithLanguageDetection bool
+	WithOddsAdjustment    bool
+	WithPlainInput        bool
+	WithUniqueNames       bool
+	WithVerification      bool
+	WithoutBayes          bool
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -139,9 +167,9 @@ func init() {
 		"adjust Bayes odds using density of found names.")
 	rootCmd.Flags().BoolP("details-odds", "d", false,
 		"show details of odds calculation.")
-	rootCmd.Flags().StringP("verifier_url", "e", "",
+	rootCmd.Flags().StringP("verifier-url", "e", "",
 		"custom URL for name-verification service.")
-	rootCmd.Flags().StringP("format", "f", "csv",
+	rootCmd.Flags().StringP("format", "f", "",
 		`Format of the output: "compact", "pretty", "csv".
   compact: compact JSON,
   pretty: pretty JSON,
@@ -151,28 +179,31 @@ func init() {
 	rootCmd.Flags().BoolP("no-bayes", "n", false, "do not run Bayes algorithms.")
 	rootCmd.Flags().IntP("port",
 		"p", 0, "port to run the gnfinder's RESTful API service.")
-	rootCmd.Flags().BoolP("return_input", "r", false,
+	rootCmd.Flags().BoolP("return-input", "r", false,
 		"return given input")
 	rootCmd.Flags().StringP("sources", "s", "",
 		`IDs of important data-sources to verify against (ex "1,11").
 If sources are set and there are matches to their data,
-such matches are returned in "preferred_result" results.
+such matches are returned in "preferred-result" results.
 To find IDs refer to "https://resolver.globalnames.org/data_sources".
-1 - Catalogue of Life
-3 - ITIS
-4 - NCBI
-9 - WoRMS
-11 - GBIF
-12 - Encyclopedia of Life
-167 - IPNI
-170 - Arctos
-172 - PaleoBioDB
-181 - IRMNG`)
-	rootCmd.Flags().StringP("tika_url", "t", "",
-		"custom URL for text from file extraction service.")
-	rootCmd.Flags().BoolP("utf8_input", "U", false,
-		"input is UTF8 file")
-	rootCmd.Flags().BoolP("unique_names", "u", false,
+  1 - Catalogue of Life
+  3 - ITIS
+  4 - NCBI
+  9 - WoRMS
+  11 - GBIF
+  12 - Encyclopedia of Life
+  167 - IPNI
+  170 - Arctos
+  172 - PaleoBioDB
+  181 - IRMNG`)
+	rootCmd.Flags().StringP("tika-url", "t", "",
+		`custom URL for the Apache Tika service.
+The service is used for converting files into UTF8-encoded text.`)
+	rootCmd.Flags().BoolP("utf8-input", "U", false,
+		`affurm that the input is a plain text UTF8 file.
+The direct reading of a file will be used instead of a remote
+Apache Tika service.`)
+	rootCmd.Flags().BoolP("unique-names", "u", false,
 		"return unique names list")
 	rootCmd.Flags().BoolP("verify", "v", false, "verify found name-strings.")
 	rootCmd.Flags().BoolP("version", "V", false, "show version.")
@@ -183,6 +214,130 @@ To find IDs refer to "https://resolver.globalnames.org/data_sources".
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	var configDir string
+	var err error
+	configFile := "gnfinder"
+
+	// Find config directory.
+	configDir, err = os.UserConfigDir()
+	if err != nil {
+		log.Printf("Cannot find config directory: %s.", err)
+		return
+	}
+
+	// Search config in home directory with name ".gnmatcher" (without extension).
+	viper.AddConfigPath(configDir)
+	viper.SetConfigName(configFile)
+
+	// Set environment variables to override
+	// config file settings
+	viper.BindEnv("BayesOddsThreshold", "GNF_BAYES_ODDS_THRESHOLD")
+	viper.BindEnv("Format", "GNF_FORMAT")
+	viper.BindEnv("IncludeInputText", "GNF_INCLUDE_INPUT_TEXT")
+	viper.BindEnv("Language", "GNF_LANGUAGE")
+	viper.BindEnv("PreferredSources", "GNF_PREFERRED_SOURCES")
+	viper.BindEnv("TikaURL", "GNF_TIKA_URL")
+	viper.BindEnv("TokensAround", "GNF_TOKENS_AROUND")
+	viper.BindEnv("VerifierURL", "GNF_VERIFIER_URL")
+	viper.BindEnv("WithBayesOddsDetails", "GNF_WITH_BAYES_ODDS_DETAILS")
+	viper.BindEnv("WithLanguageDetection", "GNF_WITH_LANGUAGE_DETECTION")
+	viper.BindEnv("WithOddsAdjustment", "GNF_WITH_ODDS_ADJUSTMENT")
+	viper.BindEnv("WithPlainInput", "GNF_WITH_PLAIN_INPUT")
+	viper.BindEnv("WithUniqueNames", "GNF_WITH_UNIQUE_NAMES")
+	viper.BindEnv("WithVerification", "GNF_WITH_VERIFICATION")
+	viper.BindEnv("WithoutBayes", "GNF_WITHOUT_BAYES")
+
+	viper.AutomaticEnv() // read in environment variables that match
+	configPath := filepath.Join(configDir, fmt.Sprintf("%s.yml", configFile))
+	_ = touchConfigFile(configPath, configFile)
+
+	// If a config file is found, read it in.
+	err = viper.ReadInConfig()
+	if err != nil {
+		log.Printf("Cannot use config file: %s", viper.ConfigFileUsed())
+	} else {
+		getOpts()
+	}
+}
+
+// getOpts imports data from the configuration file. Some of the settings can
+// be overriden by command line flags.
+func getOpts() {
+	cfg := &cfgData{}
+	err := viper.Unmarshal(cfg)
+	if err != nil {
+		log.Fatalf("Cannot deserialize config data: %s.", err)
+	}
+
+	if cfg.BayesOddsThreshold > 0 {
+		opts = append(opts,
+			config.OptBayesOddsThreshold(cfg.BayesOddsThreshold))
+	}
+
+	if cfg.Format != "" {
+		cfgFormat, err := gnfmt.NewFormat(cfg.Format)
+		if err != nil {
+			cfgFormat = gnfmt.CSV
+		}
+		opts = append(opts, config.OptFormat(cfgFormat))
+	}
+
+	if cfg.IncludeInputText {
+		opts = append(opts, config.OptIncludeInputText(cfg.IncludeInputText))
+	}
+
+	if cfg.Language != "" {
+		l, err := lang.NewLanguage(cfg.Language)
+		if err != nil {
+			log.Print(err)
+		}
+		opts = append(opts, config.OptLanguage(l))
+	}
+
+	if len(cfg.PreferredSources) > 0 {
+		opts = append(opts, config.OptPreferredSources(cfg.PreferredSources))
+	}
+
+	if cfg.TikaURL != "" {
+		opts = append(opts, config.OptTikaURL(cfg.TikaURL))
+	}
+
+	if cfg.TokensAround > 0 {
+		opts = append(opts, config.OptTokensAround(cfg.TokensAround))
+	}
+
+	if cfg.VerifierURL != "" {
+		opts = append(opts, config.OptVerifierURL(cfg.VerifierURL))
+	}
+
+	if cfg.WithBayesOddsDetails {
+		opts = append(opts, config.OptWithBayesOddsDetails(true))
+	}
+
+	if cfg.WithLanguageDetection {
+		opts = append(opts, config.OptWithLanguageDetection(true))
+	}
+
+	if cfg.WithOddsAdjustment {
+		opts = append(opts, config.OptWithOddsAdjustment(true))
+	}
+
+	if cfg.WithPlainInput {
+		opts = append(opts, config.OptWithPlainInput(true))
+	}
+
+	if cfg.WithUniqueNames {
+		opts = append(opts, config.OptWithUniqueNames(true))
+	}
+
+	if cfg.WithVerification {
+		opts = append(opts, config.OptWithVerification(true))
+	}
+
+	if cfg.WithoutBayes {
+		opts = append(opts, config.OptWithBayes(false))
+	}
+
 }
 
 func findNames(
@@ -222,4 +377,31 @@ func checkStdin() bool {
 		log.Panic(err)
 	}
 	return (stat.Mode() & os.ModeCharDevice) == 0
+}
+
+// touchConfigFile checks if config file exists, and if not, it gets created.
+func touchConfigFile(configPath string, configFile string) error {
+	fileExists, _ := gnsys.FileExists(configPath)
+	if fileExists {
+		return nil
+	}
+
+	log.Printf("Creating config file: %s.", configPath)
+	return createConfig(configPath, configFile)
+}
+
+// createConfig creates config file.
+func createConfig(path string, file string) error {
+	err := gnsys.MakeDir(filepath.Dir(path))
+	if err != nil {
+		log.Printf("Cannot create dir %s: %s.", path, err)
+		return err
+	}
+
+	err = os.WriteFile(path, []byte(configText), 0644)
+	if err != nil {
+		log.Printf("Cannot write to file %s: %s", path, err)
+		return err
+	}
+	return nil
 }

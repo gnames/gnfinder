@@ -9,49 +9,68 @@ import (
 
 // Config is responsible for name-finding operations.
 type Config struct {
-	// BayesOddsThreshold sets the limit of posterior odds. Everything bigger
-	// that this limit will go to the names output.
+	// BayesOddsThreshold sets the limit of posterior odds. Everything higher
+	// this limit will be classified as a name.
 	BayesOddsThreshold float64
 
-	// Format output format for finding results
+	// Format output format for finding results. Possible formats are
+	// csv - CSV output
+	// compact - JSON in one line
+	// pretty - JSON with new lines and indentations.
 	Format gnfmt.Format
 
 	// IncludeInputText can be set to true if the user wants to get back the text
-	// used for name-finding.
+	// used for name-finding. This feature is epspecilly useful if original file
+	// was a PDF, MS Word, HTML etc. and a user wants to use OffsetStart and
+	// OffsetEnd indices to find names in the text.
 	IncludeInputText bool
 
-	// Language for name-finding in the text.
+	// Language that is prevalent in the text. This setting helps to get
+	// a better result for NLP name-finding, because languages differ in their
+	// training patterns.
+	// Currently only the following languages are supported:
+	//
+	// en - English
+	// de - German
 	Language lang.Language
 
 	// LanguageDetected is the code of a language that was detected in text.
 	// It is an empty string, if detection of language is not set.
 	LanguageDetected string
 
-	// PreferredSources is a list of data-source IDs for verification
+	// PreferredSources is a list of data-source IDs used for the
+	// name-verification. These data-sources will always be matched with the
+	// verified names. You can find the list of all data-sources at
+	// https://verifier.globalnames.org/api/v1/data_sources
 	PreferredSources []int
 
 	// TikaURL contains the URL of Apache Tika service. This service is used
 	// for extraction of UTF8-encoded texts from a variety of file formats.
 	TikaURL string
 
-	// TokensAround gives number of tokens kepts before and after each
-	// name-candidate.
+	// TokensAround sets the number of tokens (words) before and after each
+	// name-candidate. These words will be returned with the output.
 	TokensAround int
 
-	// VerifierURL contains the URL of a verification service.
+	// VerifierURL contains the URL of a name-verification service.
 	VerifierURL string
 
-	// WithBayes is true when we run WithBayes algorithm, and false when we dont.
+	// WithBayes determines if both heuristic and Naive Bayes algorithms run
+	// during the name-finnding.
+	// false - only heuristic algorithms run
+	// true - both heuristic and Naive Bayes algorithms run.
 	WithBayes bool
 
-	// WithBayesOddsDetails show odds calculation details in the CLI output.
+	// WithBayesOddsDetails show in detail how odds are calculated.
 	WithBayesOddsDetails bool
 
-	// WithLanguageDetection flag is true if we want to detect language automatically.
+	// WithLanguageDetection can be set to true, if a user wants to detect
+	// the language of a text automatically.
 	WithLanguageDetection bool
 
-	// WithOddsAdjustment is true if we use the density of found names to
-	// recalculate odds.
+	// WithOddsAdjustment can be set to true to adjust calculated odds using the
+	// ratio of scientific names found in text to the number of capitalized
+	// words.
 	WithOddsAdjustment bool
 
 	// WithPlainInput flag can be set to true if the input is a plain
@@ -69,10 +88,10 @@ type Config struct {
 // Option type for changing GNfinder settings.
 type Option func(*Config)
 
-// OptBayesThreshold is an option for name finding, that sets new threshold
+// OptBayesOddsThreshold is an option for name finding, that sets new threshold
 // for results from the Bayes name-finding. All the name candidates that have a
 // higher threshold will appear in the resulting names output.
-func OptBayesThreshold(f float64) Option {
+func OptBayesOddsThreshold(f float64) Option {
 	return func(cfg *Config) {
 		cfg.BayesOddsThreshold = f
 	}
@@ -202,7 +221,7 @@ func New(opts ...Option) Config {
 		WithBayes:          true,
 		BayesOddsThreshold: 80.0,
 		TokensAround:       0,
-		VerifierURL:        "https://verifier.globalnames.org",
+		VerifierURL:        "https://verifier.globalnames.org/api/v1/",
 		TikaURL:            "https://tika.globalnames.org",
 	}
 

@@ -1,0 +1,96 @@
+# Configuration file for gnfinder. Commented out fields correspond to the
+# default settings.
+
+# BayesOddsThreshold sets the limit of posterior odds. Everything higher
+# this limit will be classified as a name.
+#
+# BayesOddsThreshold: 80.0
+
+# Format output format for finding results. Possible formats are
+#
+# csv - CSV output
+# compact - JSON in one line
+# pretty - JSON with new lines and indentations.
+#
+# Format: csv
+
+# IncludeInputText can be set to true if the user wants to get back the text
+# used for name-finding. This feature is epspecilly useful if original file
+# was a PDF, MS Word, HTML etc. and a user wants to use OffsetStart and
+# OffsetEnd indices to find names in the text.
+#
+# IncludeInputText: false
+
+# Language that is prevalent in the text. This setting helps to get
+# a better result for NLP name-finding, because languages differ in their
+# training patterns.
+# Currently only the following languages are supported:
+#
+# eng - English
+# deu - German
+#
+# Language: eng
+
+# PreferredSources is a list of data-source IDs used for the
+# name-verification. These data-sources will always be matched with the
+# verified names. You can find the list of all data-sources at
+# https://verifier.globalnames.org/api/v1/data_sources.
+# When this option is not empty, verification is switched on automatically.
+# Example - [1, 11]
+#
+# PreferredSources: []
+
+# TikaURL contains the URL of Apache Tika service. This service is used
+# for extraction of UTF8-encoded texts from a variety of file formats.
+#
+# TikaURL: https://tika.globalnames.org
+
+# TokensAround sets the number of tokens (words) before and after each
+# name-candidate. These words will be returned with the output.
+# The acceptable range is from 0 to 5.
+# This option is ignored if WithUniqueNames is true.
+#
+# TokensAround: 0
+
+# VerifierURL contains the URL of a name-verification service.
+#
+# VerifierURL: https://verifier.globalnames.org/api/v1/
+
+# WithBayesOddsDetails show in detail how odds are calculated.
+# This option is ignores if Format is set to csv.
+#
+# WithBayesOddsDetails: false
+
+# WithLanguageDetection can be set to true, if a user wants to detect
+# the language of a text automatically.
+#
+# WithLanguageDetection: false
+
+# WithOddsAdjustment can be set to true to adjust calculated odds using the
+# ratio of scientific names found in text to the number of capitalized
+# words.
+#
+# WithOddsAdjustment: false
+
+# WithPlainInput flag can be set to true if the input is a plain
+# UTF8-encoded text. In this case file is read directly instead of going
+# through file type and encoding checking.
+#
+# WithPlainInput: false
+
+# WithUniqueNames can be set to true to get a unique list of names.
+#
+# WithUniqueNames: false
+
+# WithVerification can be set to true if found names need be verified.
+# Verification uses a remote service, so it does not work without
+# an internet connection.
+#
+# WithVerification: false
+
+# WithoutBayes determines if both heuristic and Naive Bayes algorithms run
+# during the name-finnding.
+# false - both heuristic and Naive Bayes algorithms run.
+# true - only heuristic algorithms run
+#
+# WithoutBayes: false

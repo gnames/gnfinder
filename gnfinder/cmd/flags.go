@@ -47,7 +47,7 @@ func formatFlag(cmd *cobra.Command) {
 }
 
 func inputFlag(cmd *cobra.Command) {
-	b, _ := cmd.Flags().GetBool("return_input")
+	b, _ := cmd.Flags().GetBool("return-input")
 	if b {
 		opts = append(opts, config.OptIncludeInputText(b))
 	}
@@ -83,7 +83,7 @@ func oddsDetailsFlag(cmd *cobra.Command) {
 }
 
 func plainInputFlag(cmd *cobra.Command) {
-	b, _ := cmd.Flags().GetBool("utf8_input")
+	b, _ := cmd.Flags().GetBool("utf8-input")
 	if b {
 		opts = append(opts, config.OptWithPlainInput(true))
 	}
@@ -102,14 +102,14 @@ func sourcesFlag(cmd *cobra.Command) {
 }
 
 func tikaURLFlag(cmd *cobra.Command) {
-	s, _ := cmd.Flags().GetString("tika_url")
+	s, _ := cmd.Flags().GetString("tika-url")
 	if s != "" {
 		opts = append(opts, config.OptTikaURL(s))
 	}
 }
 
 func uniqueFlag(cmd *cobra.Command) {
-	b, _ := cmd.Flags().GetBool("unique_names")
+	b, _ := cmd.Flags().GetBool("unique-names")
 	if b {
 		opts = append(opts, config.OptWithUniqueNames(b))
 	}
@@ -123,7 +123,7 @@ func verifFlag(cmd *cobra.Command) {
 }
 
 func verifURLFlag(cmd *cobra.Command) {
-	s, _ := cmd.Flags().GetString("verifier_url")
+	s, _ := cmd.Flags().GetString("verifier-url")
 	if s != "" {
 		opts = append(opts, config.OptVerifierURL(s))
 	}

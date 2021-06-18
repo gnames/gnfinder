@@ -41,7 +41,10 @@ func (o *Output) csvOutput() string {
 }
 
 func csvRow(name Name, i int) string {
-	odds := strconv.FormatFloat(name.OddsLog10, 'f', 2, 64)
+	var odds string
+	if name.OddsLog10 > 0 {
+		odds = strconv.FormatFloat(name.OddsLog10, 'f', 2, 64)
+	}
 	wrdsBefore := strings.Join(name.WordsBefore, ", ")
 	wrdsAfter := strings.Join(name.WordsAfter, ", ")
 	start := strconv.Itoa(name.OffsetStart)

@@ -13,6 +13,7 @@ Finds scientific names using dictionary and nlp approaches.
   * [Linux or OS X](#linux-or-os-x)
   * [Windows](#windows)
   * [Go](#go)
+* [Configuration](#configuration)
 * [Usage](#usage)
   * [Usage as a command line app](#usage-as-a-command-line-app)
   * [Usage as a library](#usage-as-a-library)
@@ -84,6 +85,48 @@ cd gnfinder
 make tools
 make install
 ```
+
+## Configuration
+
+When you run ``gnfinder`` command for the first time, it will create a
+[``gnfinder.yml``][gnfinder.yml] configuration file.
+
+This file should be located in the following places:
+
+MS Windows: `C:\Users\AppData\Roaming\gnfinder.yml`
+
+Mac OS: `$HOME/.config/gnfinder.yml`
+
+Linux: `$HOME/.config/gnfinder.yml`
+
+This file allows to set options that will modify behaviour of ``gnfinder``
+according to your needs. It will spare you to enter the same flags for the
+command line application again and again.
+
+Command line flags will override the settings in the configuration file.
+
+It is also possible to setup environment variables. They will override the
+settings in both the configuration file and from the flags.gt
+
+|-----------------------|-----------------------------|
+| Settings              | Env variable                |
+|-----------------------|-----------------------------|
+| BayesOddsThreshold    | GNF_BAYES_ODDS_THRESHOLD    |
+| Format                | GNF_FORMAT                  |
+| IncludeInputText      | GNF_INCLUDE_INPUT_TEXT      |
+| Language              | GNF_LANGUAGE                |
+| PreferredSources      | GNF_PREFERRED_SOURCES       |
+| TikaURL               | GNF_TIKA_URL                |
+| TokensAround          | GNF_TOKENS_AROUND           |
+| VerifierURL           | GNF_VERIFIER_URL            |
+| WithBayesOddsDetails  | GNF_WITH_BAYES_ODDS_DETAILS |
+| WithLanguageDetection | GNF_WITH_LANGUAGE_DETECTION |
+| WithOddsAdjustment    | GNF_WITH_ODDS_ADJUSTMENT    |
+| WithPlainInput        | GNF_WITH_PLAIN_INPUT        |
+| WithUniqueNames       | GNF_WITH_UNIQUE_NAMES       |
+| WithVerification      | GNF_WITH_VERIFICATION       |
+| WithoutBayes          | GNF_WITHOUT_BAYES           |
+|-----------------------|-----------------------------|
 
 ## Usage
 
@@ -250,17 +293,18 @@ go test ./...
 make test
 ```
 
-[travis-img]: https://travis-ci.org/gnames/gnfinder.svg?branch=master
-[travis]: https://travis-ci.org/gnames/gnfinder
+[bhlindex]: https://github.com/gnames/bhlindex
 [doc-img]: https://godoc.org/github.com/gnames/gnfinder?status.png
 [doc]: https://godoc.org/github.com/gnames/gnfinder
-[releases]: https://github.com/gnames/gnfinder/releases
-[gnindex]: https://index.globalnames.org
-[bhlindex]: https://github.com/gnames/bhlindex
-[newwinlogo]: https://i.stack.imgur.com/B8Zit.png
-[winpath]: https://www.computerhope.com/issues/ch000549.htm
 [gnfinder gem]: https://rubygems.org/gems/gnfinder
+[gnfinder.yml]: https://github.com/gnames/gnfinder/blob/master/gnfinder/cmd/gnfinder.yml
+[gnindex]: https://index.globalnames.org
+[gnverifier]: https://verifier.globalnames.org/data_sources
 [go-report-img]: https://goreportcard.com/badge/github.com/gnames/gnfinder
 [go-report]: https://goreportcard.com/report/github.com/gnames/gnfinder
-[gnverifier]: https://verifier.globalnames.org/data_sources
+[newwinlogo]: https://i.stack.imgur.com/B8Zit.png
 [protobuf releases]: https://github.com/protocolbuffers/protobuf/releases
+[releases]: https://github.com/gnames/gnfinder/releases
+[travis-img]: https://travis-ci.org/gnames/gnfinder.svg?branch=master
+[travis]: https://travis-ci.org/gnames/gnfinder
+[winpath]: https://www.computerhope.com/issues/ch000549.htm
