@@ -13,6 +13,7 @@ Finds scientific names using dictionary and nlp approaches.
   * [Linux or OS X](#linux-or-os-x)
   * [Windows](#windows)
   * [Go](#go)
+  * [Install with Homebrew](#install-with-homebrew)
 * [Configuration](#configuration)
 * [Usage](#usage)
   * [Usage as a command line app](#usage-as-a-command-line-app)
@@ -85,6 +86,20 @@ cd gnfinder
 make tools
 make install
 ```
+
+### Install with Homebrew
+
+[Homebrew] is a packaging system originally made for Mac OS X. You can use it
+now for Mac, Linux, or Windows X WSL (Windows susbsystem for Linux).
+
+1. Install Homebrew according to their [instructions][Homebrew].
+
+2. Install `gnfinder` with:
+
+    ```bash
+    brew tap gnames/gn
+    brew install gnfinder
+    ```
 
 ## Configuration
 
@@ -291,6 +306,7 @@ go test ./...
 make test
 ```
 
+[Homebrew]: https://brew.sh/
 [bhlindex]: https://github.com/gnames/bhlindex
 [doc-img]: https://godoc.org/github.com/gnames/gnfinder?status.png
 [doc]: https://godoc.org/github.com/gnames/gnfinder

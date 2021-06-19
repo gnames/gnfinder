@@ -1,6 +1,6 @@
 package gnfinder
 
 var (
-	Version = "v0.12.0+"
+	Version = "v0.14.0+"
 	Build   string
 )
