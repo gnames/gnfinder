@@ -108,8 +108,7 @@ Command line flags will override the settings in the configuration file.
 It is also possible to setup environment variables. They will override the
 settings in both the configuration file and from the flags.gt
 
-|-----------------------|-----------------------------|
-| Settings              | Env variable                |
+| Settings              | Environment variables       |
 |-----------------------|-----------------------------|
 | BayesOddsThreshold    | GNF_BAYES_ODDS_THRESHOLD    |
 | Format                | GNF_FORMAT                  |
@@ -126,7 +125,6 @@ settings in both the configuration file and from the flags.gt
 | WithUniqueNames       | GNF_WITH_UNIQUE_NAMES       |
 | WithVerification      | GNF_WITH_VERIFICATION       |
 | WithoutBayes          | GNF_WITHOUT_BAYES           |
-|-----------------------|-----------------------------|
 
 ## Usage
 

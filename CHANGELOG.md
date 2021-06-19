@@ -2,7 +2,10 @@
 
 ## Unreleased
 
+## [v0.14.0]
+
 - Add [#91]: convert/extract plain texts locally
+- Add [#89]: configuration file and environment variables.
 - Add [#87]: support PDFs, MS Word, Excel, RTF, HTML, UTF16 etc via Apache Tika.
 - Add [#86]: an option to return unique found names.
 
@@ -188,6 +191,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.14.0]: https://github.com/gnames/gnfinder/compare/v0.13.1...v0.14.0
 [v0.13.1]: https://github.com/gnames/gnfinder/compare/v0.13.0...v0.13.1
 [v0.13.0]: https://github.com/gnames/gnfinder/compare/v0.12.1...v0.13.0
 [v0.12.1]: https://github.com/gnames/gnfinder/compare/v0.12.0...v0.12.1
@@ -215,6 +219,16 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#100]: https://github.com/gnames/gnfinder/issues/100
+[#99]: https://github.com/gnames/gnfinder/issues/99
+[#98]: https://github.com/gnames/gnfinder/issues/98
+[#97]: https://github.com/gnames/gnfinder/issues/97
+[#96]: https://github.com/gnames/gnfinder/issues/96
+[#95]: https://github.com/gnames/gnfinder/issues/95
+[#94]: https://github.com/gnames/gnfinder/issues/94
+[#93]: https://github.com/gnames/gnfinder/issues/93
+[#92]: https://github.com/gnames/gnfinder/issues/92
+[#91]: https://github.com/gnames/gnfinder/issues/91
 [#90]: https://github.com/gnames/gnfinder/issues/90
 [#89]: https://github.com/gnames/gnfinder/issues/89
 [#88]: https://github.com/gnames/gnfinder/issues/88
