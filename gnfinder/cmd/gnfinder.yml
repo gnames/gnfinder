@@ -14,6 +14,11 @@
 #
 # Format: csv
 
+# InputTextOnly can be set to true if the user wants only the UTF8-encoded text
+# of the file without name-finding. If this option is true, then most of other
+# options are ignored.
+# InputTextOnly: false
+
 # IncludeInputText can be set to true if the user wants to get back the text
 # used for name-finding. This feature is epspecilly useful if original file
 # was a PDF, MS Word, HTML etc. and a user wants to use OffsetStart and

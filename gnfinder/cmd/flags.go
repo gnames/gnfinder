@@ -47,9 +47,16 @@ func formatFlag(cmd *cobra.Command) {
 }
 
 func inputFlag(cmd *cobra.Command) {
-	b, _ := cmd.Flags().GetBool("return-input")
+	b, _ := cmd.Flags().GetBool("input")
 	if b {
 		opts = append(opts, config.OptIncludeInputText(b))
+	}
+}
+
+func inputOnlyFlag(cmd *cobra.Command) {
+	b, _ := cmd.Flags().GetBool("input-only")
+	if b {
+		opts = append(opts, config.OptInputTextOnly(b))
 	}
 }
 

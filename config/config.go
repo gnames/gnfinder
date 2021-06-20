@@ -25,6 +25,11 @@ type Config struct {
 	// OffsetEnd indices to find names in the text.
 	IncludeInputText bool
 
+	// InputTextOnly can be set to true if the user wants only the UTF8-encoded text
+	// of the file without name-finding. If this option is true, then most of other
+	// options are ignored.
+	InputTextOnly bool
+
 	// Language that is prevalent in the text. This setting helps to get
 	// a better result for NLP name-finding, because languages differ in their
 	// training patterns.
@@ -108,6 +113,13 @@ func OptFormat(f gnfmt.Format) Option {
 func OptIncludeInputText(b bool) Option {
 	return func(cfg *Config) {
 		cfg.IncludeInputText = b
+	}
+}
+
+// OptInputTextOnly indicates if to return original UTF8-encoded input.
+func OptInputTextOnly(b bool) Option {
+	return func(cfg *Config) {
+		cfg.InputTextOnly = b
 	}
 }
 

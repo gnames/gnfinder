@@ -2,9 +2,13 @@
 
 ## Unreleased
 
+## [v0.14.1]
+
+- Add [#92]: return UTF8-encoded text only.
+
 ## [v0.14.0]
 
-- Add [#91]: convert/extract plain texts locally
+- Add [#91]: convert/extract plain texts locally.
 - Add [#89]: configuration file and environment variables.
 - Add [#87]: support PDFs, MS Word, Excel, RTF, HTML, UTF16 etc via Apache Tika.
 - Add [#86]: an option to return unique found names.
@@ -191,6 +195,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.14.1]: https://github.com/gnames/gnfinder/compare/v0.14.0...v0.14.1
 [v0.14.0]: https://github.com/gnames/gnfinder/compare/v0.13.1...v0.14.0
 [v0.13.1]: https://github.com/gnames/gnfinder/compare/v0.13.0...v0.13.1
 [v0.13.0]: https://github.com/gnames/gnfinder/compare/v0.12.1...v0.13.0

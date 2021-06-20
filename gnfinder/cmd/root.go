@@ -54,6 +54,7 @@ type cfgData struct {
 	BayesOddsThreshold    float64
 	Format                string
 	IncludeInputText      bool
+	InputTextOnly         bool
 	Language              string
 	PreferredSources      []int
 	TikaURL               string
@@ -107,6 +108,7 @@ specific datasets are important for verification, they can be set with '-s'
 		bayesFlag(cmd)
 		formatFlag(cmd)
 		inputFlag(cmd)
+		inputOnlyFlag(cmd)
 		langFlag(cmd)
 		oddsDetailsFlag(cmd)
 		plainInputFlag(cmd)
@@ -147,6 +149,11 @@ specific datasets are important for verification, they can be set with '-s'
 			os.Exit(0)
 		}
 
+		if cfg.InputTextOnly {
+			fmt.Print(data)
+			os.Exit(0)
+		}
+
 		findNames(data, cfg, file, convDur)
 	},
 }
@@ -174,13 +181,15 @@ func init() {
   compact: compact JSON,
   pretty: pretty JSON,
   csv: CSV (DEFAULT)`)
+	rootCmd.Flags().BoolP("input-only", "I", false,
+		"return only given UTF8-encoded input without finding names.")
+	rootCmd.Flags().BoolP("input", "i", false,
+		"add given input to results.")
 	rootCmd.Flags().StringP("lang", "l", "",
 		"text's language or 'detect' for automatic detection.")
 	rootCmd.Flags().BoolP("no-bayes", "n", false, "do not run Bayes algorithms.")
 	rootCmd.Flags().IntP("port",
 		"p", 0, "port to run the gnfinder's RESTful API service.")
-	rootCmd.Flags().BoolP("return-input", "r", false,
-		"return given input")
 	rootCmd.Flags().StringP("sources", "s", "",
 		`IDs of important data-sources to verify against (ex "1,11").
 If sources are set and there are matches to their data,
@@ -284,6 +293,10 @@ func getOpts() {
 
 	if cfg.IncludeInputText {
 		opts = append(opts, config.OptIncludeInputText(cfg.IncludeInputText))
+	}
+
+	if cfg.InputTextOnly {
+		opts = append(opts, config.OptInputTextOnly(cfg.InputTextOnly))
 	}
 
 	if cfg.Language != "" {
