@@ -231,6 +231,10 @@ Detection of nomenclatural annotations
 echo "Parus major sp. n." | gnfinder
 ```
 
+There is aldo a [tutorial] about processing many PDF files
+
+
+
 ### Usage as a library
 
 ```go
@@ -321,4 +325,6 @@ make test
 [releases]: https://github.com/gnames/gnfinder/releases
 [travis-img]: https://travis-ci.org/gnames/gnfinder.svg?branch=master
 [travis]: https://travis-ci.org/gnames/gnfinder
+[tutorial]: https://globalnames.org/docs/tut-gnfinder/
 [winpath]: https://www.computerhope.com/issues/ch000549.htm
+
