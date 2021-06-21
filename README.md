@@ -231,9 +231,7 @@ Detection of nomenclatural annotations
 echo "Parus major sp. n." | gnfinder
 ```
 
-There is aldo a [tutorial] about processing many PDF files
-
-
+There is also a [tutorial] about processing many PDF files in parallel.
 
 ### Usage as a library
 
