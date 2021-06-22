@@ -33,6 +33,9 @@ Finds scientific names using dictionary and nlp approaches.
   required for name-verification.
 * Takes UTF8-encoded text and returns back CSV or JSON-formatted output that
   contains detected scientific names.
+* Extracts text from PDF files, MS Word, MS Excel, HTML, XML, RTF, JPG,
+  TIFF, GIF etc. files for names-detection.
+* Downloads web-page from a given URL for names-detection.
 * Optionally, automatically detects the language of the text, and adjusts Bayes
   algorithm for the language. English and German languages are currently
   supported.
@@ -167,6 +170,7 @@ Getting names from a UTF8-encoded file in CSV format
 # -U flag prevents use of remote Apache Tika service for file conversion to
 # UTF8-encoded plain text
 # -U flag is optional, but it removes unnecessary remote call to Tika.
+
 gnfinder file_with_names.txt -U
 ```
 
@@ -174,6 +178,12 @@ Getting names from a file that is not a plain UTF8-encoded text
 
 ```bash
 gnfinder file.pdf
+```
+
+Getting names from a URL
+
+```bash
+gnfinder https://en.wikipedia.org/wiki/Raccoon
 ```
 
 Getting unique names from a file in JSON format

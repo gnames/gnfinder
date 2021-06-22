@@ -121,7 +121,7 @@ specific datasets are important for verification, they can be set with '-s'
 
 		cfg := config.New(opts...)
 
-		var data, file string
+		var data, input string
 		var rawData []byte
 		var convDur float32
 		switch len(args) {
@@ -135,11 +135,15 @@ specific datasets are important for verification, they can be set with '-s'
 				log.Println(err)
 			}
 			data = string(rawData)
-			file = "STDIN"
+			input = "STDIN"
 		case 1:
-			file = args[0]
+			input = args[0]
 			d := gndoc.New(cfg.TikaURL)
-			data, convDur, err = d.TextFromFile(file, cfg.WithPlainInput)
+			if strings.HasPrefix(input, "http") {
+				data, convDur, err = d.TextFromURL(input)
+			} else {
+				data, convDur, err = d.TextFromFile(input, cfg.WithPlainInput)
+			}
 			if err != nil {
 				log.Println(err)
 				os.Exit(1)
@@ -154,7 +158,7 @@ specific datasets are important for verification, they can be set with '-s'
 			os.Exit(0)
 		}
 
-		findNames(data, cfg, file, convDur)
+		findNames(data, cfg, input, convDur)
 	},
 }
 
