@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/gnames/gnfinder/ent/token"
-	"github.com/tj/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestTokenize(t *testing.T) {

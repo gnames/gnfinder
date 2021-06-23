@@ -36,7 +36,7 @@ import (
 	"github.com/gnames/gnfinder/ent/nlp"
 	"github.com/gnames/gnfinder/ent/verifier"
 	"github.com/gnames/gnfinder/io/dict"
-	"github.com/gnames/gnfinder/io/rest"
+	"github.com/gnames/gnfinder/io/web"
 	"github.com/gnames/gnfmt"
 	"github.com/gnames/gnsys"
 	"github.com/spf13/cobra"
@@ -98,7 +98,7 @@ specific datasets are important for verification, they can be set with '-s'
 
 			cfg := config.New()
 			gnf := gnfinder.New(cfg, dict, weights)
-			rest.Run(gnf, port)
+			web.Run(gnf, port)
 
 			os.Exit(0)
 		}
@@ -164,7 +164,7 @@ specific datasets are important for verification, they can be set with '-s'
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute(ver string) {
+func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -263,7 +263,7 @@ func initConfig() {
 
 	viper.AutomaticEnv() // read in environment variables that match
 	configPath := filepath.Join(configDir, fmt.Sprintf("%s.yml", configFile))
-	_ = touchConfigFile(configPath, configFile)
+	_ = touchConfigFile(configPath)
 
 	// If a config file is found, read it in.
 	err = viper.ReadInConfig()
@@ -365,13 +365,14 @@ func findNames(
 
 	gnf := gnfinder.New(cfg, dict, weights)
 	res := gnf.Find(file, data)
-	res.Meta.FileConversionSec = convDur
+	res.TextExtractionSec = convDur
 	if gnf.GetConfig().WithVerification {
 		sources := gnf.GetConfig().PreferredSources
 		verif := verifier.New(cfg.VerifierURL, sources)
 		verifiedNames, dur := verif.Verify(res.UniqueNameStrings())
 		res.MergeVerification(verifiedNames, dur)
 	}
+	res.TotalSec = res.TextExtractionSec + res.NameFindingSec + res.NameVerifSec
 	fmt.Println(res.Format(cfg.Format))
 }
 
@@ -390,18 +391,18 @@ func checkStdin() bool {
 }
 
 // touchConfigFile checks if config file exists, and if not, it gets created.
-func touchConfigFile(configPath string, configFile string) error {
+func touchConfigFile(configPath string) error {
 	fileExists, _ := gnsys.FileExists(configPath)
 	if fileExists {
 		return nil
 	}
 
 	log.Printf("Creating config file: %s.", configPath)
-	return createConfig(configPath, configFile)
+	return createConfig(configPath)
 }
 
 // createConfig creates config file.
-func createConfig(path string, file string) error {
+func createConfig(path string) error {
 	err := gnsys.MakeDir(filepath.Dir(path))
 	if err != nil {
 		log.Printf("Cannot create dir %s: %s.", path, err)

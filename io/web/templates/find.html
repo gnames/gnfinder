@@ -1,0 +1,32 @@
+{{ define "find" }}
+<div class='structural fixedWidth clear' id='BodyContent'>
+  <div class='inner'>
+    <div id='content-wrapper'>
+      <div id='durations'>
+        <strong>Convert to text:</strong> {{ printf "%0.2fs" .Duration.TextExtraction }},
+        <strong>Name finding:</strong> {{ printf "%0.2fs" .Duration.NameFinding }},
+        <strong>Verification:</strong> {{ printf "%0.2fs" .Duration.Verification }},
+        <strong>Total:</strong> {{ printf "%0.2fs" .Duration.Total }}
+      </div>
+      <table id='found-names-grid'>
+        <thead>
+          <tr>
+            <th/>
+            <th>
+              <a name='found-names'>Found Scientific Names</a>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+        {{ range .Output.Names }}
+          <tr>
+            <td>{{ isVerified .Verification }}</td>
+            <td>{{ .Name }}</td>
+          </tr>
+        {{ end }}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{{ end }}

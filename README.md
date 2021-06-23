@@ -26,6 +26,7 @@ connection.
   * [Usage as a command line app](#usage-as-a-command-line-app)
   * [Usage as a library](#usage-as-a-library)
   * [Usage as a docker container](#usage-as-a-docker-container)
+  * [Usage of API](#usage-of-api)
 * [Projects based on GNfinder](#projects-based-on-gnfinder)
 * [Development](#development)
   * [Modify OpenAPI documentation](#modify-openapi-documentation)
@@ -309,6 +310,24 @@ docker pull gnames/gnfinder
 docker run -d -p 8888:8778 --name gnfinder gnames/gnfinder
 ```
 
+### Usage of API
+
+Best source for API usage is its [documenation][apidoc].
+
+If you want to start your own API endpoint (for example on `localhost`, port
+8080) use:
+
+```bash
+gnfinder -p 8080
+curl localhost:8080/api/v1/ping
+```
+
+To upload a file and detect names from its content:
+
+```bash 
+curl -v -F verification=true -F file=@/path/to/test.txt https://gnfinder.globalnames.org/api/v1/find
+```
+
 ## Projects based on GNfinder
 
 [gnfinder-plus] allows to work with MS Docs and PDF files without remote
@@ -359,10 +378,14 @@ make test
 
 [Homebrew]: https://brew.sh/
 [Zenodo DOI]: https://zenodo.org/badge/latestdoi/137407958
+[apidoc]: https://apidoc.globalnames.org/gnfinder
 [bhlindex]: https://github.com/gnames/bhlindex
+[bhlindex]: https://github.com/gnames/bhlindex
+[bhlnames]: https://github.com/gnames/bhlnames
 [doc-img]: https://godoc.org/github.com/gnames/gnfinder?status.png
 [doc]: https://godoc.org/github.com/gnames/gnfinder
 [gnfinder gem]: https://rubygems.org/gems/gnfinder
+[gnfinder-plus]: https://github.com/biodiv-platform/gnfinder-plus
 [gnfinder.yml]: https://github.com/gnames/gnfinder/blob/master/gnfinder/cmd/gnfinder.yml
 [gnindex]: https://index.globalnames.org
 [gnverifier]: https://verifier.globalnames.org/data_sources
@@ -375,6 +398,3 @@ make test
 [travis]: https://travis-ci.org/gnames/gnfinder
 [tutorial]: https://globalnames.org/docs/tut-gnfinder/
 [winpath]: https://www.computerhope.com/issues/ch000549.htm
-[gnfinder-plus]: https://github.com/biodiv-platform/gnfinder-plus
-[bhlindex]: https://github.com/gnames/bhlindex
-[bhlnames]: https://github.com/gnames/bhlnames

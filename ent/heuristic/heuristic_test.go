@@ -6,7 +6,7 @@ import (
 	"github.com/gnames/gnfinder/ent/heuristic"
 	"github.com/gnames/gnfinder/ent/token"
 	"github.com/gnames/gnfinder/io/dict"
-	"github.com/tj/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestHeuristic(t *testing.T) {

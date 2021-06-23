@@ -1,0 +1,48 @@
+{{ define "layout" }}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='UTF-8'>
+    <title>GNfinder</title>
+    <link href='/static/images/favicon.ico' rel='icon' type='image/x-icon'>
+    <link href='/static/styles/screen.css' rel='stylesheet' type='text/css'>
+    <script src='/static/javascript/jquery-3.6.0.min.js' type='text/javascript'></script>
+    <script src='/static/javascript/jquery.tools.min.js' type='text/javascript'></script>
+    <script src='/static/javascript/application.js' type='text/javascript'></script>
+  </head>
+  <body>
+    <div class='structural' id='SiteContainer'>
+      <div class='background'></div>
+      <div class='structural fixedWidth' id='Header'>
+        <div class='inner'>
+          <div id='Logo'>
+            <a href='/'>
+              <h1>Global Names Finder</h1>
+            </a>
+          </div>
+          <ul id='SiteNavigation'>
+            <li class='active'>
+              <a href='/'>Home</a>
+            </li>
+            <li>
+              <a href='/api'>API</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {{ if eq .Page "home" }} {{ template "home" . }}
+      {{ else if eq .Page "find" }} {{ template "find" . }}
+      {{end}}
+
+      <div class='structural fixedWidth' id='Footer'>
+        <div class='inner'>
+          <span>
+            <a href='http://www.globalnames.org'>Global Names Architecture</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+{{ end }}

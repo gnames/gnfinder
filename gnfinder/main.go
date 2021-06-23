@@ -24,10 +24,6 @@ import (
 	"github.com/gnames/gnfinder/gnfinder/cmd"
 )
 
-var (
-	buildVersion string
-)
-
 func main() {
-	cmd.Execute(buildVersion)
+	cmd.Execute()
 }

@@ -14,7 +14,7 @@ import (
 	"github.com/gnames/gnfinder/ent/lang"
 	"github.com/gnames/gnfinder/ent/nlp"
 	"github.com/gnames/gnfinder/io/dict"
-	"github.com/tj/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 var dictionary *dict.Dictionary

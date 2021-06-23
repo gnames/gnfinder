@@ -71,7 +71,7 @@ func (gnf gnfinder) Find(file, txt string) output.Output {
 
 	o := output.TokensToOutput(tokens, text, Version, gnf.GetConfig())
 
-	o.Meta.InputFile = file
+	o.InputFile = file
 	if gnf.WithUniqueNames {
 		o = uniqueNames(o)
 	}

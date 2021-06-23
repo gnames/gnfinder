@@ -8,7 +8,7 @@ import (
 	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/verifier"
 	"github.com/rendon/testcli"
-	"github.com/tj/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 // Run make install before these tests to get meaningful

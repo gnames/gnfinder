@@ -6,7 +6,7 @@ import (
 
 	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/verifier"
-	"github.com/tj/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestVerifier(t *testing.T) {

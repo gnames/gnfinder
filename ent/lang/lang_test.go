@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/gnames/gnfinder/ent/lang"
-	"github.com/tj/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestString(t *testing.T) {

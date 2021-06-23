@@ -5,7 +5,7 @@ import (
 
 	"github.com/gnames/gnfinder/ent/lang"
 	"github.com/gnames/gnfinder/io/dict"
-	"github.com/tj/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 // TestLangData returns training data for a language.

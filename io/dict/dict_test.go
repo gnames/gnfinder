@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/gnames/gnfinder/io/dict"
-	"github.com/tj/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 var dictionary = dict.LoadDictionary()

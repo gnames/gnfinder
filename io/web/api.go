@@ -1,10 +1,8 @@
-package rest
+package web
 
 import (
 	"context"
 	"errors"
-	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -17,47 +15,21 @@ import (
 	"github.com/gnames/gnfinder/ent/verifier"
 	"github.com/gnames/gnfmt"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
-const withLogs = true
-
-// Run starts HTTP/1 service for scientific names verification.
-func Run(gnf gnfinder.GNfinder, port int) {
-	log.Printf("Starting the HTTP API server on port %d.", port)
-	e := echo.New()
-	e.Use(middleware.Gzip())
-	e.Use(middleware.CORS())
-	if withLogs {
-		e.Use(middleware.Logger())
-	}
-
-	e.GET("/api/v1/ping", ping())
-	e.GET("/api/v1/version", ver(gnf))
-	e.POST("/api/v1/find", find(gnf))
-
-	addr := fmt.Sprintf(":%d", port)
-	s := &http.Server{
-		Addr:         addr,
-		ReadTimeout:  5 * time.Minute,
-		WriteTimeout: 5 * time.Minute,
-	}
-	e.Logger.Fatal(e.StartServer(s))
-}
-
-func ping() func(echo.Context) error {
+func pingAPI() func(echo.Context) error {
 	return func(c echo.Context) error {
 		return c.String(http.StatusOK, "pong")
 	}
 }
 
-func ver(gnf gnfinder.GNfinder) func(echo.Context) error {
+func verAPI(gnf gnfinder.GNfinder) func(echo.Context) error {
 	return func(c echo.Context) error {
 		return c.JSON(http.StatusOK, gnf.GetVersion())
 	}
 }
 
-func find(gnf gnfinder.GNfinder) func(echo.Context) error {
+func findAPI(gnf gnfinder.GNfinder) func(echo.Context) error {
 	return func(c echo.Context) error {
 		ctx, cancel := getContext(c)
 		defer cancel()
@@ -65,37 +37,22 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 
 		go func() {
 			var err error
-			var text string
-			var convDur float32
+			var text, filename string
+			var txtExtr float32
 			var out output.Output
 			var params api.FinderParams
 			var format gnfmt.Format
+			var opts []config.Option
 
 			err = c.Bind(&params)
 
 			if err == nil {
-				text, convDur, err = getText(params, gnf.GetConfig().TikaURL)
+				text, filename, txtExtr, err = getText(c, params, gnf.GetConfig().TikaURL)
 
-				format, _ = gnfmt.NewFormat(params.Format)
-				if format == gnfmt.FormatNone {
-					format = gnfmt.CompactJSON
-				}
-				opts := []config.Option{
-					config.OptWithBayesOddsDetails(params.OddsDetails),
-					config.OptFormat(format),
-					config.OptWithBayes(!params.NoBayes),
-					config.OptWithBytesOffset(params.BytesOffset),
-					config.OptLanguage(getLanguage(params.Language)),
-					config.OptPreferredSources(params.Sources),
-					config.OptWithVerification(
-						params.Verification || len(params.Sources) > 0,
-					),
-					config.OptTokensAround(params.WordsAround),
-				}
-
+				opts, format = getOptsAPI(params)
 				gnf = gnf.ChangeConfig(opts...)
-				out = gnf.Find("", text)
-				out.FileConversionSec = convDur
+				out = gnf.Find(filename, text)
+				out.TextExtractionSec = txtExtr
 				cfg := gnf.GetConfig()
 				if cfg.WithVerification {
 					verif := verifier.New(cfg.VerifierURL, cfg.PreferredSources)
@@ -103,6 +60,7 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 					out.MergeVerification(verifiedNames, dur)
 				}
 			}
+			out.TotalSec = out.TextExtractionSec + out.NameFindingSec + out.NameVerifSec
 
 			if err == nil {
 				if format == gnfmt.CompactJSON || format == gnfmt.PrettyJSON {
@@ -115,6 +73,7 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 			chErr <- err
 
 		}()
+
 		select {
 		case <-ctx.Done():
 			<-chErr
@@ -125,6 +84,27 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 			return errors.New("request took too long")
 		}
 	}
+}
+
+func getOptsAPI(params api.FinderParams) ([]config.Option, gnfmt.Format) {
+	format, _ := gnfmt.NewFormat(params.Format)
+	if format == gnfmt.FormatNone {
+		format = gnfmt.CompactJSON
+	}
+
+	opts := []config.Option{
+		config.OptWithBayesOddsDetails(params.OddsDetails),
+		config.OptFormat(format),
+		config.OptWithBayes(!params.NoBayes),
+		config.OptWithBytesOffset(params.BytesOffset),
+		config.OptLanguage(getLanguage(params.Language)),
+		config.OptPreferredSources(params.Sources),
+		config.OptWithVerification(
+			params.Verification || len(params.Sources) > 0,
+		),
+		config.OptTokensAround(params.WordsAround),
+	}
+	return opts, format
 }
 
 func getLanguage(s string) lang.Language {
@@ -139,17 +119,23 @@ func getContext(c echo.Context) (ctx context.Context, cancel func()) {
 }
 
 func getText(
+	c echo.Context,
 	params api.FinderParams,
 	tikaURL string,
-) (string, float32, error) {
+) (string, string, float32, error) {
+	var err error
+	var txt, filename string
+	var dur float32
+
 	if params.Text != "" {
-		return params.Text, 0, nil
+		return params.Text, filename, dur, err
 	}
 
 	d := gndoc.New(tikaURL)
 	if params.URL != "" {
-		return d.TextFromURL(params.URL)
+		txt, dur, err = d.TextFromURL(params.URL)
+		return txt, filename, dur, err
 	}
 
-	return "", 0, errors.New("empty input")
+	return textFromFile(c, tikaURL)
 }

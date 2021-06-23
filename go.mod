@@ -6,11 +6,11 @@ require (
 	github.com/abadojack/whatlanggo v1.0.1
 	github.com/aclements/perflock v0.0.0-20180319185109-8402f33a418d
 	github.com/gnames/bayes v0.1.3
-	github.com/gnames/gndoc v0.3.0
+	github.com/gnames/gndoc v0.3.1
 	github.com/gnames/gner v0.1.4
 	github.com/gnames/gnfmt v0.2.0
 	github.com/gnames/gnlib v0.2.2
-	github.com/gnames/gnsys v0.2.0
+	github.com/gnames/gnsys v0.2.1
 	github.com/gnames/gnverifier v0.3.3
 	github.com/json-iterator/go v1.1.11
 	github.com/labstack/echo/v4 v4.5.0
@@ -18,7 +18,7 @@ require (
 	github.com/rendon/testcli v1.0.0
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.8.1
-	github.com/tj/assert v0.0.3
+	github.com/stretchr/testify v1.7.0
 	golang.org/x/perf v0.0.0-20210220033136-40a54f11e909
 )
 
@@ -45,19 +45,18 @@ require (
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
 	golang.org/x/mod v0.5.0 // indirect
-	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d // indirect
-	golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf // indirect
+	golang.org/x/net v0.0.0-20210903162142-ad29c8ab022f // indirect
+	golang.org/x/sys v0.0.0-20210903071746-97244b99971b // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 	golang.org/x/tools v0.1.5 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
-	gopkg.in/ini.v1 v1.62.0 // indirect
+	gopkg.in/ini.v1 v1.62.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )

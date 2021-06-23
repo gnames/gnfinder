@@ -21,15 +21,18 @@ type Meta struct {
 	// InputFile is the name of the source file.
 	InputFile string `json:"inputFile,omitempty"`
 
-	// FileConversionSec is the time spent on converting the file
+	// TextExtractionSec is the time spent on converting the file
 	// into UTF8-encoded text.
-	FileConversionSec float32 `json:"fileConvSec,omitempty"`
+	TextExtractionSec float32 `json:"textExtractSec,omitempty"`
 
 	// NameFindingSec is the time spent on name-finding.
 	NameFindingSec float32 `json:"nameFindingSec"`
 
 	// NameVerifSec is the time spent on name-verification.
 	NameVerifSec float32 `json:"nameVerifSec,omitempty"`
+
+	// TotalSec is time spent for the whole process
+	TotalSec float32 `json:"totalSec,omitempty"`
 
 	// Date represents time when output was generated.
 	Date time.Time `json:"date"`

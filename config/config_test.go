@@ -7,7 +7,7 @@ import (
 
 	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/lang"
-	"github.com/tj/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestConfig(t *testing.T) {
