@@ -36,8 +36,8 @@ import (
 	"github.com/gnames/gnfinder/ent/nlp"
 	"github.com/gnames/gnfinder/ent/verifier"
 	"github.com/gnames/gnfinder/io/dict"
-	"github.com/gnames/gnfinder/io/rest"
 	"github.com/gnames/gnfmt"
+	"github.com/gnames/gnparser/io/web"
 	"github.com/gnames/gnsys"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -99,7 +99,7 @@ specific datasets are important for verification, they can be set with '-s'
 
 			cfg := config.New()
 			gnf := gnfinder.New(cfg, dict, weights)
-			rest.Run(gnf, port)
+			web.Run(gnf, port)
 
 			os.Exit(0)
 		}
