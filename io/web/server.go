@@ -2,6 +2,7 @@ package web
 
 import (
 	"context"
+	"embed"
 	"errors"
 	"fmt"
 	"log"
@@ -21,7 +22,10 @@ import (
 
 const withLogs = true
 
-// Run starts HTTP/1 service for scientific names verification.
+//go:embed static
+var static embed.FS
+
+// Run starts GNfinder service for its webiste and RESTful API.
 func Run(gnf gnfinder.GNfinder, port int) {
 	log.Printf("Starting the HTTP API server on port %d.", port)
 	e := echo.New()
@@ -31,6 +35,7 @@ func Run(gnf gnfinder.GNfinder, port int) {
 		e.Use(middleware.Logger())
 	}
 
+	e.GET("/", home())
 	e.GET("/api/v1/ping", ping())
 	e.GET("/api/v1/version", ver(gnf))
 	e.POST("/api/v1/find", find(gnf))
