@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.14.2]
+
+- Add [#96]: Zenodo DOI for citing GNfinder.
+
 ## [v0.14.1]
 
 - Add [#92]: return UTF8-encoded text only.

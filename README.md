@@ -1,4 +1,4 @@
-# Global Names Finder
+:x
 
 [![Build Status][travis-img]][travis]
 [![Doc Status][doc-img]][doc]
@@ -8,6 +8,7 @@ Finds scientific names using dictionary and nlp approaches.
 
 <!-- vim-markdown-toc GFM -->
 
+* [Citing](#citing)
 * [Features](#features)
 * [Install as a command line app](#install-as-a-command-line-app)
   * [Linux or OS X](#linux-or-os-x)
@@ -24,6 +25,10 @@ Finds scientific names using dictionary and nlp approaches.
 * [Testing](#testing)
 
 <!-- vim-markdown-toc -->
+
+## Citing
+
+[Zenodo DOI] can be used to cite GNfinder.
 
 ## Features
 
@@ -117,7 +122,7 @@ Mac OS: `$HOME/.config/gnfinder.yml`
 
 Linux: `$HOME/.config/gnfinder.yml`
 
-This file allows to set options that will modify behaviour of ``gnfinder``
+This file allows to set options that will modify behaviour of ``GNfinder``
 according to your needs. It will spare you to enter the same flags for the
 command line application again and again.
 
@@ -277,13 +282,13 @@ inches the first year,Pardosa moesta Banks, 1892`
 ```bash
 docker pull gnames/gnfinder
 
-# run gnfinder server, and map it to port 8888 on the host machine
+# run GNfinder server, and map it to port 8888 on the host machine
 docker run -d -p 8888:8778 --name gnfinder gnames/gnfinder
 ```
 
 ## Development
 
-To install the latest gnfinder
+To install the latest `GNfinder`
 
 ```bash
 git clone git@github.com:/gnames/gnfinder
@@ -319,6 +324,7 @@ make test
 ```
 
 [Homebrew]: https://brew.sh/
+[Zenodo DOI]: https://example.org
 [bhlindex]: https://github.com/gnames/bhlindex
 [doc-img]: https://godoc.org/github.com/gnames/gnfinder?status.png
 [doc]: https://godoc.org/github.com/gnames/gnfinder
