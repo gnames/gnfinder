@@ -1,5 +1,6 @@
-:x
+# Global Names Finder (GNfinder)
 
+[![DOI](https://zenodo.org/badge/137407958.svg)](https://zenodo.org/badge/latestdoi/137407958)
 [![Build Status][travis-img]][travis]
 [![Doc Status][doc-img]][doc]
 [![Go Report Card][go-report-img]][go-report]
@@ -102,7 +103,7 @@ now for Mac, Linux, or Windows X WSL (Windows susbsystem for Linux).
 
 1. Install Homebrew according to their [instructions][Homebrew].
 
-2. Install `gnfinder` with:
+2. Install `GNfinder` with:
 
     ```bash
     brew tap gnames/gn
@@ -288,7 +289,7 @@ docker run -d -p 8888:8778 --name gnfinder gnames/gnfinder
 
 ## Development
 
-To install the latest `GNfinder`
+To install the latest GNfinder
 
 ```bash
 git clone git@github.com:/gnames/gnfinder
@@ -324,7 +325,7 @@ make test
 ```
 
 [Homebrew]: https://brew.sh/
-[Zenodo DOI]: https://example.org
+[Zenodo DOI]: https://zenodo.org/badge/latestdoi/137407958
 [bhlindex]: https://github.com/gnames/bhlindex
 [doc-img]: https://godoc.org/github.com/gnames/gnfinder?status.png
 [doc]: https://godoc.org/github.com/gnames/gnfinder
