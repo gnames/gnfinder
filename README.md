@@ -192,7 +192,7 @@ Getting names from a URL
 gnfinder https://en.wikipedia.org/wiki/Raccoon
 ```
 
-Getting unique names from a file in JSON format
+Getting unique names from a file in JSON format. Disables `-w` flag.
 
 ```bash
 gnfinder file_with_names.txt -u -f pretty
@@ -228,7 +228,8 @@ odds for texts with a lot of found names.
 gnfinder -a -d -f pretty file_with_names.txt
 ```
 
-Returning 5 words before and after found name-candidate.
+Returning 5 words before and after found name-candidate. This flag does is
+ignored if unique names are returned.
 
 ```bash
 gnfinder -w 5 file_with_names.txt
