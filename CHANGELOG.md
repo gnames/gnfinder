@@ -4,6 +4,8 @@
 
 ## [v0.15.0]
 
+Add:       update modules
+Add:       update go to 1.17
 Add [#98]: an option to return names positions in bytes from the text start
            instead of UTF-8 characters.
 
