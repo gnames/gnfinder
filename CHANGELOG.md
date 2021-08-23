@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [v0.15.0]
+
+Add [#98]: an option to return names positions in bytes from the text start
+           instead of UTF-8 characters.
+
 ## [v0.14.2]
 
 - Add [#96]: Zenodo DOI for citing GNfinder.
@@ -199,6 +204,8 @@
 
 This document follows [changelog guidelines]
 
+[v0.15.0]: https://github.com/gnames/gnfinder/compare/v0.14.2...v0.15.0
+[v0.14.2]: https://github.com/gnames/gnfinder/compare/v0.14.1...v0.14.2
 [v0.14.1]: https://github.com/gnames/gnfinder/compare/v0.14.0...v0.14.1
 [v0.14.0]: https://github.com/gnames/gnfinder/compare/v0.13.1...v0.14.0
 [v0.13.1]: https://github.com/gnames/gnfinder/compare/v0.13.0...v0.13.1
@@ -228,6 +235,16 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#110]: https://github.com/gnames/gnfinder/issues/110
+[#109]: https://github.com/gnames/gnfinder/issues/109
+[#108]: https://github.com/gnames/gnfinder/issues/108
+[#107]: https://github.com/gnames/gnfinder/issues/107
+[#106]: https://github.com/gnames/gnfinder/issues/106
+[#105]: https://github.com/gnames/gnfinder/issues/105
+[#104]: https://github.com/gnames/gnfinder/issues/104
+[#103]: https://github.com/gnames/gnfinder/issues/103
+[#102]: https://github.com/gnames/gnfinder/issues/102
+[#101]: https://github.com/gnames/gnfinder/issues/101
 [#100]: https://github.com/gnames/gnfinder/issues/100
 [#99]: https://github.com/gnames/gnfinder/issues/99
 [#98]: https://github.com/gnames/gnfinder/issues/98

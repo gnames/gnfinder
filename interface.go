@@ -7,7 +7,7 @@ import (
 )
 
 type GNfinder interface {
-	Find(text, file string) output.Output
+	Find(file, text string) output.Output
 
 	GetConfig() config.Config
 

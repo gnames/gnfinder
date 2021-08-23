@@ -5,7 +5,7 @@
 [![Doc Status][doc-img]][doc]
 [![Go Report Card][go-report-img]][go-report]
 
-Finds scientific names using dictionary and nlp approaches.
+Finds scientific names using dictionary and NLP approaches.
 
 <!-- vim-markdown-toc GFM -->
 
@@ -63,7 +63,7 @@ Download the binary executable for your operating system from the
 
 ### Linux or OS X
 
-Move ``gnfinder`` executabe somewhere in your PATH
+Move ``gnfinder`` executable somewhere in your PATH
 (for example ``/usr/local/bin``)
 
 ```bash
@@ -87,7 +87,7 @@ copy path_to\gnfinder.exe C:\bin
 
 ### Go
 
-Install Go v1.16 or higher.
+Install Go v1.17 or higher.
 
 ```bash
 git clone git@github.com:/gnames/gnfinder
@@ -246,6 +246,13 @@ Detection of nomenclatural annotations
 
 ```bash
 echo "Parus major sp. n." | gnfinder
+```
+
+Returning found names positions in the number of bytes from the beginning
+of the text instead of the number of UTF-8 characters
+
+```bash
+echo "Это Parus major" | gnfinder -b
 ```
 
 There is also a [tutorial] about processing many PDF files in parallel.

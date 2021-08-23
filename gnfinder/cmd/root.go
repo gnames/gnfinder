@@ -106,6 +106,7 @@ specific datasets are important for verification, they can be set with '-s'
 
 		adjustOddsFlag(cmd)
 		bayesFlag(cmd)
+		bytesOffsetFlag(cmd)
 		formatFlag(cmd)
 		inputFlag(cmd)
 		inputOnlyFlag(cmd)
@@ -176,6 +177,8 @@ func init() {
 
 	rootCmd.Flags().BoolP("adjust-odds", "a", false,
 		"adjust Bayes odds using density of found names.")
+	rootCmd.Flags().BoolP("bytes-offset", "b", false,
+		"names offsets in bytes, not UTF-8 chars.")
 	rootCmd.Flags().BoolP("details-odds", "d", false,
 		"show details of odds calculation.")
 	rootCmd.Flags().StringP("verifier-url", "e", "",

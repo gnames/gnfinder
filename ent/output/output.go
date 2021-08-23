@@ -40,6 +40,9 @@ type Meta struct {
 	// WithBayes use of bayes during name-finding
 	WithBayes bool `json:"withBayes"`
 
+	// WithBytesOffset names position in bytes instead of UTF-8 chars.
+	WithBytesOffset bool
+
 	// WithOddsAdjustment to adjust prior odds according to the dencity of
 	// scientific names in the text.
 	WithOddsAdjustment bool `json:"withOddsAdjustment"`

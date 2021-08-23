@@ -65,16 +65,20 @@ func TestPost(t *testing.T) {
 		params      api.FinderParams
 		bayes       bool
 		verif       bool
+		bytes       bool
 		cardinality []int
 	}{
 		{api.FinderParams{Text: text},
-			true, false, []int{1, 1, 2, 2}},
+			true, false, false, []int{1, 1, 2, 2}},
 
 		{api.FinderParams{Text: text, NoBayes: true},
-			false, false, []int{1, 1, 1, 2}},
+			false, false, false, []int{1, 1, 1, 2}},
 
 		{api.FinderParams{Text: text, Verification: true},
-			true, true, []int{1, 1, 2, 2}},
+			true, true, false, []int{1, 1, 2, 2}},
+
+		{api.FinderParams{Text: text, BytesOffset: true},
+			true, false, true, []int{1, 1, 2, 2}},
 	}
 
 	for i, v := range params {
@@ -97,8 +101,8 @@ func TestPost(t *testing.T) {
 				cardinalities[i] = out.Names[i].Cardinality
 			}
 			assert.Equal(t, cardinalities, v.cardinality)
-			assert.Equal(t, out.Meta.WithVerification, v.verif)
-			assert.Equal(t, out.Meta.WithBayes, v.bayes)
+			assert.Equal(t, out.WithVerification, v.verif)
+			assert.Equal(t, out.WithBayes, v.bayes)
 		})
 	}
 }

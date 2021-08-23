@@ -10,19 +10,26 @@ import (
 	vlib "github.com/gnames/gnlib/ent/verifier"
 )
 
+var rtb map[int]int
+
 // TokensToOutput takes tagged tokens and assembles output out of them.
 func TokensToOutput(
 	ts []token.TokenSN,
 	text []rune,
 	version string,
 	cfg config.Config) Output {
+	// map rune number to byte number
+	if cfg.WithBytesOffset {
+		populateBytesMap(text)
+	}
+
 	var names []Name
 	for i := range ts {
 		u := ts[i]
 		if u.Decision() == token.NotName {
 			continue
 		}
-		name := tokensToName(ts[i:token.UpperIndex(i, len(ts))], text)
+		name := tokensToName(ts[i:token.UpperIndex(i, len(ts))], text, cfg)
 		name.Odds = calculateOdds(name.OddsDetails)
 		if name.Odds == 0.0 || name.Odds > 1.0 || name.Cardinality == 2 ||
 			name.Cardinality == 3 {
@@ -46,6 +53,16 @@ func calculateOdds(det token.OddsDetails) float64 {
 		}
 	}
 	return res
+}
+
+func populateBytesMap(text []rune) {
+	rtb = make(map[int]int)
+	bytes := 0
+	for i := range text {
+		rtb[i] = bytes
+		bytes += len(string(text[i]))
+	}
+	rtb[len(text)] = bytes
 }
 
 func getTokensAround(
@@ -163,21 +180,25 @@ func (o *Output) MergeVerification(
 	o.Meta.NameVerifSec = dur
 }
 
-func tokensToName(ts []token.TokenSN, text []rune) Name {
+func tokensToName(ts []token.TokenSN, text []rune, cfg config.Config) Name {
 	u := ts[0]
 	switch u.Decision().Cardinality() {
 	case 1:
-		return uninomialName(u, text)
+		return uninomialName(u, text, cfg)
 	case 2:
-		return speciesName(u, ts[u.Indices().Species], text)
+		return speciesName(u, ts[u.Indices().Species], text, cfg)
 	case 3:
-		return infraspeciesName(ts, text)
+		return infraspeciesName(ts, text, cfg)
 	default:
 		panic(fmt.Errorf("unkown Decision: %s", u.Decision()))
 	}
 }
 
-func uninomialName(u token.TokenSN, text []rune) Name {
+func uninomialName(
+	u token.TokenSN,
+	text []rune,
+	cfg config.Config,
+) Name {
 	name := Name{
 		Cardinality: u.Decision().Cardinality(),
 		Verbatim:    verbatim(text[u.Start():u.End()]),
@@ -192,13 +213,22 @@ func uninomialName(u token.TokenSN, text []rune) Name {
 		name.OddsDetails = make(token.OddsDetails)
 		name.OddsDetails[nlp.Name.String()] = l
 	}
+	if cfg.WithBytesOffset {
+		offsetsToBytes(&name)
+	}
 	return name
+}
+
+func offsetsToBytes(name *Name) {
+	name.OffsetStart = rtb[name.OffsetStart]
+	name.OffsetEnd = rtb[name.OffsetEnd]
 }
 
 func speciesName(
 	g token.TokenSN,
 	s token.TokenSN,
 	text []rune,
+	cfg config.Config,
 ) Name {
 	name := Name{
 		Cardinality: g.Decision().Cardinality(),
@@ -220,12 +250,16 @@ func speciesName(
 			}
 		}
 	}
+	if cfg.WithBytesOffset {
+		offsetsToBytes(&name)
+	}
 	return name
 }
 
 func infraspeciesName(
 	ts []token.TokenSN,
 	text []rune,
+	cfg config.Config,
 ) Name {
 	g := ts[0]
 	sp := ts[g.Indices().Species]
@@ -260,6 +294,9 @@ func infraspeciesName(
 				name.OddsDetails[nlp.Name.String()][k] = v
 			}
 		}
+	}
+	if cfg.WithBytesOffset {
+		offsetsToBytes(&name)
 	}
 	return name
 }

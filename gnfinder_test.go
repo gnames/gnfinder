@@ -528,6 +528,34 @@ func genFinder(opts ...config.Option) gnfinder.GNfinder {
 	return gnfinder.New(cfg, dictionary, weights)
 }
 
+func TestBytesOffset(t *testing.T) {
+	gnf := genFinder()
+	tests := []struct {
+		msg, input string
+		withBytes  bool
+		start, end int
+	}{
+		{"ascii runes", "Hello Pardosa moesta", false, 6, 20},
+		{"ascii bytes", "Hello Pardosa moesta", true, 6, 20},
+		{"utf8 runes", "Это Pardosa moesta", false, 4, 18},
+		{"utf8 bytes", "Это Pardosa moesta", true, 7, 21},
+		{"utf8 in name runes", "Это Pardюsa moesta", false, 4, 18},
+		{"utf8 in name bytes", "Это Pardюsa moesta", true, 7, 22},
+		{"utf8 in name, tail bytes", "Это Pardюsa moesta думаю", true, 7, 22},
+	}
+
+	for _, v := range tests {
+		t.Run(v.msg, func(t *testing.T) {
+			gnf = gnf.ChangeConfig(config.OptWithBytesOffset(v.withBytes))
+			o := gnf.Find("", v.input)
+			assert.True(t, len(o.Names) > 0)
+			name := o.Names[0]
+			assert.Equal(t, name.OffsetStart, v.start)
+			assert.Equal(t, name.OffsetEnd, v.end)
+		})
+	}
+}
+
 func Example() {
 	txt := `Blue Adussel (Mytilus edulis) grows to about two
 inches the first year,Pardosa moesta Banks, 1892`

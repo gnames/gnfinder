@@ -66,6 +66,10 @@ type Config struct {
 	// true - both heuristic and Naive Bayes algorithms run.
 	WithBayes bool
 
+	// WithBytesOffset can be set to true to receive offsets in number of
+	// bytes instead of UTF-8 characters.
+	WithBytesOffset bool
+
 	// WithBayesOddsDetails show in detail how odds are calculated.
 	WithBayesOddsDetails bool
 
@@ -174,6 +178,14 @@ func OptVerifierURL(s string) Option {
 func OptWithBayes(b bool) Option {
 	return func(cfg *Config) {
 		cfg.WithBayes = b
+	}
+}
+
+// OptWithBytesOffset is an option that allows to have offsets in number of
+// bytes of number of UTF-8 characters.
+func OptWithBytesOffset(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithBytesOffset = b
 	}
 }
 

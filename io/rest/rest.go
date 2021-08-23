@@ -75,6 +75,7 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 					config.OptLanguage(getLanguage(params.Language)),
 					config.OptWithLanguageDetection(params.LanguageDetection),
 					config.OptWithBayes(!params.NoBayes),
+					config.OptWithBytesOffset(params.BytesOffset),
 					config.OptPreferredSources(params.Sources),
 					config.OptWithVerification(
 						params.Verification || len(params.Sources) > 0,

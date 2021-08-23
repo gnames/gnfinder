@@ -5,6 +5,9 @@ type FinderParams struct {
 	// Text contains a plain text document encoded in UTF-8.
 	Text string `json:"text"`
 
+	// BytesOffset changes offset value from UTF-8 characters to bytes number.
+	BytesOffset bool `json:"bytesOffset"`
+
 	// NoBayes disables NaiveBayes approach for name detection and leaves only
 	// heuristic approach.
 	NoBayes bool `json:"noBayes"`
