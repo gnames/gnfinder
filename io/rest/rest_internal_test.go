@@ -61,27 +61,31 @@ func TestPost(t *testing.T) {
 	cheilum, 1 5s. per doz.
 	Conostylis americana, 2i. 6d.
 	`
-	params := []struct {
+	tests := []struct {
 		params      api.FinderParams
 		bayes       bool
 		verif       bool
 		bytes       bool
+		format      gnfmt.Format
 		cardinality []int
 	}{
 		{api.FinderParams{Text: text},
-			true, false, false, []int{1, 1, 2, 2}},
+			true, false, false, gnfmt.CompactJSON, []int{1, 1, 2, 2}},
 
 		{api.FinderParams{Text: text, NoBayes: true},
-			false, false, false, []int{1, 1, 1, 2}},
+			false, false, false, gnfmt.CompactJSON, []int{1, 1, 1, 2}},
 
 		{api.FinderParams{Text: text, Verification: true},
-			true, true, false, []int{1, 1, 2, 2}},
+			true, true, false, gnfmt.CompactJSON, []int{1, 1, 2, 2}},
 
 		{api.FinderParams{Text: text, BytesOffset: true},
-			true, false, true, []int{1, 1, 2, 2}},
+			true, false, true, gnfmt.CompactJSON, []int{1, 1, 2, 2}},
+
+		{api.FinderParams{Text: text, Format: "tsv"},
+			true, false, true, gnfmt.TSV, []int{1, 1, 2, 2}},
 	}
 
-	for i, v := range params {
+	for i, v := range tests {
 		msg := fmt.Sprintf("params %d", i)
 		if v.verif && !verifier.HasRemote() {
 			log.Print("WARNING: no internet connection, skipping some tests")
@@ -91,18 +95,22 @@ func TestPost(t *testing.T) {
 			reqBody, err := gnfmt.GNjson{}.Encode(v.params)
 			assert.Nil(t, err)
 			c, rec := initPOST(t, reqBody)
-			_ = rec
 			assert.Nil(t, find(gnf)(c))
-			var out output.Output
-			err = gnfmt.GNjson{}.Decode(rec.Body.Bytes(), &out)
-			assert.Nil(t, err)
-			cardinalities := make([]int, len(out.Names))
-			for i := range out.Names {
-				cardinalities[i] = out.Names[i].Cardinality
+			if v.format != gnfmt.TSV {
+				var out output.Output
+				err = gnfmt.GNjson{}.Decode(rec.Body.Bytes(), &out)
+				assert.Nil(t, err)
+				cardinalities := make([]int, len(out.Names))
+				for i := range out.Names {
+					cardinalities[i] = out.Names[i].Cardinality
+				}
+				assert.Equal(t, cardinalities, v.cardinality)
+				assert.Equal(t, out.WithVerification, v.verif)
+				assert.Equal(t, out.WithBayes, v.bayes)
+			} else if v.format == gnfmt.TSV {
+				body := rec.Body.String()
+				assert.Contains(t, body, "\tCardinality")
 			}
-			assert.Equal(t, cardinalities, v.cardinality)
-			assert.Equal(t, out.WithVerification, v.verif)
-			assert.Equal(t, out.WithBayes, v.bayes)
 		})
 	}
 }

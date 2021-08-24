@@ -4,8 +4,9 @@
 
 ## [v0.15.0]
 
+Add [#99]: add TSV format and make ouput format an option for REST API.
 Add:       update modules
-Add:       update go to 1.17
+Add:       update Go to 1.17
 Add [#98]: an option to return names positions in bytes from the text start
            instead of UTF-8 characters.
 

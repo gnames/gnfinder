@@ -5,6 +5,9 @@ type FinderParams struct {
 	// Text contains a plain text document encoded in UTF-8.
 	Text string `json:"text"`
 
+	// Format sets the format of the output (csv, json, .
+	Format string `json:"format"`
+
 	// BytesOffset changes offset value from UTF-8 characters to bytes number.
 	BytesOffset bool `json:"bytesOffset"`
 

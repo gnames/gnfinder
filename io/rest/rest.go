@@ -66,14 +66,20 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 			var err error
 			var out output.Output
 			var params api.FinderParams
+			var format gnfmt.Format
 
 			err = c.Bind(&params)
 
 			if err == nil {
+				format, _ = gnfmt.NewFormat(params.Format)
+				if format == gnfmt.FormatNone {
+					format = gnfmt.CompactJSON
+				}
 				opts := []config.Option{
 					config.OptWithBayesOddsDetails(params.OddsDetails),
 					config.OptLanguage(getLanguage(params.Language)),
 					config.OptWithLanguageDetection(params.LanguageDetection),
+					config.OptFormat(format),
 					config.OptWithBayes(!params.NoBayes),
 					config.OptWithBytesOffset(params.BytesOffset),
 					config.OptPreferredSources(params.Sources),
@@ -93,7 +99,11 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 			}
 
 			if err == nil {
-				err = c.JSON(http.StatusOK, out)
+				if format == gnfmt.CompactJSON || format == gnfmt.PrettyJSON {
+					err = c.JSON(http.StatusOK, out)
+				} else {
+					err = c.String(http.StatusOK, out.Format(format))
+				}
 			}
 
 			chErr <- err

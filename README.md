@@ -37,8 +37,8 @@ Finds scientific names using dictionary and NLP approaches.
 * Self-contained, no external dependencies, only binary `gnfinder` or
   `gnfinder.exe` (~15Mb) is needed. However the internet connection is
   required for name-verification.
-* Takes UTF8-encoded text and returns back CSV or JSON-formatted output that
-  contains detected scientific names.
+* Takes UTF8-encoded text and returns back CSV, TSV or JSON-formatted output
+  that contains detected scientific names.
 * Extracts text from PDF files, MS Word, MS Excel, HTML, XML, RTF, JPG,
   TIFF, GIF etc. files for names-detection.
 * Downloads web-page from a given URL for names-detection.
@@ -178,6 +178,12 @@ Getting names from a UTF8-encoded file in CSV format
 # -U flag is optional, but it removes unnecessary remote call to Tika.
 
 gnfinder file_with_names.txt -U
+```
+
+Getting names from a UTF8-encoded file in tab-separated values (TSV) format
+
+```bash
+gnfinder file_with_names.txt -U -f tsv
 ```
 
 Getting names from a file that is not a plain UTF8-encoded text

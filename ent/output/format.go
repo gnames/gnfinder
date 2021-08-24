@@ -10,7 +10,9 @@ import (
 func (o *Output) Format(f gnfmt.Format) string {
 	switch f {
 	case gnfmt.CSV:
-		return o.csvOutput()
+		return o.csvOutput(',')
+	case gnfmt.TSV:
+		return o.csvOutput('\t')
 	case gnfmt.CompactJSON:
 		return o.jsonOutput(false)
 	case gnfmt.PrettyJSON:
@@ -20,27 +22,30 @@ func (o *Output) Format(f gnfmt.Format) string {
 }
 
 // CSVHeader returns the header string for CSV output format.
-func CSVHeader(withVerification bool) string {
-	verif := ",VerifMatchType,VerifEditDistance,VerifMatchedName,VerifMatchedCanonical,VerifTaxonId,VerifDataSourceId,VerifDataSourceTitle,VerifError"
-	res := "Index,Verbatim,Name,Start,End,OddsLog10,Cardinality,AnnotNomenType,WordsBefore,WordsAfter"
+func CSVHeader(withVerification bool, sep rune) string {
+	res := []string{"Index", "Verbatim", "Name", "Start", "End",
+		"OddsLog10", "Cardinality", "AnnotNomenType", "WordsBefore", "WordsAfter"}
 	if withVerification {
-		res = res + verif
+		verif := []string{"VerifMatchType", "VerifEditDistance",
+			"VerifMatchedName", "VerifMatchedCanonical", "VerifTaxonId",
+			"VerifDataSourceId", "VerifDataSourceTitle", "VerifError"}
+		res = append(res, verif...)
 	}
-	return res
+	return gnfmt.ToCSV(res, sep)
 }
 
-func (o *Output) csvOutput() string {
+func (o *Output) csvOutput(sep rune) string {
 	res := make([]string, len(o.Names)+1)
-	res[0] = CSVHeader(o.Meta.WithVerification)
+	res[0] = CSVHeader(o.WithVerification, sep)
 	for i := range o.Names {
-		pref := csvRow(o.Names[i], i)
+		pref := csvRow(o.Names[i], i, sep)
 		res[i+1] = pref
 	}
 
 	return strings.Join(res, "\n")
 }
 
-func csvRow(name Name, i int) string {
+func csvRow(name Name, i int, sep rune) string {
 	var odds string
 	if name.OddsLog10 > 0 {
 		odds = strconv.FormatFloat(name.OddsLog10, 'f', 2, 64)
@@ -71,7 +76,7 @@ func csvRow(name Name, i int) string {
 		s = append(s, verif...)
 	}
 
-	return gnfmt.ToCSV(s)
+	return gnfmt.ToCSV(s, sep)
 }
 
 func (o *Output) jsonOutput(pretty bool) string {
