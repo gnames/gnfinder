@@ -63,7 +63,7 @@ func csvRow(name Name, i int, sep rune) string {
 	if name.Verification != nil {
 		v := name.Verification
 		verif := []string{
-			v.MatchType.String(), "", "", "", "", "", "", "", v.Error,
+			v.MatchType.String(), "", "", "", "", "", "", v.Error,
 		}
 		if v.BestResult != nil {
 			br := v.BestResult
