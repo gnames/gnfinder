@@ -10,6 +10,8 @@ Add:       update Go to 1.17
 Add [#98]: an option to return names positions in bytes from the text start
            instead of UTF-8 characters.
 
+Fix [#100]: fix csv/tsv fields number for verification
+
 ## [v0.14.2]
 
 - Add [#96]: Zenodo DOI for citing GNfinder.
