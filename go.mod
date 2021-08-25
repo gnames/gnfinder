@@ -25,7 +25,7 @@ require (
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
-	github.com/fsnotify/fsnotify v1.5.0 // indirect
+	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/gnames/gnuuid v0.1.1 // indirect
 	github.com/google/go-tika v0.1.21 // indirect
 	github.com/google/uuid v1.3.0 // indirect
