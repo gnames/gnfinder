@@ -12,10 +12,11 @@ Finds scientific names using dictionary and NLP approaches.
 * [Citing](#citing)
 * [Features](#features)
 * [Install as a command line app](#install-as-a-command-line-app)
-  * [Linux or OS X](#linux-or-os-x)
-  * [Windows](#windows)
-  * [Go](#go)
   * [Install with Homebrew](#install-with-homebrew)
+  * [Install by hand](#install-by-hand)
+    * [Linux or OS X](#linux-or-os-x)
+    * [Windows](#windows)
+    * [Go](#go)
 * [Configuration](#configuration)
 * [Usage](#usage)
   * [Usage as a command line app](#usage-as-a-command-line-app)
@@ -58,10 +59,27 @@ Finds scientific names using dictionary and NLP approaches.
 
 ## Install as a command line app
 
-Download the binary executable for your operating system from the
-[latest release][releases].
+### Install with Homebrew
 
-### Linux or OS X
+[Homebrew] is a packaging system originally made for Mac OS X. You can use it
+now for Mac, Linux, or Windows X WSL (Windows susbsystem for Linux).
+
+1. Install Homebrew according to their [instructions][Homebrew].
+
+2. Install `GNfinder` with:
+
+    ```bash
+    brew tap gnames/gn
+    brew install gnfinder
+    ```
+
+### Install by hand
+
+`GNfinder` consists of just one executable file, so it is pretty easy to
+install it by hand. To do that download the binary executable for your
+operating system from the [latest release][releases].
+
+#### Linux or OS X
 
 Move ``gnfinder`` executable somewhere in your PATH
 (for example ``/usr/local/bin``)
@@ -70,7 +88,7 @@ Move ``gnfinder`` executable somewhere in your PATH
 sudo mv path_to/gnfinder /usr/local/bin
 ```
 
-### Windows
+#### Windows
 
 One possible way would be to create a default folder for executables and place
 ``gnfinder`` there.
@@ -85,7 +103,7 @@ copy path_to\gnfinder.exe C:\bin
 
 [Add ``C:\bin`` directory to your ``PATH``][winpath] environment variable.
 
-### Go
+#### Go
 
 Install Go v1.17 or higher.
 
@@ -95,20 +113,6 @@ cd gnfinder
 make tools
 make install
 ```
-
-### Install with Homebrew
-
-[Homebrew] is a packaging system originally made for Mac OS X. You can use it
-now for Mac, Linux, or Windows X WSL (Windows susbsystem for Linux).
-
-1. Install Homebrew according to their [instructions][Homebrew].
-
-2. Install `GNfinder` with:
-
-    ```bash
-    brew tap gnames/gn
-    brew install gnfinder
-    ```
 
 ## Configuration
 
