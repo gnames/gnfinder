@@ -539,6 +539,8 @@ func TestBytesOffset(t *testing.T) {
 		{"ascii bytes", "Hello Pardosa moesta", true, 6, 20},
 		{"utf8 runes", "Это Pardosa moesta", false, 4, 18},
 		{"utf8 bytes", "Это Pardosa moesta", true, 7, 21},
+    // BOM character at the start of a string is ignored
+		{"utf8 bytes", "\uFEFFЭто Pardosa moesta", true, 7, 21},
 		{"utf8 in name runes", "Это Pardюsa moesta", false, 4, 18},
 		{"utf8 in name bytes", "Это Pardюsa moesta", true, 7, 22},
 		{"utf8 in name, tail bytes", "Это Pardюsa moesta думаю", true, 7, 22},

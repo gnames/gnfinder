@@ -7,7 +7,7 @@ require (
 	github.com/aclements/perflock v0.0.0-20180319185109-8402f33a418d
 	github.com/gnames/bayes v0.1.3
 	github.com/gnames/gndoc v0.3.0
-	github.com/gnames/gner v0.1.2
+	github.com/gnames/gner v0.1.4
 	github.com/gnames/gnfmt v0.2.0
 	github.com/gnames/gnlib v0.2.2
 	github.com/gnames/gnsys v0.2.0

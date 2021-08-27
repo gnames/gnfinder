@@ -49,9 +49,13 @@ func New(
 }
 
 // Find takes a text as a slice of bytes, detects names and returns the found
-// names.
+// names. Name of the file is used for metainformation, not for opening it.
 func (gnf gnfinder) Find(file, txt string) output.Output {
 	start := time.Now()
+	// Remove BOM if it is still around
+	if txt[0:3] == "\xef\xbb\xbf" {
+		txt = txt[3:]
+	}
 	text := []rune(string(txt))
 	tokens := token.Tokenize(text)
 

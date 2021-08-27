@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.15.1]
+
+Fix [#101]: BOM interferes with offsets when -U flag is used.
+
 ## [v0.15.0]
 
 Add [#99]: add TSV format and make ouput format an option for REST API.
@@ -209,6 +213,7 @@ Fix [#100]: fix csv/tsv fields number for verification
 
 This document follows [changelog guidelines]
 
+[v0.15.1]: https://github.com/gnames/gnfinder/compare/v0.15.0...v0.15.1
 [v0.15.0]: https://github.com/gnames/gnfinder/compare/v0.14.2...v0.15.0
 [v0.14.2]: https://github.com/gnames/gnfinder/compare/v0.14.1...v0.14.2
 [v0.14.1]: https://github.com/gnames/gnfinder/compare/v0.14.0...v0.14.1
