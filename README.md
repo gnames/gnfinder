@@ -22,6 +22,7 @@ Finds scientific names using dictionary and NLP approaches.
   * [Usage as a command line app](#usage-as-a-command-line-app)
   * [Usage as a library](#usage-as-a-library)
   * [Usage as a docker container](#usage-as-a-docker-container)
+* [Projects based on GNfinder](#projects-based-on-gnfinder)
 * [Development](#development)
   * [Modify OpenAPI documentation](#modify-openapi-documentation)
 * [Testing](#testing)
@@ -305,6 +306,17 @@ docker pull gnames/gnfinder
 docker run -d -p 8888:8778 --name gnfinder gnames/gnfinder
 ```
 
+## Projects based on GNfinder
+
+[gnfinder-plus] allows to work with MS Docs and PDF files without remote
+services (requires local install of popler package).
+
+[bhlindex] creates an index of scientific names for Biodiversity Heritage
+Library (BHL).
+
+[bhlnames] adds synonymy and currently accepted names to searches
+in BHL, connects publications to pages in BHL.
+
 ## Development
 
 To install the latest GNfinder
@@ -360,4 +372,6 @@ make test
 [travis]: https://travis-ci.org/gnames/gnfinder
 [tutorial]: https://globalnames.org/docs/tut-gnfinder/
 [winpath]: https://www.computerhope.com/issues/ch000549.htm
-
+[gnfinder-plus]: https://github.com/biodiv-platform/gnfinder-plus
+[bhlindex]: https://github.com/gnames/bhlindex
+[bhlnames]: https://github.com/gnames/bhlnames
