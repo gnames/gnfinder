@@ -309,7 +309,7 @@ docker run -d -p 8888:8778 --name gnfinder gnames/gnfinder
 ## Projects based on GNfinder
 
 [gnfinder-plus] allows to work with MS Docs and PDF files without remote
-services (requires local install of popler package).
+services (requires local install of `poppler` package).
 
 [bhlindex] creates an index of scientific names for Biodiversity Heritage
 Library (BHL).
