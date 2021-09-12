@@ -13,7 +13,7 @@ require (
 	github.com/gnames/gnsys v0.2.0
 	github.com/gnames/gnverifier v0.3.3
 	github.com/json-iterator/go v1.1.11
-	github.com/labstack/echo v3.3.10+incompatible
+	github.com/labstack/echo/v4 v4.5.0
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.4.1
 	github.com/rendon/testcli v1.0.0
 	github.com/spf13/cobra v1.2.1
@@ -24,9 +24,9 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/gnames/gnuuid v0.1.1 // indirect
+	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/google/go-tika v0.1.21 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
@@ -54,6 +54,7 @@ require (
 	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d // indirect
 	golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf // indirect
 	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 	golang.org/x/tools v0.1.5 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/ini.v1 v1.62.0 // indirect

@@ -16,7 +16,7 @@ import (
 	"github.com/gnames/gnfinder/ent/verifier"
 	"github.com/gnames/gnfinder/io/dict"
 	"github.com/gnames/gnfmt"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	"github.com/tj/assert"
 )
 

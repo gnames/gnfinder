@@ -15,8 +15,8 @@ import (
 	"github.com/gnames/gnfinder/ent/output"
 	"github.com/gnames/gnfinder/ent/verifier"
 	"github.com/gnames/gnfmt"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 const withLogs = true
