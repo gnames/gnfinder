@@ -67,22 +67,26 @@ func TestPost(t *testing.T) {
 		verif       bool
 		bytes       bool
 		format      gnfmt.Format
+		lang        string
 		cardinality []int
 	}{
 		{api.FinderParams{Text: text},
-			true, false, false, gnfmt.CompactJSON, []int{1, 1, 2, 2}},
+			true, false, false, gnfmt.CompactJSON, "eng", []int{1, 1, 2, 2}},
 
 		{api.FinderParams{Text: text, NoBayes: true},
-			false, false, false, gnfmt.CompactJSON, []int{1, 1, 1, 2}},
+			false, false, false, gnfmt.CompactJSON, "eng", []int{1, 1, 1, 2}},
 
 		{api.FinderParams{Text: text, Verification: true},
-			true, true, false, gnfmt.CompactJSON, []int{1, 1, 2, 2}},
+			true, true, false, gnfmt.CompactJSON, "eng", []int{1, 1, 2, 2}},
 
 		{api.FinderParams{Text: text, BytesOffset: true},
-			true, false, true, gnfmt.CompactJSON, []int{1, 1, 2, 2}},
+			true, false, true, gnfmt.CompactJSON, "eng", []int{1, 1, 2, 2}},
 
 		{api.FinderParams{Text: text, Format: "tsv"},
-			true, false, true, gnfmt.TSV, []int{1, 1, 2, 2}},
+			true, false, true, gnfmt.TSV, "eng", []int{1, 1, 2, 2}},
+
+		{api.FinderParams{Text: text, BytesOffset: true, Language: "deu"},
+			true, false, true, gnfmt.CompactJSON, "deu", []int{1, 1, 1, 2}},
 	}
 
 	for i, v := range tests {
@@ -95,7 +99,8 @@ func TestPost(t *testing.T) {
 			reqBody, err := gnfmt.GNjson{}.Encode(v.params)
 			assert.Nil(t, err)
 			c, rec := initPOST(t, reqBody)
-			assert.Nil(t, find(gnf)(c))
+			err = find(gnf)(c)
+			assert.Nil(t, err)
 			if v.format != gnfmt.TSV {
 				var out output.Output
 				err = gnfmt.GNjson{}.Decode(rec.Body.Bytes(), &out)
@@ -107,6 +112,7 @@ func TestPost(t *testing.T) {
 				assert.Equal(t, cardinalities, v.cardinality)
 				assert.Equal(t, out.WithVerification, v.verif)
 				assert.Equal(t, out.WithBayes, v.bayes)
+				assert.Equal(t, out.Language, v.lang)
 			} else if v.format == gnfmt.TSV {
 				body := rec.Body.String()
 				assert.Contains(t, body, "\tCardinality")

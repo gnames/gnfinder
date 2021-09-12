@@ -77,8 +77,8 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 				}
 				opts := []config.Option{
 					config.OptWithBayesOddsDetails(params.OddsDetails),
-					config.OptLanguage(getLanguage(params.Language)),
 					config.OptWithLanguageDetection(params.LanguageDetection),
+					config.OptLanguage(getLanguage(params.Language)),
 					config.OptFormat(format),
 					config.OptWithBayes(!params.NoBayes),
 					config.OptWithBytesOffset(params.BytesOffset),
