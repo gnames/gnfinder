@@ -279,82 +279,82 @@ func initConfig() {
 // getOpts imports data from the configuration file. Some of the settings can
 // be overriden by command line flags.
 func getOpts() {
-	cfg := &cfgData{}
-	err := viper.Unmarshal(cfg)
+	cfgCli := &cfgData{}
+	err := viper.Unmarshal(cfgCli)
 	if err != nil {
 		log.Fatalf("Cannot deserialize config data: %s.", err)
 	}
 
-	if cfg.BayesOddsThreshold > 0 {
+	if cfgCli.BayesOddsThreshold > 0 {
 		opts = append(opts,
-			config.OptBayesOddsThreshold(cfg.BayesOddsThreshold))
+			config.OptBayesOddsThreshold(cfgCli.BayesOddsThreshold))
 	}
 
-	if cfg.Format != "" {
-		cfgFormat, err := gnfmt.NewFormat(cfg.Format)
+	if cfgCli.Format != "" {
+		cfgFormat, err := gnfmt.NewFormat(cfgCli.Format)
 		if err != nil {
 			cfgFormat = gnfmt.CSV
 		}
 		opts = append(opts, config.OptFormat(cfgFormat))
 	}
 
-	if cfg.IncludeInputText {
-		opts = append(opts, config.OptIncludeInputText(cfg.IncludeInputText))
+	if cfgCli.IncludeInputText {
+		opts = append(opts, config.OptIncludeInputText(cfgCli.IncludeInputText))
 	}
 
-	if cfg.InputTextOnly {
-		opts = append(opts, config.OptInputTextOnly(cfg.InputTextOnly))
+	if cfgCli.InputTextOnly {
+		opts = append(opts, config.OptInputTextOnly(cfgCli.InputTextOnly))
 	}
 
-	if cfg.Language != "" {
-		l, err := lang.NewLanguage(cfg.Language)
+	if cfgCli.Language != "" {
+		l, err := lang.New(cfgCli.Language)
 		if err != nil {
 			log.Print(err)
 		}
 		opts = append(opts, config.OptLanguage(l))
 	}
 
-	if len(cfg.PreferredSources) > 0 {
-		opts = append(opts, config.OptPreferredSources(cfg.PreferredSources))
+	if len(cfgCli.PreferredSources) > 0 {
+		opts = append(opts, config.OptPreferredSources(cfgCli.PreferredSources))
 	}
 
-	if cfg.TikaURL != "" {
-		opts = append(opts, config.OptTikaURL(cfg.TikaURL))
+	if cfgCli.TikaURL != "" {
+		opts = append(opts, config.OptTikaURL(cfgCli.TikaURL))
 	}
 
-	if cfg.TokensAround > 0 {
-		opts = append(opts, config.OptTokensAround(cfg.TokensAround))
+	if cfgCli.TokensAround > 0 {
+		opts = append(opts, config.OptTokensAround(cfgCli.TokensAround))
 	}
 
-	if cfg.VerifierURL != "" {
-		opts = append(opts, config.OptVerifierURL(cfg.VerifierURL))
+	if cfgCli.VerifierURL != "" {
+		opts = append(opts, config.OptVerifierURL(cfgCli.VerifierURL))
 	}
 
-	if cfg.WithBayesOddsDetails {
+	if cfgCli.WithBayesOddsDetails {
 		opts = append(opts, config.OptWithBayesOddsDetails(true))
 	}
 
-	if cfg.WithLanguageDetection {
+	if cfgCli.WithLanguageDetection {
 		opts = append(opts, config.OptWithLanguageDetection(true))
 	}
 
-	if cfg.WithOddsAdjustment {
+	if cfgCli.WithOddsAdjustment {
 		opts = append(opts, config.OptWithOddsAdjustment(true))
 	}
 
-	if cfg.WithPlainInput {
+	if cfgCli.WithPlainInput {
 		opts = append(opts, config.OptWithPlainInput(true))
 	}
 
-	if cfg.WithUniqueNames {
+	if cfgCli.WithUniqueNames {
 		opts = append(opts, config.OptWithUniqueNames(true))
 	}
 
-	if cfg.WithVerification {
+	if cfgCli.WithVerification {
 		opts = append(opts, config.OptWithVerification(true))
 	}
 
-	if cfg.WithoutBayes {
+	if cfgCli.WithoutBayes {
 		opts = append(opts, config.OptWithBayes(false))
 	}
 

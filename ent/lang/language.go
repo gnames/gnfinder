@@ -12,7 +12,7 @@ type Language int
 // Set of languages. Last one is an indicator of the 'edge', as well as
 // a default value for GnFinder.Language.
 const (
-	DefaultLanguage Language = iota
+	Default Language = iota
 	English
 	German
 	NotSet
@@ -23,9 +23,10 @@ func (l Language) String() string {
 	return languages[l]
 }
 
-// NewLanguage takes a string and returns matching language, or error, if
-// a matching language cannot be found.
-func NewLanguage(lang string) (Language, error) {
+// New takes a string and returns a matching language. If language could not
+// be found by the string, the function returns lang.DefaultLanguage and an
+// error.
+func New(lang string) (Language, error) {
 	for _, l := range SupportedLanguages() {
 		if l.String() == lang {
 			return l, nil
@@ -70,6 +71,6 @@ func DetectLanguage(text []rune) (Language, string) {
 	case "deu":
 		return German, code
 	default:
-		return DefaultLanguage, code
+		return Default, code
 	}
 }

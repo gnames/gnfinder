@@ -9,7 +9,7 @@ import (
 
 func TestString(t *testing.T) {
 	assert.Equal(t, lang.English.String(), "eng")
-	assert.Equal(t, lang.DefaultLanguage.String(), "eng")
+	assert.Equal(t, lang.Default.String(), "eng")
 }
 
 func TestLanguageSet(t *testing.T) {
@@ -42,6 +42,6 @@ func TestDetectLang(t *testing.T) {
 	// unknown language detection
 	text = "Однажды в студеную, зимнюю пору я из лесу вышел"
 	l, code = lang.DetectLanguage([]rune(text))
-	assert.Equal(t, l, lang.DefaultLanguage)
+	assert.Equal(t, l, lang.Default)
 	assert.Equal(t, code, "rus")
 }

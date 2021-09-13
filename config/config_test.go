@@ -16,11 +16,11 @@ func TestConfig(t *testing.T) {
 
 	t.Run("returns new Config object", func(t *testing.T) {
 		cfg := config.New()
-		assert.Equal(t, cfg.Language, lang.DefaultLanguage)
+		assert.Equal(t, cfg.Language, lang.Default)
 		assert.Equal(t, cfg.LanguageDetected, "")
 		assert.Equal(t, cfg.TokensAround, 0)
 		assert.True(t, cfg.WithBayes)
-    assert.False(t, cfg.WithBytesOffset)
+		assert.False(t, cfg.WithBytesOffset)
 	})
 
 	t.Run("takes language", func(t *testing.T) {
@@ -66,5 +66,35 @@ func TestConfig(t *testing.T) {
 		assert.Equal(t, cfg.Language, lang.German)
 		assert.False(t, cfg.WithLanguageDetection)
 		assert.True(t, cfg.WithBayes)
+	})
+
+	t.Run("sets language options", func(t *testing.T) {
+		tests := []struct {
+			msg, lang string
+			detect    bool
+			langFirst bool
+			langCfg   lang.Language
+			detCfg    bool
+		}{
+			{"default", "", false, true, lang.Default, false},
+			{"eng", "eng", false, true, lang.English, false},
+			{"detect first", "", true, false, lang.Default, true},
+			{"detect second", "", true, true, lang.Default, true},
+			{"detect first && lang", "deu", true, false, lang.German, false},
+			{"detect second && lang", "deu", true, true, lang.German, false},
+		}
+
+		for _, v := range tests {
+			l, _ := lang.New(v.lang)
+			langOpt := config.OptLanguage(l)
+			detectOpt := config.OptWithLanguageDetection(v.detect)
+			opts := []config.Option{detectOpt, langOpt}
+			if v.langFirst {
+				opts = []config.Option{langOpt, detectOpt}
+			}
+			cfg := config.New(opts...)
+			assert.Equal(t, cfg.Language, v.langCfg, v.msg)
+			assert.Equal(t, cfg.WithLanguageDetection, v.detCfg, v.msg)
+		}
 	})
 }

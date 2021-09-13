@@ -79,9 +79,8 @@ func langFlag(cmd *cobra.Command) {
 		return
 	}
 
-	l, err := lang.NewLanguage(s)
+	l, err := lang.New(s)
 	if err != nil {
-		l = lang.DefaultLanguage
 		log.Print(err)
 		log.Printf("Supported language codes: %s.", langsToString())
 		log.Printf("To detect language automatically use '-l detect'.")

@@ -130,8 +130,10 @@ func OptInputTextOnly(b bool) Option {
 // OptLanguage sets a language of a text.
 func OptLanguage(l lang.Language) Option {
 	return func(cfg *Config) {
-		cfg.Language = l
-		cfg.WithLanguageDetection = false
+		if l != lang.Default {
+			cfg.Language = l
+			cfg.WithLanguageDetection = false
+		}
 	}
 }
 
@@ -200,8 +202,9 @@ func OptWithBayesOddsDetails(b bool) Option {
 // language.
 func OptWithLanguageDetection(b bool) Option {
 	return func(cfg *Config) {
-		cfg.Language = lang.DefaultLanguage
-		cfg.WithLanguageDetection = b
+		if cfg.Language == lang.Default {
+			cfg.WithLanguageDetection = b
+		}
 	}
 }
 
@@ -242,6 +245,7 @@ func OptWithVerification(b bool) Option {
 func New(opts ...Option) Config {
 	cfg := Config{
 		Format:             gnfmt.CSV,
+		Language:           lang.Default,
 		WithBayes:          true,
 		BayesOddsThreshold: 80.0,
 		TokensAround:       0,
