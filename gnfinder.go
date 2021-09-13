@@ -59,7 +59,7 @@ func (gnf gnfinder) Find(file, txt string) output.Output {
 	text := []rune(string(txt))
 	tokens := token.Tokenize(text)
 
-	if gnf.WithLanguageDetection {
+	if gnf.Language == lang.None {
 		gnf.Language, gnf.LanguageDetected = lang.DetectLanguage(text)
 	}
 

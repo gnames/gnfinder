@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## [v0.15.4]
+
+Add [#104]: merge petectLanguage to language. It allows to simplify logic for
+            language settings. It also changes API signature for parameters.
+            Now parameter "language" recognizes
+
+            * "": empty string that goes to default "eng" setting for language
+            * "detect": finds language by an algorithm
+            * "eng": sets language to English
+            * "deu": sets language to German
+
+            All other settings default to "eng" (English)
+
 ## [v0.15.3]
 
 Fix [#103]: remove conflict between language and detectlanguage parameters.
@@ -222,6 +235,7 @@ Fix [#100]: fix csv/tsv fields number for verification
 
 This document follows [changelog guidelines]
 
+[v0.15.4]: https://github.com/gnames/gnfinder/compare/v0.15.3...v0.15.4
 [v0.15.3]: https://github.com/gnames/gnfinder/compare/v0.15.2...v0.15.3
 [v0.15.2]: https://github.com/gnames/gnfinder/compare/v0.15.1...v0.15.2
 [v0.15.1]: https://github.com/gnames/gnfinder/compare/v0.15.0...v0.15.1

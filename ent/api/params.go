@@ -19,11 +19,16 @@ type FinderParams struct {
 	OddsDetails bool `json:"oddsDetails"`
 
 	// Language sets a language in the document. It is important for
-	// Bayes-based detection.
+	// Bayes-based detection. Currently supported languages are
+	// "eng": English
+	// "deu": German. All other strings are not recognized (defaulting to "eng").
+	// An exception to this rule is a string
+	// "detect": detect Language
+	// If it is set, a language-detection algorithm will try to figure out the
+	// language of a text. If detected language is not supported the, it will
+	// shown in the output, but Bayes language setting will be a default one
+	// ("eng").
 	Language string `json:"language"`
-
-	// LanguageDetection allows to automatically detect the language of a text.
-	LanguageDetection bool `json:"detectLanguage"`
 
 	// WordsAround sets how many words before of after detected name will be
 	// returned back, default is 0, maximum of words is 5.

@@ -16,7 +16,7 @@ func TestConfig(t *testing.T) {
 
 	t.Run("returns new Config object", func(t *testing.T) {
 		cfg := config.New()
-		assert.Equal(t, cfg.Language, lang.Default)
+		assert.Equal(t, cfg.Language, lang.English)
 		assert.Equal(t, cfg.LanguageDetected, "")
 		assert.Equal(t, cfg.TokensAround, 0)
 		assert.True(t, cfg.WithBayes)
@@ -26,7 +26,6 @@ func TestConfig(t *testing.T) {
 	t.Run("takes language", func(t *testing.T) {
 		cfg := config.New(config.OptLanguage(lang.English))
 		assert.Equal(t, cfg.Language, lang.English)
-		assert.False(t, cfg.WithLanguageDetection)
 		assert.Equal(t, cfg.LanguageDetected, "")
 	})
 
@@ -64,37 +63,29 @@ func TestConfig(t *testing.T) {
 		}
 		cfg := config.New(opts...)
 		assert.Equal(t, cfg.Language, lang.German)
-		assert.False(t, cfg.WithLanguageDetection)
 		assert.True(t, cfg.WithBayes)
 	})
 
 	t.Run("sets language options", func(t *testing.T) {
 		tests := []struct {
 			msg, lang string
-			detect    bool
-			langFirst bool
 			langCfg   lang.Language
-			detCfg    bool
+			hasErr    bool
 		}{
-			{"default", "", false, true, lang.Default, false},
-			{"eng", "eng", false, true, lang.English, false},
-			{"detect first", "", true, false, lang.Default, true},
-			{"detect second", "", true, true, lang.Default, true},
-			{"detect first && lang", "deu", true, false, lang.German, false},
-			{"detect second && lang", "deu", true, true, lang.German, false},
+			{"default", "", lang.English, false},
+			{"eng", "eng", lang.English, false},
+			{"deu", "deu", lang.German, false},
+			{"unknown", "notlang", lang.English, true},
+			{"detect", "detect", lang.None, false},
 		}
 
 		for _, v := range tests {
-			l, _ := lang.New(v.lang)
+			l, err := lang.New(v.lang)
+			assert.Equal(t, err != nil, v.hasErr, v.msg)
 			langOpt := config.OptLanguage(l)
-			detectOpt := config.OptWithLanguageDetection(v.detect)
-			opts := []config.Option{detectOpt, langOpt}
-			if v.langFirst {
-				opts = []config.Option{langOpt, detectOpt}
-			}
+			opts := []config.Option{langOpt}
 			cfg := config.New(opts...)
 			assert.Equal(t, cfg.Language, v.langCfg, v.msg)
-			assert.Equal(t, cfg.WithLanguageDetection, v.detCfg, v.msg)
 		}
 	})
 }

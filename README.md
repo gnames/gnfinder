@@ -148,7 +148,6 @@ settings in both the configuration file and from the flags.gt
 | TokensAround          | GNF_TOKENS_AROUND           |
 | VerifierURL           | GNF_VERIFIER_URL            |
 | WithBayesOddsDetails  | GNF_WITH_BAYES_ODDS_DETAILS |
-| WithLanguageDetection | GNF_WITH_LANGUAGE_DETECTION |
 | WithOddsAdjustment    | GNF_WITH_ODDS_ADJUSTMENT    |
 | WithPlainInput        | GNF_WITH_PLAIN_INPUT        |
 | WithUniqueNames       | GNF_WITH_UNIQUE_NAMES       |

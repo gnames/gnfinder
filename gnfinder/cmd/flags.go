@@ -69,21 +69,13 @@ func inputOnlyFlag(cmd *cobra.Command) {
 
 func langFlag(cmd *cobra.Command) {
 	s, _ := cmd.Flags().GetString("lang")
-
-	if s == "" {
-		return
-	}
-
-	if s == "detect" {
-		opts = append(opts, config.OptWithLanguageDetection(true))
-		return
-	}
-
+	// can take "detect" as a string
 	l, err := lang.New(s)
 	if err != nil {
 		log.Print(err)
-		log.Printf("Supported language codes: %s.", langsToString())
+		log.Printf("Supported language codes: %s.", langStrings())
 		log.Printf("To detect language automatically use '-l detect'.")
+		log.Printf("Switching to default English language setting.")
 	}
 	opts = append(opts, config.OptLanguage(l))
 }

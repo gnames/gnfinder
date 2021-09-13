@@ -51,22 +51,21 @@ var opts []config.Option
 // cfgData purpose is to achieve automatic import of data from the
 // configuration file, if it exists.
 type cfgData struct {
-	BayesOddsThreshold    float64
-	Format                string
-	IncludeInputText      bool
-	InputTextOnly         bool
-	Language              string
-	PreferredSources      []int
-	TikaURL               string
-	TokensAround          int
-	VerifierURL           string
-	WithBayesOddsDetails  bool
-	WithLanguageDetection bool
-	WithOddsAdjustment    bool
-	WithPlainInput        bool
-	WithUniqueNames       bool
-	WithVerification      bool
-	WithoutBayes          bool
+	BayesOddsThreshold   float64
+	Format               string
+	IncludeInputText     bool
+	InputTextOnly        bool
+	Language             string
+	PreferredSources     []int
+	TikaURL              string
+	TokensAround         int
+	VerifierURL          string
+	WithBayesOddsDetails bool
+	WithOddsAdjustment   bool
+	WithPlainInput       bool
+	WithUniqueNames      bool
+	WithVerification     bool
+	WithoutBayes         bool
 }
 
 // rootCmd represents the base command when called without any subcommands
@@ -256,7 +255,6 @@ func initConfig() {
 	viper.BindEnv("TokensAround", "GNF_TOKENS_AROUND")
 	viper.BindEnv("VerifierURL", "GNF_VERIFIER_URL")
 	viper.BindEnv("WithBayesOddsDetails", "GNF_WITH_BAYES_ODDS_DETAILS")
-	viper.BindEnv("WithLanguageDetection", "GNF_WITH_LANGUAGE_DETECTION")
 	viper.BindEnv("WithOddsAdjustment", "GNF_WITH_ODDS_ADJUSTMENT")
 	viper.BindEnv("WithPlainInput", "GNF_WITH_PLAIN_INPUT")
 	viper.BindEnv("WithUniqueNames", "GNF_WITH_UNIQUE_NAMES")
@@ -334,10 +332,6 @@ func getOpts() {
 		opts = append(opts, config.OptWithBayesOddsDetails(true))
 	}
 
-	if cfgCli.WithLanguageDetection {
-		opts = append(opts, config.OptWithLanguageDetection(true))
-	}
-
 	if cfgCli.WithOddsAdjustment {
 		opts = append(opts, config.OptWithOddsAdjustment(true))
 	}
@@ -381,13 +375,9 @@ func findNames(
 	fmt.Println(res.Format(cfg.Format))
 }
 
-func langsToString() string {
-	langs := lang.SupportedLanguages()
-	res := make([]string, len(langs))
-	for i, v := range langs {
-		res[i] = v.String()
-	}
-	return strings.Join(res, ", ")
+func langStrings() string {
+	langs := lang.LangStrings()
+	return strings.Join(langs, ", ")
 }
 
 func checkStdin() bool {

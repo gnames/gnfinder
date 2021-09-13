@@ -165,7 +165,7 @@ func nameFrequency() bayes.LabelFreq {
 
 func BayesWeights() map[lang.Language]*bayes.NaiveBayes {
 	bw := make(map[lang.Language]*bayes.NaiveBayes)
-	for k := range lang.LanguagesSet() {
+	for k := range lang.LanguagesSet {
 		bw[k] = naiveBayesFromDump(k)
 	}
 	return bw
@@ -181,7 +181,7 @@ func naiveBayesFromDump(l lang.Language) *bayes.NaiveBayes {
 	}
 
 	defer func() {
-		err := f.Close()
+		err = f.Close()
 		if err != nil {
 			log.Fatal(err)
 		}

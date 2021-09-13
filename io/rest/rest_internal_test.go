@@ -47,7 +47,6 @@ func TestGet(t *testing.T) {
 		assert.Equal(t, rec.Code, http.StatusOK)
 		assert.Contains(t, rec.Body.String(), "version")
 	})
-
 }
 
 func TestPost(t *testing.T) {
@@ -62,31 +61,35 @@ func TestPost(t *testing.T) {
 	Conostylis americana, 2i. 6d.
 	`
 	tests := []struct {
-		params      api.FinderParams
-		bayes       bool
-		verif       bool
-		bytes       bool
-		format      gnfmt.Format
-		lang        string
-		cardinality []int
+		params       api.FinderParams
+		bayes        bool
+		verif        bool
+		bytes        bool
+		format       gnfmt.Format
+		lang         string
+		detectedLang string
+		cardinality  []int
 	}{
 		{api.FinderParams{Text: text},
-			true, false, false, gnfmt.CompactJSON, "eng", []int{1, 1, 2, 2}},
+			true, false, false, gnfmt.CompactJSON, "eng", "", []int{1, 1, 2, 2}},
 
 		{api.FinderParams{Text: text, NoBayes: true},
-			false, false, false, gnfmt.CompactJSON, "eng", []int{1, 1, 1, 2}},
+			false, false, false, gnfmt.CompactJSON, "eng", "", []int{1, 1, 1, 2}},
 
 		{api.FinderParams{Text: text, Verification: true},
-			true, true, false, gnfmt.CompactJSON, "eng", []int{1, 1, 2, 2}},
+			true, true, false, gnfmt.CompactJSON, "eng", "", []int{1, 1, 2, 2}},
 
 		{api.FinderParams{Text: text, BytesOffset: true},
-			true, false, true, gnfmt.CompactJSON, "eng", []int{1, 1, 2, 2}},
+			true, false, true, gnfmt.CompactJSON, "eng", "", []int{1, 1, 2, 2}},
 
 		{api.FinderParams{Text: text, Format: "tsv"},
-			true, false, true, gnfmt.TSV, "eng", []int{1, 1, 2, 2}},
+			true, false, true, gnfmt.TSV, "eng", "", []int{1, 1, 2, 2}},
 
 		{api.FinderParams{Text: text, BytesOffset: true, Language: "deu"},
-			true, false, true, gnfmt.CompactJSON, "deu", []int{1, 1, 1, 2}},
+			true, false, true, gnfmt.CompactJSON, "deu", "", []int{1, 1, 1, 2}},
+
+		{api.FinderParams{Text: text, Language: "detect"},
+			true, false, true, gnfmt.CompactJSON, "eng", "eng", []int{1, 1, 2, 2}},
 	}
 
 	for i, v := range tests {

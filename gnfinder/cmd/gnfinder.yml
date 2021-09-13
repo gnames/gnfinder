@@ -29,10 +29,11 @@
 # Language that is prevalent in the text. This setting helps to get
 # a better result for NLP name-finding, because languages differ in their
 # training patterns.
-# Currently only the following languages are supported:
+# Currently the following values are supported:
 #
 # eng - English
 # deu - German
+# detect - try to find the language of the text
 #
 # Language: eng
 
@@ -65,11 +66,6 @@
 # This option is ignores if Format is set to csv.
 #
 # WithBayesOddsDetails: false
-
-# WithLanguageDetection can be set to true, if a user wants to detect
-# the language of a text automatically.
-#
-# WithLanguageDetection: false
 
 # WithOddsAdjustment can be set to true to adjust calculated odds using the
 # ratio of scientific names found in text to the number of capitalized

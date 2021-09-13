@@ -56,7 +56,8 @@ func BenchmarkSmallYesBayesLangDetect(b *testing.B) {
 	args := inputs{
 		opts: []config.Option{
 			config.OptWithBayes(true),
-			config.OptWithLanguageDetection(true),
+			// detect language
+			config.OptLanguage(lang.None),
 		},
 		weights:   weights,
 		traceFile: "small-eng.trace",
@@ -110,7 +111,8 @@ func BenchmarkBigYesBayesLangDetect(b *testing.B) {
 	args := inputs{
 		opts: []config.Option{
 			config.OptWithBayes(true),
-			config.OptWithLanguageDetection(true),
+			// detect language
+			config.OptLanguage(lang.None),
 		},
 		weights:   weights,
 		input:     string(input),

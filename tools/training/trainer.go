@@ -47,8 +47,7 @@ func Train(td TrainingData, d *dict.Dictionary) *bayes.NaiveBayes {
 // LoadTrainingData loads TrainingData from a file.
 func NewTrainingLanguageData(dir string) TrainingLanguageData {
 	tld := make(TrainingLanguageData)
-	for i := 1; i < int(lang.NotSet); i++ {
-		lang := lang.Language(i)
+	for lang := range lang.LanguagesSet {
 		path := filepath.Join(dir, lang.String())
 		td := NewTrainingData(path)
 		tld[lang] = td

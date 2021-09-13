@@ -77,20 +77,15 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 				}
 				opts := []config.Option{
 					config.OptWithBayesOddsDetails(params.OddsDetails),
-					config.OptWithLanguageDetection(params.LanguageDetection),
 					config.OptFormat(format),
 					config.OptWithBayes(!params.NoBayes),
 					config.OptWithBytesOffset(params.BytesOffset),
+					config.OptLanguage(getLanguage(params.Language)),
 					config.OptPreferredSources(params.Sources),
 					config.OptWithVerification(
 						params.Verification || len(params.Sources) > 0,
 					),
 					config.OptTokensAround(params.WordsAround),
-				}
-
-				if params.Language != "" {
-					langOpt := config.OptLanguage(getLanguage(params.Language))
-					opts = append(opts, langOpt)
 				}
 
 				gnf = gnf.ChangeConfig(opts...)

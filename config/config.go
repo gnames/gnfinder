@@ -35,8 +35,8 @@ type Config struct {
 	// training patterns.
 	// Currently only the following languages are supported:
 	//
-	// en - English
-	// de - German
+	// eng - English
+	// deu - German
 	Language lang.Language
 
 	// LanguageDetected is the code of a language that was detected in text.
@@ -72,10 +72,6 @@ type Config struct {
 
 	// WithBayesOddsDetails show in detail how odds are calculated.
 	WithBayesOddsDetails bool
-
-	// WithLanguageDetection can be set to true, if a user wants to detect
-	// the language of a text automatically.
-	WithLanguageDetection bool
 
 	// WithOddsAdjustment can be set to true to adjust calculated odds using the
 	// ratio of scientific names found in text to the number of capitalized
@@ -130,10 +126,7 @@ func OptInputTextOnly(b bool) Option {
 // OptLanguage sets a language of a text.
 func OptLanguage(l lang.Language) Option {
 	return func(cfg *Config) {
-		if l != lang.Default {
-			cfg.Language = l
-			cfg.WithLanguageDetection = false
-		}
+		cfg.Language = l
 	}
 }
 
@@ -198,16 +191,6 @@ func OptWithBayesOddsDetails(b bool) Option {
 	}
 }
 
-// OptWithLanguageDetection when true sets automatic detection of text's
-// language.
-func OptWithLanguageDetection(b bool) Option {
-	return func(cfg *Config) {
-		if cfg.Language == lang.Default {
-			cfg.WithLanguageDetection = b
-		}
-	}
-}
-
 // OptWithOddsAdjustment is an option that triggers recalculation of prior odds
 // using number of found names divided by number of all name candidates.
 func OptWithOddsAdjustment(b bool) Option {
@@ -245,7 +228,7 @@ func OptWithVerification(b bool) Option {
 func New(opts ...Option) Config {
 	cfg := Config{
 		Format:             gnfmt.CSV,
-		Language:           lang.Default,
+		Language:           lang.English,
 		WithBayes:          true,
 		BayesOddsThreshold: 80.0,
 		TokensAround:       0,
