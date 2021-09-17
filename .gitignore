@@ -1,13 +1,13 @@
 scripts/training/training
 gnfinder/gnfinder
 debug.test
+coverage.txt
 t
 t.json
 *.pprof
 *.trace
 *.test
 *.out
-*test
 .idea
 .vscode
 *.tar.gz

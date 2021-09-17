@@ -1,8 +1,7 @@
 VERSION = $(shell git describe --tags)
 VER = $(shell git describe --tags --abbrev=0)
 DATE = $(shell date -u '+%Y-%m-%d_%H:%M:%S%Z')
-FLAG_MODULE = GO111MODULE=on
-FLAGS_SHARED = $(FLAG_MODULE) CGO_ENABLED=0 GOARCH=amd64
+FLAGS_SHARED = CGO_ENABLED=0 GOARCH=amd64
 FLAGS_LD=-ldflags "-w -s -X github.com/gnames/gnfinder.Build=${DATE} \
                   -X github.com/gnames/gnfinder.Version=${VERSION}"
 NO_C = CGO_ENABLED=0
@@ -15,12 +14,11 @@ GOGET = $(GOCMD) get
 all: install
 
 test: deps install
-	$(FLAG_MODULE) go test ./...
+	go test -shuffle=on -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 tools: deps
 	@echo Installing tools from tools.go
 	@cat gnfinder/tools.go | grep _ | awk -F'"' '{print $$2}' | xargs -tI % go install %
-
 
 deps:
 	@echo Download go.mod dependencies

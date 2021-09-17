@@ -26,22 +26,22 @@ func TestMeta(t *testing.T) {
 		      decided to get a cup of Camelia sinensis on Sunday.`
 	gnf := genFinder()
 	res := gnf.Find("", txt)
-	assert.Equal(t, res.Meta.Date.Year(), time.Now().Year())
+	assert.Equal(t, res.Date.Year(), time.Now().Year())
 
-	match, err := regexp.Match(`^v\d+\.\d+\.\d+`, []byte(res.Meta.FinderVersion))
+	match, err := regexp.Match(`^v\d+\.\d+\.\d+`, []byte(res.FinderVersion))
 	assert.Nil(t, err)
 	assert.True(t, match)
 
-	assert.True(t, res.Meta.WithBayes)
-	assert.Zero(t, res.Meta.WordsAround)
-	assert.Equal(t, res.Meta.Language, "eng")
-	assert.Empty(t, res.Meta.LanguageDetected)
-	assert.False(t, res.Meta.DetectLanguage)
+	assert.True(t, res.WithBayes)
+	assert.Zero(t, res.WordsAround)
+	assert.Equal(t, res.Language, "eng")
+	assert.Empty(t, res.LanguageDetected)
+	assert.False(t, res.DetectLanguage)
 
-	assert.Equal(t, res.Meta.TotalTokens, 17)
-	assert.Equal(t, res.Meta.TotalNameCandidates, 5)
-	assert.Equal(t, res.Meta.TotalNames, 4)
-	assert.Zero(t, res.Meta.CurrentName)
+	assert.Equal(t, res.TotalTokens, 17)
+	assert.Equal(t, res.TotalNameCandidates, 5)
+	assert.Equal(t, res.TotalNames, 4)
+	assert.Zero(t, res.CurrentName)
 	assert.Equal(t, res.Names[0].Name, "Pardosa moesta")
 }
 
@@ -539,7 +539,7 @@ func TestBytesOffset(t *testing.T) {
 		{"ascii bytes", "Hello Pardosa moesta", true, 6, 20},
 		{"utf8 runes", "Это Pardosa moesta", false, 4, 18},
 		{"utf8 bytes", "Это Pardosa moesta", true, 7, 21},
-    // BOM character at the start of a string is ignored
+		// BOM character at the start of a string is ignored
 		{"utf8 bytes", "\uFEFFЭто Pardosa moesta", true, 7, 21},
 		{"utf8 in name runes", "Это Pardюsa moesta", false, 4, 18},
 		{"utf8 in name bytes", "Это Pardюsa moesta", true, 7, 22},

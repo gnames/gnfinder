@@ -1,9 +1,7 @@
 package token
 
 import (
-	"math/rand"
 	"testing"
-	"time"
 
 	"github.com/tj/assert"
 )
@@ -124,11 +122,4 @@ func TestEndsWithLetter(t *testing.T) {
 			assert.Equal(t, f.EndsWithLetter, v.res)
 		})
 	}
-}
-
-func randInt() int {
-	rand.Seed(time.Now().UnixNano())
-	min := 0
-	max := 10
-	return rand.Intn(max-min+1) + min
 }

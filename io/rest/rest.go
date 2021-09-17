@@ -121,14 +121,6 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 	}
 }
 
-func getFormat(s string) gnfmt.Format {
-	format, _ := gnfmt.NewFormat(s)
-	if format == gnfmt.FormatNone {
-		format = gnfmt.CSV
-	}
-	return format
-}
-
 func getLanguage(s string) lang.Language {
 	l, _ := lang.New(s)
 	return l

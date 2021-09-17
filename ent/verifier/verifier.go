@@ -41,7 +41,7 @@ func (gnv *verif) Verify(names []string) (map[string]vlib.Verification, float32)
 	for _, v := range verif {
 		res[v.Input] = v
 	}
-	dur := float32(time.Now().Sub(start)) / float32(time.Second)
+	dur := float32(time.Since(start)) / float32(time.Second)
 	return res, dur
 }
 
