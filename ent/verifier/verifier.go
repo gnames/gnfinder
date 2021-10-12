@@ -62,6 +62,6 @@ func unique(names []string) []string {
 // HasRemote finds if there is an internet connection.
 func HasRemote() bool {
 	timeout := 1 * time.Second
-	_, err := net.DialTimeout("tcp", "google.com", timeout)
+	_, err := net.DialTimeout("tcp", "google.com:80", timeout)
 	return err == nil
 }

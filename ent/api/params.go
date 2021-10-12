@@ -2,6 +2,11 @@ package api
 
 // FindParams allows to send settings to a REST API request.
 type FinderParams struct {
+	// URL points to a content that contains scientific names. This field
+	// can be used instead of Text field. If both URL and Text are provided,
+	// URL has a priority.
+	URL string `json:"url"`
+
 	// Text contains a plain text document encoded in UTF-8.
 	Text string `json:"text"`
 

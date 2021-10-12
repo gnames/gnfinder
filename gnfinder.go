@@ -53,7 +53,7 @@ func New(
 func (gnf gnfinder) Find(file, txt string) output.Output {
 	start := time.Now()
 	// Remove BOM if it is still around
-	if txt[0:3] == "\xef\xbb\xbf" {
+	if len(txt) > 3 && txt[0:3] == "\xef\xbb\xbf" {
 		txt = txt[3:]
 	}
 	text := []rune(string(txt))

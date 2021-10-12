@@ -124,6 +124,37 @@ func TestPost(t *testing.T) {
 	}
 }
 
+func TestPostURL(t *testing.T) {
+	cfg := config.New()
+	gnf := gnfinder.New(cfg, dictionary, weights)
+	url := `https://en.wikipedia.org/wiki/Monochamus_galloprovincialis`
+	tests := []struct {
+		params api.FinderParams
+	}{
+		{api.FinderParams{URL: url}},
+	}
+
+	for i, v := range tests {
+		msg := fmt.Sprintf("params %d", i)
+		if !verifier.HasRemote() {
+			log.Print("WARNING: no internet connection, skipping URL test")
+			return
+		}
+
+		t.Run(msg, func(t *testing.T) {
+			reqBody, err := gnfmt.GNjson{}.Encode(v.params)
+			assert.Nil(t, err)
+			c, rec := initPOST(t, reqBody)
+			err = find(gnf)(c)
+			assert.Nil(t, err)
+			var out output.Output
+			err = gnfmt.GNjson{}.Decode(rec.Body.Bytes(), &out)
+			assert.Nil(t, err)
+			assert.Greater(t, len(out.Names), 1)
+		})
+	}
+}
+
 func initPOST(
 	t *testing.T,
 	recBody []byte,

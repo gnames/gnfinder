@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+Add [#105]: Support for URL name-finding in REST API.
+
 ## [v0.15.4]
 
 Add [#104]: merge petectLanguage to language. It allows to simplify logic for

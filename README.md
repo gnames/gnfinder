@@ -5,7 +5,11 @@
 [![Doc Status][doc-img]][doc]
 [![Go Report Card][go-report-img]][go-report]
 
-Finds scientific names using dictionary and NLP approaches.
+Very fast finder of scientific names. It uses dictionary and NLP approaches. On
+modern multiprocessor laptop it is able to process 15 million pages per hour.
+Works with many file formats and includes names verification against many
+biological databases. For full functionality it requires an Internet
+connection.
 
 <!-- vim-markdown-toc GFM -->
 

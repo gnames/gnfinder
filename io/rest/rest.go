@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gnames/gndoc"
 	"github.com/gnames/gnfinder"
 	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/api"
@@ -64,6 +65,8 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 
 		go func() {
 			var err error
+			var text string
+			var convDur float32
 			var out output.Output
 			var params api.FinderParams
 			var format gnfmt.Format
@@ -71,6 +74,8 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 			err = c.Bind(&params)
 
 			if err == nil {
+				text, convDur, err = getText(params, gnf.GetConfig().TikaURL)
+
 				format, _ = gnfmt.NewFormat(params.Format)
 				if format == gnfmt.FormatNone {
 					format = gnfmt.CompactJSON
@@ -89,7 +94,8 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 				}
 
 				gnf = gnf.ChangeConfig(opts...)
-				out = gnf.Find("", params.Text)
+				out = gnf.Find("", text)
+				out.FileConversionSec = convDur
 				cfg := gnf.GetConfig()
 				if cfg.WithVerification {
 					verif := verifier.New(cfg.VerifierURL, cfg.PreferredSources)
@@ -130,4 +136,20 @@ func getContext(c echo.Context) (ctx context.Context, cancel func()) {
 	ctx = c.Request().Context()
 	ctx, cancel = context.WithTimeout(ctx, 1*time.Minute)
 	return ctx, cancel
+}
+
+func getText(
+	params api.FinderParams,
+	tikaURL string,
+) (string, float32, error) {
+	if params.Text != "" {
+		return params.Text, 0, nil
+	}
+
+	d := gndoc.New(tikaURL)
+	if params.URL != "" {
+		return d.TextFromURL(params.URL)
+	}
+
+	return "", 0, errors.New("empty input")
 }
