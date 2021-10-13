@@ -4,12 +4,15 @@ import (
 	"log"
 	"testing"
 
+	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/verifier"
 	"github.com/tj/assert"
 )
 
 func TestVerifier(t *testing.T) {
-	if verifier.HasRemote() {
+	cfg := config.New()
+	gnv := verifier.New(cfg.VerifierURL, []int{})
+	if gnv.IsConnected() {
 		verif := verifier.New("", nil)
 		res, _ := verif.Verify([]string{"Bubo bubo"})
 		assert.Equal(t, len(res), 1)

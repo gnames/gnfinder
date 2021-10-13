@@ -5,6 +5,7 @@ import (
 	"log"
 	"testing"
 
+	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/verifier"
 	"github.com/rendon/testcli"
 	"github.com/tj/assert"
@@ -24,6 +25,7 @@ func TestVersion(t *testing.T) {
 }
 
 func TestFind(t *testing.T) {
+	gnv := verifier.New(config.New().VerifierURL, []int{})
 	c := testcli.Command("gnfinder", "-f", "pretty")
 	stdin := bytes.NewBuffer([]byte("Pardosa moesta is a spider"))
 	c.SetStdin(stdin)
@@ -35,7 +37,7 @@ func TestFind(t *testing.T) {
 	assert.Contains(t, c.Stdout(), `cardinality": 2`)
 	assert.NotContains(t, c.Stdout(), `"matchType": "Exact`)
 
-	if verifier.HasRemote() {
+	if gnv.IsConnected() {
 		c = testcli.Command("gnfinder", "-v", "-f", "pretty")
 		stdin = bytes.NewBuffer([]byte("Pardosa moesta is a spider"))
 		c.SetStdin(stdin)

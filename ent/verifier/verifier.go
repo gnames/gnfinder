@@ -1,7 +1,6 @@
 package verifier
 
 import (
-	"net"
 	"time"
 
 	vlib "github.com/gnames/gnlib/ent/verifier"
@@ -45,6 +44,12 @@ func (gnv *verif) Verify(names []string) (map[string]vlib.Verification, float32)
 	return res, dur
 }
 
+// IsConnected finds if there is an internet connection.
+func (gnv *verif) IsConnected() bool {
+	_, err := gnv.DataSource(2)
+	return err == nil
+}
+
 func unique(names []string) []string {
 	m := make(map[string]struct{})
 	for i := range names {
@@ -57,11 +62,4 @@ func unique(names []string) []string {
 		count++
 	}
 	return res
-}
-
-// HasRemote finds if there is an internet connection.
-func HasRemote() bool {
-	timeout := 1 * time.Second
-	_, err := net.DialTimeout("tcp", "google.com:80", timeout)
-	return err == nil
 }

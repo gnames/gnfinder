@@ -52,6 +52,7 @@ func TestGet(t *testing.T) {
 func TestPost(t *testing.T) {
 	cfg := config.New()
 	gnf := gnfinder.New(cfg, dictionary, weights)
+	gnv := verifier.New(cfg.VerifierURL, []int{})
 	text := `
 	Thalictroides, 18s per doz.
 	vitifoiia, Is. 6d. each
@@ -94,7 +95,7 @@ func TestPost(t *testing.T) {
 
 	for i, v := range tests {
 		msg := fmt.Sprintf("params %d", i)
-		if v.verif && !verifier.HasRemote() {
+		if v.verif && !gnv.IsConnected() {
 			log.Print("WARNING: no internet connection, skipping some tests")
 		}
 
@@ -127,6 +128,7 @@ func TestPost(t *testing.T) {
 func TestPostURL(t *testing.T) {
 	cfg := config.New()
 	gnf := gnfinder.New(cfg, dictionary, weights)
+	gnv := verifier.New(cfg.VerifierURL, []int{})
 	url := `https://en.wikipedia.org/wiki/Monochamus_galloprovincialis`
 	tests := []struct {
 		params api.FinderParams
@@ -136,7 +138,7 @@ func TestPostURL(t *testing.T) {
 
 	for i, v := range tests {
 		msg := fmt.Sprintf("params %d", i)
-		if !verifier.HasRemote() {
+		if !gnv.IsConnected() {
 			log.Print("WARNING: no internet connection, skipping URL test")
 			return
 		}
