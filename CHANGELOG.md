@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [v0.15.5]
+
 Add [#105]: Support for URL name-finding in REST API.
 
 ## [v0.15.4]
@@ -237,6 +239,7 @@ Fix [#100]: fix csv/tsv fields number for verification
 
 This document follows [changelog guidelines]
 
+[v0.15.5]: https://github.com/gnames/gnfinder/compare/v0.15.4...v0.15.5
 [v0.15.4]: https://github.com/gnames/gnfinder/compare/v0.15.3...v0.15.4
 [v0.15.3]: https://github.com/gnames/gnfinder/compare/v0.15.2...v0.15.3
 [v0.15.2]: https://github.com/gnames/gnfinder/compare/v0.15.1...v0.15.2
