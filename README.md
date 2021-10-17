@@ -44,6 +44,7 @@ connection.
 * Self-contained, no external dependencies, only binary `gnfinder` or
   `gnfinder.exe` (~15Mb) is needed. However the internet connection is
   required for name-verification.
+* Includes REST API and web-based User Interface.
 * Takes UTF8-encoded text and returns back CSV, TSV or JSON-formatted output
   that contains detected scientific names.
 * Extracts text from PDF files, MS Word, MS Excel, HTML, XML, RTF, JPG,
@@ -178,6 +179,12 @@ gnfinder -V
 ```
 
 Examples:
+
+Starting as a web-application and an API server on port 8080
+
+```bash
+gnfinder -p 8080
+```
 
 Getting names from a UTF8-encoded file in CSV format
 
