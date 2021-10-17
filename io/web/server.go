@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/gnames/gnfinder"
-	"github.com/gnames/gnfmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -36,6 +35,7 @@ func Run(gnf gnfinder.GNfinder, port int) {
 	}
 
 	e.GET("/", home(gnf))
+	e.GET("/apidoc", apidoc(gnf))
 	e.POST("/find", find(gnf))
 
 	e.GET("/api/v1/ping", pingAPI())
@@ -52,12 +52,4 @@ func Run(gnf gnfinder.GNfinder, port int) {
 		WriteTimeout: 5 * time.Minute,
 	}
 	e.Logger.Fatal(e.StartServer(s))
-}
-
-func getFormat(s string) gnfmt.Format {
-	format, _ := gnfmt.NewFormat(s)
-	if format == gnfmt.FormatNone {
-		format = gnfmt.CSV
-	}
-	return format
 }

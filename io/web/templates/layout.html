@@ -3,7 +3,7 @@
 <html>
   <head>
     <meta charset='UTF-8'>
-    <title>GNfinder</title>
+    <title>Global Names Finder</title>
     <link href='/static/images/favicon.ico' rel='icon' type='image/x-icon'>
     <link href='/static/styles/screen.css' rel='stylesheet' type='text/css'>
     <script src='/static/javascript/jquery-3.6.0.min.js' type='text/javascript'></script>
@@ -21,17 +21,26 @@
             </a>
           </div>
           <ul id='SiteNavigation'>
+            {{ if eq .Page "home" }}
             <li class='active'>
+            {{ else }}
+            <li>
+            {{ end }}
               <a href='/'>Home</a>
             </li>
+            {{ if eq .Page "apidoc" }}
+            <li class='active'>
+            {{ else }}
             <li>
-              <a href='/api'>API</a>
+            {{ end }}
+              <a href='/apidoc'>API</a>
             </li>
           </ul>
         </div>
       </div>
 
       {{ if eq .Page "home" }} {{ template "home" . }}
+      {{ else if eq .Page "apidoc" }} {{ template "apidoc" . }}
       {{ else if eq .Page "find" }} {{ template "find" . }}
       {{end}}
 

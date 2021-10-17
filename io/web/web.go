@@ -37,6 +37,13 @@ func home(gnf gnfinder.GNfinder) func(echo.Context) error {
 	}
 }
 
+func apidoc(gnf gnfinder.GNfinder) func(echo.Context) error {
+	return func(c echo.Context) error {
+		data := Data{Page: "apidoc", Version: gnf.GetVersion().Version}
+		return c.Render(http.StatusOK, "layout", data)
+	}
+}
+
 func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 
 	return func(c echo.Context) error {
@@ -138,12 +145,6 @@ func findNames(
 		res.InputText = txt
 	}
 	return res, float32(dur)
-}
-
-//
-func textFromURL(tikaURL, url string) (string, float32, error) {
-	doc := gndoc.New(tikaURL)
-	return doc.TextFromURL(url)
 }
 
 // textFromFile converts uploaded file into text, returns UTF-8 encoded

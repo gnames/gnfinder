@@ -1,0 +1,62 @@
+{{ define "apidoc" }}
+<div class='structural fixedWidth clear' id='BodyContent'>
+  <div class='inner'>
+    <div id='content-wrapper'>
+      <div id='content-body'>
+        <div id='content-splash'>
+          <h2>Application Programming Interface (API)</h2>
+        </div>
+
+        <div id='content-body'>
+
+          <p>
+            Web-based scientific names finding service provides a RESTful 
+            API interface.
+          </p>
+
+          <h3 id="post">Using POST Method with JSON payload</h3>
+
+          <pre class='code'>/api/v1</code></pre>
+
+          <p>
+            with request body in JSON according to the
+            <a href='https://apidoc.globalnames.org/gnfinder'>specification.</a>
+          </p>
+
+          <h3 id="post">Using POST Method to Upload Files</h3>
+
+          <p>
+            It is possible to upload files and get scientific names from their
+            content. In this case API uses 'multipart/form' approach instead of
+            JSON. For example, using <strong>curl</strong> and verifying data
+            against
+            <a href='https://verifier.globalnames.org/data_sources/1'>
+            Catalogue of Life
+            </a> (source #1) and 
+            <a href='https://verifier.globalnames.org/data_sources/12'>
+            Encyclopedia of Life
+            </a> (source #12):
+          </p>
+
+          <pre class='code'>curl -v -F sources[]=1 -F sources[]=12 -F file=@file.pdf \
+    https://finder.globalnames.org/api/v1/find</pre>
+
+          <p>
+            For examples how to write a client, refer to
+            <a href='https://github.com/GlobalNamesArchitecture/gnfinder'>
+              a gnfinder Ruby Gem code</a>.
+          </p>
+
+          <h3> OpenAPI Schema</h3>
+          <p>
+            Read the GNfinder's
+            <a href="https://apidoc.globalnames.org/gnfinder">
+              OpenAPI documentation
+            </a> to learn about all options and the output schema.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}

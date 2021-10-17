@@ -22,9 +22,9 @@ h2 {
   text-shadow: 0 -1px 2px #fff; }
 
 h3 {
-  color: #333;
-  font-size: 1.5em;
-  line-height: 1.5em;
+  color: #45704D;
+  font-size: 1.2em;
+  line-height: 1.2em;
   margin: 1em 0em; }
 
 h3 a {
@@ -531,7 +531,7 @@ span.not-curated {
   font-weight: bold; }
 
 pre.code {
-  line-height: 1.2em;
+  line-height: 1.5em;
   border: 1px solid #000;
   border-radius: 6px;
   padding: 10px;

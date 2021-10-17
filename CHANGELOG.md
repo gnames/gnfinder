@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.16.1]
+
+Add [#106]: Add API documentation.
+
 ## [v0.16.0]
 
 Add [#94]: Add web-based user interface.
@@ -243,6 +247,7 @@ Fix [#100]: fix csv/tsv fields number for verification
 
 This document follows [changelog guidelines]
 
+[v0.16.1]: https://github.com/gnames/gnfinder/compare/v0.16.0...v0.16.1
 [v0.16.0]: https://github.com/gnames/gnfinder/compare/v0.15.5...v0.16.0
 [v0.15.5]: https://github.com/gnames/gnfinder/compare/v0.15.4...v0.15.5
 [v0.15.4]: https://github.com/gnames/gnfinder/compare/v0.15.3...v0.15.4
