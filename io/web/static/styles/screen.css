@@ -504,15 +504,11 @@ span.no-match {
   color: red;
 }
 
-span.curated {
+span.exact-match {
   color: green;
 }
 
-span.auto-curated {
-  color: orange;
-}
-
-span.not-curated {
+span.some-match {
   color: orange;
 }
 

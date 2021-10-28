@@ -77,15 +77,13 @@ func addFuncs(tmpl *template.Template) {
 	tmpl.Funcs(template.FuncMap{
 		"isVerified": func(ver *verifier.Verification) template.HTML {
 			if ver == nil || ver.MatchType == verifier.NoMatch {
-				return template.HTML("<span class='no-match'>x</span>")
+				return template.HTML("")
 			}
-			switch ver.Curation {
-			case verifier.Curated:
-				return template.HTML("<span class='curated'>✔ (" + ver.BestResult.MatchedCanonicalFull + ")</span>")
-			case verifier.AutoCurated:
-				return template.HTML("<span class='auto-curated'>✔ (" + ver.BestResult.MatchedCanonicalFull + ")</span>")
+			switch ver.MatchType {
+			case verifier.Exact:
+				return template.HTML("<span class='exact-match'>✔ (" + ver.BestResult.MatchedCanonicalFull + ")</span>")
 			default:
-				return template.HTML("<span class='not-curated'>✔ (" + ver.BestResult.MatchedCanonicalFull + ")</span>")
+				return template.HTML("<span class='some-match'>✔ (" + ver.BestResult.MatchedCanonicalFull + ")</span>")
 			}
 		},
 	})

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.16.2]
+
+Fix [#108]: remove confuxing red 'x' from web-UI results.
+
 ## [v0.16.1]
 
 Add [#106]: Add API documentation.
