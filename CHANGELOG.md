@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.16.3]
+
+Add: update dictionaries with Algaebase and fixes
+
 ## [v0.16.2]
 
 Fix [#108]: remove confuxing red 'x' from web-UI results.
@@ -251,6 +255,8 @@ Fix [#100]: fix csv/tsv fields number for verification
 
 This document follows [changelog guidelines]
 
+[v0.16.3]: https://github.com/gnames/gnfinder/compare/v0.16.2...v0.16.3
+[v0.16.2]: https://github.com/gnames/gnfinder/compare/v0.16.1...v0.16.2
 [v0.16.1]: https://github.com/gnames/gnfinder/compare/v0.16.0...v0.16.1
 [v0.16.0]: https://github.com/gnames/gnfinder/compare/v0.15.5...v0.16.0
 [v0.15.5]: https://github.com/gnames/gnfinder/compare/v0.15.4...v0.15.5
@@ -289,6 +295,17 @@ This document follows [changelog guidelines]
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
 
+[#120]: https://github.com/gnames/gnfinder/issues/120
+[#119]: https://github.com/gnames/gnfinder/issues/119
+[#118]: https://github.com/gnames/gnfinder/issues/118
+[#117]: https://github.com/gnames/gnfinder/issues/117
+[#117]: https://github.com/gnames/gnfinder/issues/117
+[#116]: https://github.com/gnames/gnfinder/issues/116
+[#115]: https://github.com/gnames/gnfinder/issues/115
+[#114]: https://github.com/gnames/gnfinder/issues/114
+[#113]: https://github.com/gnames/gnfinder/issues/113
+[#112]: https://github.com/gnames/gnfinder/issues/112
+[#111]: https://github.com/gnames/gnfinder/issues/111
 [#110]: https://github.com/gnames/gnfinder/issues/110
 [#109]: https://github.com/gnames/gnfinder/issues/109
 [#108]: https://github.com/gnames/gnfinder/issues/108
