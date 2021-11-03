@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+Add [#109]: add classification path to CSV and TSV outputs.
+
 ## [v0.16.3]
 
 Add: update dictionaries with Algaebase and fixes
@@ -298,7 +300,6 @@ This document follows [changelog guidelines]
 [#120]: https://github.com/gnames/gnfinder/issues/120
 [#119]: https://github.com/gnames/gnfinder/issues/119
 [#118]: https://github.com/gnames/gnfinder/issues/118
-[#117]: https://github.com/gnames/gnfinder/issues/117
 [#117]: https://github.com/gnames/gnfinder/issues/117
 [#116]: https://github.com/gnames/gnfinder/issues/116
 [#115]: https://github.com/gnames/gnfinder/issues/115

@@ -28,7 +28,7 @@ func CSVHeader(withVerification bool, sep rune) string {
 	if withVerification {
 		verif := []string{"VerifMatchType", "VerifEditDistance",
 			"VerifMatchedName", "VerifMatchedCanonical", "VerifTaxonId",
-			"VerifDataSourceId", "VerifDataSourceTitle", "VerifError"}
+			"VerifDataSourceId", "VerifDataSourceTitle", "VerifClassificationPath", "VerifError"}
 		res = append(res, verif...)
 	}
 	return gnfmt.ToCSV(res, sep)
@@ -63,14 +63,14 @@ func csvRow(name Name, i int, sep rune) string {
 	if name.Verification != nil {
 		v := name.Verification
 		verif := []string{
-			v.MatchType.String(), "", "", "", "", "", "", v.Error,
+			v.MatchType.String(), "", "", "", "", "", "", "", v.Error,
 		}
 		if v.BestResult != nil {
 			br := v.BestResult
 			verif = []string{
 				br.MatchType.String(), strconv.Itoa(br.EditDistance), br.MatchedName,
 				br.MatchedCanonicalSimple, br.RecordID, strconv.Itoa(br.DataSourceID),
-				br.DataSourceTitleShort, v.Error,
+				br.DataSourceTitleShort, v.BestResult.ClassificationPath, v.Error,
 			}
 		}
 		s = append(s, verif...)
