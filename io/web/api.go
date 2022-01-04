@@ -96,7 +96,7 @@ func getOptsAPI(params api.FinderParams) ([]config.Option, gnfmt.Format) {
 		config.OptWithBayesOddsDetails(params.OddsDetails),
 		config.OptFormat(format),
 		config.OptWithBayes(!params.NoBayes),
-		config.OptWithBytesOffset(params.BytesOffset),
+		config.OptWithPositonInBytes(params.BytesOffset),
 		config.OptLanguage(getLanguage(params.Language)),
 		config.OptPreferredSources(params.Sources),
 		config.OptWithVerification(

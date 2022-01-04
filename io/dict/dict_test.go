@@ -11,21 +11,21 @@ var dictionary = dict.LoadDictionary()
 
 func TestGreyUninomials(t *testing.T) {
 	l := len(dictionary.GreyUninomials)
-	assert.Equal(t, l, 175)
+	assert.Equal(t, 183, l)
 	_, ok := dictionary.GreyUninomials["Minimi"]
 	assert.True(t, ok)
 }
 
 func TestCommonWords(t *testing.T) {
 	l := len(dictionary.CommonWords)
-	assert.Equal(t, l, 70590)
+	assert.Equal(t, 70793, l)
 	_, ok := dictionary.CommonWords["all"]
 	assert.True(t, ok)
 }
 
 func TestWhiteGenera(t *testing.T) {
 	l := len(dictionary.WhiteGenera)
-	assert.Equal(t, l, 507774)
+	assert.Equal(t, 508639, l)
 	_, ok := dictionary.WhiteGenera["Plantago"]
 	assert.True(t, ok)
 }

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+Add [#111]: update bayes calculations.
 Add [#109]: add classification path to CSV and TSV outputs.
 
 ## [v0.16.3]

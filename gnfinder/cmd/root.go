@@ -63,6 +63,7 @@ type cfgData struct {
 	WithBayesOddsDetails bool
 	WithOddsAdjustment   bool
 	WithPlainInput       bool
+	WithPositionInBytes  bool
 	WithUniqueNames      bool
 	WithVerification     bool
 	WithoutBayes         bool
@@ -257,6 +258,7 @@ func initConfig() {
 	_ = viper.BindEnv("WithBayesOddsDetails", "GNF_WITH_BAYES_ODDS_DETAILS")
 	_ = viper.BindEnv("WithOddsAdjustment", "GNF_WITH_ODDS_ADJUSTMENT")
 	_ = viper.BindEnv("WithPlainInput", "GNF_WITH_PLAIN_INPUT")
+	_ = viper.BindEnv("WithPositionInBytes", "GNF_WITH_POSITION_IN_BYTES")
 	_ = viper.BindEnv("WithUniqueNames", "GNF_WITH_UNIQUE_NAMES")
 	_ = viper.BindEnv("WithVerification", "GNF_WITH_VERIFICATION")
 	_ = viper.BindEnv("WithoutBayes", "GNF_WITHOUT_BAYES")
@@ -338,6 +340,10 @@ func getOpts() {
 
 	if cfgCli.WithPlainInput {
 		opts = append(opts, config.OptWithPlainInput(true))
+	}
+
+	if cfgCli.WithPositionInBytes {
+		opts = append(opts, config.OptWithPositonInBytes(true))
 	}
 
 	if cfgCli.WithUniqueNames {

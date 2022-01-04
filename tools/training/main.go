@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -11,11 +12,13 @@ import (
 
 func main() {
 	dir := filepath.Join("..", "..", "io", "nlpfs", "data")
+	// get text and names positions in the text, if any
 	data := NewTrainingLanguageData(filepath.Join(dir, "training"))
 	output := filepath.Join(dir, "files")
 	d := dict.LoadDictionary()
 	for lang, v := range data {
 		path := filepath.Join(output, lang.String(), "bayes.json")
+		// produce bayes object with training data
 		nb := Train(v, d)
 		dump, err := json.MarshalIndent(nb, "", " ")
 		if err != nil {
@@ -25,5 +28,9 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+	}
+	fmt.Println("**WhiteGenus for noName**")
+	for k := range genWhiteNoName {
+		fmt.Println(k)
 	}
 }

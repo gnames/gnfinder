@@ -79,6 +79,11 @@
 #
 # WithPlainInput: false
 
+# WithPositionInBytes flag can be set to true to receive start/end
+# positions of names in bytes instead of UTF-8 characters.
+#
+# WithPositionInBytes: false
+
 # WithUniqueNames can be set to true to get a unique list of names.
 #
 # WithUniqueNames: false

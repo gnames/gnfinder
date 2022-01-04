@@ -20,7 +20,7 @@ func TestConfig(t *testing.T) {
 		assert.Equal(t, cfg.LanguageDetected, "")
 		assert.Equal(t, cfg.TokensAround, 0)
 		assert.True(t, cfg.WithBayes)
-		assert.False(t, cfg.WithBytesOffset)
+		assert.False(t, cfg.WithPositionInBytes)
 	})
 
 	t.Run("takes language", func(t *testing.T) {
@@ -35,8 +35,8 @@ func TestConfig(t *testing.T) {
 	})
 
 	t.Run("sets offsets in bytes", func(t *testing.T) {
-		cfg := config.New(config.OptWithBytesOffset(true))
-		assert.True(t, cfg.WithBytesOffset)
+		cfg := config.New(config.OptWithPositonInBytes(true))
+		assert.True(t, cfg.WithPositionInBytes)
 	})
 
 	t.Run("sets tokens number", func(t *testing.T) {

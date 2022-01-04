@@ -4,6 +4,7 @@ debug.test
 coverage.txt
 t
 t.json
+t.csv
 *.pprof
 *.trace
 *.test

@@ -18,7 +18,7 @@ import (
 )
 
 var dictionary *dict.Dictionary
-var weights map[lang.Language]*bayes.NaiveBayes
+var weights map[lang.Language]bayes.Bayes
 
 // TestMeta tests the formation of metadata in the output.
 func TestMeta(t *testing.T) {
@@ -26,7 +26,7 @@ func TestMeta(t *testing.T) {
 		      decided to get a cup of Camelia sinensis on Sunday.`
 	gnf := genFinder()
 	res := gnf.Find("", txt)
-	assert.Equal(t, res.Date.Year(), time.Now().Year())
+	assert.Equal(t, time.Now().Year(), res.Date.Year())
 
 	match, err := regexp.Match(`^v\d+\.\d+\.\d+`, []byte(res.FinderVersion))
 	assert.Nil(t, err)
@@ -34,15 +34,15 @@ func TestMeta(t *testing.T) {
 
 	assert.True(t, res.WithBayes)
 	assert.Zero(t, res.WordsAround)
-	assert.Equal(t, res.Language, "eng")
+	assert.Equal(t, "eng", res.Language)
 	assert.Empty(t, res.LanguageDetected)
 	assert.False(t, res.DetectLanguage)
 
-	assert.Equal(t, res.TotalTokens, 17)
-	assert.Equal(t, res.TotalNameCandidates, 5)
-	assert.Equal(t, res.TotalNames, 4)
+	assert.Equal(t, 17, res.TotalTokens)
+	assert.Equal(t, 5, res.TotalNameCandidates)
+	assert.Equal(t, 4, res.TotalNames)
 	assert.Zero(t, res.CurrentName)
-	assert.Equal(t, res.Names[0].Name, "Pardosa moesta")
+	assert.Equal(t, "Pardosa moesta", res.Names[0].Name)
 }
 
 // TestFindEdgeCases checks detection and non-detection of names that are
@@ -79,9 +79,9 @@ func TestFindEdgeCases(t *testing.T) {
 	gnf := genFinder()
 	for _, v := range tests {
 		res := gnf.Find("", v.name)
-		assert.Equal(t, len(res.Names) > 0, v.found, v.name)
+		assert.Equal(t, v.found, len(res.Names) > 0, v.name)
 		if len(res.Names) > 0 {
-			assert.Equal(t, res.Names[0].Cardinality, v.cardinality, v.name)
+			assert.Equal(t, v.cardinality, res.Names[0].Cardinality, v.name)
 		}
 	}
 }
@@ -192,7 +192,7 @@ func TestHumanNames(t *testing.T) {
 	gnf := genFinder()
 	for _, v := range tests {
 		res := gnf.Find("", v.name)
-		assert.Equal(t, len(res.Names) > 0, v.found, v.name)
+		assert.Equal(t, v.found, len(res.Names) > 0, v.name)
 	}
 }
 
@@ -280,7 +280,7 @@ func TestGeoNames(t *testing.T) {
 	gnf := genFinder()
 	for _, v := range tests {
 		res := gnf.Find("", v.name)
-		assert.Equal(t, len(res.Names) > 0, v.found, v.name)
+		assert.Equal(t, v.found, len(res.Names) > 0, v.name)
 	}
 }
 
@@ -326,20 +326,21 @@ Conostylis americana, 2i. 6d.
 
 	for _, v := range tests {
 		gnf := genFinder(config.OptWithBayes(v.bayes))
+
 		res := gnf.Find("", txt)
 		name := res.Names[v.nameIdx]
 
-		assert.Equal(t, res.Meta.TotalNameCandidates, 5, v.msg)
-		assert.Equal(t, res.Meta.TotalNames, 4, v.msg)
-		assert.Equal(t, name.Verbatim, v.verbatim, v.msg)
-		assert.Equal(t, name.Name, v.name, v.msg)
+		assert.Equal(t, 5, res.TotalNameCandidates, v.msg)
+		assert.Equal(t, 4, res.TotalNames, v.msg)
+		assert.Equal(t, v.verbatim, name.Verbatim, v.msg)
+		assert.Equal(t, v.name, name.Name, v.msg)
 
 		if v.bayes {
 			assert.True(t, gnf.GetConfig().WithBayes, v.msg)
 			assert.Greater(t, name.Odds, v.odds, v.msg)
 		} else {
 			assert.False(t, gnf.GetConfig().WithBayes, v.msg)
-			assert.Equal(t, name.Odds, 0.0, v.msg)
+			assert.Equal(t, 0.0, name.Odds, v.msg)
 		}
 	}
 }
@@ -356,7 +357,7 @@ Conostylis americana, 2i. 6d.
 
 	gnf := genFinder(config.OptTokensAround(2))
 	res := gnf.Find("", txt)
-	assert.Equal(t, res.Meta.WordsAround, 2)
+	assert.Equal(t, 2, res.Meta.WordsAround)
 	tests := []struct {
 		msg, name string
 		nameIdx   int
@@ -382,9 +383,9 @@ Conostylis americana, 2i. 6d.
 	}
 
 	for _, v := range tests {
-		assert.Equal(t, res.Names[v.nameIdx].Name, v.name, v.msg)
-		assert.Equal(t, res.Names[v.nameIdx].WordsBefore, v.before, v.msg)
-		assert.Equal(t, res.Names[v.nameIdx].WordsAfter, v.after, v.msg)
+		assert.Equal(t, v.name, res.Names[v.nameIdx].Name, v.msg)
+		assert.Equal(t, v.before, res.Names[v.nameIdx].WordsBefore, v.msg)
+		assert.Equal(t, v.after, res.Names[v.nameIdx].WordsAfter, v.msg)
 	}
 }
 
@@ -396,7 +397,7 @@ func TextTokensAroundSizeLimit(t *testing.T) {
 		"Bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
 	gnf := genFinder(config.OptTokensAround(2))
 	res := gnf.Find("", txt)
-	assert.Equal(t, res.Meta.WordsAround, 2)
+	assert.Equal(t, 2, res.WordsAround)
 
 	n := res.Names[0]
 	assert.Zero(t, len(n.WordsBefore))
@@ -406,10 +407,10 @@ func TextTokensAroundSizeLimit(t *testing.T) {
 		"bbbbbbbbbbbbbbbbbbbbbbb"
 	gnf = genFinder(config.OptTokensAround(2))
 	res = gnf.Find("", txt)
-	assert.Equal(t, res.Meta.WordsAround, 2)
+	assert.Equal(t, 2, res.WordsAround)
 	n = res.Names[0]
-	assert.Equal(t, len(n.WordsBefore), 1)
-	assert.Equal(t, len(n.WordsAfter), 1)
+	assert.Equal(t, 1, len(n.WordsBefore))
+	assert.Equal(t, 1, len(n.WordsAfter))
 }
 
 // TestsTestLastName tests a situation where a name is the last thing in the
@@ -418,16 +419,16 @@ func TestLastName(t *testing.T) {
 	txt := "Pardosa moesta"
 	gnf := genFinder(config.OptWithBayes(false))
 	res := gnf.Find("", txt)
-	assert.Equal(t, res.Meta.TotalNames, 1)
+	assert.Equal(t, 1, res.TotalNames)
 
 	name := res.Names[0]
-	assert.Equal(t, name.Name, "Pardosa moesta")
-	assert.Equal(t, name.Odds, 0.0)
+	assert.Equal(t, "Pardosa moesta", name.Name)
+	assert.Equal(t, 0.0, name.Odds)
 
 	gnf = genFinder(config.OptWithBayes(true))
 	res = gnf.Find("", txt)
 	name = res.Names[0]
-	assert.Equal(t, name.Name, "Pardosa moesta")
+	assert.Equal(t, "Pardosa moesta", name.Name)
 	assert.Greater(t, name.Odds, 10000.0)
 }
 
@@ -455,12 +456,12 @@ func TestAllGrey(t *testing.T) {
 		res := gnf.Find("", v.txt)
 		namesNum := len(res.Names)
 
-		assert.Equal(t, namesNum, v.namesNum, v.msg)
+		assert.Equal(t, v.namesNum, namesNum, v.msg)
 
 		if namesNum > 0 {
 			name := res.Names[0]
-			assert.Equal(t, name.Name, v.name, v.msg)
-			assert.Equal(t, name.Cardinality, v.card)
+			assert.Equal(t, v.name, name.Name, v.msg)
+			assert.Equal(t, v.card, name.Cardinality)
 			assert.Greater(t, name.Odds, v.odds, v.msg)
 		}
 	}
@@ -488,8 +489,8 @@ func TestNomenAnnot(t *testing.T) {
 	gnf := genFinder()
 	for _, v := range tests {
 		res := gnf.Find("", v.txt)
-		assert.Equal(t, res.Names[0].AnnotNomen, v.annot)
-		assert.Equal(t, res.Names[0].AnnotNomenType, v.annotType)
+		assert.Equal(t, v.annot, res.Names[0].AnnotNomen)
+		assert.Equal(t, v.annotType, res.Names[0].AnnotNomenType)
 	}
 }
 
@@ -507,7 +508,7 @@ func TestFakeAnnot(t *testing.T) {
 	for _, v := range txts {
 		res := gnf.Find("", v)
 		assert.Empty(t, res.Names[0].AnnotNomen)
-		assert.Equal(t, res.Names[0].AnnotNomenType, "NO_ANNOT")
+		assert.Equal(t, "NO_ANNOT", res.Names[0].AnnotNomenType)
 	}
 }
 
@@ -548,12 +549,12 @@ func TestBytesOffset(t *testing.T) {
 
 	for _, v := range tests {
 		t.Run(v.msg, func(t *testing.T) {
-			gnf = gnf.ChangeConfig(config.OptWithBytesOffset(v.withBytes))
+			gnf = gnf.ChangeConfig(config.OptWithPositonInBytes(v.withBytes))
 			o := gnf.Find("", v.input)
 			assert.True(t, len(o.Names) > 0)
 			name := o.Names[0]
-			assert.Equal(t, name.OffsetStart, v.start)
-			assert.Equal(t, name.OffsetEnd, v.end)
+			assert.Equal(t, v.start, name.OffsetStart)
+			assert.Equal(t, v.end, name.OffsetEnd)
 		})
 	}
 }

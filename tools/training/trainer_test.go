@@ -34,5 +34,6 @@ func TestTrain(t *testing.T) {
 	path := "../../io/nlpfs/data/training"
 	tld := NewTrainingLanguageData(path)
 	nb := Train(tld[lang.English], dictionary)
-	assert.Equal(t, len(nb.Labels), 2)
+	bout := nb.Inspect()
+	assert.Equal(t, len(bout.Classes), 2)
 }

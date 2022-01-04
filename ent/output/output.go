@@ -43,8 +43,9 @@ type Meta struct {
 	// WithBayes use of bayes during name-finding
 	WithBayes bool `json:"withBayes"`
 
-	// WithBytesOffset names position in bytes instead of UTF-8 chars.
-	WithBytesOffset bool
+	// WithPositionInBytes names get start/enc positionx in bytes
+	// instead of UTF-8 chars.
+	WithPositionInBytes bool `json:"withPositionInBytes"`
 
 	// WithOddsAdjustment to adjust prior odds according to the dencity of
 	// scientific names in the text.
@@ -94,30 +95,43 @@ type Name struct {
 	// Cardinality depicts number of elements in a name. 0 - Cannot determine
 	// cardinality, 1 - Uninomial, 2 - Binomial, 3 - Trinomial.
 	Cardinality int `json:"cardinality"`
+
 	// Verbatim shows name the way it was in the text.
 	Verbatim string `json:"verbatim,omitempty"`
+
 	// Name is a normalized version of a name.
 	Name string `json:"name"`
+
 	// Odds show a probability that name detection was correct.
 	Odds float64 `json:"-"`
+
 	// OddsLog10 show a Log10 of Odds.
 	OddsLog10 float64 `json:"oddsLog10,omitempty"`
+
 	// OddsDetails descibes how Odds were calculated.
 	OddsDetails token.OddsDetails `json:"oddsDetails,omitempty"`
+
 	// OffsetStart is a start of a name on a page.
 	OffsetStart int `json:"start"`
+
 	// OffsetEnd is the end of the name on a page.
 	OffsetEnd int `json:"end"`
+
 	// AnnotNomen is a nomenclatural annotation for new species or combination.
 	AnnotNomen string `json:"annotationNomen,omitempty"`
+
 	// AnnotNomenType is normalized nomenclatural annotation.
 	AnnotNomenType string `json:"annotationNomenType,omitempty"`
+
 	// Annotation is a placeholder to add more information about name.
 	Annotation string `json:"annotation,omitempty"`
+
 	// WordsBefore are words that happened before the name.
 	WordsBefore []string `json:"wordsBefore,omitempty"`
+
 	// WordsAfter are words that happened right after the name.
 	WordsAfter []string `json:"wordsAfter,omitempty"`
+
 	// Verification gives results of verification process of the name.
 	Verification *vlib.Verification `json:"verification,omitempty"`
 }
@@ -141,7 +155,7 @@ func postprocessNames(
 			continue
 		}
 		if prior > 0 && cfg.WithOddsAdjustment {
-			names[i].OddsDetails["name"]["priorOdds"]["true"] = prior
+			names[i].OddsDetails["priorOdds=true"] = prior
 			names[i].Odds = calculateOdds(names[i].OddsDetails)
 		}
 

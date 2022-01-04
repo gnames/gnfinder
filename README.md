@@ -156,6 +156,7 @@ settings in both the configuration file and from the flags.gt
 | WithBayesOddsDetails  | GNF_WITH_BAYES_ODDS_DETAILS |
 | WithOddsAdjustment    | GNF_WITH_ODDS_ADJUSTMENT    |
 | WithPlainInput        | GNF_WITH_PLAIN_INPUT        |
+| WithPositionInBytes   | GNF_WITH_POSITION_IN_BYTES  |
 | WithUniqueNames       | GNF_WITH_UNIQUE_NAMES       |
 | WithVerification      | GNF_WITH_VERIFICATION       |
 | WithoutBayes          | GNF_WITHOUT_BAYES           |
@@ -186,7 +187,7 @@ Starting as a web-application and an API server on port 8080
 gnfinder -p 8080
 ```
 
-Getting names from a UTF8-encoded file in CSV format
+Getting names from a UTF8-encoded file without remote Tika service.
 
 ```bash
 # -U flag prevents use of remote Apache Tika service for file conversion to
@@ -331,7 +332,7 @@ curl localhost:8080/api/v1/ping
 
 To upload a file and detect names from its content:
 
-```bash 
+```bash
 curl -v -F verification=true -F file=@/path/to/test.txt https://gnfinder.globalnames.org/api/v1/find
 ```
 

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gnames/bayes"
+	"github.com/gnames/bayes/ent/feature"
 	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/heuristic"
 	"github.com/gnames/gnfinder/ent/lang"
@@ -23,19 +24,19 @@ type gnfinder struct {
 	// text by heuristic name-finding. It should be close enough for real
 	// number of names in text. We use it when we do not have local conentration
 	// of names in a region of text.
-	TextOdds bayes.LabelFreq
+	TextOdds map[feature.Class]float64
 
 	// Dictionary contains black, grey, and white list dictionaries.
 	*dict.Dictionary
 
 	// BayesWeights weights based on Bayes' training
-	bayesWeights map[lang.Language]*bayes.NaiveBayes
+	bayesWeights map[lang.Language]bayes.Bayes
 }
 
 func New(
 	cfg config.Config,
 	dictionaries *dict.Dictionary,
-	weights map[lang.Language]*bayes.NaiveBayes,
+	weights map[lang.Language]bayes.Bayes,
 ) GNfinder {
 	gnf := &gnfinder{
 		Config:       cfg,

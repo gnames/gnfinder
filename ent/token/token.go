@@ -5,9 +5,13 @@
 package token
 
 import (
+	"encoding/json"
+	"fmt"
+	"sort"
 	"unicode"
 
-	"github.com/gnames/bayes"
+	"github.com/gnames/bayes/ent/feature"
+	"github.com/gnames/bayes/ent/posterior"
 	gner "github.com/gnames/gner/ent/token"
 	"github.com/gnames/gnfinder/io/dict"
 )
@@ -37,21 +41,48 @@ type NLP struct {
 	// Odds are posterior odds.
 	Odds float64
 
-	// OddsDetails are elements from which Odds are calculated.
-	OddsDetails
-
-	// LabelFreq is used to calculate prior odds of names appearing in a
+	// ClassCases is used to calculate prior odds of names appearing in a
 	// document.
-	LabelFreq bayes.LabelFreq
+	ClassCases map[feature.Class]int
+
+	// OddsDetails are used for calculating final odds for detected names and
+	// for displaying results in the output
+	OddsDetails
 }
 
-// OddsDetails are elements from which Odds are calculated
-type OddsDetails map[string]map[bayes.FeatureName]map[bayes.FeatureValue]float64
+type OddsDetails map[string]float64
 
-func NewOddsDetails(l bayes.Likelihoods) OddsDetails {
+type oddsOutput struct {
+	Feature string  `json:"feature"`
+	Odds    float64 `json:"odds"`
+}
+
+func (od OddsDetails) MarshalJSON() ([]byte, error) {
+	odds := make([]oddsOutput, len(od))
+
+	var i int
+	for k, v := range od {
+		odds[i] = oddsOutput{k, v}
+		i++
+	}
+
+	sort.Slice(odds, func(i, j int) bool {
+		return odds[i].Odds > odds[j].Odds
+	})
+
+	return json.Marshal(odds)
+}
+
+func NewOddsDetails(odds posterior.Odds) OddsDetails {
 	res := make(OddsDetails)
-	for k, v := range l {
-		res[k.String()] = v
+	for class, fval := range odds.Likelihoods {
+		if string(class) != "name" {
+			continue
+		}
+		for k, v := range fval {
+			str := fmt.Sprintf("%s: %s", k.Name, k.Value)
+			res[str] = v
+		}
 	}
 	return res
 }

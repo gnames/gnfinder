@@ -30,7 +30,7 @@ func bayesFlag(cmd *cobra.Command) {
 func bytesOffsetFlag(cmd *cobra.Command) {
 	b, _ := cmd.Flags().GetBool("bytes-offset")
 	if b {
-		opts = append(opts, config.OptWithBytesOffset(true))
+		opts = append(opts, config.OptWithPositonInBytes(true))
 	}
 }
 

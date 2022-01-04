@@ -21,7 +21,7 @@ import (
 type inputs struct {
 	input     string
 	opts      []config.Option
-	weights   map[lang.Language]*bayes.NaiveBayes
+	weights   map[lang.Language]bayes.Bayes
 	traceFile string
 }
 

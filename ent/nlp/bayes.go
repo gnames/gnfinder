@@ -6,6 +6,8 @@ import (
 	"log"
 
 	"github.com/gnames/bayes"
+	"github.com/gnames/bayes/ent/feature"
+	"github.com/gnames/bayes/ent/posterior"
 	"github.com/gnames/gnfinder/ent/lang"
 	"github.com/gnames/gnfinder/ent/token"
 	"github.com/gnames/gnfinder/io/dict"
@@ -15,7 +17,7 @@ import (
 func TagTokens(
 	ts []token.TokenSN,
 	d *dict.Dictionary,
-	nb *bayes.NaiveBayes,
+	nb bayes.Bayes,
 	thr float64,
 ) {
 	for i := range ts {
@@ -35,7 +37,7 @@ func TagTokens(
 }
 
 func processBayesResults(
-	odds []bayes.Posterior,
+	odds []posterior.Odds,
 	ts []token.TokenSN,
 	i int,
 	oddsThreshold float64,
@@ -44,14 +46,14 @@ func processBayesResults(
 	uni := ts[i]
 	decideUninomial(odds, uni, oddsThreshold)
 
-	if uni.Indices().Species == 0 || (odds[1].MaxLabel != Name &&
+	if uni.Indices().Species == 0 || (odds[1].MaxClass != IsName &&
 		uni.Decision().In(token.NotName, token.Uninomial)) {
 		return
 	}
 
 	sp := ts[i+uni.Indices().Species]
 	decideSpeces(odds, uni, sp, oddsThreshold, d)
-	if uni.Indices().Infraspecies == 0 || (odds[2].MaxLabel != Name &&
+	if uni.Indices().Infraspecies == 0 || (odds[2].MaxClass != IsName &&
 		!uni.Decision().In(token.Trinomial, token.BayesTrinomial)) {
 		return
 	}
@@ -60,7 +62,7 @@ func processBayesResults(
 }
 
 func decideInfraspeces(
-	odds []bayes.Posterior,
+	odds []posterior.Odds,
 	uni token.TokenSN,
 	isp token.TokenSN,
 	oddsThreshold float64,
@@ -71,7 +73,7 @@ func decideInfraspeces(
 		return
 	}
 	isp.NLP().Odds = odds[2].MaxOdds
-	isp.NLP().OddsDetails = token.NewOddsDetails(odds[2].Likelihoods)
+	isp.NLP().OddsDetails = token.NewOddsDetails(odds[2])
 	if isp.NLP().Odds >= oddsThreshold && uni.Decision().In(token.NotName,
 		token.PossibleBinomial, token.Binomial, token.BayesBinomial) {
 		uni.SetDecision(token.BayesTrinomial)
@@ -79,7 +81,7 @@ func decideInfraspeces(
 }
 
 func decideSpeces(
-	odds []bayes.Posterior,
+	odds []posterior.Odds,
 	uni token.TokenSN,
 	sp token.TokenSN,
 	oddsThreshold float64,
@@ -90,7 +92,7 @@ func decideSpeces(
 		return
 	}
 	sp.NLP().Odds = odds[1].MaxOdds
-	sp.NLP().OddsDetails = token.NewOddsDetails(odds[1].Likelihoods)
+	sp.NLP().OddsDetails = token.NewOddsDetails(odds[1])
 	if sp.NLP().Odds >= oddsThreshold && uni.NLP().Odds > 1 &&
 		uni.Decision().In(token.NotName, token.Uninomial, token.PossibleBinomial) {
 		uni.SetDecision(token.BayesBinomial)
@@ -98,18 +100,18 @@ func decideSpeces(
 }
 
 func decideUninomial(
-	odds []bayes.Posterior,
+	odds []posterior.Odds,
 	uni token.TokenSN,
 	oddsThreshold float64,
 ) {
-	if odds[0].MaxLabel == Name {
+	if odds[0].MaxClass == IsName {
 		uni.NLP().Odds = odds[0].MaxOdds
 	} else {
 		uni.NLP().Odds = 1 / odds[0].MaxOdds
 	}
-	uni.NLP().OddsDetails = token.NewOddsDetails(odds[0].Likelihoods)
-	uni.NLP().LabelFreq = odds[0].LabelFreq
-	if odds[0].MaxLabel == Name &&
+	uni.NLP().OddsDetails = token.NewOddsDetails(odds[0])
+	uni.NLP().ClassCases = odds[0].ClassCases
+	if odds[0].MaxClass == IsName &&
 		odds[0].MaxOdds >= oddsThreshold &&
 		uni.Decision() == token.NotName &&
 		uni.Features().UninomialDict != dict.BlackUninomial &&
@@ -119,62 +121,62 @@ func decideUninomial(
 }
 
 func calcOdds(
-	nb *bayes.NaiveBayes,
+	nb bayes.Bayes,
 	t token.TokenSN,
 	fs *FeatureSet,
-	odds bayes.LabelFreq,
-) []bayes.Posterior {
-	evenOdds := map[bayes.Labeler]float64{Name: 1.0, NotName: 1.0}
+	priorOdds map[feature.Class]int,
+) []posterior.Odds {
+	evenOdds := map[feature.Class]int{IsName: 1, IsNotName: 1}
 
 	oddsUni, err := nb.PosteriorOdds(
 		features(fs.Uninomial),
-		bayes.WithPriorOdds(odds),
+		bayes.OptPriorOdds(priorOdds),
 	)
 	if err != nil {
 		log.Fatal(err)
 	}
 	if t.Indices().Species == 0 {
-		return []bayes.Posterior{oddsUni}
+		return []posterior.Odds{oddsUni}
 	}
 	oddsSp, err := nb.PosteriorOdds(
 		features(fs.Species),
-		bayes.WithPriorOdds(evenOdds),
+		bayes.OptPriorOdds(evenOdds),
 	)
 	if err != nil {
 		log.Fatal(err)
 	}
-	delete(oddsSp.Likelihoods[Name], "priorOdds")
+	delete(oddsSp.Likelihoods[IsName], feature.Feature{Name: "priorOdds", Value: "true"})
 	if t.Indices().Infraspecies == 0 {
-		return []bayes.Posterior{oddsUni, oddsSp}
+		return []posterior.Odds{oddsUni, oddsSp}
 	}
 	f := features(fs.InfraSp)
-	oddsInfraSp, err := nb.PosteriorOdds(f, bayes.WithPriorOdds(evenOdds))
+	oddsInfraSp, err := nb.PosteriorOdds(f, bayes.OptPriorOdds(evenOdds))
 	if err != nil {
 		log.Fatal(err)
 	}
-	delete(oddsInfraSp.Likelihoods[Name], "priorOdds")
-	return []bayes.Posterior{oddsUni, oddsSp, oddsInfraSp}
+	delete(oddsInfraSp.Likelihoods[IsName], feature.Feature{Name: "priorOdds", Value: "true"})
+	return []posterior.Odds{oddsUni, oddsSp, oddsInfraSp}
 }
 
-func nameFrequency() bayes.LabelFreq {
-	return map[bayes.Labeler]float64{
-		Name:    1.0,
-		NotName: 10.0,
+func nameFrequency() map[feature.Class]int {
+	return map[feature.Class]int{
+		IsName:    1,
+		IsNotName: 10,
 	}
 }
 
-func BayesWeights() map[lang.Language]*bayes.NaiveBayes {
-	bw := make(map[lang.Language]*bayes.NaiveBayes)
+func BayesWeights() map[lang.Language]bayes.Bayes {
+	bw := make(map[lang.Language]bayes.Bayes)
 	for k := range lang.LanguagesSet {
 		bw[k] = naiveBayesFromDump(k)
 	}
 	return bw
 }
 
-func naiveBayesFromDump(l lang.Language) *bayes.NaiveBayes {
-	nb := bayes.NewNaiveBayes()
-	bayes.RegisterLabel(labelMap)
+func naiveBayesFromDump(l lang.Language) bayes.Bayes {
+	nb := bayes.New()
 	dir := fmt.Sprintf("data/files/%s/bayes.json", l.String())
+
 	f, err := nlpfs.Data.Open(dir)
 	if err != nil {
 		log.Fatal(err)
@@ -192,14 +194,17 @@ func naiveBayesFromDump(l lang.Language) *bayes.NaiveBayes {
 		log.Fatal(err)
 	}
 
-	nb.Restore(json)
+	nb.Load(json)
 	return nb
 }
 
-func features(bf []BayesF) []bayes.Featurer {
-	f := make([]bayes.Featurer, len(bf))
+func features(bf []BayesF) []feature.Feature {
+	f := make([]feature.Feature, len(bf))
 	for i, v := range bf {
-		f[i] = v
+		f[i] = feature.Feature{
+			Name:  feature.Name(v.Name),
+			Value: feature.Value(v.Value),
+		}
 	}
 	return f
 }

@@ -66,9 +66,9 @@ type Config struct {
 	// true - both heuristic and Naive Bayes algorithms run.
 	WithBayes bool
 
-	// WithBytesOffset can be set to true to receive offsets in number of
+	// WithPositionInBytes can be set to true to receive offsets in number of
 	// bytes instead of UTF-8 characters.
-	WithBytesOffset bool
+	WithPositionInBytes bool
 
 	// WithBayesOddsDetails show in detail how odds are calculated.
 	WithBayesOddsDetails bool
@@ -176,11 +176,11 @@ func OptWithBayes(b bool) Option {
 	}
 }
 
-// OptWithBytesOffset is an option that allows to have offsets in number of
+// OptWithPositonInBytes is an option that allows to have offsets in number of
 // bytes of number of UTF-8 characters.
-func OptWithBytesOffset(b bool) Option {
+func OptWithPositonInBytes(b bool) Option {
 	return func(cfg *Config) {
-		cfg.WithBytesOffset = b
+		cfg.WithPositionInBytes = b
 	}
 }
 

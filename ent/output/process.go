@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/gnames/gnfinder/config"
-	"github.com/gnames/gnfinder/ent/nlp"
 	"github.com/gnames/gnfinder/ent/token"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 )
@@ -19,7 +18,7 @@ func TokensToOutput(
 	version string,
 	cfg config.Config) Output {
 	// map rune number to byte number
-	if cfg.WithBytesOffset {
+	if cfg.WithPositionInBytes {
 		populateBytesMap(text)
 	}
 
@@ -42,15 +41,13 @@ func TokensToOutput(
 }
 
 func calculateOdds(det token.OddsDetails) float64 {
-	res := 1.0
-	nameDetails, ok := det["name"]
-	if !ok {
+	if len(det) == 0 {
 		return 0
 	}
-	for _, v := range nameDetails {
-		for _, vv := range v {
-			res *= vv
-		}
+
+	res := 1.0
+	for _, v := range det {
+		res *= v
 	}
 	return res
 }
@@ -177,7 +174,7 @@ func (o *Output) MergeVerification(
 			o.Names[i].Verification = &v
 		}
 	}
-	o.Meta.NameVerifSec = dur
+	o.NameVerifSec = dur
 }
 
 func tokensToName(ts []token.TokenSN, text []rune, cfg config.Config) Name {
@@ -209,11 +206,9 @@ func uninomialName(
 	if len(u.NLP().OddsDetails) == 0 {
 		return name
 	}
-	if l, ok := u.NLP().OddsDetails[nlp.Name.String()]; ok {
-		name.OddsDetails = make(token.OddsDetails)
-		name.OddsDetails[nlp.Name.String()] = l
-	}
-	if cfg.WithBytesOffset {
+
+	name.OddsDetails = u.NLP().OddsDetails
+	if cfg.WithPositionInBytes {
 		offsetsToBytes(&name)
 	}
 	return name
@@ -238,19 +233,16 @@ func speciesName(
 		OffsetEnd:   s.End(),
 	}
 	if len(g.NLP().OddsDetails) == 0 || len(s.NLP().OddsDetails) == 0 ||
-		len(g.NLP().LabelFreq) == 0 {
+		len(g.NLP().ClassCases) == 0 {
 		return name
 	}
-	if lg, ok := g.NLP().OddsDetails[nlp.Name.String()]; ok {
-		name.OddsDetails = make(token.OddsDetails)
-		name.OddsDetails[nlp.Name.String()] = lg
-		if ls, ok := s.NLP().OddsDetails[nlp.Name.String()]; ok {
-			for k, v := range ls {
-				name.OddsDetails[nlp.Name.String()][k] = v
-			}
-		}
+
+	name.OddsDetails = g.NLP().OddsDetails
+	for k, v := range s.NLP().OddsDetails {
+		name.OddsDetails[k] = v
 	}
-	if cfg.WithBytesOffset {
+
+	if cfg.WithPositionInBytes {
 		offsetsToBytes(&name)
 	}
 	return name
@@ -278,24 +270,19 @@ func infraspeciesName(
 		OffsetEnd:   isp.End(),
 	}
 	if len(g.NLP().OddsDetails) == 0 || len(sp.NLP().OddsDetails) == 0 ||
-		len(isp.NLP().OddsDetails) == 0 || len(g.NLP().LabelFreq) == 0 {
+		len(isp.NLP().OddsDetails) == 0 || len(g.NLP().ClassCases) == 0 {
 		return name
 	}
-	if lg, ok := g.NLP().OddsDetails[nlp.Name.String()]; ok {
-		name.OddsDetails = make(token.OddsDetails)
-		name.OddsDetails[nlp.Name.String()] = lg
-		if ls, ok := sp.NLP().OddsDetails[nlp.Name.String()]; ok {
-			for k, v := range ls {
-				name.OddsDetails[nlp.Name.String()][k] = v
-			}
-		}
-		if li, ok := isp.NLP().OddsDetails[nlp.Name.String()]; ok {
-			for k, v := range li {
-				name.OddsDetails[nlp.Name.String()][k] = v
-			}
-		}
+
+	name.OddsDetails = g.NLP().OddsDetails
+	for k, v := range sp.NLP().OddsDetails {
+		name.OddsDetails[k] = v
 	}
-	if cfg.WithBytesOffset {
+	for k, v := range isp.NLP().OddsDetails {
+		name.OddsDetails[k] = v
+	}
+
+	if cfg.WithPositionInBytes {
 		offsetsToBytes(&name)
 	}
 	return name

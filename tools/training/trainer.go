@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/gnames/bayes/ent/feature"
 	"github.com/gnames/gnfinder/ent/heuristic"
 
 	"github.com/gnames/bayes"
@@ -16,6 +17,8 @@ import (
 	"github.com/gnames/gnfinder/io/dict"
 	jsoniter "github.com/json-iterator/go"
 )
+
+var genWhiteNoName = make(map[string]struct{})
 
 type FileName string
 
@@ -38,9 +41,10 @@ type NameData struct {
 }
 
 // Train performs the training process
-func Train(td TrainingData, d *dict.Dictionary) *bayes.NaiveBayes {
+func Train(td TrainingData, d *dict.Dictionary) bayes.Bayes {
 	lfs := processTrainingData(td, d)
-	nb := bayes.TrainNB(lfs)
+	nb := bayes.New()
+	nb.Train(lfs)
 	return nb
 }
 
@@ -93,9 +97,11 @@ func NewTrainingData(path string) TrainingData {
 // processTrainingData takes data from several training texts, ignores
 // the name of the file and collects training information from names in
 // the texts.
-func processTrainingData(td TrainingData,
-	d *dict.Dictionary) []bayes.LabeledFeatures {
-	var lfs []bayes.LabeledFeatures
+func processTrainingData(
+	td TrainingData,
+	d *dict.Dictionary,
+) []feature.ClassFeatures {
+	var lfs []feature.ClassFeatures
 	for _, v := range td {
 		lfsText := processText(v, d)
 		lfs = append(lfs, lfsText...)
@@ -104,13 +110,13 @@ func processTrainingData(td TrainingData,
 }
 
 // processText
-func processText(t *TextData, d *dict.Dictionary) []bayes.LabeledFeatures {
-	var lfs, lfsText []bayes.LabeledFeatures
+func processText(t *TextData, d *dict.Dictionary) []feature.ClassFeatures {
+	var lfs, lfsText []feature.ClassFeatures
 	var nd NameData
 	ts := token.Tokenize(t.Text)
 	heuristic.TagTokens(ts, d)
 	l := len(t.NamesPositions)
-	nameIdx, i := 0, 0
+	var nameIdx, i int
 	for {
 		if l > 0 {
 			nd = t.NamesPositions[nameIdx]
@@ -129,10 +135,13 @@ func processText(t *TextData, d *dict.Dictionary) []bayes.LabeledFeatures {
 // known name. It takes index of the first token to traverse, tokens, and
 // currenly available name metadata, if any. It returns all the features
 // and a new index to continue collecting data.
-func getFeatures(i int, ts []token.TokenSN,
-	nd *NameData) (int, []bayes.LabeledFeatures) {
-	var lfs []bayes.LabeledFeatures
-	label := nlp.NotName
+func getFeatures(
+	i int,
+	ts []token.TokenSN,
+	nd *NameData,
+) (int, []feature.ClassFeatures) {
+	var lfs []feature.ClassFeatures
+	class := nlp.IsNotName
 
 	for j := i; j < len(ts); j++ {
 		t := ts[j]
@@ -143,14 +152,19 @@ func getFeatures(i int, ts []token.TokenSN,
 		upperIndex := token.UpperIndex(j, len(ts))
 		featureSet := nlp.NewFeatureSet(ts[j:upperIndex])
 		if nd.Name != "" && t.End() > nd.Start {
-			label = nlp.Name
-			lfs = append(lfs, bayes.LabeledFeatures{Features: featureSet.Flatten(),
-				Label: label})
+			class = nlp.IsName
+			lfs = append(lfs, feature.ClassFeatures{Features: featureSet.Flatten(),
+				Class: class})
 			return j + 1, lfs
 		}
 
-		lfs = append(lfs, bayes.LabeledFeatures{Features: featureSet.Flatten(),
-			Label: label})
+		for _, v := range featureSet.Uninomial {
+			if v.Name == "uniDict" && v.Value == "whiteGenus" {
+				genWhiteNoName[t.Cleaned()] = struct{}{}
+			}
+		}
+		lfs = append(lfs, feature.ClassFeatures{Features: featureSet.Flatten(),
+			Class: class})
 	}
 	return -1, lfs
 }

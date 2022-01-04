@@ -3,15 +3,15 @@ package nlp
 import (
 	"strconv"
 
-	"github.com/gnames/bayes"
+	"github.com/gnames/bayes/ent/feature"
 	"github.com/gnames/gnfinder/ent/token"
 	"github.com/gnames/gnfinder/io/dict"
 )
 
 // BayesF implements bayes.Featurer
 type BayesF struct {
-	name  string
-	value string
+	Name  string
+	Value string
 }
 
 // FeatureSet splits features into Uninomial, Species, Ifraspecies groups
@@ -21,21 +21,13 @@ type FeatureSet struct {
 	InfraSp   []BayesF
 }
 
-func (fs *FeatureSet) Flatten() []bayes.Featurer {
+func (fs *FeatureSet) Flatten() []feature.Feature {
 	l := len(fs.Uninomial) + len(fs.Species) + len(fs.InfraSp)
-	res := make([]bayes.Featurer, 0, l)
+	res := make([]feature.Feature, 0, l)
 	res = append(res, features(fs.Uninomial)...)
 	res = append(res, features(fs.Species)...)
 	res = append(res, features(fs.InfraSp)...)
 	return res
-}
-
-// Name is required by bayes.Featurer
-func (b BayesF) Name() bayes.FeatureName { return bayes.FeatureName(b.name) }
-
-// Value is required by bayes.Featurer
-func (b BayesF) Value() bayes.FeatureValue {
-	return bayes.FeatureValue(b.value)
 }
 
 // BayesFeatures creates slices of features for a token that might represent
