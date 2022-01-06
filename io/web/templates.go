@@ -75,7 +75,7 @@ func parseFiles() (*template.Template, error) {
 
 func addFuncs(tmpl *template.Template) {
 	tmpl.Funcs(template.FuncMap{
-		"isVerified": func(ver *verifier.Verification) template.HTML {
+		"isVerified": func(ver *verifier.Name) template.HTML {
 			if ver == nil || ver.MatchType == verifier.NoMatch {
 				return template.HTML("")
 			}

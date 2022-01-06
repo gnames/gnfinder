@@ -38,9 +38,9 @@ func Run(gnf gnfinder.GNfinder, port int) {
 	e.GET("/apidoc", apidoc(gnf))
 	e.POST("/find", find(gnf))
 
-	e.GET("/api/v1/ping", pingAPI())
-	e.GET("/api/v1/version", verAPI(gnf))
-	e.POST("/api/v1/find", findAPI(gnf))
+	e.GET("/api/v0/ping", pingAPI())
+	e.GET("/api/v0/version", verAPI(gnf))
+	e.POST("/api/v0/find", findAPI(gnf))
 
 	fs := http.FileServer(http.FS(static))
 	e.GET("/static/*", echo.WrapHandler(fs))

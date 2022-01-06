@@ -2,7 +2,10 @@
 
 ## Unreleased
 
-Add [#111]: update bayes calculations.
+## [v0.17.0]
+
+Add [#111]: update bayes calculations. Verification JSON is not fully
+            backward compatible.
 Add [#109]: add classification path to CSV and TSV outputs.
 
 ## [v0.16.3]
@@ -258,6 +261,7 @@ Fix [#100]: fix csv/tsv fields number for verification
 
 This document follows [changelog guidelines]
 
+[v0.17.0]: https://github.com/gnames/gnfinder/compare/v0.16.3...v0.17.0
 [v0.16.3]: https://github.com/gnames/gnfinder/compare/v0.16.2...v0.16.3
 [v0.16.2]: https://github.com/gnames/gnfinder/compare/v0.16.1...v0.16.2
 [v0.16.1]: https://github.com/gnames/gnfinder/compare/v0.16.0...v0.16.1

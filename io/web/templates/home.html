@@ -58,72 +58,121 @@
             </div>
             <div id='advanced_selections'>
               <fieldset>
-                <legend>Output Settings</legend>
-                <label for='return_content'>Return Input (JSON only)</label>
-                <input id='return_content' name='returnContent' value='true' type='checkbox'>
-                <br/>
-                <input checked id='unique_unique_list' name='unique' type='radio' value='true'>
-                <label for='unique_unique_list'>Unique list</label>
-                <input id='unique_all_occurrences' name='unique' type='radio' value='false'>
-                <label for='unique_all_occurrences'>All occurrences</label>
+                 <div>
+                   <input checked id='unique_unique_list' name='unique' type='radio' value='true'>
+                   <label for='unique_unique_list'>Unique list</label>
+                   <input id='unique_all_occurrences' name='unique' type='radio' value='false'>
+                   <label for='unique_all_occurrences'>All occurrences</label>
+                 </div>
+
+                 <br/><br/>
+
+                 <div>
+                   <input id='return_content' name='returnContent' value='true' type='checkbox'>
+                   <label for='return_content'>Return Input (JSON only)</label>
+                 </div>
+
+                 <div>
+                   <input id='return_content' name='oddsDetails' value='true' type='checkbox'>
+                   <label for='return_content'>Show Odds Details (JSON only)</label>
+                 </div>
               </fieldset>
               <fieldset>
                 <legend>Verification (JSON, CSV, TSV)</legend>
                 <p>
                   <strong>Return results from preferred data sources:</strong>
                 </p>
+
+                <div>
+                  <input id='preferred_data_sources_195' name='sources[]' value=195 type='checkbox'>
+                  <label for='preferred_data_sources_195'>AlgaeBase</label>
+                </div>
+
                 <div>
                   <input id='preferred_data_sources_170' name='sources[]' value=170 type='checkbox'>
                   <label for='preferred_data_sources_170'>Arctos</label>
                 </div>
+
                 <div>
                   <input id='preferred_data_sources_183' name='sources[]' value=183 type='checkbox'>
                   <label for='preferred_data_sources_183'>ASM Mammal DB</label>
                 </div>
+
                 <div>
                   <input id='preferred_data_sources_1' name='sources[]' value=1 type='checkbox'>
                   <label for='preferred_data_sources_1'>Catalogue of Life</label>
                 </div>
+
                 <div>
                   <input id='preferred_data_sources_12' name='sources[]' value=12 type='checkbox'>
                   <label for='preferred_data_sources_12'>Encyclopedia of Life</label>
                 </div>
+
                 <div>
                   <input id='preferred_data_sources_11' name='sources[]' value=11 type='checkbox'>
                   <label for='preferred_data_sources_11'>GBIF</label>
                 </div>
+
                 <div>
                   <input id='preferred_data_sources_5' name='sources[]' value=5 type='checkbox'>
                   <label for='preferred_data_sources_5'>Index Fungorum</label>
                 </div>
+
+                <div>
+                  <input id='preferred_data_sources_168' name='sources[]' value=168 type='checkbox'>
+                  <label for='preferred_data_sources_168'>ION</label>
+                </div>
+
                 <div>
                   <input id='preferred_data_sources_167' name='sources[]' value=167 type='checkbox'>
                   <label for='preferred_data_sources_167'>IPNI</label>
                 </div>
+
                 <div>
                   <input id='preferred_data_sources_3' name='sources[]' value=3 type='checkbox'>
                   <label for='preferred_data_sources_3'>ITIS</label>
                 </div>
+
                 <div>
                   <input id='preferred_data_sources_4' name='sources[]' value=4 type='checkbox'>
                   <label for='preferred_data_sources_4'>NCBI</label>
                 </div>
+
                 <div>
                   <input id='preferred_data_sources_179' name='sources[]' value=179 type='checkbox'>
                   <label for='preferred_data_sources_179'>Open Tree of Life</label>
                 </div>
+
                 <div>
                   <input id='preferred_data_sources_194' name='sources[]' value=194 type='checkbox'>
                   <label for='preferred_data_sources_194'>Plazi</label>
                 </div>
+
+                <div>
+                  <input id='preferred_data_sources_165' name='sources[]' value=165 type='checkbox'>
+                  <label for='preferred_data_sources_165'>Tropicos</label>
+                </div>
+
                 <div>
                   <input id='preferred_data_sources_2' name='sources[]' value=2 type='checkbox'>
                   <label for='preferred_data_sources_2'>Wikispecies</label>
+                </div>
+
+                <div>
+                  <input id='preferred_data_sources_197' name='sources[]' value=197 type='checkbox'>
+                  <label for='preferred_data_sources_197'>World Chkl. Vasc. Plants Kew</label>
+                </div>
+
+                <div>
+                  <input id='preferred_data_sources_196' name='sources[]' value=196 type='checkbox'>
+                  <label for='preferred_data_sources_196'>World Flora Online</label>
+                </div>
+
                 <div>
                   <input id='preferred_data_sources_9' name='sources[]' value=9 type='checkbox'>
                   <label for='preferred_data_sources_9'>WoRMS</label>
                 </div>
-                </div>
+
                 <div>
                   <input id='preferred_data_sources_169' name='sources[]' value=169 type='checkbox'>
                   <label for='preferred_data_sources_169'>uBio NameBank</label>

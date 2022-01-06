@@ -40,7 +40,7 @@
 # PreferredSources is a list of data-source IDs used for the
 # name-verification. These data-sources will always be matched with the
 # verified names. You can find the list of all data-sources at
-# https://verifier.globalnames.org/api/v1/data_sources.
+# https://verifier.globalnames.org/api/v0/data_sources.
 # When this option is not empty, verification is switched on automatically.
 # Example - [1, 11]
 #
@@ -60,7 +60,7 @@
 
 # VerifierURL contains the URL of a name-verification service.
 #
-# VerifierURL: https://verifier.globalnames.org/api/v1/
+# VerifierURL: https://verifier.globalnames.org/api/v0/
 
 # WithBayesOddsDetails show in detail how odds are calculated.
 # This option is ignores if Format is set to csv.

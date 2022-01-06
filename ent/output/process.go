@@ -2,10 +2,12 @@ package output
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/token"
+	gncontext "github.com/gnames/gnlib/ent/context"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 )
 
@@ -166,7 +168,8 @@ func (o *Output) UniqueNameStrings() []string {
 // MergeVerification takes a map with verified names and
 // incorporates into output.
 func (o *Output) MergeVerification(
-	v map[string]vlib.Verification,
+	v map[string]vlib.Name,
+	stats gncontext.Context,
 	dur float32,
 ) {
 	for i := range o.Names {
@@ -174,7 +177,30 @@ func (o *Output) MergeVerification(
 			o.Names[i].Verification = &v
 		}
 	}
+	o.getStats(stats)
 	o.NameVerifSec = dur
+}
+
+func (o *Output) getStats(stats gncontext.Context) {
+	if stats.Kingdom.Name == "" && stats.Context.Name == "" {
+		return
+	}
+
+	ks := make([]Kingdom, len(stats.Kingdoms))
+	for i, v := range stats.Kingdoms {
+		ks[i] = Kingdom{
+			NamesNum:        v.NamesNum,
+			Kingdom:         v.Name,
+			NamesPercentage: v.Percentage,
+		}
+	}
+	sort.Slice(ks, func(i, j int) bool {
+		return ks[i].NamesPercentage > ks[j].NamesPercentage
+	})
+	o.Kingdoms = ks
+	o.MainClade = stats.Context.Name
+	o.MainCladeRank = stats.Context.Rank.String()
+	o.MainCladePercentage = stats.ContextPercentage
 }
 
 func tokensToName(ts []token.TokenSN, text []rune, cfg config.Config) Name {

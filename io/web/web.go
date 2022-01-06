@@ -120,6 +120,7 @@ func getOpts(params api.FinderParams) []config.Option {
 		config.OptIncludeInputText(params.ReturnContent),
 		config.OptWithVerification(params.Verification),
 		config.OptPreferredSources(params.Sources),
+		config.OptWithBayesOddsDetails(params.OddsDetails),
 	}
 }
 
@@ -138,8 +139,8 @@ func findNames(
 	if gnf.GetConfig().WithVerification {
 		sources := gnf.GetConfig().PreferredSources
 		verif := verifier.New(cfg.VerifierURL, sources)
-		verifiedNames, durVerif := verif.Verify(res.UniqueNameStrings())
-		res.MergeVerification(verifiedNames, durVerif)
+		verifiedNames, stats, durVerif := verif.Verify(res.UniqueNameStrings())
+		res.MergeVerification(verifiedNames, stats, durVerif)
 	}
 	if cfg.IncludeInputText {
 		res.InputText = txt

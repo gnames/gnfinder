@@ -56,8 +56,8 @@ func findAPI(gnf gnfinder.GNfinder) func(echo.Context) error {
 				cfg := gnf.GetConfig()
 				if cfg.WithVerification {
 					verif := verifier.New(cfg.VerifierURL, cfg.PreferredSources)
-					verifiedNames, dur := verif.Verify(out.UniqueNameStrings())
-					out.MergeVerification(verifiedNames, dur)
+					verifiedNames, stats, dur := verif.Verify(out.UniqueNameStrings())
+					out.MergeVerification(verifiedNames, stats, dur)
 				}
 			}
 			out.TotalSec = out.TextExtractionSec + out.NameFindingSec + out.NameVerifSec

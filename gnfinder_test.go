@@ -41,7 +41,6 @@ func TestMeta(t *testing.T) {
 	assert.Equal(t, 17, res.TotalTokens)
 	assert.Equal(t, 5, res.TotalNameCandidates)
 	assert.Equal(t, 4, res.TotalNames)
-	assert.Zero(t, res.CurrentName)
 	assert.Equal(t, "Pardosa moesta", res.Names[0].Name)
 }
 

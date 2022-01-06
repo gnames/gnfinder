@@ -82,7 +82,7 @@ format to the standard output.
 
 Optional verification process returns 'the best' result for the match. If
 specific datasets are important for verification, they can be set with '-s'
-'--sources' flag using IDs from https://verifier.globalnames.org/datasource.
+'--sources' flag using IDs from https://verifier.globalnames.org/datasources.
 `,
 
 	// Uncomment the following line if your bare application has an action
@@ -375,8 +375,8 @@ func findNames(
 	if gnf.GetConfig().WithVerification {
 		sources := gnf.GetConfig().PreferredSources
 		verif := verifier.New(cfg.VerifierURL, sources)
-		verifiedNames, dur := verif.Verify(res.UniqueNameStrings())
-		res.MergeVerification(verifiedNames, dur)
+		verifiedNames, stats, dur := verif.Verify(res.UniqueNameStrings())
+		res.MergeVerification(verifiedNames, stats, dur)
 	}
 	res.TotalSec = res.TextExtractionSec + res.NameFindingSec + res.NameVerifSec
 	fmt.Println(res.Format(cfg.Format))

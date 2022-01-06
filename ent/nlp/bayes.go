@@ -194,7 +194,10 @@ func naiveBayesFromDump(l lang.Language) bayes.Bayes {
 		log.Fatal(err)
 	}
 
-	nb.Load(json)
+	err = nb.Load(json)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return nb
 }
 

@@ -77,10 +77,28 @@ type Meta struct {
 	// TotalNames is a number of scientific names found
 	TotalNames int `json:"totalNames"`
 
-	// CurrentName (optional) is the index of the names array that designates a
-	// "position of a cursor". It is used by programs like gntagger that allow
-	// to work on the list of found names interactively.
-	CurrentName int `json:"currentIndex,omitempty"`
+	// Kingdoms are the kingdoms to which the names resolved by
+	// the Catalogue of Life are placed.
+	// Kingdoms are sorted by percentage in descending order.
+	// The first kingom contains the most number of names.
+	Kingdoms []Kingdom `json:"kingdoms,omitempty"`
+
+	// MainClade is the clade containing majority of resolved by
+	// the Catalogue of Life names.
+	MainClade string `json:"mainClade,omitempty"`
+
+	// MainCladeRank is the rank of the MainClade.
+	MainCladeRank string `json:"mainCladeRank,omitempty"`
+
+	// MainCladePercentage is the percentage of names in Context.
+	MainCladePercentage float32 `json:"mainCladePercentage,omitempty"`
+}
+
+// Kingdom contains names resolved to it and their percentage.
+type Kingdom struct {
+	NamesNum        int     `json:"namesNumber"`
+	Kingdom         string  `json:"kingdom"`
+	NamesPercentage float32 `json:"namesPercentage"`
 }
 
 // OddsDatum is a simplified version of a name, that stores boolean decision
@@ -133,7 +151,7 @@ type Name struct {
 	WordsAfter []string `json:"wordsAfter,omitempty"`
 
 	// Verification gives results of verification process of the name.
-	Verification *vlib.Verification `json:"verification,omitempty"`
+	Verification *vlib.Name `json:"verification,omitempty"`
 }
 
 func postprocessNames(
