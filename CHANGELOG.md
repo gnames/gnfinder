@@ -4,8 +4,13 @@
 
 ## [v0.17.0]
 
-Add [#111]: update bayes calculations. Verification JSON is not fully
-            backward compatible.
+Add [#111]: update bayes calculations.
+
+Add [#110]: update verification process using most recent code.
+            Stats for kingdoms distribution and the main clade that
+            contains most of the names in the text.
+            Verification JSON is not fully backward compatible.
+
 Add [#109]: add classification path to CSV and TSV outputs.
 
 ## [v0.16.3]
