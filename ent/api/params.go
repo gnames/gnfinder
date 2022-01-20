@@ -10,7 +10,7 @@ type FinderParams struct {
 	// Text contains a plain text document encoded in UTF-8.
 	Text string `json:"text" form:"text"`
 
-	// Format sets the format of the output (csv, json, .
+	// Format sets the format of the output (csv, tsv, json).
 	Format string `json:"format" form:"format"`
 
 	// BytesOffset changes offset value from UTF-8 characters to bytes number.

@@ -189,7 +189,7 @@ func (o *Output) getStats(stats gncontext.Context) {
 	ks := make([]Kingdom, len(stats.Kingdoms))
 	for i, v := range stats.Kingdoms {
 		ks[i] = Kingdom{
-			NamesNum:        v.NamesNum,
+			NamesNumber:     v.NamesNum,
 			Kingdom:         v.Name,
 			NamesPercentage: v.Percentage,
 		}

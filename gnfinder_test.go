@@ -36,9 +36,9 @@ func TestMeta(t *testing.T) {
 	assert.Zero(t, res.WordsAround)
 	assert.Equal(t, "eng", res.Language)
 	assert.Empty(t, res.LanguageDetected)
-	assert.False(t, res.DetectLanguage)
+	assert.False(t, res.WithLanguageDetection)
 
-	assert.Equal(t, 17, res.TotalTokens)
+	assert.Equal(t, 17, res.TotalWords)
 	assert.Equal(t, 5, res.TotalNameCandidates)
 	assert.Equal(t, 4, res.TotalNames)
 	assert.Equal(t, "Pardosa moesta", res.Names[0].Name)

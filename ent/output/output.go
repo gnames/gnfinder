@@ -18,6 +18,12 @@ type Output struct {
 
 // Meta contains meta-information of name-finding result.
 type Meta struct {
+	// Date represents time when output was generated.
+	Date time.Time `json:"date"`
+
+	// FinderVersion the version of gnfinder.
+	FinderVersion string `json:"gnfinderVersion"`
+
 	// InputFile is the name of the source file.
 	InputFile string `json:"inputFile,omitempty"`
 
@@ -32,24 +38,18 @@ type Meta struct {
 	NameVerifSec float32 `json:"nameVerifSec,omitempty"`
 
 	// TotalSec is time spent for the whole process
-	TotalSec float32 `json:"totalSec,omitempty"`
-
-	// Date represents time when output was generated.
-	Date time.Time `json:"date"`
-
-	// FinderVersion the version of gnfinder.
-	FinderVersion string `json:"gnfinderVersion"`
+	TotalSec float32 `json:"totalSec"`
 
 	// WithBayes use of bayes during name-finding
 	WithBayes bool `json:"withBayes"`
 
-	// WithPositionInBytes names get start/enc positionx in bytes
-	// instead of UTF-8 chars.
-	WithPositionInBytes bool `json:"withPositionInBytes"`
-
 	// WithOddsAdjustment to adjust prior odds according to the dencity of
 	// scientific names in the text.
 	WithOddsAdjustment bool `json:"withOddsAdjustment"`
+
+	// WithPositionInBytes names get start/enc positionx in bytes
+	// instead of UTF-8 chars.
+	WithPositionInBytes bool `json:"withPositionInBytes"`
 
 	// WithVerification is true if results are checked by verification service.
 	WithVerification bool `json:"withVerification"`
@@ -58,21 +58,21 @@ type Meta struct {
 	// a name-string candidate.
 	WordsAround int `json:"wordsAround"`
 
-	// Language inside name-finding algorithm
+	// Language setting used by the name-finding algorithm.
 	Language string `json:"language"`
 
-	// LanguageDetected automatically for the text
+	// LanguageDetected automatically for the text.
 	LanguageDetected string `json:"languageDetected,omitempty"`
 
-	// LanguageForced by language option
-	DetectLanguage bool `json:"detectLanguage"`
+	// WithLanguageDetection sets automatic language determination.
+	WithLanguageDetection bool `json:"withLanguageDetection"`
 
-	// TotalTokens is a number of 'normalized' words in the text
-	TotalTokens int `json:"totalWords"`
+	// TotalWords is a number of 'normalized' words in the text
+	TotalWords int `json:"totalWords"`
 
 	// TotalNameCandidates is a number of words that might be a start of
 	// a scientific name
-	TotalNameCandidates int `json:"totalCandidates"`
+	TotalNameCandidates int `json:"totalNameCandidates"`
 
 	// TotalNames is a number of scientific names found
 	TotalNames int `json:"totalNames"`
@@ -96,7 +96,7 @@ type Meta struct {
 
 // Kingdom contains names resolved to it and their percentage.
 type Kingdom struct {
-	NamesNum        int     `json:"namesNumber"`
+	NamesNumber     int     `json:"namesNumber"`
 	Kingdom         string  `json:"kingdom"`
 	NamesPercentage float32 `json:"namesPercentage"`
 }
@@ -115,7 +115,7 @@ type Name struct {
 	Cardinality int `json:"cardinality"`
 
 	// Verbatim shows name the way it was in the text.
-	Verbatim string `json:"verbatim,omitempty"`
+	Verbatim string `json:"verbatim"`
 
 	// Name is a normalized version of a name.
 	Name string `json:"name"`
@@ -140,9 +140,6 @@ type Name struct {
 
 	// AnnotNomenType is normalized nomenclatural annotation.
 	AnnotNomenType string `json:"annotationNomenType,omitempty"`
-
-	// Annotation is a placeholder to add more information about name.
-	Annotation string `json:"annotation,omitempty"`
 
 	// WordsBefore are words that happened before the name.
 	WordsBefore []string `json:"wordsBefore,omitempty"`
@@ -206,7 +203,7 @@ func newOutput(
 		WordsAround:         cfg.TokensAround,
 		Language:            cfg.Language.String(),
 		LanguageDetected:    cfg.LanguageDetected,
-		TotalTokens:         len(ts),
+		TotalWords:          len(ts),
 		TotalNameCandidates: candidatesNum(ts),
 		TotalNames:          len(names),
 	}
@@ -215,7 +212,7 @@ func newOutput(
 		postprocessNames(names, meta.TotalNameCandidates, cfg)
 	}
 	o := Output{Meta: meta, Names: names}
-	o.DetectLanguage = o.LanguageDetected != ""
+	o.WithLanguageDetection = o.LanguageDetected != ""
 
 	return o
 }

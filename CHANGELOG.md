@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## [v0.18.0]
+
+Add: update input and output objects and REST API
+     Introducing some backward incompatibility.
+     See `https://apidoc.globalnames.org/gnfinder-beta`
+
 ## [v0.17.0]
 
 Add [#111]: update bayes calculations.
