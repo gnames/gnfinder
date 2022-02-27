@@ -11,9 +11,9 @@ import (
 
 func TestVerifier(t *testing.T) {
 	cfg := config.New()
-	gnv := verifier.New(cfg.VerifierURL, []int{})
+	gnv := verifier.New(cfg.VerifierURL, []int{}, false)
 	if gnv.IsConnected() {
-		verif := verifier.New("", nil)
+		verif := verifier.New("", nil, false)
 		res, _, _ := verif.Verify([]string{"Bubo bubo"})
 		assert.Equal(t, len(res), 1)
 	} else {

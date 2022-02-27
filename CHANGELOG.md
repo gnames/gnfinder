@@ -2,13 +2,15 @@
 
 ## Unreleased
 
-## [v0.18.0]
+## [v0.18.0] - 2022-02-28 Mon
 
+Add [#117]: bring verificaton in sync with gnames v0.8.0
+Add [#116]: add --all-matches flag to show all verification results.
 Add: update input and output objects and REST API
      Introducing some backward incompatibility.
      See `https://apidoc.globalnames.org/gnfinder-beta`
 
-## [v0.17.0]
+## [v0.17.0] - 2022-01-06
 
 Add [#111]: update bayes calculations.
 
@@ -19,19 +21,19 @@ Add [#110]: update verification process using most recent code.
 
 Add [#109]: add classification path to CSV and TSV outputs.
 
-## [v0.16.3]
+## [v0.16.3] - 2021-10-31
 
 Add: update dictionaries with Algaebase and fixes
 
-## [v0.16.2]
+## [v0.16.2] - 2021-10-28
 
 Fix [#108]: remove confuxing red 'x' from web-UI results.
 
-## [v0.16.1]
+## [v0.16.1] - 2021-10-17
 
 Add [#106]: Add API documentation.
 
-## [v0.16.0]
+## [v0.16.0] - 2021-06-23
 
 Add [#94]: Add web-based user interface.
 
@@ -272,6 +274,8 @@ Fix [#100]: fix csv/tsv fields number for verification
 
 This document follows [changelog guidelines]
 
+[v0.18.1]: https://github.com/gnames/gnfinder/compare/v0.18.0...v0.18.1
+[v0.18.0]: https://github.com/gnames/gnfinder/compare/v0.17.0...v0.18.0
 [v0.17.0]: https://github.com/gnames/gnfinder/compare/v0.16.3...v0.17.0
 [v0.16.3]: https://github.com/gnames/gnfinder/compare/v0.16.2...v0.16.3
 [v0.16.2]: https://github.com/gnames/gnfinder/compare/v0.16.1...v0.16.2

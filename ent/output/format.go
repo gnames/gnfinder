@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/gnames/gnfmt"
+	vlib "github.com/gnames/gnlib/ent/verifier"
 )
 
 func (o *Output) Format(f gnfmt.Format) string {
@@ -26,7 +27,7 @@ func CSVHeader(withVerification bool, sep rune) string {
 	res := []string{"Index", "Verbatim", "Name", "Start", "End",
 		"OddsLog10", "Cardinality", "AnnotNomenType", "WordsBefore", "WordsAfter"}
 	if withVerification {
-		verif := []string{"VerifMatchType", "VerifEditDistance",
+		verif := []string{"VerifMatchType", "VerifSortScore", "VerifEditDistance",
 			"VerifMatchedName", "VerifMatchedCanonical", "VerifTaxonId",
 			"VerifDataSourceId", "VerifDataSourceTitle", "VerifClassificationPath", "VerifError"}
 		res = append(res, verif...)
@@ -35,18 +36,19 @@ func CSVHeader(withVerification bool, sep rune) string {
 }
 
 func (o *Output) csvOutput(sep rune) string {
-	res := make([]string, len(o.Names)+1)
+	res := make([]string, 1, len(o.Names)+1)
 	res[0] = CSVHeader(o.WithVerification, sep)
 	for i := range o.Names {
 		pref := csvRow(o.Names[i], i, sep)
-		res[i+1] = pref
+		res = append(res, pref...)
 	}
 
 	return strings.Join(res, "\n")
 }
 
-func csvRow(name Name, i int, sep rune) string {
+func csvRow(name Name, i int, sep rune) []string {
 	var odds string
+	var res []string
 	if name.OddsLog10 > 0 {
 		odds = strconv.FormatFloat(name.OddsLog10, 'f', 2, 64)
 	}
@@ -61,22 +63,47 @@ func csvRow(name Name, i int, sep rune) string {
 	}
 
 	if name.Verification != nil {
-		v := name.Verification
-		verif := []string{
-			v.MatchType.String(), "", "", "", "", "", "", "", v.Error,
-		}
-		if v.BestResult != nil {
-			br := v.BestResult
-			verif = []string{
-				br.MatchType.String(), strconv.Itoa(br.EditDistance), br.MatchedName,
-				br.MatchedCanonicalSimple, br.RecordID, strconv.Itoa(br.DataSourceID),
-				br.DataSourceTitleShort, v.BestResult.ClassificationPath, v.Error,
-			}
-		}
-		s = append(s, verif...)
+		return withVerification(s, name.Verification, sep)
 	}
 
-	return gnfmt.ToCSV(s, sep)
+	res = append(res, gnfmt.ToCSV(s, sep))
+	return res
+}
+
+func withVerification(s []string, nv *vlib.Name, sep rune) []string {
+	var res []string
+	if nv.BestResult != nil {
+		row := makeRow(s, nv.BestResult, nv.Error)
+		res = append(res, gnfmt.ToCSV(row, sep))
+		return res
+	}
+
+	all := nv.Results
+	if len(all) == 0 {
+		verif := []string{
+			nv.MatchType.String(), "0.0", "", "", "", "", "", "", "", nv.Error,
+		}
+		row := append(s, verif...)
+		res = append(res, gnfmt.ToCSV(row, sep))
+		return res
+	}
+
+	for _, v := range all {
+		row := makeRow(s, v, nv.Error)
+		res = append(res, gnfmt.ToCSV(row, sep))
+	}
+
+	return res
+}
+
+func makeRow(s []string, v *vlib.ResultData, err string) []string {
+	sortScore := strconv.FormatFloat(v.SortScore, 'f', 5, 64)
+	verif := []string{
+		v.MatchType.String(), sortScore, strconv.Itoa(v.EditDistance), v.MatchedName,
+		v.MatchedCanonicalSimple, v.RecordID, strconv.Itoa(v.DataSourceID),
+		v.DataSourceTitleShort, v.ClassificationPath, err,
+	}
+	return append(s, verif...)
 }
 
 func (o *Output) jsonOutput(pretty bool) string {

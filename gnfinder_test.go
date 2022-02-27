@@ -334,11 +334,12 @@ Conostylis americana, 2i. 6d.
 		assert.Equal(t, v.verbatim, name.Verbatim, v.msg)
 		assert.Equal(t, v.name, name.Name, v.msg)
 
+		cfg := gnf.GetConfig()
 		if v.bayes {
-			assert.True(t, gnf.GetConfig().WithBayes, v.msg)
+			assert.True(t, cfg.WithBayes, v.msg)
 			assert.Greater(t, name.Odds, v.odds, v.msg)
 		} else {
-			assert.False(t, gnf.GetConfig().WithBayes, v.msg)
+			assert.False(t, cfg.WithBayes, v.msg)
 			assert.Equal(t, 0.0, name.Odds, v.msg)
 		}
 	}
@@ -513,7 +514,8 @@ func TestFakeAnnot(t *testing.T) {
 
 func TestChangeConfig(t *testing.T) {
 	gnf := genFinder()
-	assert.True(t, gnf.GetConfig().WithBayes)
+	cfg := gnf.GetConfig()
+	assert.True(t, cfg.WithBayes)
 	gnf = gnf.ChangeConfig(config.OptWithBayes(false))
 	assert.False(t, gnf.GetConfig().WithBayes)
 }

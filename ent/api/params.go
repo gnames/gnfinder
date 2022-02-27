@@ -52,4 +52,8 @@ type FinderParams struct {
 	// verificatioin. The sources are provided as an array of IDs. To find
 	// such IDs visit http://verifier.globalnames.org/data_sources.
 	Sources []int `json:"sources" form:"sources[]"`
+
+	// WithAllMatches indicates that Verification results will return all
+	// found results, not only the BestResult.
+	WithAllMatches bool `json:"withAllMatches" form:"allMatches"`
 }

@@ -51,15 +51,18 @@ var opts []config.Option
 // cfgData purpose is to achieve automatic import of data from the
 // configuration file, if it exists.
 type cfgData struct {
-	BayesOddsThreshold   float64
-	Format               string
-	IncludeInputText     bool
-	InputTextOnly        bool
-	Language             string
+	BayesOddsThreshold float64
+	DataSources        []int
+	Format             string
+	IncludeInputText   bool
+	InputTextOnly      bool
+	Language           string
+	// PreferredSources is deprecated
 	PreferredSources     []int
 	TikaURL              string
 	TokensAround         int
 	VerifierURL          string
+	WithAllMatches       bool
 	WithBayesOddsDetails bool
 	WithOddsAdjustment   bool
 	WithPlainInput       bool
@@ -80,9 +83,12 @@ gnfinder verifies found names against gnindex database located at
 https://index.globalnames.org. Found names and metadata are returned in JSON
 format to the standard output.
 
-Optional verification process returns 'the best' result for the match. If
-specific datasets are important for verification, they can be set with '-s'
-'--sources' flag using IDs from https://verifier.globalnames.org/datasources.
+Optional verification process returns 'the best' result for the match.
+If verification needs to be limited to specific data-sources, they can be set
+with '-s' '--sources' flag using IDs from
+https://verifier.globalnames.org/data_sources.
+If flag '-M' '--all-matches' is set, verification returns all found
+verification results.
 `,
 
 	// Uncomment the following line if your bare application has an action
@@ -111,6 +117,7 @@ specific datasets are important for verification, they can be set with '-s'
 		inputFlag(cmd)
 		inputOnlyFlag(cmd)
 		langFlag(cmd)
+		allMatchesFlag(cmd)
 		oddsDetailsFlag(cmd)
 		plainInputFlag(cmd)
 		sourcesFlag(cmd)
@@ -215,6 +222,8 @@ To find IDs refer to "https://resolver.globalnames.org/data_sources".
 	rootCmd.Flags().StringP("tika-url", "t", "",
 		`custom URL for the Apache Tika service.
 The service is used for converting files into UTF8-encoded text.`)
+	rootCmd.Flags().BoolP("all-matches", "M", false,
+		"verification returns all found matches")
 	rootCmd.Flags().BoolP("utf8-input", "U", false,
 		`affurm that the input is a plain text UTF8 file.
 The direct reading of a file will be used instead of a remote
@@ -248,13 +257,15 @@ func initConfig() {
 	// Set environment variables to override
 	// config file settings
 	_ = viper.BindEnv("BayesOddsThreshold", "GNF_BAYES_ODDS_THRESHOLD")
+	_ = viper.BindEnv("DataSources", "GNF_DATA_SOURCES")
 	_ = viper.BindEnv("Format", "GNF_FORMAT")
+	_ = viper.BindEnv("InputTextOnly", "GNF_INPUT_TEXT_ONLY")
 	_ = viper.BindEnv("IncludeInputText", "GNF_INCLUDE_INPUT_TEXT")
 	_ = viper.BindEnv("Language", "GNF_LANGUAGE")
-	_ = viper.BindEnv("PreferredSources", "GNF_PREFERRED_SOURCES")
 	_ = viper.BindEnv("TikaURL", "GNF_TIKA_URL")
 	_ = viper.BindEnv("TokensAround", "GNF_TOKENS_AROUND")
 	_ = viper.BindEnv("VerifierURL", "GNF_VERIFIER_URL")
+	_ = viper.BindEnv("WithAllMatches", "GNF_WITH_ALL_MATCHES")
 	_ = viper.BindEnv("WithBayesOddsDetails", "GNF_WITH_BAYES_ODDS_DETAILS")
 	_ = viper.BindEnv("WithOddsAdjustment", "GNF_WITH_ODDS_ADJUSTMENT")
 	_ = viper.BindEnv("WithPlainInput", "GNF_WITH_PLAIN_INPUT")
@@ -290,6 +301,14 @@ func getOpts() {
 			config.OptBayesOddsThreshold(cfgCli.BayesOddsThreshold))
 	}
 
+	if len(cfgCli.DataSources) > 0 || len(cfgCli.PreferredSources) > 0 {
+		ds := cfgCli.DataSources
+		if len(ds) == 0 {
+			ds = cfgCli.PreferredSources
+		}
+		opts = append(opts, config.OptDataSources(ds))
+	}
+
 	if cfgCli.Format != "" {
 		cfgFormat, err := gnfmt.NewFormat(cfgCli.Format)
 		if err != nil {
@@ -314,10 +333,6 @@ func getOpts() {
 		opts = append(opts, config.OptLanguage(l))
 	}
 
-	if len(cfgCli.PreferredSources) > 0 {
-		opts = append(opts, config.OptPreferredSources(cfgCli.PreferredSources))
-	}
-
 	if cfgCli.TikaURL != "" {
 		opts = append(opts, config.OptTikaURL(cfgCli.TikaURL))
 	}
@@ -330,12 +345,12 @@ func getOpts() {
 		opts = append(opts, config.OptVerifierURL(cfgCli.VerifierURL))
 	}
 
-	if cfgCli.WithBayesOddsDetails {
-		opts = append(opts, config.OptWithBayesOddsDetails(true))
+	if cfgCli.WithAllMatches {
+		opts = append(opts, config.OptWithAllMatches(true))
 	}
 
-	if cfgCli.WithOddsAdjustment {
-		opts = append(opts, config.OptWithOddsAdjustment(true))
+	if cfgCli.WithBayesOddsDetails {
+		opts = append(opts, config.OptWithBayesOddsDetails(true))
 	}
 
 	if cfgCli.WithPlainInput {
@@ -344,6 +359,10 @@ func getOpts() {
 
 	if cfgCli.WithPositionInBytes {
 		opts = append(opts, config.OptWithPositonInBytes(true))
+	}
+
+	if cfgCli.WithOddsAdjustment {
+		opts = append(opts, config.OptWithOddsAdjustment(true))
 	}
 
 	if cfgCli.WithUniqueNames {
@@ -372,9 +391,10 @@ func findNames(
 	gnf := gnfinder.New(cfg, dict, weights)
 	res := gnf.Find(file, data)
 	res.TextExtractionSec = convDur
-	if gnf.GetConfig().WithVerification {
-		sources := gnf.GetConfig().PreferredSources
-		verif := verifier.New(cfg.VerifierURL, sources)
+	if cfg.WithVerification {
+		sources := cfg.DataSources
+		all := cfg.WithAllMatches
+		verif := verifier.New(cfg.VerifierURL, sources, all)
 		verifiedNames, stats, dur := verif.Verify(res.UniqueNameStrings())
 		res.MergeVerification(verifiedNames, stats, dur)
 	}

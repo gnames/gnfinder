@@ -43,11 +43,11 @@ type Config struct {
 	// It is an empty string, if detection of language is not set.
 	LanguageDetected string
 
-	// PreferredSources is a list of data-source IDs used for the
+	// DataSources is a list of data-source IDs used for the
 	// name-verification. These data-sources will always be matched with the
 	// verified names. You can find the list of all data-sources at
 	// https://verifier.globalnames.org/api/v0/data_sources
-	PreferredSources []int
+	DataSources []int
 
 	// TikaURL contains the URL of Apache Tika service. This service is used
 	// for extraction of UTF8-encoded texts from a variety of file formats.
@@ -60,15 +60,14 @@ type Config struct {
 	// VerifierURL contains the URL of a name-verification service.
 	VerifierURL string
 
+	// WithAllMatches sets verification to return all found matches.
+	WithAllMatches bool
+
 	// WithBayes determines if both heuristic and Naive Bayes algorithms run
 	// during the name-finnding.
 	// false - only heuristic algorithms run
 	// true - both heuristic and Naive Bayes algorithms run.
 	WithBayes bool
-
-	// WithPositionInBytes can be set to true to receive offsets in number of
-	// bytes instead of UTF-8 characters.
-	WithPositionInBytes bool
 
 	// WithBayesOddsDetails show in detail how odds are calculated.
 	WithBayesOddsDetails bool
@@ -82,6 +81,10 @@ type Config struct {
 	// UTF8-encoded text. In this case file is read directly instead of going
 	// through file type and encoding checking.
 	WithPlainInput bool
+
+	// WithPositionInBytes can be set to true to receive offsets in number of
+	// bytes instead of UTF-8 characters.
+	WithPositionInBytes bool
 
 	// WithUniqueNames can be set to true to get a unique list of names.
 	WithUniqueNames bool
@@ -130,11 +133,11 @@ func OptLanguage(l lang.Language) Option {
 	}
 }
 
-// OptPreferredSources sets data sources that will always be checked
+// OptDataSources sets data sources that will always be checked
 // during verification process.
-func OptPreferredSources(is []int) Option {
+func OptDataSources(is []int) Option {
 	return func(cfg *Config) {
-		cfg.PreferredSources = is
+		cfg.DataSources = is
 	}
 }
 
@@ -168,19 +171,19 @@ func OptVerifierURL(s string) Option {
 	}
 }
 
+// OptWithAllMatches sets WithAllMatches option to return all matches
+// found by verification.
+func OptWithAllMatches(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithAllMatches = b
+	}
+}
+
 // OptWithBayes is an option that forces running bayes name-finding even when
 // the language is not supported by training sets.
 func OptWithBayes(b bool) Option {
 	return func(cfg *Config) {
 		cfg.WithBayes = b
-	}
-}
-
-// OptWithPositonInBytes is an option that allows to have offsets in number of
-// bytes of number of UTF-8 characters.
-func OptWithPositonInBytes(b bool) Option {
-	return func(cfg *Config) {
-		cfg.WithPositionInBytes = b
 	}
 }
 
@@ -204,6 +207,14 @@ func OptWithOddsAdjustment(b bool) Option {
 func OptWithPlainInput(b bool) Option {
 	return func(cfg *Config) {
 		cfg.WithPlainInput = b
+	}
+}
+
+// OptWithPositonInBytes is an option that allows to have offsets in number of
+// bytes of number of UTF-8 characters.
+func OptWithPositonInBytes(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithPositionInBytes = b
 	}
 }
 
@@ -240,7 +251,7 @@ func New(opts ...Option) Config {
 		opt(&cfg)
 	}
 
-	if len(cfg.PreferredSources) > 0 {
+	if len(cfg.DataSources) > 0 {
 		cfg.WithVerification = true
 	}
 	return cfg

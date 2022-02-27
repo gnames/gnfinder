@@ -16,10 +16,10 @@ connection.
 * [Citing](#citing)
 * [Features](#features)
 * [Install as a command line app](#install-as-a-command-line-app)
-  * [Install with Homebrew](#install-with-homebrew)
+  * [Install with Homebrew on Mac OS X, Linux, and Linux on Windows (WSL2)](#install-with-homebrew-on-mac-os-x-linux-and-linux-on-windows-wsl2)
   * [Install by hand](#install-by-hand)
-    * [Linux or OS X](#linux-or-os-x)
-    * [Windows](#windows)
+    * [Linux and Mac without Homebrew](#linux-and-mac-without-homebrew)
+    * [Windows without Homebrew and WSL](#windows-without-homebrew-and-wsl)
     * [Go](#go)
 * [Configuration](#configuration)
 * [Usage](#usage)
@@ -66,10 +66,16 @@ connection.
 
 ## Install as a command line app
 
-### Install with Homebrew
+### Install with Homebrew on Mac OS X, Linux, and Linux on Windows ([WSL2][WSL install])
 
-[Homebrew] is a packaging system originally made for Mac OS X. You can use it
-now for Mac, Linux, or Windows X WSL (Windows susbsystem for Linux).
+[Homebrew] is a popular package manager for Open Source software originally
+developed for Mac OS X. Now it is also available on Linux, and can easily
+be used on MS Windows 10 or 11, if Windows Subsystem for Linux (WSL) is
+[installed][WSL install].
+
+Note that [Homebrew] requires some other programs to be installed, like Curl,
+Git, a compiler (GCC compiler on Linux, Xcode on Mac). If it is too much,
+go to the `Linux and Mac without Homebrew` section.
 
 1. Install Homebrew according to their [instructions][Homebrew].
 
@@ -86,7 +92,7 @@ now for Mac, Linux, or Windows X WSL (Windows susbsystem for Linux).
 install it by hand. To do that download the binary executable for your
 operating system from the [latest release][releases].
 
-#### Linux or OS X
+#### Linux and Mac without Homebrew
 
 Move ``gnfinder`` executable somewhere in your PATH
 (for example ``/usr/local/bin``)
@@ -95,7 +101,10 @@ Move ``gnfinder`` executable somewhere in your PATH
 sudo mv path_to/gnfinder /usr/local/bin
 ```
 
-#### Windows
+#### Windows without Homebrew and WSL
+
+It is possible to use `GNfinder` natively on Windows, without Homebrew or
+Linux installed.
 
 One possible way would be to create a default folder for executables and place
 ``gnfinder`` there.
@@ -141,18 +150,20 @@ command line application again and again.
 Command line flags will override the settings in the configuration file.
 
 It is also possible to setup environment variables. They will override the
-settings in both the configuration file and from the flags.gt
+settings in both the configuration file and from the flags.
 
 | Settings              | Environment variables       |
 |-----------------------|-----------------------------|
 | BayesOddsThreshold    | GNF_BAYES_ODDS_THRESHOLD    |
+| DataSources           | GNF_DATA_SOURCES            |
 | Format                | GNF_FORMAT                  |
+| InputTextOnly         | GNF_INPUT_TEXT_ONLY         |
 | IncludeInputText      | GNF_INCLUDE_INPUT_TEXT      |
 | Language              | GNF_LANGUAGE                |
-| PreferredSources      | GNF_PREFERRED_SOURCES       |
 | TikaURL               | GNF_TIKA_URL                |
 | TokensAround          | GNF_TOKENS_AROUND           |
 | VerifierURL           | GNF_VERIFIER_URL            |
+| WithAllMatches        | GNF_WITH_ALL_MATCHES        |
 | WithBayesOddsDetails  | GNF_WITH_BAYES_ODDS_DETAILS |
 | WithOddsAdjustment    | GNF_WITH_ODDS_ADJUSTMENT    |
 | WithPlainInput        | GNF_WITH_PLAIN_INPUT        |
@@ -234,12 +245,25 @@ echo "Pomatomus saltator and Parus major" | gnfinder -v -l eng
 echo "Pomatomus saltator and Parus major" | gnfinder --verify --lang eng
 ```
 
-Displaying matches from ``NCBI`` and ``Encyclopedia of Life``, if exist.  For
+Limit matches to ``NCBI`` and ``Encyclopedia of Life``.  For
 the list of data source ids go to [gnverifier's data sources page][gnverifier].
 
 ```bash
 echo "Pomatomus saltator and Parus major" | gnfinder -v -l eng -s "4,12"
 echo "Pomatomus saltator and Parus major" | gnfinder --verify --lang eng --sources "4,12"
+```
+
+Show all matches, not only the best result.
+
+```bash
+echo "Pomatomus saltator and Parus major" | gnfinder -M
+echo "Pomatomus saltator and Parus major" | gnfinder --all-matches
+```
+
+Show all matches, but only for selected data-sources.
+
+```bash
+echo "Pomatomus saltator and Parus major" | gnfinder -M -s 1,12
 ```
 
 Adjusting Prior Odds using information about found names. They are calculated

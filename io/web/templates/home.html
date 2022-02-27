@@ -80,7 +80,11 @@
               <fieldset>
                 <legend>Verification (JSON, CSV, TSV)</legend>
                 <p>
-                  <strong>Return results from preferred data sources:</strong>
+                  <strong>Pick Data Sources:</strong>
+                <div>
+                  <input id='all_matches' name='allMatches' value='true' type='checkbox'>
+                  <label for='all_matches'>Show All Matches</label>
+                </div>
                 </p>
 
                 <div>
@@ -141,6 +145,11 @@
                 <div>
                   <input id='preferred_data_sources_179' name='sources[]' value=179 type='checkbox'>
                   <label for='preferred_data_sources_179'>Open Tree of Life</label>
+                </div>
+
+                <div>
+                  <input id='preferred_data_sources_172' name='sources[]' value='172' type='checkbox'>
+                  <label for='preferred_data_sources_172'>PaleoBioDB</label>
                 </div>
 
                 <div>

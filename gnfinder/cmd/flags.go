@@ -80,6 +80,14 @@ func langFlag(cmd *cobra.Command) {
 	opts = append(opts, config.OptLanguage(l))
 }
 
+func allMatchesFlag(cmd *cobra.Command) {
+	b, _ := cmd.Flags().GetBool("all-matches")
+	if b {
+		opts = append(opts, config.OptWithAllMatches(b))
+		opts = append(opts, config.OptWithVerification(true))
+	}
+}
+
 func oddsDetailsFlag(cmd *cobra.Command) {
 	b, _ := cmd.Flags().GetBool("details-odds")
 	if b {
@@ -102,7 +110,8 @@ func portFlag(cmd *cobra.Command) int {
 func sourcesFlag(cmd *cobra.Command) {
 	s, _ := cmd.Flags().GetString("sources")
 	if s != "" {
-		opts = append(opts, config.OptPreferredSources(parseDataSources(s)))
+		opts = append(opts, config.OptDataSources(parseDataSources(s)))
+		opts = append(opts, config.OptWithVerification(true))
 	}
 }
 

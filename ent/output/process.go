@@ -173,8 +173,8 @@ func (o *Output) MergeVerification(
 	dur float32,
 ) {
 	for i := range o.Names {
-		if v, ok := v[o.Names[i].Name]; ok {
-			o.Names[i].Verification = &v
+		if nameRec, ok := v[o.Names[i].Name]; ok {
+			o.Names[i].Verification = &nameRec
 		}
 	}
 	o.getStats(stats)

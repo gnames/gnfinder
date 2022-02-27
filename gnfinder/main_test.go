@@ -25,7 +25,7 @@ func TestVersion(t *testing.T) {
 }
 
 func TestFind(t *testing.T) {
-	gnv := verifier.New(config.New().VerifierURL, []int{})
+	gnv := verifier.New(config.New().VerifierURL, []int{}, false)
 	c := testcli.Command("gnfinder", "-f", "pretty")
 	stdin := bytes.NewBuffer([]byte("Pardosa moesta is a spider"))
 	c.SetStdin(stdin)

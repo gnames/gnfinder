@@ -1,7 +1,6 @@
 package web
 
 import (
-	"log"
 	"net/http"
 	"time"
 
@@ -52,11 +51,6 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 		var txt, filename string
 		var out output.Output
 		var dur Duration
-
-		log.Println("*****************")
-		tmp, _ := c.FormParams()
-		log.Printf("%#v", tmp)
-		log.Println("*****************")
 
 		err = c.Bind(&params)
 		if err != nil {
@@ -119,7 +113,8 @@ func getOpts(params api.FinderParams) []config.Option {
 		config.OptWithUniqueNames(params.UniqueNames),
 		config.OptIncludeInputText(params.ReturnContent),
 		config.OptWithVerification(params.Verification),
-		config.OptPreferredSources(params.Sources),
+		config.OptDataSources(params.Sources),
+		config.OptWithAllMatches(params.WithAllMatches),
 		config.OptWithBayesOddsDetails(params.OddsDetails),
 	}
 }
@@ -131,14 +126,12 @@ func findNames(
 ) (output.Output, float32) {
 	start := time.Now()
 	cfg := gnf.GetConfig()
-	log.Println("***************")
-	log.Printf("%#v", gnf.GetConfig())
-	log.Println("***************")
 	res := gnf.Find(file, txt)
 	dur := float32(time.Since(start)) / float32(time.Second)
-	if gnf.GetConfig().WithVerification {
-		sources := gnf.GetConfig().PreferredSources
-		verif := verifier.New(cfg.VerifierURL, sources)
+	if cfg.WithVerification {
+		sources := cfg.DataSources
+		all := cfg.WithAllMatches
+		verif := verifier.New(cfg.VerifierURL, sources, all)
 		verifiedNames, stats, durVerif := verif.Verify(res.UniqueNameStrings())
 		res.MergeVerification(verifiedNames, stats, durVerif)
 	}

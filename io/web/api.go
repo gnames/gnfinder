@@ -47,7 +47,11 @@ func findAPI(gnf gnfinder.GNfinder) func(echo.Context) error {
 			err = c.Bind(&params)
 
 			if err == nil {
-				text, filename, txtExtr, err = getText(c, params, gnf.GetConfig().TikaURL)
+				text, filename, txtExtr, err = getText(
+					c,
+					params,
+					gnf.GetConfig().TikaURL,
+				)
 
 				opts, format = getOptsAPI(params)
 				gnf = gnf.ChangeConfig(opts...)
@@ -55,7 +59,11 @@ func findAPI(gnf gnfinder.GNfinder) func(echo.Context) error {
 				out.TextExtractionSec = txtExtr
 				cfg := gnf.GetConfig()
 				if cfg.WithVerification {
-					verif := verifier.New(cfg.VerifierURL, cfg.PreferredSources)
+					verif := verifier.New(
+						cfg.VerifierURL,
+						cfg.DataSources,
+						cfg.WithAllMatches,
+					)
 					verifiedNames, stats, dur := verif.Verify(out.UniqueNameStrings())
 					out.MergeVerification(verifiedNames, stats, dur)
 				}
@@ -98,9 +106,12 @@ func getOptsAPI(params api.FinderParams) ([]config.Option, gnfmt.Format) {
 		config.OptWithBayes(!params.NoBayes),
 		config.OptWithPositonInBytes(params.BytesOffset),
 		config.OptLanguage(getLanguage(params.Language)),
-		config.OptPreferredSources(params.Sources),
+		config.OptDataSources(params.Sources),
+		config.OptWithAllMatches(params.WithAllMatches),
 		config.OptWithVerification(
-			params.Verification || len(params.Sources) > 0,
+			params.Verification ||
+				len(params.Sources) > 0 ||
+				params.WithAllMatches,
 		),
 		config.OptTokensAround(params.WordsAround),
 	}
