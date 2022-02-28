@@ -2,48 +2,51 @@
 
 ## Unreleased
 
+## [v0.18.1] - 2022-03-01 Tue
+
+- Add [#114]: add an option to show ambiguous uninomials.
+- Add [#113]: show ambiguous genera, if there are species names with them.
+
 ## [v0.18.0] - 2022-02-28 Mon
 
-Add [#117]: bring verificaton in sync with gnames v0.8.0
-Add [#116]: add --all-matches flag to show all verification results.
-Add: update input and output objects and REST API
+- Add [#117]: bring verificaton in sync with gnames v0.8.0
+- Add [#116]: add --all-matches flag to show all verification results.
+- Add: update input and output objects and REST API
      Introducing some backward incompatibility.
      See `https://apidoc.globalnames.org/gnfinder-beta`
 
 ## [v0.17.0] - 2022-01-06
 
-Add [#111]: update bayes calculations.
-
-Add [#110]: update verification process using most recent code.
+- Add [#111]: update bayes calculations.
+- Add [#110]: update verification process using most recent code.
             Stats for kingdoms distribution and the main clade that
             contains most of the names in the text.
             Verification JSON is not fully backward compatible.
-
-Add [#109]: add classification path to CSV and TSV outputs.
+- Add [#109]: add classification path to CSV and TSV outputs.
 
 ## [v0.16.3] - 2021-10-31
 
-Add: update dictionaries with Algaebase and fixes
+- Add: update dictionaries with Algaebase and fixes
 
 ## [v0.16.2] - 2021-10-28
 
-Fix [#108]: remove confuxing red 'x' from web-UI results.
+- Fix [#108]: remove confuxing red 'x' from web-UI results.
 
 ## [v0.16.1] - 2021-10-17
 
-Add [#106]: Add API documentation.
+- Add [#106]: Add API documentation.
 
 ## [v0.16.0] - 2021-06-23
 
-Add [#94]: Add web-based user interface.
+- Add [#94]: Add web-based user interface.
 
 ## [v0.15.5]
 
-Add [#105]: Support for URL name-finding in REST API.
+- Add [#105]: Support for URL name-finding in REST API.
 
 ## [v0.15.4]
 
-Add [#104]: merge petectLanguage to language. It allows to simplify logic for
+- Add [#104]: merge petectLanguage to language. It allows to simplify logic for
             language settings. It also changes API signature for parameters.
             Now parameter "language" recognizes
 
@@ -56,26 +59,26 @@ Add [#104]: merge petectLanguage to language. It allows to simplify logic for
 
 ## [v0.15.3]
 
-Fix [#103]: remove conflict between language and detectlanguage parameters.
+- Fix [#103]: remove conflict between language and detectlanguage parameters.
 
 ## [v0.15.2]
 
-Add: update Echo web framework to v4.5.0
-Fix [#102]: 'language' parameter for REST API.
+- Add: update Echo web framework to v4.5.0
+- Fix [#102]: 'language' parameter for REST API.
 
 ## [v0.15.1]
 
-Fix [#101]: BOM interferes with offsets when -U flag is used.
+- Fix [#101]: BOM interferes with offsets when -U flag is used.
 
 ## [v0.15.0]
 
-Add [#99]: add TSV format and make ouput format an option for REST API.
-Add:       update modules
-Add:       update Go to 1.17
-Add [#98]: an option to return names positions in bytes from the text start
+- Add [#99]: add TSV format and make ouput format an option for REST API.
+- Add:       update modules
+- Add:       update Go to 1.17
+- Add [#98]: an option to return names positions in bytes from the text start
            instead of UTF-8 characters.
 
-Fix [#100]: fix csv/tsv fields number for verification
+- Fix [#100]: fix csv/tsv fields number for verification
 
 ## [v0.14.2]
 

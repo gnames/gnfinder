@@ -115,6 +115,7 @@ func getOpts(params api.FinderParams) []config.Option {
 		config.OptWithVerification(params.Verification),
 		config.OptDataSources(params.Sources),
 		config.OptWithAllMatches(params.WithAllMatches),
+		config.OptWithAmbiguousNames(params.WithAmbiguousNames),
 		config.OptWithBayesOddsDetails(params.OddsDetails),
 	}
 }

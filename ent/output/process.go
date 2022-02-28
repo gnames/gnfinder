@@ -25,6 +25,7 @@ func TokensToOutput(
 	}
 
 	var names []Name
+	genera := make(map[string]struct{})
 	for i := range ts {
 		u := ts[i]
 		if u.Decision() == token.NotName {
@@ -32,14 +33,25 @@ func TokensToOutput(
 		}
 		name := tokensToName(ts[i:token.UpperIndex(i, len(ts))], text, cfg)
 		name.Odds = calculateOdds(name.OddsDetails)
-		if name.Odds == 0.0 || name.Odds > 1.0 || name.Cardinality == 2 ||
-			name.Cardinality == 3 {
+		if name.Odds == 0.0 || name.Odds > 1.0 ||
+			name.Decision == token.PossibleUninomial {
 			getTokensAround(ts, i, &name, cfg.TokensAround)
+			if name.Decision == token.Binomial || name.Decision == token.Trinomial {
+				genera[getGenus(name)] = struct{}{}
+			}
 			names = append(names, name)
 		}
 	}
-	out := newOutput(names, ts, version, cfg)
+	out := newOutput(names, genera, ts, version, cfg)
 	return out
+}
+
+func getGenus(name Name) string {
+	words := strings.SplitN(name.Name, " ", 2)
+	if len(words) > 1 {
+		return words[0]
+	}
+	return ""
 }
 
 func calculateOdds(det token.OddsDetails) float64 {
@@ -224,6 +236,7 @@ func uninomialName(
 ) Name {
 	name := Name{
 		Cardinality: u.Decision().Cardinality(),
+		Decision:    u.Decision(),
 		Verbatim:    verbatim(text[u.Start():u.End()]),
 		Name:        u.Cleaned(),
 		OffsetStart: u.Start(),
@@ -253,6 +266,7 @@ func speciesName(
 ) Name {
 	name := Name{
 		Cardinality: g.Decision().Cardinality(),
+		Decision:    g.Decision(),
 		Verbatim:    verbatim(text[g.Start():s.End()]),
 		Name:        fmt.Sprintf("%s %s", g.Cleaned(), strings.ToLower(s.Cleaned())),
 		OffsetStart: g.Start(),
@@ -290,6 +304,7 @@ func infraspeciesName(
 
 	name := Name{
 		Cardinality: g.Decision().Cardinality(),
+		Decision:    g.Decision(),
 		Verbatim:    verbatim(text[g.Start():isp.End()]),
 		Name:        infraspeciesString(g, sp, rank, isp),
 		OffsetStart: g.Start(),

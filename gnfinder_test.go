@@ -560,6 +560,68 @@ func TestBytesOffset(t *testing.T) {
 	}
 }
 
+func TestAmbiguousGenera(t *testing.T) {
+	gnf := genFinder()
+	tests := []struct {
+		msg, text string
+		namesNum  int
+	}{
+		{
+			"good name + ambiguous",
+			"Genus America and America columbiana",
+			2,
+		},
+		{
+			"bad name + ambiguous",
+			"Genus America and America olumbiana",
+			0,
+		},
+		{
+			"2 ambiguous 1 good name",
+			"Genus America, genus Murex and Murex brandaris",
+			2,
+		},
+		{
+			"nlp name + ambiguous",
+			"Genus America and America longissima var. longissima",
+			2,
+		},
+	}
+	for _, v := range tests {
+		o := gnf.Find("", v.text)
+		assert.Equal(t, len(o.Names), v.namesNum, v.msg)
+	}
+}
+
+func TestAmbiguousFlag(t *testing.T) {
+	gnf := genFinder()
+	gnf = gnf.ChangeConfig(config.OptWithAmbiguousNames(true))
+	tests := []struct {
+		msg, text string
+		namesNum  int
+	}{
+		{
+			"good name + ambiguous",
+			"Genus America and America columbiana",
+			2,
+		},
+		{
+			"bad name + ambiguous",
+			"Genus America and America olumbiana",
+			2,
+		},
+		{
+			"nlp name + ambiguous",
+			"Genus America and America longissima var. longissima",
+			2,
+		},
+	}
+	for _, v := range tests {
+		o := gnf.Find("", v.text)
+		assert.Equal(t, len(o.Names), v.namesNum, v.msg)
+	}
+}
+
 func Example() {
 	txt := `Blue Adussel (Mytilus edulis) grows to about two
 inches the first year,Pardosa moesta Banks, 1892`

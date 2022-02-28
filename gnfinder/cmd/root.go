@@ -63,6 +63,7 @@ type cfgData struct {
 	TokensAround         int
 	VerifierURL          string
 	WithAllMatches       bool
+	WithAmbiguousNames   bool
 	WithBayesOddsDetails bool
 	WithOddsAdjustment   bool
 	WithPlainInput       bool
@@ -110,6 +111,7 @@ verification results.
 			os.Exit(0)
 		}
 
+		ambiguousUninomialsFlag(cmd)
 		adjustOddsFlag(cmd)
 		bayesFlag(cmd)
 		bytesOffsetFlag(cmd)
@@ -182,6 +184,8 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
+	rootCmd.Flags().BoolP("ambiguous-uninomials", "A", false,
+		"preserve uninomials that are also common words.")
 	rootCmd.Flags().BoolP("adjust-odds", "a", false,
 		"adjust Bayes odds using density of found names.")
 	rootCmd.Flags().BoolP("bytes-offset", "b", false,
@@ -265,6 +269,7 @@ func initConfig() {
 	_ = viper.BindEnv("TikaURL", "GNF_TIKA_URL")
 	_ = viper.BindEnv("TokensAround", "GNF_TOKENS_AROUND")
 	_ = viper.BindEnv("VerifierURL", "GNF_VERIFIER_URL")
+	_ = viper.BindEnv("WithAmbiguousNames", "GNF_WITH_AMBIGUOUS_NAMES")
 	_ = viper.BindEnv("WithAllMatches", "GNF_WITH_ALL_MATCHES")
 	_ = viper.BindEnv("WithBayesOddsDetails", "GNF_WITH_BAYES_ODDS_DETAILS")
 	_ = viper.BindEnv("WithOddsAdjustment", "GNF_WITH_ODDS_ADJUSTMENT")
@@ -347,6 +352,10 @@ func getOpts() {
 
 	if cfgCli.WithAllMatches {
 		opts = append(opts, config.OptWithAllMatches(true))
+	}
+
+	if cfgCli.WithAmbiguousNames {
+		opts = append(opts, config.OptWithAmbiguousNames(true))
 	}
 
 	if cfgCli.WithBayesOddsDetails {

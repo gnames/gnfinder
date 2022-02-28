@@ -29,15 +29,28 @@ func exploreNameCandidate(ts []token.TokenSN, d *dict.Dictionary) bool {
 
 	u := ts[0]
 
-	if u.Features().UninomialDict == dict.WhiteUninomial ||
-		(u.Indices().Species == 0 &&
-			u.Features().UninomialDict == dict.WhiteGenus) {
+	if u.Features().UninomialDict == dict.WhiteUninomial {
 		u.SetDecision(token.Uninomial)
 		return true
 	}
 
-	if u.Indices().Species == 0 ||
-		u.Features().UninomialDict == dict.BlackUninomial {
+	if u.Features().UninomialDict == dict.GreyUninomial {
+		u.SetDecision(token.PossibleUninomial)
+		return true
+	}
+
+	if u.Indices().Species == 0 {
+		if u.Features().UninomialDict == dict.WhiteGenus {
+			u.SetDecision(token.Uninomial)
+			return true
+		}
+		if u.Features().UninomialDict == dict.GreyGenus {
+			u.SetDecision(token.PossibleUninomial)
+			return true
+		}
+	}
+
+	if u.Features().UninomialDict == dict.BlackUninomial {
 		return false
 	}
 
@@ -53,7 +66,7 @@ func exploreNameCandidate(ts []token.TokenSN, d *dict.Dictionary) bool {
 	return true
 }
 
-func checkAsSpecies(t token.TokenSN, d *dict.Dictionary) bool {
+func checkAsSpecies(t token.TokenSN) bool {
 	if !t.Features().IsCapitalized &&
 		(t.Features().SpeciesDict == dict.WhiteSpecies ||
 			t.Features().SpeciesDict == dict.GreySpecies) {
@@ -65,10 +78,13 @@ func checkAsSpecies(t token.TokenSN, d *dict.Dictionary) bool {
 func checkAsGenusSpecies(ts []token.TokenSN, d *dict.Dictionary) bool {
 	g := ts[0]
 	s := ts[g.Indices().Species]
-
-	if !checkAsSpecies(s, d) {
+	if !checkAsSpecies(s) {
 		if g.Features().UninomialDict == dict.WhiteGenus {
 			g.SetDecision(token.Uninomial)
+			return true
+		}
+		if g.Features().UninomialDict == dict.GreyGenus {
+			g.SetDecision(token.PossibleUninomial)
 			return true
 		}
 		return false
@@ -126,7 +142,7 @@ func checkInfraspecies(ts []token.TokenSN, d *dict.Dictionary) {
 	s := ts[ts[0].Indices().Species]
 	isp := ts[i]
 
-	if checkGreyGeneraIsp(g, s, isp, d) || checkAsSpecies(ts[i], d) {
+	if checkGreyGeneraIsp(g, s, isp, d) || checkAsSpecies(ts[i]) {
 		ts[0].SetDecision(token.Trinomial)
 	}
 }

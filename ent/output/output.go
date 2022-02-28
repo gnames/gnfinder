@@ -40,20 +40,6 @@ type Meta struct {
 	// TotalSec is time spent for the whole process
 	TotalSec float32 `json:"totalSec"`
 
-	// WithBayes use of bayes during name-finding
-	WithBayes bool `json:"withBayes"`
-
-	// WithOddsAdjustment to adjust prior odds according to the dencity of
-	// scientific names in the text.
-	WithOddsAdjustment bool `json:"withOddsAdjustment"`
-
-	// WithPositionInBytes names get start/enc positionx in bytes
-	// instead of UTF-8 chars.
-	WithPositionInBytes bool `json:"withPositionInBytes"`
-
-	// WithVerification is true if results are checked by verification service.
-	WithVerification bool `json:"withVerification"`
-
 	// WordsAround shows the number of tokens preserved before and after
 	// a name-string candidate.
 	WordsAround int `json:"wordsAround"`
@@ -64,8 +50,33 @@ type Meta struct {
 	// LanguageDetected automatically for the text.
 	LanguageDetected string `json:"languageDetected,omitempty"`
 
+	// WithAllMatches is true if all verifcation results are shown.
+	WithAllMatches bool `json:"withAllMatches,omitempty"`
+
+	// WithAmbiguousNames is true if ambiguous uninomials are preserved.
+	// Examples of ambiguous uninomial names are `Cancer`, `America`.
+	WithAmbiguousNames bool `json:"withAmbiguousNames,omitempty"`
+
+	// WithUniqueNames is true when unique names are returned instead
+	// of every occurance of a name.
+	WithUniqueNames bool `json:"withUniqueNames,omitempty"`
+
+	// WithBayes use of bayes during name-finding
+	WithBayes bool `json:"withBayes,omitempty"`
+
+	// WithOddsAdjustment to adjust prior odds according to the dencity of
+	// scientific names in the text.
+	WithOddsAdjustment bool `json:"withOddsAdjustment,omitempty"`
+
+	// WithPositionInBytes names get start/enc positionx in bytes
+	// instead of UTF-8 chars.
+	WithPositionInBytes bool `json:"withPositionInBytes,omitempty"`
+
+	// WithVerification is true if results are checked by verification service.
+	WithVerification bool `json:"withVerification,omitempty"`
+
 	// WithLanguageDetection sets automatic language determination.
-	WithLanguageDetection bool `json:"withLanguageDetection"`
+	WithLanguageDetection bool `json:"withLanguageDetection,omitempty"`
 
 	// TotalWords is a number of 'normalized' words in the text
 	TotalWords int `json:"totalWords"`
@@ -115,10 +126,13 @@ type Name struct {
 	Cardinality int `json:"cardinality"`
 
 	// Verbatim shows name the way it was in the text.
-	Verbatim string `json:"verbatim"`
+	Verbatim string `json:"verbatim,omitempty"`
 
 	// Name is a normalized version of a name.
 	Name string `json:"name"`
+
+	// Decision about the quality of name detection.
+	Decision token.Decision `json:"-"`
 
 	// Odds show a probability that name detection was correct.
 	Odds float64 `json:"-"`
@@ -183,6 +197,7 @@ func postprocessNames(
 // newOutput is a constructor for Output type.
 func newOutput(
 	names []Name,
+	genera map[string]struct{},
 	ts []token.TokenSN,
 	version string,
 	cfg config.Config,
@@ -197,6 +212,9 @@ func newOutput(
 	meta := Meta{
 		Date:                time.Now(),
 		FinderVersion:       version,
+		WithAllMatches:      cfg.WithAllMatches,
+		WithAmbiguousNames:  cfg.WithAmbiguousNames,
+		WithUniqueNames:     cfg.WithUniqueNames,
 		WithBayes:           cfg.WithBayes,
 		WithOddsAdjustment:  cfg.WithOddsAdjustment,
 		WithVerification:    cfg.WithVerification,
@@ -207,6 +225,9 @@ func newOutput(
 		TotalNameCandidates: candidatesNum(ts),
 		TotalNames:          len(names),
 	}
+	if !cfg.WithAmbiguousNames {
+		names = FilterNames(names, genera)
+	}
 
 	if !cfg.WithBayesOddsDetails || cfg.WithOddsAdjustment {
 		postprocessNames(names, meta.TotalNameCandidates, cfg)
@@ -215,4 +236,17 @@ func newOutput(
 	o.WithLanguageDetection = o.LanguageDetected != ""
 
 	return o
+}
+
+func FilterNames(names []Name, genera map[string]struct{}) []Name {
+	res := make([]Name, 0, len(names))
+	for i := range names {
+		if names[i].Decision == token.PossibleUninomial {
+			if _, ok := genera[names[i].Name]; !ok {
+				continue
+			}
+		}
+		res = append(res, names[i])
+	}
+	return res
 }

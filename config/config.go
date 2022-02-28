@@ -63,6 +63,9 @@ type Config struct {
 	// WithAllMatches sets verification to return all found matches.
 	WithAllMatches bool
 
+	// WithAmbiguousNames shows ambigous uninomial names when true.
+	WithAmbiguousNames bool
+
 	// WithBayes determines if both heuristic and Naive Bayes algorithms run
 	// during the name-finnding.
 	// false - only heuristic algorithms run
@@ -176,6 +179,14 @@ func OptVerifierURL(s string) Option {
 func OptWithAllMatches(b bool) Option {
 	return func(cfg *Config) {
 		cfg.WithAllMatches = b
+	}
+}
+
+// OptWithAmbiguousNames sets WithAmbiguousNames option to show ambiguous
+// uninomials and genera.
+func OptWithAmbiguousNames(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithAmbiguousNames = b
 	}
 }
 

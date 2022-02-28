@@ -13,6 +13,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func ambiguousUninomialsFlag(cmd *cobra.Command) {
+	b, _ := cmd.Flags().GetBool("ambiguous-uninomials")
+	if b {
+		opts = append(opts, config.OptWithAmbiguousNames(b))
+	}
+}
+
 func adjustOddsFlag(cmd *cobra.Command) {
 	b, _ := cmd.Flags().GetBool("adjust-odds")
 	if b {

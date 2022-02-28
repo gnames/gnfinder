@@ -82,7 +82,6 @@ func (gnf gnfinder) Find(file, txt string) output.Output {
 
 	dur := time.Since(start)
 	o.NameFindingSec = float32(dur) / float32(time.Second)
-
 	return o
 }
 

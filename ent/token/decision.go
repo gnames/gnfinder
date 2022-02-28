@@ -7,6 +7,7 @@ type Decision int
 const (
 	NotName Decision = iota
 	Uninomial
+	PossibleUninomial
 	Binomial
 	PossibleBinomial
 	Trinomial
@@ -15,9 +16,9 @@ const (
 	BayesTrinomial
 )
 
-var decisionsStrings = [...]string{"NotName", "Uninomial", "Binomial",
-	"PossibleBinomial", "Trinomial", "Uninomial(nlp)", "Binomial(nlp)",
-	"Trinomial(nlp)",
+var decisionsStrings = [...]string{"NotName", "Uninomial", "PossibleUninomial",
+	"Binomial", "PossibleBinomial", "Trinomial", "Uninomial(nlp)",
+	"Binomial(nlp)", "Trinomial(nlp)",
 }
 
 // String representation of a Decision
@@ -29,7 +30,7 @@ func (d Decision) String() string {
 // name. If name is uninomial 1 is returned, for binomial 2, for trinomial 3.
 func (d Decision) Cardinality() int {
 	switch d {
-	case Uninomial, BayesUninomial:
+	case Uninomial, PossibleUninomial, BayesUninomial:
 		return 1
 	case Binomial, PossibleBinomial, BayesBinomial:
 		return 2

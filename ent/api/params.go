@@ -56,4 +56,8 @@ type FinderParams struct {
 	// WithAllMatches indicates that Verification results will return all
 	// found results, not only the BestResult.
 	WithAllMatches bool `json:"withAllMatches" form:"allMatches"`
+
+	// WithAmbiguousNames preserves detected ambigous uninomials like `America`
+	// or `Cancer`.
+	WithAmbiguousNames bool `json:"withAmbiguousNames" form:"ambiguousNames"`
 }

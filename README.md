@@ -164,6 +164,7 @@ settings in both the configuration file and from the flags.
 | TokensAround          | GNF_TOKENS_AROUND           |
 | VerifierURL           | GNF_VERIFIER_URL            |
 | WithAllMatches        | GNF_WITH_ALL_MATCHES        |
+| WithAmbiguousNames    | GNF_WITH_AMBIGUOUS_NAMES    |
 | WithBayesOddsDetails  | GNF_WITH_BAYES_ODDS_DETAILS |
 | WithOddsAdjustment    | GNF_WITH_ODDS_ADJUSTMENT    |
 | WithPlainInput        | GNF_WITH_PLAIN_INPUT        |
@@ -251,6 +252,13 @@ the list of data source ids go to [gnverifier's data sources page][gnverifier].
 ```bash
 echo "Pomatomus saltator and Parus major" | gnfinder -v -l eng -s "4,12"
 echo "Pomatomus saltator and Parus major" | gnfinder --verify --lang eng --sources "4,12"
+```
+
+Preserve uninomial names that are also common words.
+
+```bash
+echo "Cancer is a genus" | gnfinder -A
+echo "America is also a genus" | gnfinder --ambiguous-uninomials
 ```
 
 Show all matches, not only the best result.

@@ -108,6 +108,7 @@ func getOptsAPI(params api.FinderParams) ([]config.Option, gnfmt.Format) {
 		config.OptLanguage(getLanguage(params.Language)),
 		config.OptDataSources(params.Sources),
 		config.OptWithAllMatches(params.WithAllMatches),
+		config.OptWithAmbiguousNames(params.WithAmbiguousNames),
 		config.OptWithVerification(
 			params.Verification ||
 				len(params.Sources) > 0 ||
