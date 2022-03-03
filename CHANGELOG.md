@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.18.2] - 2022-03-03 Thu
+
+- Add: fix typo in home.html
+
 ## [v0.18.1] - 2022-03-01 Tue
 
 - Add [#114]: add an option to show ambiguous uninomials.
