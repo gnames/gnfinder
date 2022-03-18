@@ -92,6 +92,8 @@ func TestHumanNames(t *testing.T) {
 		name  string
 		found bool
 	}{
+		{"Morphological", false},
+		{"Taxon", false},
 		{"Elsa", false},
 		{"Paula", false},
 		{"Gabriella", false},

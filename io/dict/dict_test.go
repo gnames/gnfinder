@@ -25,7 +25,7 @@ func TestCommonWords(t *testing.T) {
 
 func TestWhiteGenera(t *testing.T) {
 	l := len(dictionary.WhiteGenera)
-	assert.Equal(t, 508639, l)
+	assert.Equal(t, 508638, l)
 	_, ok := dictionary.WhiteGenera["Plantago"]
 	assert.True(t, ok)
 }

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix [#119]: `Taxon`, `Morphological` should not be recognized as uninomials.
+
 ## [v0.18.2] - 2022-03-03 Thu
 
 - Add: fix typo in home.html
@@ -16,16 +18,16 @@
 - Add [#117]: bring verificaton in sync with gnames v0.8.0
 - Add [#116]: add --all-matches flag to show all verification results.
 - Add: update input and output objects and REST API
-     Introducing some backward incompatibility.
-     See `https://apidoc.globalnames.org/gnfinder-beta`
+  Introducing some backward incompatibility.
+  See `https://apidoc.globalnames.org/gnfinder-beta`
 
 ## [v0.17.0] - 2022-01-06
 
 - Add [#111]: update bayes calculations.
 - Add [#110]: update verification process using most recent code.
-            Stats for kingdoms distribution and the main clade that
-            contains most of the names in the text.
-            Verification JSON is not fully backward compatible.
+  Stats for kingdoms distribution and the main clade that
+  contains most of the names in the text.
+  Verification JSON is not fully backward compatible.
 - Add [#109]: add classification path to CSV and TSV outputs.
 
 ## [v0.16.3] - 2021-10-31
@@ -51,8 +53,8 @@
 ## [v0.15.4]
 
 - Add [#104]: merge petectLanguage to language. It allows to simplify logic for
-            language settings. It also changes API signature for parameters.
-            Now parameter "language" recognizes
+  language settings. It also changes API signature for parameters.
+  Now parameter "language" recognizes
 
             * "": empty string that goes to default "eng" setting for language
             * "detect": finds language by an algorithm
@@ -77,10 +79,10 @@
 ## [v0.15.0]
 
 - Add [#99]: add TSV format and make ouput format an option for REST API.
-- Add:       update modules
-- Add:       update Go to 1.17
+- Add: update modules
+- Add: update Go to 1.17
 - Add [#98]: an option to return names positions in bytes from the text start
-           instead of UTF-8 characters.
+  instead of UTF-8 characters.
 
 - Fix [#100]: fix csv/tsv fields number for verification
 
@@ -126,7 +128,7 @@
 - Add [#70]: migrate code to use gner tokenizer.
 - Add [#69]: Output Odds as a log10.
 - Add [#68]: Refactor the code with interfaces to be consistent with
-             other projects.
+  other projects.
 - Add [#64]: Remove common words from species.
 - Add [#63]: Remove geo-names as uninomials.
 - Add [#62]: Remove human names as uninomials.
@@ -134,26 +136,26 @@
 ## [v0.11.1]
 
 - Add: Update dictionaries.
-- Fix [#51]:  Remove 'Piper' from black list, add new words to dictionaries.
+- Fix [#51]: Remove 'Piper' from black list, add new words to dictionaries.
 
 ## [v0.11.0]
 
 - Add [#49]: Cleanup protobuf and JSON outputs. Introducing backward
-             incompatible changes in the output. Standardising CLI JSON
-             to camelcase, introducing cardinality instead of string for
-             a name type, adding canonical simple and full canonical foms
-             for matched and current names. Removing current name unless
-             it is a synonym.
+  incompatible changes in the output. Standardising CLI JSON
+  to camelcase, introducing cardinality instead of string for
+  a name type, adding canonical simple and full canonical foms
+  for matched and current names. Removing current name unless
+  it is a synonym.
 
 ## [v0.10.1]
 
 - Add [#46]: gRPC serves nomenclatural annotation and words surrounding
-             name-strings.
+  name-strings.
 
 ## [v0.10.0]
 
 - Add [#44]: save nomenclatural annotation for new species, combinations,
-             subscpecies etc.
+  subscpecies etc.
 - Add [#45]: return desired number of words before and after a name-candidate.
 
 ## [v0.9.1]
@@ -175,8 +177,8 @@
 ## [v0.8.10]
 
 - Add [#31]: Speedup name-finding for large numbers of small texts. Solving
-             only partialy by preloading Bayes training data. We are going to
-             do other optimizations later.
+  only partialy by preloading Bayes training data. We are going to
+  do other optimizations later.
 
 ## [v0.8.9]
 
@@ -185,13 +187,13 @@
 ## [v0.8.8]
 
 - Add [#29]: Enhance verification results. Now preferred data sources
-             have the same fields as the best result. Classification
-             has IDs and ranks.
+  have the same fields as the best result. Classification
+  has IDs and ranks.
 
 ## [v0.8.7]
 
 - Add: Update dictionaries setting latin common names to grey
-       dictionary.
+  dictionary.
 
 ## [v0.8.6]
 
@@ -200,18 +202,18 @@
 ## [v0.8.5]
 
 - Add [#28]: Generic names from ICN (botanical) code might have authors
-             in parentheses that look the same as subgenus part of ICZN
-             names. As a result parsing such names creates fake
-             uninomials. We removed such fake uninomials from uninomial
-             white dictionary.
+  in parentheses that look the same as subgenus part of ICZN
+  names. As a result parsing such names creates fake
+  uninomials. We removed such fake uninomials from uninomial
+  white dictionary.
 
 ## [v0.8.4]
 
 - Add [#27]: Refactor code to make it more maintainable
 - Add [#26]: Command line app tests
 - Fix [#25]: Make CLI app work again (cobra-based cli does not allow
-             root command with input without flags so
-             ``gndinfer text.txt`` was broken).
+  root command with input without flags so
+  `gndinfer text.txt` was broken).
 
 ## [v0.8.3]
 
@@ -233,7 +235,7 @@
 
 - Add [#22]: Go module support for more stable builds
 - Add [#19]: bring gRPC output close to cli output. Breaks backward
-             compatibility of gRPC.
+  compatibility of gRPC.
 - Add [#20]: update API interaction with gnindex.
 - Add [#17]: return offsets for the start and the end of name-strings.
 - Fix [#18]: gRPC works with diacritics in text input.
@@ -243,8 +245,8 @@
 - Add [#16]: docker support. Command `make docker` creates docker image.
 - Add [#15]: enable gRPC to set data-source IDs for verification.
 - Add [#14]: setting for name verification data-sources as well as command
-       line flag. Currently tests for gRPC are located in [Ruby gem gndinder]
-       project.
+  line flag. Currently tests for gRPC are located in [Ruby gem gndinder]
+  project.
 - Add [#12]: gRPC-based HTTP API to access gnfinder from other languages.
 - Add StemEditDistance for fuzzy matching by stem.
 
@@ -270,10 +272,10 @@
 - Add: Heuristic rules for scientific name finding.
 - Add: Bayes rules for scientific name finding.
 - Add: `White`, `Black`, and `Grey` dictionaries, `common european words`
-       dictionary.
+  dictionary.
 - Add: Bayes training script to create reference data for Bayes algorithms.
-- Add: Command line application ``gnfinder`` is created using ``cobra``
-       framework.
+- Add: Command line application `gnfinder` is created using `cobra`
+  framework.
 - Add: Name-verification via [gnindex].
 - Add: Makefile to simplify compilation of the command line tool.
 
@@ -323,7 +325,6 @@ This document follows [changelog guidelines]
 [v0.5.2]: https://github.com/gnames/gnfinder/compare/v0.5.1...v0.5.2
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
-
 [#120]: https://github.com/gnames/gnfinder/issues/120
 [#119]: https://github.com/gnames/gnfinder/issues/119
 [#118]: https://github.com/gnames/gnfinder/issues/118
@@ -439,7 +440,6 @@ This document follows [changelog guidelines]
 [#5]: https://github.com/gnames/gnfinder/issues/5
 [#4]: https://github.com/gnames/gnfinder/issues/4
 [#3]: https://github.com/gnames/gnfinder/issues/3
-
 [changelog guidelines]: https://github.com/olivierlacan/keep-a-changelog
 [gnindex]: https://index.globalnames.org
-[Ruby gem gndinder]: https://github.com/GlobalNamesArchitecture/gnfinder
+[ruby gem gndinder]: https://github.com/GlobalNamesArchitecture/gnfinder
