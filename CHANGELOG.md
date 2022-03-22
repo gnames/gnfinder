@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## [v0.18.3] - 2022-03-22 Tue
+
+- Add: update Go to v1.18, modules.
 - Fix [#119]: `Taxon`, `Morphological` should not be recognized as uninomials.
 
 ## [v0.18.2] - 2022-03-03 Thu

@@ -1,6 +1,7 @@
 package verifier
 
 import (
+	"context"
 	"time"
 
 	gncontext "github.com/gnames/gnlib/ent/context"
@@ -38,7 +39,7 @@ func (gnv *verif) Verify(names []string) (map[string]vlib.Name, gncontext.Contex
 
 	start := time.Now()
 	names = unique(names)
-	verif := gnv.VerifyBatch(names)
+	verif := gnv.VerifyBatch(context.Background(), names)
 	for _, v := range verif {
 		res[v.Name] = v
 	}
