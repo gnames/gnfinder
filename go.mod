@@ -9,7 +9,7 @@ require (
 	github.com/gnames/gndoc v0.3.1
 	github.com/gnames/gner v0.1.4
 	github.com/gnames/gnfmt v0.2.0
-	github.com/gnames/gnlib v0.11.0
+	github.com/gnames/gnlib v0.12.0
 	github.com/gnames/gnsys v0.2.2
 	github.com/gnames/gnverifier v0.9.1
 	github.com/json-iterator/go v1.1.12

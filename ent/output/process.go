@@ -7,7 +7,7 @@ import (
 
 	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/token"
-	gncontext "github.com/gnames/gnlib/ent/context"
+	"github.com/gnames/gnlib/ent/stats"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 )
 
@@ -181,7 +181,7 @@ func (o *Output) UniqueNameStrings() []string {
 // incorporates into output.
 func (o *Output) MergeVerification(
 	v map[string]vlib.Name,
-	stats gncontext.Context,
+	st stats.Stats,
 	dur float32,
 ) {
 	for i := range o.Names {
@@ -189,17 +189,17 @@ func (o *Output) MergeVerification(
 			o.Names[i].Verification = &nameRec
 		}
 	}
-	o.getStats(stats)
+	o.getStats(st)
 	o.NameVerifSec = dur
 }
 
-func (o *Output) getStats(stats gncontext.Context) {
-	if stats.Kingdom.Name == "" && stats.Context.Name == "" {
+func (o *Output) getStats(st stats.Stats) {
+	if st.Kingdom.Name == "" && st.MainTaxon.Name == "" {
 		return
 	}
 
-	ks := make([]Kingdom, len(stats.Kingdoms))
-	for i, v := range stats.Kingdoms {
+	ks := make([]Kingdom, len(st.Kingdoms))
+	for i, v := range st.Kingdoms {
 		ks[i] = Kingdom{
 			NamesNumber:     v.NamesNum,
 			Kingdom:         v.Name,
@@ -210,9 +210,10 @@ func (o *Output) getStats(stats gncontext.Context) {
 		return ks[i].NamesPercentage > ks[j].NamesPercentage
 	})
 	o.Kingdoms = ks
-	o.MainClade = stats.Context.Name
-	o.MainCladeRank = stats.Context.Rank.String()
-	o.MainCladePercentage = stats.ContextPercentage
+	o.MainClade = st.MainTaxon.Name
+	o.MainCladeRank = st.MainTaxon.Rank.String()
+	o.MainCladePercentage = st.MainTaxonPercentage
+	o.StatsNamesNum = st.NamesNum
 }
 
 func tokensToName(ts []token.TokenSN, text []rune, cfg config.Config) Name {

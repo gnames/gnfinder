@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	gncontext "github.com/gnames/gnlib/ent/context"
+	"github.com/gnames/gnlib/ent/stats"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnverifier"
 	gnvconfig "github.com/gnames/gnverifier/config"
@@ -31,10 +31,10 @@ func New(url string, sources []int, all bool) Verifier {
 
 // Verify method takes a slice of name-strings, matches them to a variety of
 // scientific name databases and returns reconciliation/resolution results.
-func (gnv *verif) Verify(names []string) (map[string]vlib.Name, gncontext.Context, float32) {
+func (gnv *verif) Verify(names []string) (map[string]vlib.Name, stats.Stats, float32) {
 	res := make(map[string]vlib.Name)
 	if len(names) == 0 {
-		return res, gncontext.Context{}, 0
+		return res, stats.Stats{}, 0
 	}
 
 	start := time.Now()
@@ -44,11 +44,11 @@ func (gnv *verif) Verify(names []string) (map[string]vlib.Name, gncontext.Contex
 		res[v.Name] = v
 	}
 	dur := float32(time.Since(start)) / float32(time.Second)
-	hier := make([]gncontext.Hierarch, len(verif))
+	hier := make([]stats.Hierarchy, len(verif))
 	for i := range verif {
 		hier[i] = verif[i]
 	}
-	ctx := gncontext.New(hier, 0.5)
+	ctx := stats.New(hier, 0.5)
 	return res, ctx, dur
 }
 

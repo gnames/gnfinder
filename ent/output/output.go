@@ -103,6 +103,11 @@ type Meta struct {
 
 	// MainCladePercentage is the percentage of names in Context.
 	MainCladePercentage float32 `json:"mainCladePercentage,omitempty"`
+
+	// StatsNamesNum is the number of names used for calculating statistics.
+	// It includes names that are genus and lower and are verified to
+	// Catalogue of Life.
+	StatsNamesNum int `json:"statsNamesNum:omitempty"`
 }
 
 // Kingdom contains names resolved to it and their percentage.

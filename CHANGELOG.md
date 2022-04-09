@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.19.0] - 2022-04-09 Sat
+
+- Add: update to gnlib v0.12.0, use its stats module.
+
 ## [v0.18.3] - 2022-03-22 Tue
 
 - Add: update Go to v1.18, modules.
@@ -286,6 +290,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.19.0]: https://github.com/gnames/gnfinder/compare/v0.18.1...v0.19.0
 [v0.18.1]: https://github.com/gnames/gnfinder/compare/v0.18.0...v0.18.1
 [v0.18.0]: https://github.com/gnames/gnfinder/compare/v0.17.0...v0.18.0
 [v0.17.0]: https://github.com/gnames/gnfinder/compare/v0.16.3...v0.17.0

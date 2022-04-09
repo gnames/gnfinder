@@ -1,7 +1,7 @@
 package verifier
 
 import (
-	gncontext "github.com/gnames/gnlib/ent/context"
+	"github.com/gnames/gnlib/ent/stats"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 )
 
@@ -13,7 +13,7 @@ import (
 type Verifier interface {
 	// Verify method takes a slice of name-strings, matches them to a variety of
 	// scientific name databases and returns reconciliation/resolution results.
-	Verify([]string) (map[string]vlib.Name, gncontext.Context, float32)
+	Verify([]string) (map[string]vlib.Name, stats.Stats, float32)
 
 	// IsConnected checks if there remote verification service is reachable.
 	IsConnected() bool
