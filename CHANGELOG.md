@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.19.1] - 2022-04-09 Sat
+
+- Fix: output field misspelling in JSON
+
 ## [v0.19.0] - 2022-04-09 Sat
 
 - Add: add IRMNG to web UI
@@ -291,6 +295,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.19.1]: https://github.com/gnames/gnfinder/compare/v0.19.0...v0.19.1
 [v0.19.0]: https://github.com/gnames/gnfinder/compare/v0.18.1...v0.19.0
 [v0.18.1]: https://github.com/gnames/gnfinder/compare/v0.18.0...v0.18.1
 [v0.18.0]: https://github.com/gnames/gnfinder/compare/v0.17.0...v0.18.0

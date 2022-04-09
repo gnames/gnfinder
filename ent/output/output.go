@@ -107,7 +107,7 @@ type Meta struct {
 	// StatsNamesNum is the number of names used for calculating statistics.
 	// It includes names that are genus and lower and are verified to
 	// Catalogue of Life.
-	StatsNamesNum int `json:"statsNamesNum:omitempty"`
+	StatsNamesNum int `json:"statsNamesNum,omitempty"`
 }
 
 // Kingdom contains names resolved to it and their percentage.
