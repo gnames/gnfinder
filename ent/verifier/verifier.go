@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/gnames/gnlib/ent/stats"
 	vlib "github.com/gnames/gnlib/ent/verifier"
+	"github.com/gnames/gnstats/ent/stats"
 	"github.com/gnames/gnverifier"
 	gnvconfig "github.com/gnames/gnverifier/config"
 	"github.com/gnames/gnverifier/io/verifrest"

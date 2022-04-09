@@ -1,8 +1,8 @@
 package verifier
 
 import (
-	"github.com/gnames/gnlib/ent/stats"
 	vlib "github.com/gnames/gnlib/ent/verifier"
+	"github.com/gnames/gnstats/ent/stats"
 )
 
 // Verifier interface provides reconciliation and resolution of scientific

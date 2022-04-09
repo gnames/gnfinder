@@ -7,8 +7,8 @@ import (
 
 	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/token"
-	"github.com/gnames/gnlib/ent/stats"
 	vlib "github.com/gnames/gnlib/ent/verifier"
+	"github.com/gnames/gnstats/ent/stats"
 )
 
 var rtb map[int]int
