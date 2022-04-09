@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add: add IRMNG to web UI
+
 ## [v0.19.0] - 2022-04-09 Sat
 
 - Add: update to gnlib v0.12.0, use its stats module.
