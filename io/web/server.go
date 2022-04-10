@@ -38,6 +38,8 @@ func Run(gnf gnfinder.GNfinder, port int) {
 	e.GET("/apidoc", apidoc(gnf))
 	e.POST("/find", find(gnf))
 
+	e.GET("/api", infoAPI(gnf))
+	e.GET("/api/v0", infoAPI(gnf))
 	e.GET("/api/v0/ping", pingAPI())
 	e.GET("/api/v0/version", verAPI(gnf))
 	e.POST("/api/v0/find", findAPI(gnf))

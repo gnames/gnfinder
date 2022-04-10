@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.19.3] - 2022-04-10 Sun
+
+- Add: update output to use MainTaxon, templates
+
 ## [v0.19.2] - 2022-04-09 Sat
 
 - Add: update gnlib to v0.13.0
@@ -299,6 +303,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.19.3]: https://github.com/gnames/gnfinder/compare/v0.19.2...v0.19.3
 [v0.19.2]: https://github.com/gnames/gnfinder/compare/v0.19.1...v0.19.2
 [v0.19.1]: https://github.com/gnames/gnfinder/compare/v0.19.0...v0.19.1
 [v0.19.0]: https://github.com/gnames/gnfinder/compare/v0.18.1...v0.19.0

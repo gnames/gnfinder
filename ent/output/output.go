@@ -18,6 +18,9 @@ type Output struct {
 
 // Meta contains meta-information of name-finding result.
 type Meta struct {
+	// Documentation
+	Documentation string `json:"documentation"`
+
 	// Date represents time when output was generated.
 	Date time.Time `json:"date"`
 
@@ -64,7 +67,7 @@ type Meta struct {
 	// WithBayes use of bayes during name-finding
 	WithBayes bool `json:"withBayes,omitempty"`
 
-	// WithOddsAdjustment to adjust prior odds according to the dencity of
+	// WithOddsAdjustment to adjust prior odds according to the density of
 	// scientific names in the text.
 	WithOddsAdjustment bool `json:"withOddsAdjustment,omitempty"`
 
@@ -94,15 +97,15 @@ type Meta struct {
 	// The first kingom contains the most number of names.
 	Kingdoms []Kingdom `json:"kingdoms,omitempty"`
 
-	// MainClade is the clade containing majority of resolved by
+	// MainTaxon is the taxon containing the majority of resolved by
 	// the Catalogue of Life names.
-	MainClade string `json:"mainClade,omitempty"`
+	MainTaxon string `json:"mainTaxon,omitempty"`
 
-	// MainCladeRank is the rank of the MainClade.
-	MainCladeRank string `json:"mainCladeRank,omitempty"`
+	// MainTaxonRank is the rank of the MainTaxon.
+	MainTaxonRank string `json:"mainTaxonRank,omitempty"`
 
-	// MainCladePercentage is the percentage of names in Context.
-	MainCladePercentage float32 `json:"mainCladePercentage,omitempty"`
+	// MainTaxonPercentage is the percentage of names in MainTaxon.
+	MainTaxonPercentage float32 `json:"mainTaxonPercentage,omitempty"`
 
 	// StatsNamesNum is the number of names used for calculating statistics.
 	// It includes names that are genus and lower and are verified to

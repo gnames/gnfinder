@@ -210,9 +210,9 @@ func (o *Output) getStats(st stats.Stats) {
 		return ks[i].NamesPercentage > ks[j].NamesPercentage
 	})
 	o.Kingdoms = ks
-	o.MainClade = st.MainTaxon.Name
-	o.MainCladeRank = st.MainTaxon.Rank.String()
-	o.MainCladePercentage = st.MainTaxonPercentage
+	o.MainTaxon = st.MainTaxon.Name
+	o.MainTaxonRank = st.MainTaxon.Rank.String()
+	o.MainTaxonPercentage = st.MainTaxonPercentage
 	o.StatsNamesNum = st.NamesNum
 }
 

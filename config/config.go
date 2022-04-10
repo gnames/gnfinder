@@ -94,6 +94,9 @@ type Config struct {
 
 	// WithVerification is true if names should be verified
 	WithVerification bool
+
+	// APIDoc
+	APIDoc string
 }
 
 // Option type for changing GNfinder settings.
@@ -256,6 +259,7 @@ func New(opts ...Option) Config {
 		TokensAround:       0,
 		VerifierURL:        "https://verifier.globalnames.org/api/v0/",
 		TikaURL:            "https://tika.globalnames.org",
+		APIDoc:             "https://apidoc.globalnames.org/gnfinder-beta",
 	}
 
 	for _, opt := range opts {

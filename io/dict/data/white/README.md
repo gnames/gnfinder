@@ -1,5 +1,4 @@
-"White" dictionaries
---------------------
+## "White" dictionaries
 
 `genera.txt`
 
@@ -16,10 +15,8 @@ words like `major`, `acute` etc
 
 contains all uninomials from GNI including 3 ambiguous uninomials --- Aves
 Bacteria, Fungi. Here we assume that most of the time these 3 words will be
-written in low-case if they are not about a clade.
+written in low-case if they are not about a taxon.
 
-Ambiguous words
----------------
+## Ambiguous words
 
 They are in grey directory
-

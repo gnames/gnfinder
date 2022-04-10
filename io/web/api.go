@@ -3,6 +3,7 @@ package web
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -16,6 +17,18 @@ import (
 	"github.com/gnames/gnfmt"
 	"github.com/labstack/echo/v4"
 )
+
+func infoAPI(gnf gnfinder.GNfinder) func(echo.Context) error {
+	return func(c echo.Context) error {
+		info := fmt.Sprintf(
+			"OpenAPI for gnfinder is described at\n\n%s\n",
+			gnf.GetConfig().APIDoc,
+		)
+
+		return c.String(http.StatusOK, info)
+	}
+
+}
 
 func pingAPI() func(echo.Context) error {
 	return func(c echo.Context) error {

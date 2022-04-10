@@ -27,6 +27,7 @@ type Data struct {
 	Format      string
 	UniqueNames bool
 	Version     string
+	APIDoc      string
 }
 
 func home(gnf gnfinder.GNfinder) func(echo.Context) error {
@@ -38,7 +39,11 @@ func home(gnf gnfinder.GNfinder) func(echo.Context) error {
 
 func apidoc(gnf gnfinder.GNfinder) func(echo.Context) error {
 	return func(c echo.Context) error {
-		data := Data{Page: "apidoc", Version: gnf.GetVersion().Version}
+		data := Data{
+			Page:    "apidoc",
+			Version: gnf.GetVersion().Version,
+			APIDoc:  gnf.GetConfig().APIDoc,
+		}
 		return c.Render(http.StatusOK, "layout", data)
 	}
 }
@@ -84,6 +89,7 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 			Page:        "find",
 			UniqueNames: false,
 			Version:     gnf.GetVersion().Version,
+			APIDoc:      gnf.GetConfig().APIDoc,
 		}
 
 		data.Output.TextExtractionSec = dur.TextExtraction
