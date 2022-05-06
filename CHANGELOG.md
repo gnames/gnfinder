@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add: MCSbase to web UI.
+
 ## [v0.19.4] - 2022-05-03 Tue
 
 - Add: species group, cardinality score for verification.
