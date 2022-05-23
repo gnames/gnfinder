@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add: Nix build and shell files.
 - Add: rename dictionaries.
 
 ## [v0.19.5] - 2022-05-10 Tue
