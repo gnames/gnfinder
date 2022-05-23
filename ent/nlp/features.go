@@ -81,9 +81,9 @@ func (fs *FeatureSet) convertFeatures(
 		fs.Species = append(fs.Species,
 			BayesF{"spLen", strconv.Itoa(len(sp.Cleaned()))},
 		)
-		if uni.Features().GenSpGreyDict > 0 {
-			uniDict = dict.GreyGenusSp.String()
-			spDict = dict.GreyGenusSp.String()
+		if uni.Features().GenSpInAmbigDict > 0 {
+			uniDict = dict.InAmbigGenusSp.String()
+			spDict = dict.InAmbigGenusSp.String()
 		}
 		if sp.Features().HasDash {
 			fs.Species = append(fs.Species, BayesF{"hasDash", "true"})
@@ -103,8 +103,8 @@ func (fs *FeatureSet) convertFeatures(
 		fs.InfraSp = append(fs.InfraSp,
 			BayesF{"ispLen", strconv.Itoa(len(isp.Cleaned()))},
 		)
-		if uni.Features().GenSpGreyDict > 1 {
-			ispDict = dict.GreyGenusSp.String()
+		if uni.Features().GenSpInAmbigDict > 1 {
+			ispDict = dict.InAmbigGenusSp.String()
 		}
 		if isp.Features().HasDash {
 			fs.InfraSp = append(fs.InfraSp, BayesF{"hasDash", "true"})

@@ -29,8 +29,8 @@ func main() {
 			log.Fatal(err)
 		}
 	}
-	fmt.Println("**WhiteGenus for noName**")
-	for k := range genWhiteNoName {
+	fmt.Println("**InGenus for noName**")
+	for k := range inGenusButNoName {
 		fmt.Println(k)
 	}
 }

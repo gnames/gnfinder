@@ -13,7 +13,7 @@ type Features struct {
 	// IsCapitalized is true if the first rune that is letter, is capitalized.
 	IsCapitalized bool
 
-	// HasDash is true if token tontains dash
+	// HasDash is true if token contains dash
 	HasDash bool
 
 	// HasStartParens is true if token start with '('
@@ -47,11 +47,11 @@ type Features struct {
 	// SpeciesDict defines which Species dictionary (if any) contained the token.
 	SpeciesDict dict.DictionaryType
 
-	// GenSpGreyDict shows how many specific/infraspecific epithets of a putative
+	// GenSpInAmbigDict shows how many specific/infraspecific epithets of a putative
 	// name matched bi-/tri- nomials in a full name dictionary for grey genera.
 	// For example "Bubo bubo" name would set it to 1, and "Bubo bubo bubo" would
 	// set it to 2.
-	GenSpGreyDict int
+	GenSpInAmbigDict int
 }
 
 func (p *Features) setAbbr(raw []rune, start, end int) {
@@ -108,16 +108,16 @@ func (p *Features) SetUninomialDict(cleaned string, d *dict.Dictionary) {
 	}
 
 	switch {
-	case in(d.WhiteGenera):
-		p.UninomialDict = dict.WhiteGenus
-	case in(d.GreyGenera):
-		p.UninomialDict = dict.GreyGenus
-	case in(d.WhiteUninomials):
-		p.UninomialDict = dict.WhiteUninomial
-	case in(d.GreyUninomials):
-		p.UninomialDict = dict.GreyUninomial
-	case inlow(d.BlackUninomials):
-		p.UninomialDict = dict.BlackUninomial
+	case in(d.InGenera):
+		p.UninomialDict = dict.InGenus
+	case in(d.InAmbigGenera):
+		p.UninomialDict = dict.InAmbigGenus
+	case in(d.InUninomials):
+		p.UninomialDict = dict.InUninomial
+	case in(d.InAmbigUninomials):
+		p.UninomialDict = dict.InAmbigUninomial
+	case inlow(d.NotInUninomials):
+		p.UninomialDict = dict.NotInUninomial
 	case inlow(d.CommonWords):
 		p.UninomialDict = dict.CommonWords
 	default:
@@ -131,12 +131,12 @@ func (p *Features) SetSpeciesDict(cleaned string, d *dict.Dictionary) {
 	}
 	in := func(dict map[string]struct{}) bool { _, ok := dict[cleaned]; return ok }
 	switch {
-	case in(d.WhiteSpecies):
-		p.SpeciesDict = dict.WhiteSpecies
-	case in(d.GreySpecies):
-		p.SpeciesDict = dict.GreySpecies
-	case in(d.BlackSpecies):
-		p.SpeciesDict = dict.BlackSpecies
+	case in(d.InSpecies):
+		p.SpeciesDict = dict.InSpecies
+	case in(d.InAmbigSpecies):
+		p.SpeciesDict = dict.InAmbigSpecies
+	case in(d.NotInSpecies):
+		p.SpeciesDict = dict.NotInSpecies
 	case in(d.CommonWords):
 		p.SpeciesDict = dict.CommonWords
 	default:

@@ -26,27 +26,27 @@
    }
   },
   "ispDict": {
-   "blackSpecies": {
-    "name": 3,
-    "notName": 727
-   },
    "commonWords": {
     "notName": 2755
    },
-   "greyGenusSp": {
+   "inAmbigGenusSp": {
     "name": 303
    },
-   "greySpecies": {
+   "inAmbigSpecies": {
     "name": 83,
     "notName": 840
+   },
+   "inSpecies": {
+    "name": 1766,
+    "notName": 13
    },
    "notInDictionary": {
     "name": 5,
     "notName": 1791
    },
-   "whiteSpecies": {
-    "name": 1766,
-    "notName": 13
+   "notInSpecies": {
+    "name": 3,
+    "notName": 727
    }
   },
   "ispEnd3": {
@@ -2204,28 +2204,28 @@
    }
   },
   "spDict": {
-   "blackSpecies": {
-    "name": 5,
-    "notName": 2974
-   },
    "commonWords": {
     "name": 2,
     "notName": 4931
    },
-   "greyGenusSp": {
+   "inAmbigGenusSp": {
     "name": 831
    },
-   "greySpecies": {
+   "inAmbigSpecies": {
     "name": 347,
     "notName": 1069
+   },
+   "inSpecies": {
+    "name": 8114,
+    "notName": 42
    },
    "notInDictionary": {
     "name": 68,
     "notName": 4228
    },
-   "whiteSpecies": {
-    "name": 8114,
-    "notName": 42
+   "notInSpecies": {
+    "name": 5,
+    "notName": 2974
    }
   },
   "spEnd3": {
@@ -5784,34 +5784,34 @@
    }
   },
   "uniDict": {
-   "blackUninomial": {
-    "name": 1,
-    "notName": 1227
-   },
    "commonWords": {
     "name": 1,
     "notName": 6636
    },
-   "greyGenus": {
+   "inAmbigGenus": {
     "name": 63,
     "notName": 681
    },
-   "greyGenusSp": {
+   "inAmbigGenusSp": {
     "name": 831
    },
-   "greyUninomial": {
+   "inAmbigUninomial": {
     "notName": 21
+   },
+   "inGenus": {
+    "name": 8138
+   },
+   "inUninomial": {
+    "name": 186,
+    "notName": 49
    },
    "notInDictionary": {
     "name": 25,
     "notName": 15731
    },
-   "whiteGenus": {
-    "name": 8138
-   },
-   "whiteUninomial": {
-    "name": 186,
-    "notName": 49
+   "notInUninomial": {
+    "name": 1,
+    "notName": 1227
    }
   },
   "uniEnd3": {

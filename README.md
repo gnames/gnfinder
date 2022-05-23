@@ -121,7 +121,7 @@ copy path_to\gnfinder.exe C:\bin
 
 #### Go
 
-Install Go v1.17 or higher.
+Install Go v1.18 or higher.
 
 ```bash
 git clone git@github.com:/gnames/gnfinder
@@ -250,8 +250,8 @@ Limit matches to ``NCBI`` and ``Encyclopedia of Life``.  For
 the list of data source ids go to [gnverifier's data sources page][gnverifier].
 
 ```bash
-echo "Pomatomus saltator and Parus major" | gnfinder -v -l eng -s "4,12"
-echo "Pomatomus saltator and Parus major" | gnfinder --verify --lang eng --sources "4,12"
+echo "And Parus major" | gnfinder -v -l eng -s "4,12"
+echo "And Parus major" | gnfinder --verify --lang eng --sources "4,12"
 ```
 
 Preserve uninomial names that are also common words.

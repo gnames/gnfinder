@@ -9,10 +9,10 @@ import (
 
 var dictionary = dict.LoadDictionary()
 
-func TestGreyUninomials(t *testing.T) {
-	l := len(dictionary.GreyUninomials)
+func TestInAmbigUninomials(t *testing.T) {
+	l := len(dictionary.InAmbigUninomials)
 	assert.Equal(t, 183, l)
-	_, ok := dictionary.GreyUninomials["Minimi"]
+	_, ok := dictionary.InAmbigUninomials["Minimi"]
 	assert.True(t, ok)
 }
 
@@ -23,9 +23,9 @@ func TestCommonWords(t *testing.T) {
 	assert.True(t, ok)
 }
 
-func TestWhiteGenera(t *testing.T) {
-	l := len(dictionary.WhiteGenera)
+func TestInGenera(t *testing.T) {
+	l := len(dictionary.InGenera)
 	assert.Equal(t, 508638, l)
-	_, ok := dictionary.WhiteGenera["Plantago"]
+	_, ok := dictionary.InGenera["Plantago"]
 	assert.True(t, ok)
 }

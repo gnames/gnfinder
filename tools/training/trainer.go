@@ -18,7 +18,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
-var genWhiteNoName = make(map[string]struct{})
+var inGenusButNoName = make(map[string]struct{})
 
 type FileName string
 
@@ -159,8 +159,8 @@ func getFeatures(
 		}
 
 		for _, v := range featureSet.Uninomial {
-			if v.Name == "uniDict" && v.Value == "whiteGenus" {
-				genWhiteNoName[t.Cleaned()] = struct{}{}
+			if v.Name == "uniDict" && v.Value == "inGenus" {
+				inGenusButNoName[t.Cleaned()] = struct{}{}
 			}
 		}
 		lfs = append(lfs, feature.ClassFeatures{Features: featureSet.Flatten(),

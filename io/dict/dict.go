@@ -15,24 +15,24 @@ var data embed.FS
 type DictionaryType int
 
 func (d DictionaryType) String() string {
-	types := [...]string{"notSet", "whiteGenus", "greyGenus", "greyGenusSp",
-		"whiteUninomial", "greyUninomial", "blackUninomial", "whiteSpecies",
-		"greySpecies", "blackSpecies", "commonWords", "rank", "notInDictionary"}
+	types := [...]string{"notSet", "inGenus", "inAmbigGenus", "inAmbigGenusSp",
+		"inUninomial", "inAmbigUninomial", "notInUninomial", "inSpecies",
+		"inAmbigSpecies", "notInSpecies", "commonWords", "rank", "notInDictionary"}
 	return types[d]
 }
 
 // DictionaryType dictionaries
 const (
 	NotSet DictionaryType = iota
-	WhiteGenus
-	GreyGenus
-	GreyGenusSp
-	WhiteUninomial
-	GreyUninomial
-	BlackUninomial
-	WhiteSpecies
-	GreySpecies
-	BlackSpecies
+	InGenus
+	InAmbigGenus
+	InAmbigGenusSp
+	InUninomial
+	InAmbigUninomial
+	NotInUninomial
+	InSpecies
+	InAmbigSpecies
+	NotInSpecies
 	CommonWords
 	Rank
 	NotInDictionary
@@ -40,33 +40,33 @@ const (
 
 // Dictionary contains dictionaries used for detecting scientific names
 type Dictionary struct {
-	BlackUninomials map[string]struct{}
-	BlackSpecies    map[string]struct{}
-	CommonWords     map[string]struct{}
-	GreyGenera      map[string]struct{}
-	GreyGeneraSp    map[string]struct{}
-	GreySpecies     map[string]struct{}
-	GreyUninomials  map[string]struct{}
-	WhiteGenera     map[string]struct{}
-	WhiteSpecies    map[string]struct{}
-	WhiteUninomials map[string]struct{}
-	Ranks           map[string]struct{}
+	NotInUninomials   map[string]struct{}
+	NotInSpecies      map[string]struct{}
+	CommonWords       map[string]struct{}
+	InAmbigGenera     map[string]struct{}
+	InAmbigGeneraSp   map[string]struct{}
+	InAmbigSpecies    map[string]struct{}
+	InAmbigUninomials map[string]struct{}
+	InGenera          map[string]struct{}
+	InSpecies         map[string]struct{}
+	InUninomials      map[string]struct{}
+	Ranks             map[string]struct{}
 }
 
 // LoadDictionary contain most popular words in European languages.
 func LoadDictionary() *Dictionary {
 	d := &Dictionary{
-		BlackUninomials: readData("data/black/uninomials.csv"),
-		BlackSpecies:    readData("data/black/species.csv"),
-		CommonWords:     readData("data/common/eu.csv"),
-		GreyGenera:      readData("data/grey/genera.csv"),
-		GreyGeneraSp:    readData("data/grey/genera_species.csv"),
-		GreySpecies:     readData("data/grey/species.csv"),
-		GreyUninomials:  readData("data/grey/uninomials.csv"),
-		WhiteGenera:     readData("data/white/genera.csv"),
-		WhiteSpecies:    readData("data/white/species.csv"),
-		WhiteUninomials: readData("data/white/uninomials.csv"),
-		Ranks:           setRanks(),
+		NotInUninomials:   readData("data/not-in/uninomials.csv"),
+		NotInSpecies:      readData("data/not-in/species.csv"),
+		CommonWords:       readData("data/common/eu.csv"),
+		InAmbigGenera:     readData("data/in-ambig/genera.csv"),
+		InAmbigGeneraSp:   readData("data/in-ambig/genera_species.csv"),
+		InAmbigSpecies:    readData("data/in-ambig/species.csv"),
+		InAmbigUninomials: readData("data/in-ambig/uninomials.csv"),
+		InGenera:          readData("data/in/genera.csv"),
+		InSpecies:         readData("data/in/species.csv"),
+		InUninomials:      readData("data/in/uninomials.csv"),
+		Ranks:             setRanks(),
 	}
 	return d
 }

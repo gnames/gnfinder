@@ -23,7 +23,7 @@ func TagTokens(
 	for i := range ts {
 		t := ts[i]
 		if !t.Features().IsCapitalized ||
-			t.Features().UninomialDict == dict.BlackUninomial {
+			t.Features().UninomialDict == dict.NotInUninomial {
 			continue
 		}
 
@@ -69,7 +69,7 @@ func decideInfraspeces(
 	d *dict.Dictionary,
 ) {
 	isp.Features().SetSpeciesDict(isp.Cleaned(), d)
-	if isp.Features().SpeciesDict == dict.BlackSpecies {
+	if isp.Features().SpeciesDict == dict.NotInSpecies {
 		return
 	}
 	isp.NLP().Odds = odds[2].MaxOdds
@@ -88,7 +88,7 @@ func decideSpeces(
 	d *dict.Dictionary,
 ) {
 	sp.Features().SetSpeciesDict(sp.Cleaned(), d)
-	if sp.Features().SpeciesDict == dict.BlackSpecies {
+	if sp.Features().SpeciesDict == dict.NotInSpecies {
 		return
 	}
 	sp.NLP().Odds = odds[1].MaxOdds
@@ -114,7 +114,7 @@ func decideUninomial(
 	if odds[0].MaxClass == IsName &&
 		odds[0].MaxOdds >= oddsThreshold &&
 		uni.Decision() == token.NotName &&
-		uni.Features().UninomialDict != dict.BlackUninomial &&
+		uni.Features().UninomialDict != dict.NotInUninomial &&
 		!uni.Features().Abbr {
 		uni.SetDecision(token.BayesUninomial)
 	}

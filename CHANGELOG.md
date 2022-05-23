@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add: rename dictionaries.
+
 ## [v0.19.5] - 2022-05-10 Tue
 
 - Add: update gnverifier to v1.0.0-RC1
