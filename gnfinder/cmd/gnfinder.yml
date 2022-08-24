@@ -60,7 +60,7 @@
 
 # VerifierURL contains the URL of a name-verification service.
 #
-# VerifierURL: https://verifier.globalnames.org/api/v0/
+# VerifierURL: https://verifier.globalnames.org/api/v1/
 
 # WithAllMatches sets verification to return all found matches.
 #

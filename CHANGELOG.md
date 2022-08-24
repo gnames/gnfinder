@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## [v1.0.0] 2022-08-24 Wed
+
+- Add [#127]: prepare v1.0.0.
 - Add: Nix build and shell files.
 - Add: rename dictionaries.
 

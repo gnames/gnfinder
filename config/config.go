@@ -46,7 +46,7 @@ type Config struct {
 	// DataSources is a list of data-source IDs used for the
 	// name-verification. These data-sources will always be matched with the
 	// verified names. You can find the list of all data-sources at
-	// https://verifier.globalnames.org/api/v0/data_sources
+	// https://verifier.globalnames.org/api/v1/data_sources
 	DataSources []int
 
 	// TikaURL contains the URL of Apache Tika service. This service is used
@@ -257,9 +257,9 @@ func New(opts ...Option) Config {
 		WithBayes:          true,
 		BayesOddsThreshold: 80.0,
 		TokensAround:       0,
-		VerifierURL:        "https://verifier.globalnames.org/api/v0/",
+		VerifierURL:        "https://verifier.globalnames.org/api/v1/",
 		TikaURL:            "https://tika.globalnames.org",
-		APIDoc:             "https://apidoc.globalnames.org/gnfinder-beta",
+		APIDoc:             "https://apidoc.globalnames.org/gnfinder",
 	}
 
 	for _, opt := range opts {

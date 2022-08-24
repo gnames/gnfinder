@@ -10,13 +10,13 @@
         <div id='content-body'>
 
           <p>
-            Web-based scientific names finding service provides a RESTful 
+            Web-based scientific names finding service provides a RESTful
             API interface.
           </p>
 
           <h3 id="post">Using POST Method with JSON payload</h3>
 
-          <pre class='code'>/api/v0</code></pre>
+          <pre class='code'>/api/v1</code></pre>
 
           <p>
             with request body in JSON according to the
@@ -32,14 +32,14 @@
             against
             <a href='https://verifier.globalnames.org/data_sources/1'>
             Catalogue of Life
-            </a> (source #1) and 
+            </a> (source #1) and
             <a href='https://verifier.globalnames.org/data_sources/12'>
             Encyclopedia of Life
             </a> (source #12):
           </p>
 
           <pre class='code'>curl -v -F sources[]=1 -F sources[]=12 -F file=@file.pdf \
-    https://finder.globalnames.org/api/v0/find</pre>
+    https://finder.globalnames.org/api/v1/find</pre>
 
           <p>
             For examples how to write a client, refer to

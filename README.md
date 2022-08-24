@@ -29,7 +29,6 @@ connection.
   * [Usage of API](#usage-of-api)
 * [Projects based on GNfinder](#projects-based-on-gnfinder)
 * [Development](#development)
-  * [Modify OpenAPI documentation](#modify-openapi-documentation)
 * [Testing](#testing)
 
 <!-- vim-markdown-toc -->
@@ -359,13 +358,13 @@ If you want to start your own API endpoint (for example on `localhost`, port
 
 ```bash
 gnfinder -p 8080
-curl localhost:8080/api/v0/ping
+curl localhost:8080/api/v1/ping
 ```
 
 To upload a file and detect names from its content:
 
 ```bash
-curl -v -F verification=true -F file=@/path/to/test.txt https://gnfinder.globalnames.org/api/v0/find
+curl -v -F verification=true -F file=@/path/to/test.txt https://gnfinder.globalnames.org/api/v1/find
 ```
 
 ## Projects based on GNfinder
@@ -388,12 +387,6 @@ git clone git@github.com:/gnames/gnfinder
 cd gnfinder
 make tools
 make install
-```
-
-### Modify OpenAPI documentation
-
-```bash
-docker run -d -p 80:8080 swaggerapi/swagger-editor
 ```
 
 ## Testing
