@@ -1,6 +1,6 @@
 module github.com/gnames/gnfinder
 
-go 1.18
+go 1.19
 
 require (
 	github.com/abadojack/whatlanggo v1.0.1
@@ -12,7 +12,7 @@ require (
 	github.com/gnames/gnlib v0.14.0
 	github.com/gnames/gnstats v0.1.0
 	github.com/gnames/gnsys v0.2.2
-	github.com/gnames/gnverifier v1.0.0-RC1
+	github.com/gnames/gnverifier v1.0.0
 	github.com/json-iterator/go v1.1.12
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.5.0

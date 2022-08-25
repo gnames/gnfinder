@@ -2,7 +2,11 @@
 
 ## Unreleased
 
-## [v1.0.0] 2022-08-24 Wed
+## [v1.0.1] - 2022-08-25 Thu
+
+- Fix: verifier test, update gnverifier dependency to v1.0.0
+
+## [v1.0.0] - 2022-08-24 Wed
 
 - Add [#127]: prepare v1.0.0.
 - Add: Nix build and shell files.

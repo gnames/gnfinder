@@ -15,7 +15,7 @@ func TestVerifier(t *testing.T) {
 	if gnv.IsConnected() {
 		verif := verifier.New("", nil, false)
 		res, _, _ := verif.Verify([]string{"Bubo bubo"})
-		assert.Equal(t, len(res), 1)
+		assert.Equal(t, 1, len(res))
 	} else {
 		log.Print("WARNING: no internet connection, skipping some tests")
 	}
