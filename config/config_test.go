@@ -1,7 +1,7 @@
 package config_test
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"testing"
 
@@ -12,7 +12,7 @@ import (
 
 func TestConfig(t *testing.T) {
 
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 
 	t.Run("returns new Config object", func(t *testing.T) {
 		cfg := config.New()
