@@ -14,7 +14,7 @@ require (
 	github.com/gnames/gnsys v0.2.2
 	github.com/gnames/gnverifier v1.0.0
 	github.com/json-iterator/go v1.1.12
-	github.com/labstack/echo/v4 v4.7.2
+	github.com/labstack/echo/v4 v4.9.0
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.5.0
 	github.com/rendon/testcli v1.0.0
 	github.com/spf13/cobra v1.4.0
