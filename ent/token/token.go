@@ -5,13 +5,10 @@
 package token
 
 import (
-	"encoding/json"
-	"fmt"
-	"sort"
 	"unicode"
 
 	"github.com/gnames/bayes/ent/feature"
-	"github.com/gnames/bayes/ent/posterior"
+	boutput "github.com/gnames/bayes/ent/output"
 	gner "github.com/gnames/gner/ent/token"
 	"github.com/gnames/gnfinder/io/dict"
 )
@@ -47,44 +44,7 @@ type NLP struct {
 
 	// OddsDetails are used for calculating final odds for detected names and
 	// for displaying results in the output
-	OddsDetails
-}
-
-type OddsDetails map[string]float64
-
-type oddsOutput struct {
-	Feature string  `json:"feature"`
-	Odds    float64 `json:"odds"`
-}
-
-func (od OddsDetails) MarshalJSON() ([]byte, error) {
-	odds := make([]oddsOutput, len(od))
-
-	var i int
-	for k, v := range od {
-		odds[i] = oddsOutput{k, v}
-		i++
-	}
-
-	sort.Slice(odds, func(i, j int) bool {
-		return odds[i].Odds > odds[j].Odds
-	})
-
-	return json.Marshal(odds)
-}
-
-func NewOddsDetails(odds posterior.Odds) OddsDetails {
-	res := make(OddsDetails)
-	for class, fval := range odds.Likelihoods {
-		if string(class) != "name" {
-			continue
-		}
-		for k, v := range fval {
-			str := fmt.Sprintf("%s: %s", k.Name, k.Value)
-			res[str] = v
-		}
-	}
-	return res
+	boutput.OddsDetails
 }
 
 // Indices of the elmements for a name candidate.

@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strings"
 
+	boutput "github.com/gnames/bayes/ent/output"
 	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/token"
 	vlib "github.com/gnames/gnlib/ent/verifier"
@@ -54,7 +55,7 @@ func getGenus(name Name) string {
 	return ""
 }
 
-func calculateOdds(det token.OddsDetails) float64 {
+func calculateOdds(det boutput.OddsDetails) float64 {
 	if len(det) == 0 {
 		return 0
 	}

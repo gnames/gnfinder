@@ -4,6 +4,7 @@ import (
 	"math"
 	"time"
 
+	boutput "github.com/gnames/bayes/ent/output"
 	"github.com/gnames/gnfinder/config"
 	"github.com/gnames/gnfinder/ent/token"
 	vlib "github.com/gnames/gnlib/ent/verifier"
@@ -149,7 +150,7 @@ type Name struct {
 	OddsLog10 float64 `json:"oddsLog10,omitempty"`
 
 	// OddsDetails descibes how Odds were calculated.
-	OddsDetails token.OddsDetails `json:"oddsDetails,omitempty"`
+	OddsDetails boutput.OddsDetails `json:"oddsDetails,omitempty"`
 
 	// OffsetStart is a start of a name on a page.
 	OffsetStart int `json:"start"`

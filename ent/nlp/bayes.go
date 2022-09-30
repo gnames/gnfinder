@@ -7,6 +7,7 @@ import (
 
 	"github.com/gnames/bayes"
 	"github.com/gnames/bayes/ent/feature"
+	boutput "github.com/gnames/bayes/ent/output"
 	"github.com/gnames/bayes/ent/posterior"
 	"github.com/gnames/gnfinder/ent/lang"
 	"github.com/gnames/gnfinder/ent/token"
@@ -73,7 +74,7 @@ func decideInfraspeces(
 		return
 	}
 	isp.NLP().Odds = odds[2].MaxOdds
-	isp.NLP().OddsDetails = token.NewOddsDetails(odds[2])
+	isp.NLP().OddsDetails = boutput.New(odds[2], "name")
 	if isp.NLP().Odds >= oddsThreshold && uni.Decision().In(token.NotName,
 		token.PossibleBinomial, token.Binomial, token.BayesBinomial) {
 		uni.SetDecision(token.BayesTrinomial)
@@ -92,7 +93,7 @@ func decideSpeces(
 		return
 	}
 	sp.NLP().Odds = odds[1].MaxOdds
-	sp.NLP().OddsDetails = token.NewOddsDetails(odds[1])
+	sp.NLP().OddsDetails = boutput.New(odds[1], "name")
 	if sp.NLP().Odds >= oddsThreshold && uni.NLP().Odds > 1 &&
 		uni.Decision().In(token.NotName, token.Uninomial, token.PossibleBinomial) {
 		uni.SetDecision(token.BayesBinomial)
@@ -109,7 +110,7 @@ func decideUninomial(
 	} else {
 		uni.NLP().Odds = 1 / odds[0].MaxOdds
 	}
-	uni.NLP().OddsDetails = token.NewOddsDetails(odds[0])
+	uni.NLP().OddsDetails = boutput.New(odds[0], "name")
 	uni.NLP().ClassCases = odds[0].ClassCases
 	if odds[0].MaxClass == IsName &&
 		odds[0].MaxOdds >= oddsThreshold &&

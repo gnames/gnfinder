@@ -2,9 +2,11 @@
 
 ## Unreleased
 
-## [v1.0.1] - 2022-08-25 Thu
+## [v1.0.1] - 2022-09-30 Fri
 
-- Fix: verifier test, update gnverifier dependency to v1.0.0
+- Add: all modules update.
+- Add: bayes module output for OddsDetails.
+- Fix: verifier test, update gnverifier dependency to v1.0.0.
 
 ## [v1.0.0] - 2022-08-24 Wed
 
