@@ -78,8 +78,8 @@ github.com/fsnotify/fsnotify v1.5.4 h1:jRbGcIw6P2Meqdwuo0H1p6JVLbL5DHKAKlYndzMwV
 github.com/fsnotify/fsnotify v1.5.4/go.mod h1:OVB6XrOHzAwXMpEM7uPOzcehqUV2UqJxmVXmkdnm1bU=
 github.com/gnames/bayes v0.5.0 h1:+xD1I1CxbTyFU/Yv10+XIRVTV9XA5JA9IDzs9tZ8yIM=
 github.com/gnames/bayes v0.5.0/go.mod h1:Gf15XCxyjQQvYk4+9pIFYjuKXdOb0uxhKHpf4m2gmaU=
-github.com/gnames/gndoc v0.3.1 h1:Uki1XW5s5Lv8p5TpXbPczE9RGoGyfRFggVwysDQJJhs=
-github.com/gnames/gndoc v0.3.1/go.mod h1:SWHl1vRaVlc0E1oftUseKVq6S1GjY8jYYv5tgUBpdy8=
+github.com/gnames/gndoc v0.3.2 h1:A7GpdFh6fvjpdisDGwk85p1ihDkpZ59WtPDUfnmT7eU=
+github.com/gnames/gndoc v0.3.2/go.mod h1:SWHl1vRaVlc0E1oftUseKVq6S1GjY8jYYv5tgUBpdy8=
 github.com/gnames/gner v0.1.4 h1:N4mV7oYpwLVQ3EyuC3exhhddb276sQQrdCMPbDP7KLw=
 github.com/gnames/gner v0.1.4/go.mod h1:ZVooOJYLzT36y8Tv1ArAWGD2et+HPEury/kHXvSGHY0=
 github.com/gnames/gnfmt v0.1.0/go.mod h1:WG9c3CoiVrGc1SDsxLk7zjmv2B4UIzI00m4K5Khc/d0=

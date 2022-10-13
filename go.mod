@@ -6,7 +6,7 @@ require (
 	github.com/abadojack/whatlanggo v1.0.1
 	github.com/aclements/perflock v0.0.0-20220309210112-c3e96ed36b4a
 	github.com/gnames/bayes v0.5.0
-	github.com/gnames/gndoc v0.3.1
+	github.com/gnames/gndoc v0.3.2
 	github.com/gnames/gner v0.1.4
 	github.com/gnames/gnfmt v0.3.0
 	github.com/gnames/gnlib v0.14.0
