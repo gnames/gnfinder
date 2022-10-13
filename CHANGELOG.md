@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [v1.0.2] - 2022-10-13 Thu
+
+- Fix: update gndoc to `v0.3.2` to increasae threshold to access remote
+  URLs
+
 ## [v1.0.1] - 2022-09-30 Fri
 
 - Add: all modules update.
