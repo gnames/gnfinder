@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.0.3] - 2022-10-13 Thu
+
+- Fix [#131]: recognize no-break and wide spaces as spaces during tokenization.
+
 ## [v1.0.2] - 2022-10-13 Thu
 
 - Fix: update gndoc to `v0.3.2` to increasae threshold to access remote

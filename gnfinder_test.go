@@ -85,6 +85,32 @@ func TestFindEdgeCases(t *testing.T) {
 	}
 }
 
+// TestNoBreakSpaces tests name-finding when no-break spaces are used instead
+// of 'normal' spaces.
+func TestNoBreakSpaces(t *testing.T) {
+	assert := assert.New(t)
+	text := `d      Family Blaniulidae
+        (I) Blaniulus guttulatus (Fabricius, 1798)`
+	gnf := genFinder()
+	res := gnf.Find("", text)
+	assert.Equal(2, len(res.Names))
+	assert.Equal("Blaniulidae", res.Names[0].Name)
+	assert.Equal("Blaniulus guttulatus", res.Names[1].Name)
+}
+
+// TestWideSpaces tests name-finding when wide spaces are used instead
+// of 'normal' spaces.
+func TestWideSpaces(t *testing.T) {
+	assert := assert.New(t)
+	text := `d　Family　Blaniulidae
+　(I)　Blaniulus　guttulatus　(Fabricius,　1798)`
+	gnf := genFinder()
+	res := gnf.Find("", text)
+	assert.Equal(2, len(res.Names))
+	assert.Equal("Blaniulidae", res.Names[0].Name)
+	assert.Equal("Blaniulus guttulatus", res.Names[1].Name)
+}
+
 // TestHumanNames checks detection and non-detection of names that are
 // similar to scientific names.
 func TestHumanNames(t *testing.T) {
