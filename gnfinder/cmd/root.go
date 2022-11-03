@@ -229,7 +229,7 @@ The service is used for converting files into UTF8-encoded text.`)
 	rootCmd.Flags().BoolP("all-matches", "M", false,
 		"verification returns all found matches")
 	rootCmd.Flags().BoolP("utf8-input", "U", false,
-		`affurm that the input is a plain text UTF8 file.
+		`affirm that the input is a plain text UTF8 file.
 The direct reading of a file will be used instead of a remote
 Apache Tika service.`)
 	rootCmd.Flags().BoolP("unique-names", "u", false,

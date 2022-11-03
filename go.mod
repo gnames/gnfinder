@@ -17,9 +17,9 @@ require (
 	github.com/labstack/echo/v4 v4.9.1
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.5.0
 	github.com/rendon/testcli v1.0.0
-	github.com/spf13/cobra v1.6.0
+	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.13.0
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.8.1
 	golang.org/x/perf v0.0.0-20220920022801-e8d778a60d07
 )
 

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.0.4] - 2022-11-03 Thu
+
+- Fix [#132]: return words surronding a name without preprocessing.
+
 ## [v1.0.3] - 2022-10-13 Thu
 
 - Fix [#131]: recognize no-break and wide spaces as spaces during tokenization.

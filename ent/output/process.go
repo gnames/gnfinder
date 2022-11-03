@@ -93,7 +93,7 @@ func getTokensAround(
 	name.WordsBefore = make([]string, 0, index-before)
 	for _, t := range ts[before:index] {
 		if len(t.Cleaned()) < tooBig {
-			name.WordsBefore = append(name.WordsBefore, t.Cleaned())
+			name.WordsBefore = append(name.WordsBefore, string(t.Raw()))
 		}
 	}
 	name.WordsAfter = make([]string, 0, tokensAround)
@@ -106,7 +106,7 @@ func getTokensAround(
 			continue
 		}
 		if count < tokensAround && len(t.Cleaned()) < 30 {
-			name.WordsAfter = append(name.WordsAfter, t.Cleaned())
+			name.WordsAfter = append(name.WordsAfter, string(t.Raw()))
 		}
 		after = append(after, t)
 		count++
