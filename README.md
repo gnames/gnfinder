@@ -120,7 +120,7 @@ copy path_to\gnfinder.exe C:\bin
 
 #### Go
 
-Install Go v1.18 or higher.
+Install Go v1.19 or higher.
 
 ```bash
 git clone git@github.com:/gnames/gnfinder
