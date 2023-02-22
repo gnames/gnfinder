@@ -5,8 +5,7 @@
 [![Doc Status][doc-img]][doc]
 [![Go Report Card][go-report-img]][go-report]
 
-Try `GNfinder` [online][finder-web].
-Try `GNfinder` [API][finder-api].
+Try `GNfinder` [online][finder-web] or learn about its [API][finder-api].
 
 Very fast finder of scientific names. It uses dictionary and NLP approaches. On
 modern multiprocessor laptop it is able to process 15 million pages per hour.
