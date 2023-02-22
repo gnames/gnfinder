@@ -5,11 +5,17 @@
 [![Doc Status][doc-img]][doc]
 [![Go Report Card][go-report-img]][go-report]
 
+Try `GNfinder` [online][finder-web].
+Try `GNfinder` [API][finder-api].
+
 Very fast finder of scientific names. It uses dictionary and NLP approaches. On
 modern multiprocessor laptop it is able to process 15 million pages per hour.
 Works with many file formats and includes names verification against many
 biological databases. For full functionality it requires an Internet
 connection.
+
+`GNfinder` is also awailable via [web][finder-web] or
+as a [RESTful API][finder-api].
 
 <!-- vim-markdown-toc GFM -->
 
@@ -23,10 +29,11 @@ connection.
     * [Go](#go)
 * [Configuration](#configuration)
 * [Usage](#usage)
+  * [Usage of a web-based application.](#usage-of-a-web-based-application)
+  * [Usage of RESTful API](#usage-of-restful-api)
   * [Usage as a command line app](#usage-as-a-command-line-app)
   * [Usage as a library](#usage-as-a-library)
   * [Usage as a docker container](#usage-as-a-docker-container)
-  * [Usage of API](#usage-of-api)
 * [Projects based on GNfinder](#projects-based-on-gnfinder)
 * [Development](#development)
 * [Testing](#testing)
@@ -120,7 +127,7 @@ copy path_to\gnfinder.exe C:\bin
 
 #### Go
 
-Install Go v1.19 or higher.
+Install Go v1.20 or higher.
 
 ```bash
 git clone git@github.com:/gnames/gnfinder
@@ -173,6 +180,28 @@ settings in both the configuration file and from the flags.
 | WithoutBayes          | GNF_WITHOUT_BAYES           |
 
 ## Usage
+
+### Usage of a web-based application.
+
+`GNfinder` can be used as a [web-based application][finder-web].
+
+### Usage of RESTful API
+
+Best source for API usage is its [documenation][apidoc].
+
+If you want to start your own API endpoint (for example on `localhost`, port
+8080) use:
+
+```bash
+gnfinder -p 8080
+curl localhost:8080/api/v1/ping
+```
+
+To upload a file and detect names from its content:
+
+```bash
+curl -v -F verification=true -F file=@/path/to/test.txt https://gnfinder.globalnames.org/api/v1/find
+```
 
 ### Usage as a command line app
 
@@ -349,24 +378,6 @@ docker pull gnames/gnfinder
 docker run -d -p 8888:8778 --name gnfinder gnames/gnfinder
 ```
 
-### Usage of API
-
-Best source for API usage is its [documenation][apidoc].
-
-If you want to start your own API endpoint (for example on `localhost`, port
-8080) use:
-
-```bash
-gnfinder -p 8080
-curl localhost:8080/api/v1/ping
-```
-
-To upload a file and detect names from its content:
-
-```bash
-curl -v -F verification=true -F file=@/path/to/test.txt https://gnfinder.globalnames.org/api/v1/find
-```
-
 ## Projects based on GNfinder
 
 [gnfinder-plus] allows to work with MS Docs and PDF files without remote
@@ -417,6 +428,8 @@ make test
 [bhlnames]: https://github.com/gnames/bhlnames
 [doc-img]: https://godoc.org/github.com/gnames/gnfinder?status.png
 [doc]: https://godoc.org/github.com/gnames/gnfinder
+[finder-web]: https://finder.globalnames.org
+[finder-api]: https://apidoc.globalnames.org/gnfinder
 [gnfinder gem]: https://rubygems.org/gems/gnfinder
 [gnfinder-plus]: https://github.com/biodiv-platform/gnfinder-plus
 [gnfinder.yml]: https://github.com/gnames/gnfinder/blob/master/gnfinder/cmd/gnfinder.yml
