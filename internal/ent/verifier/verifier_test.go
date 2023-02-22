@@ -1,0 +1,22 @@
+package verifier_test
+
+import (
+	"log"
+	"testing"
+
+	"github.com/gnames/gnfinder/internal/ent/verifier"
+	"github.com/gnames/gnfinder/pkg/config"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestVerifier(t *testing.T) {
+	cfg := config.New()
+	gnv := verifier.New(cfg.VerifierURL, []int{}, false)
+	if gnv.IsConnected() {
+		verif := verifier.New("", nil, false)
+		res, _, _ := verif.Verify([]string{"Bubo bubo"})
+		assert.Equal(t, 1, len(res))
+	} else {
+		log.Print("WARNING: no internet connection, skipping some tests")
+	}
+}

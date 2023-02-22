@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gnames/gnfinder/io/dict"
+	"github.com/gnames/gnfinder/internal/io/dict"
 )
 
 func main() {

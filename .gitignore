@@ -1,5 +1,6 @@
 scripts/training/training
 gnfinder/gnfinder
+out
 debug.test
 coverage.txt
 t

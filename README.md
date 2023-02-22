@@ -315,9 +315,9 @@ There is also a [tutorial] about processing many PDF files in parallel.
 
 ```go
 import (
-  "github.com/gnames/gnfinder"
-  "github.com/gnames/gnfinder/ent/nlp"
-  "github.com/gnames/gnfinder/io/dict"
+  gnfinder "github.com/gnames/gnfinder/pkg"
+  "github.com/gnames/gnfinder/internal/ent/nlp"
+  "github.com/gnames/gnfinder/internal/io/dict"
 )
 
 func Example() {

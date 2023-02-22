@@ -1,12 +1,12 @@
-FROM alpine:3.14
+FROM alpine:3.17
 
 MAINTAINER Dmitry Mozzherin
 
-ENV LAST_FULL_REBUILD 2019-02-18
+ENV LAST_FULL_REBUILD 2023-02-22
 
 WORKDIR /bin
 
-COPY ./gnfinder/gnfinder /bin
+COPY ./out/bin/gnfinder /bin
 
 ENTRYPOINT [ "gnfinder" ]
 
