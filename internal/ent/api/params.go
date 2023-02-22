@@ -22,6 +22,10 @@ type FinderParams struct {
 	// UniqueNames sets flag for JSON output to return only unique names.
 	UniqueNames bool `json:"unique" form:"unique"`
 
+	// AmbiguousNames preserves detected ambigous uninomials like `America`
+	// or `Cancer`.
+	AmbiguousNames bool `json:"ambiguousNames" form:"ambiguousNames"`
+
 	// NoBayes disables NaiveBayes approach for name detection and leaves only
 	// heuristic approach.
 	NoBayes bool `json:"noBayes" form:"noBayes"`
@@ -53,11 +57,7 @@ type FinderParams struct {
 	// such IDs visit http://verifier.globalnames.org/data_sources.
 	Sources []int `json:"sources" form:"sources[]"`
 
-	// WithAllMatches indicates that Verification results will return all
+	// AllMatches indicates that Verification results will return all
 	// found results, not only the BestResult.
-	WithAllMatches bool `json:"withAllMatches" form:"allMatches"`
-
-	// WithAmbiguousNames preserves detected ambigous uninomials like `America`
-	// or `Cancer`.
-	WithAmbiguousNames bool `json:"withAmbiguousNames" form:"ambiguousNames"`
+	AllMatches bool `json:"withAllMatches" form:"allMatches"`
 }

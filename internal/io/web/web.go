@@ -117,11 +117,11 @@ func getOpts(params api.FinderParams) []config.Option {
 	}
 	return []config.Option{
 		config.OptWithUniqueNames(params.UniqueNames),
+		config.OptWithAmbiguousNames(params.AmbiguousNames),
 		config.OptIncludeInputText(params.ReturnContent),
 		config.OptWithVerification(params.Verification),
 		config.OptDataSources(params.Sources),
-		config.OptWithAllMatches(params.WithAllMatches),
-		config.OptWithAmbiguousNames(params.WithAmbiguousNames),
+		config.OptWithAllMatches(params.AllMatches),
 		config.OptWithBayesOddsDetails(params.OddsDetails),
 	}
 }

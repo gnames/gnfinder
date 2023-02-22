@@ -4,7 +4,6 @@
 
 ## [v1.1.0] - 2023-02-22 Wed
 
-
 - Add [#107]: GET version for `find` in API.
 - Add [#136]: refactor code to more standard file layout.
 - Add [#135]: emphasize API/Web interfaces in README.

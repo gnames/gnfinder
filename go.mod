@@ -18,6 +18,7 @@ require (
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.6.1
 	github.com/rendon/testcli v1.0.0
 	github.com/spf13/cobra v1.6.1
+	github.com/spf13/cobra-cli v1.3.0
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.1
 	golang.org/x/perf v0.0.0-20230221235046-aebcfb61e84c

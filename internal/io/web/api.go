@@ -5,6 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gnames/gndoc"
@@ -18,7 +21,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func infoAPI(gnf gnfinder.GNfinder) func(echo.Context) error {
+func infoApiGET(gnf gnfinder.GNfinder) func(echo.Context) error {
 	return func(c echo.Context) error {
 		info := fmt.Sprintf(
 			"OpenAPI for gnfinder is described at\n\n%s\n",
@@ -30,70 +33,26 @@ func infoAPI(gnf gnfinder.GNfinder) func(echo.Context) error {
 
 }
 
-func pingAPI() func(echo.Context) error {
+func pingApiGET() func(echo.Context) error {
 	return func(c echo.Context) error {
 		return c.String(http.StatusOK, "pong")
 	}
 }
 
-func verAPI(gnf gnfinder.GNfinder) func(echo.Context) error {
+func verApiGET(gnf gnfinder.GNfinder) func(echo.Context) error {
 	return func(c echo.Context) error {
 		return c.JSON(http.StatusOK, gnf.GetVersion())
 	}
 }
 
-func findAPI(gnf gnfinder.GNfinder) func(echo.Context) error {
+func findApiGET(gnf gnfinder.GNfinder) func(echo.Context) error {
 	return func(c echo.Context) error {
 		ctx, cancel := getContext(c)
 		defer cancel()
 		chErr := make(chan error)
+		params := paramsFindGET(c)
 
-		go func() {
-			var err error
-			var text, filename string
-			var txtExtr float32
-			var out output.Output
-			var params api.FinderParams
-			var format gnfmt.Format
-			var opts []config.Option
-
-			err = c.Bind(&params)
-
-			if err == nil {
-				text, filename, txtExtr, err = getText(
-					c,
-					params,
-					gnf.GetConfig().TikaURL,
-				)
-
-				opts, format = getOptsAPI(params)
-				gnf = gnf.ChangeConfig(opts...)
-				out = gnf.Find(filename, text)
-				out.TextExtractionSec = txtExtr
-				cfg := gnf.GetConfig()
-				if cfg.WithVerification {
-					verif := verifier.New(
-						cfg.VerifierURL,
-						cfg.DataSources,
-						cfg.WithAllMatches,
-					)
-					verifiedNames, stats, dur := verif.Verify(out.UniqueNameStrings())
-					out.MergeVerification(verifiedNames, stats, dur)
-				}
-			}
-			out.TotalSec = out.TextExtractionSec + out.NameFindingSec + out.NameVerifSec
-
-			if err == nil {
-				if format == gnfmt.CompactJSON || format == gnfmt.PrettyJSON {
-					err = c.JSON(http.StatusOK, out)
-				} else {
-					err = c.String(http.StatusOK, out.Format(format))
-				}
-			}
-
-			chErr <- err
-
-		}()
+		go finder(c, gnf, params, chErr)
 
 		select {
 		case <-ctx.Done():
@@ -105,6 +64,118 @@ func findAPI(gnf gnfinder.GNfinder) func(echo.Context) error {
 			return errors.New("request took too long")
 		}
 	}
+}
+
+func paramsFindGET(c echo.Context) api.FinderParams {
+	var textURL, text string
+	text, _ = url.QueryUnescape(c.Param("text"))
+	if strings.HasPrefix(text, "http") {
+		textURL = text
+		text = ""
+	}
+	var wordsAround int
+	if num, err := strconv.Atoi(c.QueryParam("words_around")); err == nil {
+		wordsAround = num
+	}
+	var sources []int
+	elements := strings.Split(c.QueryParam("sources"), ",")
+	for _, v := range elements {
+		v = strings.TrimSpace(v)
+		if num, err := strconv.Atoi(v); err == nil {
+			sources = append(sources, num)
+		}
+	}
+
+	params := api.FinderParams{
+		URL:            textURL,
+		Text:           text,
+		Format:         c.QueryParam("format"),
+		Language:       c.QueryParam("language"),
+		BytesOffset:    c.QueryParam("bytes_offset") == "true",
+		ReturnContent:  c.QueryParam("return_content") == "true",
+		UniqueNames:    c.QueryParam("unique_names") == "true",
+		AmbiguousNames: c.QueryParam("ambiguous_names") == "true",
+		NoBayes:        c.QueryParam("no_bayes") == "true",
+		OddsDetails:    c.QueryParam("odds_details") == "true",
+		WordsAround:    wordsAround,
+		Verification:   c.QueryParam("verification") == "true",
+		Sources:        sources,
+		AllMatches:     c.QueryParam("all_matches") == "true",
+	}
+
+	if len(params.Sources) > 0 || params.AllMatches {
+		params.Verification = true
+	}
+
+	return params
+}
+
+func findApiPOST(gnf gnfinder.GNfinder) func(echo.Context) error {
+	return func(c echo.Context) error {
+		ctx, cancel := getContext(c)
+		defer cancel()
+		chErr := make(chan error)
+
+		var params api.FinderParams
+		err := c.Bind(&params)
+		if err != nil {
+			return err
+		}
+
+		go finder(c, gnf, params, chErr)
+
+		select {
+		case <-ctx.Done():
+			<-chErr
+			return ctx.Err()
+		case err := <-chErr:
+			return err
+		case <-time.After(1 * time.Minute):
+			return errors.New("request took too long")
+		}
+	}
+}
+
+func finder(c echo.Context, gnf gnfinder.GNfinder, params api.FinderParams, chErr chan<- error) {
+	var err error
+	var text, filename string
+	var txtExtr float32
+	var out output.Output
+	var format gnfmt.Format
+	var opts []config.Option
+
+	text, filename, txtExtr, err = getText(
+		c,
+		params,
+		gnf.GetConfig().TikaURL,
+	)
+
+	opts, format = getOptsAPI(params)
+	gnf = gnf.ChangeConfig(opts...)
+	out = gnf.Find(filename, text)
+	out.TextExtractionSec = txtExtr
+	cfg := gnf.GetConfig()
+	if cfg.WithVerification {
+		verif := verifier.New(
+			cfg.VerifierURL,
+			cfg.DataSources,
+			cfg.WithAllMatches,
+		)
+		verifiedNames, stats, dur := verif.Verify(out.UniqueNameStrings())
+		out.MergeVerification(verifiedNames, stats, dur)
+	}
+
+	out.TotalSec = out.TextExtractionSec + out.NameFindingSec + out.NameVerifSec
+
+	if err == nil {
+		if format == gnfmt.CompactJSON || format == gnfmt.PrettyJSON {
+			err = c.JSON(http.StatusOK, out)
+		} else {
+			err = c.String(http.StatusOK, out.Format(format))
+		}
+	}
+
+	chErr <- err
 }
 
 func getOptsAPI(params api.FinderParams) ([]config.Option, gnfmt.Format) {
@@ -120,12 +191,13 @@ func getOptsAPI(params api.FinderParams) ([]config.Option, gnfmt.Format) {
 		config.OptWithPositonInBytes(params.BytesOffset),
 		config.OptLanguage(getLanguage(params.Language)),
 		config.OptDataSources(params.Sources),
-		config.OptWithAllMatches(params.WithAllMatches),
-		config.OptWithAmbiguousNames(params.WithAmbiguousNames),
+		config.OptIncludeInputText(params.ReturnContent),
+		config.OptWithAllMatches(params.AllMatches),
+		config.OptWithAmbiguousNames(params.AmbiguousNames),
 		config.OptWithVerification(
 			params.Verification ||
 				len(params.Sources) > 0 ||
-				params.WithAllMatches,
+				params.AllMatches,
 		),
 		config.OptTokensAround(params.WordsAround),
 	}
