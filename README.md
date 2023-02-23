@@ -66,7 +66,7 @@ connection.
 
 ## Installation
 
-### Homebrew on Mac OS X, Linux, and Linux on Windows ([WSL2][WSL install])
+### Homebrew on Mac OS X, Linux, and Linux on Windows ([WSL2][wsl])
 
 [Homebrew] is a popular package manager for Open Source software originally
 developed for Mac OS X. Now it is also available on Linux, and can easily
@@ -84,6 +84,8 @@ go to the `Linux and Mac without Homebrew` section.
     ```bash
     brew tap gnames/gn
     brew install gnfinder
+    # to upgrade
+    brew upgrade gnfinder
     ```
 
 ### Arch Linux AUR package
@@ -443,3 +445,4 @@ make test
 [travis]: https://travis-ci.org/gnames/gnfinder
 [tutorial]: https://globalnames.org/docs/tut-gnfinder/
 [winpath]: https://www.computerhope.com/issues/ch000549.htm
+[wsl]: https://docs.microsoft.com/en-us/windows/wsl/
