@@ -5,7 +5,7 @@
 [![Doc Status][doc-img]][doc]
 [![Go Report Card][go-report-img]][go-report]
 
-Try `GNfinder` [online][finder-web] or learn about its [API][finder-api].
+Try `GNfinder` [online][finder-web] or learn about its [API][apidoc].
 
 Very fast finder of scientific names. It uses dictionary and NLP approaches. On
 modern multiprocessor laptop it is able to process 15 million pages per hour.
@@ -14,7 +14,7 @@ biological databases. For full functionality it requires an Internet
 connection.
 
 `GNfinder` is also awailable via [web][finder-web] or
-as a [RESTful API][finder-api].
+as a [RESTful API][apidoc].
 
 <!-- vim-markdown-toc GFM -->
 
@@ -443,6 +443,7 @@ make test
 [bhlnames]: https://github.com/gnames/bhlnames
 [doc-img]: https://godoc.org/github.com/gnames/gnfinder?status.png
 [doc]: https://godoc.org/github.com/gnames/gnfinder
+[finder-web]: https://finder.globalnames.org
 [gnfinder gem]: https://rubygems.org/gems/gnfinder
 [gnfinder-plus]: https://github.com/biodiv-platform/gnfinder-plus
 [gnfinder.yml]: https://github.com/gnames/gnfinder/blob/master/gnfinder/cmd/gnfinder.yml
