@@ -5,34 +5,29 @@
 [![Doc Status][doc-img]][doc]
 [![Go Report Card][go-report-img]][go-report]
 
-Try `GNfinder` [online][finder-web] or learn about its [API][finder-api].
-
 Very fast finder of scientific names. It uses dictionary and NLP approaches. On
 modern multiprocessor laptop it is able to process 15 million pages per hour.
 Works with many file formats and includes names verification against many
 biological databases. For full functionality it requires an Internet
 connection.
 
-`GNfinder` is also awailable via [web][finder-web] or
-as a [RESTful API][finder-api].
-
 <!-- vim-markdown-toc GFM -->
 
 * [Citing](#citing)
 * [Features](#features)
-* [Install as a command line app](#install-as-a-command-line-app)
-  * [Install with Homebrew on Mac OS X, Linux, and Linux on Windows (WSL2)](#install-with-homebrew-on-mac-os-x-linux-and-linux-on-windows-wsl2)
-  * [Install by hand](#install-by-hand)
+* [Installation](#installation)
+  * [Homebrew on Mac OS X, Linux, and Linux on Windows (WSL2)](#homebrew-on-mac-os-x-linux-and-linux-on-windows-wsl2)
+  * [Arch Linux AUR package](#arch-linux-aur-package)
+  * [Manual Install](#manual-install)
     * [Linux and Mac without Homebrew](#linux-and-mac-without-homebrew)
     * [Windows without Homebrew and WSL](#windows-without-homebrew-and-wsl)
     * [Go](#go)
 * [Configuration](#configuration)
 * [Usage](#usage)
-  * [Usage of a web-based application.](#usage-of-a-web-based-application)
-  * [Usage of RESTful API](#usage-of-restful-api)
   * [Usage as a command line app](#usage-as-a-command-line-app)
   * [Usage as a library](#usage-as-a-library)
   * [Usage as a docker container](#usage-as-a-docker-container)
+  * [Usage of API](#usage-of-api)
 * [Projects based on GNfinder](#projects-based-on-gnfinder)
 * [Development](#development)
 * [Testing](#testing)
@@ -69,9 +64,9 @@ as a [RESTful API][finder-api].
   in approximately 3 hours using both heuristic and Bayes algorithms. Check
   [bhlindex] project for an example.
 
-## Install as a command line app
+## Installation
 
-### Install with Homebrew on Mac OS X, Linux, and Linux on Windows ([WSL2][WSL install])
+### Homebrew on Mac OS X, Linux, and Linux on Windows ([WSL2][WSL install])
 
 [Homebrew] is a popular package manager for Open Source software originally
 developed for Mac OS X. Now it is also available on Linux, and can easily
@@ -91,7 +86,18 @@ go to the `Linux and Mac without Homebrew` section.
     brew install gnfinder
     ```
 
-### Install by hand
+### Arch Linux AUR package
+
+AUR package is located at `https://aur.archlinux.org/packages/gnfinder`.
+Install it by hand, or with AUR helpers like `yay` or `pacaur`.
+
+```bash
+yay -S gnfinder
+# or
+pacaur -S gnfinder
+```
+
+### Manual Install
 
 `GNfinder` consists of just one executable file, so it is pretty easy to
 install it by hand. To do that download the binary executable for your
@@ -126,7 +132,7 @@ copy path_to\gnfinder.exe C:\bin
 
 #### Go
 
-Install Go v1.20 or higher.
+Install Go v1.19 or higher.
 
 ```bash
 git clone git@github.com:/gnames/gnfinder
@@ -179,28 +185,6 @@ settings in both the configuration file and from the flags.
 | WithoutBayes          | GNF_WITHOUT_BAYES           |
 
 ## Usage
-
-### Usage of a web-based application.
-
-`GNfinder` can be used as a [web-based application][finder-web].
-
-### Usage of RESTful API
-
-Best source for API usage is its [documenation][apidoc].
-
-If you want to start your own API endpoint (for example on `localhost`, port
-8080) use:
-
-```bash
-gnfinder -p 8080
-curl localhost:8080/api/v1/ping
-```
-
-To upload a file and detect names from its content:
-
-```bash
-curl -v -F verification=true -F file=@/path/to/test.txt https://gnfinder.globalnames.org/api/v1/find
-```
 
 ### Usage as a command line app
 
@@ -343,9 +327,9 @@ There is also a [tutorial] about processing many PDF files in parallel.
 
 ```go
 import (
-  gnfinder "github.com/gnames/gnfinder/pkg"
-  "github.com/gnames/gnfinder/internal/ent/nlp"
-  "github.com/gnames/gnfinder/internal/io/dict"
+  "github.com/gnames/gnfinder"
+  "github.com/gnames/gnfinder/ent/nlp"
+  "github.com/gnames/gnfinder/io/dict"
 )
 
 func Example() {
@@ -375,6 +359,24 @@ docker pull gnames/gnfinder
 
 # run GNfinder server, and map it to port 8888 on the host machine
 docker run -d -p 8888:8778 --name gnfinder gnames/gnfinder
+```
+
+### Usage of API
+
+Best source for API usage is its [documenation][apidoc].
+
+If you want to start your own API endpoint (for example on `localhost`, port
+8080) use:
+
+```bash
+gnfinder -p 8080
+curl localhost:8080/api/v1/ping
+```
+
+To upload a file and detect names from its content:
+
+```bash
+curl -v -F verification=true -F file=@/path/to/test.txt https://gnfinder.globalnames.org/api/v1/find
 ```
 
 ## Projects based on GNfinder
@@ -427,8 +429,6 @@ make test
 [bhlnames]: https://github.com/gnames/bhlnames
 [doc-img]: https://godoc.org/github.com/gnames/gnfinder?status.png
 [doc]: https://godoc.org/github.com/gnames/gnfinder
-[finder-web]: https://finder.globalnames.org
-[finder-api]: https://apidoc.globalnames.org/gnfinder
 [gnfinder gem]: https://rubygems.org/gems/gnfinder
 [gnfinder-plus]: https://github.com/biodiv-platform/gnfinder-plus
 [gnfinder.yml]: https://github.com/gnames/gnfinder/blob/master/gnfinder/cmd/gnfinder.yml
