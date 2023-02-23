@@ -54,7 +54,7 @@ release: dockerhub
 	$(FLAGS_SHARED) GOOS=darwin $(GORELEASE) -o $(OUTPUT); \
 	tar zcvf /tmp/$(PROJ_NAME)-$(VER)-mac.tar.gz $(OUTPUT); \
 	$(GOCLEAN); \
-	$(FLAGS_SHARED) GOOS=windows $(GORELEASE) -o $(OUTPUT); \
+	$(FLAGS_SHARED) GOOS=windows $(GORELEASE) -o $(OUTPUT).exe; \
 	zip -9 /tmp/$(PROJ_NAME)-$(VER)-win-64.zip $(OUTPUT).exe; \
 	$(GOCLEAN);
 
@@ -63,7 +63,7 @@ install:
 
 docker: buildrel
 	mkdir -p $(OUT_DIR)
-	docker build -t gnames/$(PROJ_NAME):latest -t gnames/$(PROJ_NAME):$(VERSION) .; \
+	docker buildx build -t gnames/$(PROJ_NAME):latest -t gnames/$(PROJ_NAME):$(VERSION) .; \
 	$(GOCLEAN);
 
 dockerhub: docker
