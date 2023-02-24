@@ -42,7 +42,7 @@ buildrel:
 
 release: dockerhub
 	$(GOCLEAN); \
-	$(FLAGS_SHARED) GOOS=linux $(GORELEASE); \
+	$(FLAGS_SHARED) GOOS=linux $(GORELEASE) $(PROJ_NAME); \
 	tar zcvf /tmp/$(PROJ_NAME)-$(VER)-linux.tar.gz; \
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=darwin $(GORELEASE); \
