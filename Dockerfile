@@ -6,7 +6,7 @@ ENV LAST_FULL_REBUILD 2023-02-22
 
 WORKDIR /bin
 
-COPY ./out/bin/gnfinder /bin
+COPY ./gnfinder /bin
 
 ENTRYPOINT [ "gnfinder" ]
 
