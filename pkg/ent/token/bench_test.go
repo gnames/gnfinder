@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gnames/gnfinder/internal/ent/token"
+	"github.com/gnames/gnfinder/pkg/ent/token"
 )
 
 // BenchmarkTokenize checks speed of tokenizing. Run it with:

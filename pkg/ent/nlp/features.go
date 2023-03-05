@@ -4,8 +4,8 @@ import (
 	"strconv"
 
 	"github.com/gnames/bayes/ent/feature"
-	"github.com/gnames/gnfinder/internal/ent/token"
-	"github.com/gnames/gnfinder/internal/io/dict"
+	"github.com/gnames/gnfinder/pkg/ent/token"
+	"github.com/gnames/gnfinder/pkg/io/dict"
 )
 
 // BayesF implements bayes.Featurer

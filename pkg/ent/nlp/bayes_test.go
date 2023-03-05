@@ -3,11 +3,11 @@ package nlp_test
 import (
 	"testing"
 
-	"github.com/gnames/gnfinder/internal/ent/heuristic"
-	"github.com/gnames/gnfinder/internal/ent/lang"
-	"github.com/gnames/gnfinder/internal/ent/nlp"
-	"github.com/gnames/gnfinder/internal/ent/token"
-	"github.com/gnames/gnfinder/internal/io/dict"
+	"github.com/gnames/gnfinder/pkg/ent/heuristic"
+	"github.com/gnames/gnfinder/pkg/ent/lang"
+	"github.com/gnames/gnfinder/pkg/ent/nlp"
+	"github.com/gnames/gnfinder/pkg/ent/token"
+	"github.com/gnames/gnfinder/pkg/io/dict"
 	"github.com/stretchr/testify/assert"
 )
 

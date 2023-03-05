@@ -10,7 +10,7 @@ import (
 	"github.com/gnames/bayes/ent/feature"
 	boutput "github.com/gnames/bayes/ent/output"
 	gner "github.com/gnames/gner/ent/token"
-	"github.com/gnames/gnfinder/internal/io/dict"
+	"github.com/gnames/gnfinder/pkg/io/dict"
 )
 
 // tokenSN represents a word separated by spaces in a text. Words that are

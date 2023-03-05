@@ -7,12 +7,12 @@ import (
 	"testing"
 
 	"github.com/gnames/bayes"
-	"github.com/gnames/gnfinder/internal/ent/lang"
-	"github.com/gnames/gnfinder/internal/ent/nlp"
-	"github.com/gnames/gnfinder/internal/ent/output"
-	"github.com/gnames/gnfinder/internal/io/dict"
 	gnfinder "github.com/gnames/gnfinder/pkg"
 	"github.com/gnames/gnfinder/pkg/config"
+	"github.com/gnames/gnfinder/pkg/ent/lang"
+	"github.com/gnames/gnfinder/pkg/ent/nlp"
+	"github.com/gnames/gnfinder/pkg/ent/output"
+	"github.com/gnames/gnfinder/pkg/io/dict"
 )
 
 // Benchmarks. To run all of them use

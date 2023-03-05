@@ -4,7 +4,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/gnames/gnfinder/internal/io/dict"
+	"github.com/gnames/gnfinder/pkg/io/dict"
 )
 
 // Features keep properties of a token as a possible candidate for a

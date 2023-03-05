@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gnames/gnfinder/internal/ent/lang"
 	gnfinder "github.com/gnames/gnfinder/pkg"
 	"github.com/gnames/gnfinder/pkg/config"
+	"github.com/gnames/gnfinder/pkg/ent/lang"
 	"github.com/gnames/gnfmt"
 	"github.com/spf13/cobra"
 )

@@ -11,12 +11,12 @@ import (
 	"time"
 
 	"github.com/gnames/gndoc"
-	"github.com/gnames/gnfinder/internal/ent/api"
-	"github.com/gnames/gnfinder/internal/ent/lang"
-	"github.com/gnames/gnfinder/internal/ent/output"
-	"github.com/gnames/gnfinder/internal/ent/verifier"
 	gnfinder "github.com/gnames/gnfinder/pkg"
 	"github.com/gnames/gnfinder/pkg/config"
+	"github.com/gnames/gnfinder/pkg/ent/api"
+	"github.com/gnames/gnfinder/pkg/ent/lang"
+	"github.com/gnames/gnfinder/pkg/ent/output"
+	"github.com/gnames/gnfinder/pkg/ent/verifier"
 	"github.com/gnames/gnfmt"
 	"github.com/labstack/echo/v4"
 )

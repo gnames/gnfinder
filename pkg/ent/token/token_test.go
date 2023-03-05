@@ -3,7 +3,7 @@ package token_test
 import (
 	"testing"
 
-	"github.com/gnames/gnfinder/internal/ent/token"
+	"github.com/gnames/gnfinder/pkg/ent/token"
 	"github.com/stretchr/testify/assert"
 )
 

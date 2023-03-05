@@ -9,11 +9,11 @@ import (
 
 	"github.com/gnames/bayes"
 	"github.com/gnames/bayes/ent/feature"
-	"github.com/gnames/gnfinder/internal/ent/heuristic"
-	"github.com/gnames/gnfinder/internal/ent/lang"
-	"github.com/gnames/gnfinder/internal/ent/nlp"
-	"github.com/gnames/gnfinder/internal/ent/token"
-	"github.com/gnames/gnfinder/internal/io/dict"
+	"github.com/gnames/gnfinder/pkg/ent/heuristic"
+	"github.com/gnames/gnfinder/pkg/ent/lang"
+	"github.com/gnames/gnfinder/pkg/ent/nlp"
+	"github.com/gnames/gnfinder/pkg/ent/token"
+	"github.com/gnames/gnfinder/pkg/io/dict"
 	jsoniter "github.com/json-iterator/go"
 )
 

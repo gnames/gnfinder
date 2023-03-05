@@ -3,8 +3,8 @@ package heuristic
 import (
 	"fmt"
 
-	"github.com/gnames/gnfinder/internal/ent/token"
-	"github.com/gnames/gnfinder/internal/io/dict"
+	"github.com/gnames/gnfinder/pkg/ent/token"
+	"github.com/gnames/gnfinder/pkg/io/dict"
 )
 
 // TagTokens is important for both heuristic and Bayes approaches. It analyses

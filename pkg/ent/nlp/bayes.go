@@ -9,10 +9,10 @@ import (
 	"github.com/gnames/bayes/ent/feature"
 	boutput "github.com/gnames/bayes/ent/output"
 	"github.com/gnames/bayes/ent/posterior"
-	"github.com/gnames/gnfinder/internal/ent/lang"
-	"github.com/gnames/gnfinder/internal/ent/token"
-	"github.com/gnames/gnfinder/internal/io/dict"
-	"github.com/gnames/gnfinder/internal/io/nlpfs"
+	"github.com/gnames/gnfinder/pkg/ent/lang"
+	"github.com/gnames/gnfinder/pkg/ent/token"
+	"github.com/gnames/gnfinder/pkg/io/dict"
+	"github.com/gnames/gnfinder/pkg/io/nlpfs"
 )
 
 func TagTokens(

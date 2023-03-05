@@ -3,14 +3,14 @@ package main
 import (
 	"testing"
 
-	"github.com/gnames/gnfinder/internal/ent/lang"
-	"github.com/gnames/gnfinder/internal/io/dict"
+	"github.com/gnames/gnfinder/pkg/ent/lang"
+	"github.com/gnames/gnfinder/pkg/io/dict"
 	"github.com/stretchr/testify/assert"
 )
 
 // TestLangData returns training data for a language.
 func TestLangData(t *testing.T) {
-	path := "../../internal/io/nlpfs/data/training/eng"
+	path := "../../pkg/io/nlpfs/data/training/eng"
 	td := NewTrainingData(path)
 	assert.Greater(t, len(td), 1)
 	_, ok := td[FileName("no_names")]
@@ -19,7 +19,7 @@ func TestLangData(t *testing.T) {
 
 // TestTrainingData tests getting training data organized by languages.
 func TestTrainingData(t *testing.T) {
-	path := "../../internal/io/nlpfs/data/training"
+	path := "../../pkg/io/nlpfs/data/training"
 	tld := NewTrainingLanguageData(path)
 	assert.Greater(t, len(tld), 1)
 	_, ok := tld[lang.English]
@@ -31,7 +31,7 @@ func TestTrainingData(t *testing.T) {
 // TestTrain tests on returning NaiveBayes object.
 func TestTrain(t *testing.T) {
 	dictionary := dict.LoadDictionary()
-	path := "../../internal/io/nlpfs/data/training"
+	path := "../../pkg/io/nlpfs/data/training"
 	tld := NewTrainingLanguageData(path)
 	nb := Train(tld[lang.English], dictionary)
 	bout := nb.Inspect()

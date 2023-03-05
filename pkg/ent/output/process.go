@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	boutput "github.com/gnames/bayes/ent/output"
-	"github.com/gnames/gnfinder/internal/ent/token"
 	"github.com/gnames/gnfinder/pkg/config"
+	"github.com/gnames/gnfinder/pkg/ent/token"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnstats/ent/stats"
 )

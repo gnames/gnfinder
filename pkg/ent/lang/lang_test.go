@@ -3,7 +3,7 @@ package lang_test
 import (
 	"testing"
 
-	"github.com/gnames/gnfinder/internal/ent/lang"
+	"github.com/gnames/gnfinder/pkg/ent/lang"
 	"github.com/stretchr/testify/assert"
 )
 

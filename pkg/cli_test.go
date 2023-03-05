@@ -5,8 +5,8 @@ import (
 	"log"
 	"testing"
 
-	"github.com/gnames/gnfinder/internal/ent/verifier"
 	"github.com/gnames/gnfinder/pkg/config"
+	"github.com/gnames/gnfinder/pkg/ent/verifier"
 	"github.com/rendon/testcli"
 	"github.com/stretchr/testify/assert"
 )

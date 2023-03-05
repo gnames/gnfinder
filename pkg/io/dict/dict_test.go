@@ -3,7 +3,7 @@ package dict_test
 import (
 	"testing"
 
-	"github.com/gnames/gnfinder/internal/io/dict"
+	"github.com/gnames/gnfinder/pkg/io/dict"
 	"github.com/stretchr/testify/assert"
 )
 
