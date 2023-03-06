@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	dir := filepath.Join("..", "..", "io", "nlpfs", "data")
+	dir := filepath.Join("..", "..", "pkg", "io", "nlpfs", "data")
 	// get text and names positions in the text, if any
 	data := NewTrainingLanguageData(filepath.Join(dir, "training"))
 	output := filepath.Join(dir, "files")
