@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [v1.1.1] - 2023-03-06 Mon
+
+- Add: move everything from internal to pkg to make gnfinder useful as a
+  library.
+
 ## [v1.1.0] - 2023-02-22 Wed
 
 - Add [#107]: GET version for `find` in API.
@@ -343,6 +348,14 @@
 
 This document follows [changelog guidelines]
 
+[v1.1.1]: https://github.com/gnames/gnfinder/compare/v1.1.0...v1.1.1
+[v1.1.0]: https://github.com/gnames/gnfinder/compare/v1.0.4...v1.1.0
+[v1.0.4]: https://github.com/gnames/gnfinder/compare/v1.0.3...v1.0.4
+[v1.0.3]: https://github.com/gnames/gnfinder/compare/v1.0.2...v1.0.3
+[v1.0.2]: https://github.com/gnames/gnfinder/compare/v1.0.1...v1.0.2
+[v1.0.1]: https://github.com/gnames/gnfinder/compare/v1.0.0...v1.0.1
+[v1.0.0]: https://github.com/gnames/gnfinder/compare/v0.19.5...v1.0.0
+[v0.19.5]: https://github.com/gnames/gnfinder/compare/v0.19.4...v0.19.5
 [v0.19.4]: https://github.com/gnames/gnfinder/compare/v0.19.3...v0.19.4
 [v0.19.3]: https://github.com/gnames/gnfinder/compare/v0.19.2...v0.19.3
 [v0.19.2]: https://github.com/gnames/gnfinder/compare/v0.19.1...v0.19.2
@@ -390,6 +403,36 @@ This document follows [changelog guidelines]
 [v0.5.2]: https://github.com/gnames/gnfinder/compare/v0.5.1...v0.5.2
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
+[#150]: https://github.com/gnames/gnfinder/issues/150
+[#149]: https://github.com/gnames/gnfinder/issues/149
+[#148]: https://github.com/gnames/gnfinder/issues/148
+[#147]: https://github.com/gnames/gnfinder/issues/147
+[#146]: https://github.com/gnames/gnfinder/issues/146
+[#145]: https://github.com/gnames/gnfinder/issues/145
+[#144]: https://github.com/gnames/gnfinder/issues/144
+[#143]: https://github.com/gnames/gnfinder/issues/143
+[#142]: https://github.com/gnames/gnfinder/issues/142
+[#141]: https://github.com/gnames/gnfinder/issues/141
+[#140]: https://github.com/gnames/gnfinder/issues/140
+[#139]: https://github.com/gnames/gnfinder/issues/139
+[#138]: https://github.com/gnames/gnfinder/issues/138
+[#137]: https://github.com/gnames/gnfinder/issues/137
+[#136]: https://github.com/gnames/gnfinder/issues/136
+[#135]: https://github.com/gnames/gnfinder/issues/135
+[#134]: https://github.com/gnames/gnfinder/issues/134
+[#133]: https://github.com/gnames/gnfinder/issues/133
+[#132]: https://github.com/gnames/gnfinder/issues/132
+[#131]: https://github.com/gnames/gnfinder/issues/131
+[#130]: https://github.com/gnames/gnfinder/issues/130
+[#129]: https://github.com/gnames/gnfinder/issues/129
+[#128]: https://github.com/gnames/gnfinder/issues/128
+[#127]: https://github.com/gnames/gnfinder/issues/127
+[#126]: https://github.com/gnames/gnfinder/issues/126
+[#125]: https://github.com/gnames/gnfinder/issues/125
+[#124]: https://github.com/gnames/gnfinder/issues/124
+[#123]: https://github.com/gnames/gnfinder/issues/123
+[#122]: https://github.com/gnames/gnfinder/issues/122
+[#121]: https://github.com/gnames/gnfinder/issues/121
 [#120]: https://github.com/gnames/gnfinder/issues/120
 [#119]: https://github.com/gnames/gnfinder/issues/119
 [#118]: https://github.com/gnames/gnfinder/issues/118
