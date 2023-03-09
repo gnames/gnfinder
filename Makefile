@@ -22,7 +22,7 @@ GOGET = $(GOCMD) get
 all: install
 
 test: deps install
-	go test -shuffle=on -race -coverprofile=coverage.txt -covermode=atomic ./...
+	go test -shuffle=on -count=1 -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 tools: deps
 	@echo Installing tools from tools.go
