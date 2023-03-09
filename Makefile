@@ -40,6 +40,9 @@ buildrel:
 	$(GOCLEAN); \
 	$(NO_C) $(GORELEASE);
 
+install:
+	$(FLAGS_SHARED) $(GOINSTALL);
+
 release: dockerhub
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=linux $(GORELEASE); \
@@ -51,9 +54,6 @@ release: dockerhub
 	$(FLAGS_SHARED) GOOS=windows $(GORELEASE); \
 	zip -9 /tmp/$(PROJ_NAME)-$(VER)-win-64.zip $(PROJ_NAME).exe; \
 	$(GOCLEAN);
-
-install:
-	$(FLAGS_SHARED) $(GOINSTALL);
 
 docker: buildrel
 	docker buildx build -t gnames/$(PROJ_NAME):latest -t gnames/$(PROJ_NAME):$(VERSION) .; \
