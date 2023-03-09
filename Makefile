@@ -34,11 +34,11 @@ deps:
 
 build:
 	$(GOCLEAN); \
-	$(FLAGS_SHARED) $(GOBUILD);
+	$(NO_C) $(GOBUILD);
 
 buildrel:
 	$(GOCLEAN); \
-	$(FLAGS_SHARED) $(GORELEASE);
+	$(NO_C) $(GORELEASE);
 
 release: dockerhub
 	$(GOCLEAN); \
