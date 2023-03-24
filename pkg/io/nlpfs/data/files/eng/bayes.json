@@ -1,7 +1,7 @@
 {
  "classes": [
-  "notName",
-  "name"
+  "name",
+  "notName"
  ],
  "casesTotal": 59489,
  "classCases": {
@@ -27,21 +27,22 @@
   },
   "ispDict": {
    "commonWords": {
-    "notName": 4000
+    "name": 2,
+    "notName": 3900
    },
    "inAmbigGenusSp": {
-    "name": 303
+    "name": 308
    },
    "inAmbigSpecies": {
-    "name": 83,
-    "notName": 711
+    "name": 81,
+    "notName": 811
    },
    "inSpecies": {
-    "name": 1766,
+    "name": 1762,
     "notName": 1
    },
    "notInDictionary": {
-    "name": 5,
+    "name": 4,
     "notName": 1262
    },
    "notInSpecies": {
@@ -2423,21 +2424,21 @@
   "spDict": {
    "commonWords": {
     "name": 2,
-    "notName": 7979
+    "notName": 7808
    },
    "inAmbigGenusSp": {
-    "name": 831
+    "name": 841
    },
    "inAmbigSpecies": {
     "name": 347,
-    "notName": 893
+    "notName": 1064
    },
    "inSpecies": {
-    "name": 8114,
+    "name": 8131,
     "notName": 4
    },
    "notInDictionary": {
-    "name": 68,
+    "name": 41,
     "notName": 2401
    },
    "notInSpecies": {
@@ -5962,28 +5963,28 @@
   "uniDict": {
    "commonWords": {
     "name": 1,
-    "notName": 25137
+    "notName": 25115
    },
    "inAmbigGenus": {
-    "name": 63,
-    "notName": 2010
+    "name": 53,
+    "notName": 2032
    },
    "inAmbigGenusSp": {
-    "name": 831
+    "name": 841
    },
    "inAmbigUninomial": {
     "notName": 15
    },
    "inGenus": {
-    "name": 8138,
+    "name": 8140,
     "notName": 12
    },
    "inUninomial": {
-    "name": 186,
+    "name": 191,
     "notName": 1
    },
    "notInDictionary": {
-    "name": 25,
+    "name": 18,
     "notName": 7132
    },
    "notInUninomial": {
