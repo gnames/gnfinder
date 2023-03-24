@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.1.2] - 2023-03-24 Fri
+
+- Add: update dictionaries according to gnverifier data from 2023-03.
+
 ## [v1.1.1] - 2023-03-06 Mon
 
 - Add: move everything from internal to pkg to make gnfinder useful as a
@@ -348,6 +352,7 @@
 
 This document follows [changelog guidelines]
 
+[v1.1.2]: https://github.com/gnames/gnfinder/compare/v1.1.1...v1.1.2
 [v1.1.1]: https://github.com/gnames/gnfinder/compare/v1.1.0...v1.1.1
 [v1.1.0]: https://github.com/gnames/gnfinder/compare/v1.0.4...v1.1.0
 [v1.0.4]: https://github.com/gnames/gnfinder/compare/v1.0.3...v1.0.4
