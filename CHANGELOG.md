@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix [#138]: ignore last dash in a token, if it is not after a letter.
+
 ## [v1.1.2] - 2023-03-24 Fri
 
 - Add: update dictionaries according to gnverifier data from 2023-03.
@@ -352,6 +354,7 @@
 
 This document follows [changelog guidelines]
 
+[v1.1.3]: https://github.com/gnames/gnfinder/compare/v1.1.2...v1.1.3
 [v1.1.2]: https://github.com/gnames/gnfinder/compare/v1.1.1...v1.1.2
 [v1.1.1]: https://github.com/gnames/gnfinder/compare/v1.1.0...v1.1.1
 [v1.1.0]: https://github.com/gnames/gnfinder/compare/v1.0.4...v1.1.0
