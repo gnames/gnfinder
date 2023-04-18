@@ -24,10 +24,11 @@ func TestTokenize(t *testing.T) {
 
 func TestTokenizeDashNoLetter(t *testing.T) {
 	assert := assert.New(t)
-	str := ` (Ardea alba).- `
+	str := ` (Ardea alba).- Ar*-ea`
 	tokens := token.Tokenize([]rune(str))
-	assert.Equal(len(tokens), 2)
+	assert.Equal(len(tokens), 3)
 	assert.Equal(tokens[1].Cleaned(), "alba")
+	assert.Equal(tokens[2].Cleaned(), "Ar��ea")
 }
 
 func TestTokenizeNoNewLine(t *testing.T) {

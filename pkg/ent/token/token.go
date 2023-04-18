@@ -125,9 +125,10 @@ func normalize(raw []rune, f *Features) ([]rune, int, int) {
 	firstLetter := true
 	var start, end int
 	for i := range raw {
-		hasDash := raw[i] == rune('-') &&
-			raw[i-1] >= 0 &&
-			unicode.IsLetter(raw[i-1])
+		hasDash := raw[i] == rune('-')
+		if hasDash && i > 0 && !unicode.IsLetter(raw[i-1]) {
+			hasDash = false
+		}
 		if unicode.IsLetter(raw[i]) || hasDash {
 			if firstLetter {
 				start = i
