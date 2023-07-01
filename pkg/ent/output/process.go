@@ -132,6 +132,10 @@ func normalizeAnnotNomen(annot string) string {
 		return "COMB_NOV"
 	}
 
+	if strings.Contains(annot, "nom") {
+		return "NOM_NOV"
+	}
+
 	return "NO_ANNOT"
 }
 
@@ -148,7 +152,8 @@ func annotNomen(after []token.TokenSN) string {
 			nNum++
 		}
 		isSp := (c == "sp" || c == "comb" || c == "subsp" || c == "ssp")
-		if isN || isSp {
+		isNom := (c == "nom")
+		if isN || isSp || isNom {
 			annot = append(annot, string(v.Raw()))
 		} else {
 			annot = annot[0:0]

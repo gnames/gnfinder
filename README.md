@@ -21,19 +21,19 @@ as a [RESTful API][apidoc].
 * [Citing](#citing)
 * [Features](#features)
 * [Installation](#installation)
-  * [Homebrew on Mac OS X, Linux, and Linux on Windows (WSL2)](#homebrew-on-mac-os-x-linux-and-linux-on-windows-wsl2)
-  * [Arch Linux AUR package](#arch-linux-aur-package)
-  * [Manual Install](#manual-install)
-    * [Linux and Mac without Homebrew](#linux-and-mac-without-homebrew)
-    * [Windows without Homebrew and WSL](#windows-without-homebrew-and-wsl)
-    * [Go](#go)
+    * [Homebrew on Mac OS X, Linux, and Linux on Windows (WSL2)](#homebrew-on-mac-os-x-linux-and-linux-on-windows-wsl2)
+    * [Arch Linux AUR package](#arch-linux-aur-package)
+    * [Manual Install](#manual-install)
+        * [Linux and Mac without Homebrew](#linux-and-mac-without-homebrew)
+        * [Windows without Homebrew and WSL](#windows-without-homebrew-and-wsl)
+        * [Go](#go)
 * [Configuration](#configuration)
 * [Usage](#usage)
-  * [Usage of a web-based application.](#usage-of-a-web-based-application)
-  * [Usage of RESTful API](#usage-of-restful-api)
-  * [Usage as a command line app](#usage-as-a-command-line-app)
-  * [Usage as a library](#usage-as-a-library)
-  * [Usage as a docker container](#usage-as-a-docker-container)
+    * [Usage of a web-based application.](#usage-of-a-web-based-application)
+    * [Usage of RESTful API](#usage-of-restful-api)
+    * [Usage as a command line app](#usage-as-a-command-line-app)
+    * [Usage as a library](#usage-as-a-library)
+    * [Usage as a docker container](#usage-as-a-docker-container)
 * [Projects based on GNfinder](#projects-based-on-gnfinder)
 * [Development](#development)
 * [Testing](#testing)
@@ -63,7 +63,7 @@ as a [RESTful API][apidoc].
 * Optionally verifies found names against multiple biodiversity databases using
   [gnindex] service.
 * Detection of nomenclatural annotations like `sp. nov.`, `comb. nov.`,
-  `ssp. nov.` and their variants.
+  `ssp. nov.`, `nom. nov.` and their variants.
 * Ability to see words that surround detected name-strings.
 * The library can be used concurrently to **significantly improve speed**.
   On a server with 40threads it is able to detect names on 50 million pages

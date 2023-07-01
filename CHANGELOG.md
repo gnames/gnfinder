@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## [v1.1.3] - 2023-07-01 Sat
+
+- Add [#139]: `nom. nov.` as nomenclatural annotation.
 - Fix [#138]: ignore last dash in a token, if it is not after a letter.
 
 ## [v1.1.2] - 2023-03-24 Fri

@@ -18,7 +18,7 @@ func TestInAmbigUninomials(t *testing.T) {
 
 func TestCommonWords(t *testing.T) {
 	l := len(dictionary.CommonWords)
-	assert.Equal(t, 70793, l)
+	assert.Equal(t, 70791, l)
 	_, ok := dictionary.CommonWords["all"]
 	assert.True(t, ok)
 }

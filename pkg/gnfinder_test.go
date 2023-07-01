@@ -516,6 +516,8 @@ func TestNomenAnnot(t *testing.T) {
 		{"Pardosa moesta ssp. n.", "ssp. n.", "SUBSP_NOV"},
 		{"Pardosa moesta comb. n.", "comb. n.", "COMB_NOV"},
 		{"Pardosa moesta nov comb", "nov comb", "COMB_NOV"},
+		{"Pardosa moesta nom. nov.", "nom. nov.", "NOM_NOV"},
+		{"Pardosa moesta smth nov nom", "nov nom", "NOM_NOV"},
 		{"Pardosa moesta and then something ssp. n.", "ssp. n.", "SUBSP_NOV"},
 		{"Pardosa moesta one two three sp. n.", "sp. n.", "SP_NOV"},
 		{"Pardosa moesta", "", "NO_ANNOT"},
