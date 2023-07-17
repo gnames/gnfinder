@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add [#140]: support nomenclatural annotations without space, like `sp.nov.`.
+
 ## [v1.1.3] - 2023-07-01 Sat
 
 - Add [#139]: `nom. nov.` as nomenclatural annotation.

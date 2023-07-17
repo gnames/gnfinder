@@ -531,6 +531,28 @@ func TestNomenAnnot(t *testing.T) {
 	}
 }
 
+// TestNomenAnnotNoSpace covers issue #140:
+// Process correctly annotations without spaces.
+func TestNomenAnnotNoSpace(t *testing.T) {
+	assert := assert.New(t)
+	tests := []struct {
+		txt, annot, annotType string
+	}{
+		{"Pardosa moesta sp.nov.", "sp.nov.", "SP_NOV"},
+		{"Pardosa moesta sp.nov...\n", "sp.nov...", "SP_NOV"},
+		{"Pardosa moesta comb.nov.\n", "comb.nov.", "COMB_NOV"},
+		{"Pardosa moesta nom.nov.", "nom.nov.", "NOM_NOV"},
+		{"Pardosa moesta subsp.nov.", "subsp.nov.", "SUBSP_NOV"},
+		{"Pardosa moesta ssp.nov.", "ssp.nov.", "SUBSP_NOV"},
+	}
+	gnf := genFinder()
+	for _, v := range tests {
+		res := gnf.Find("", v.txt)
+		assert.Equal(v.annot, res.Names[0].AnnotNomen)
+		assert.Equal(v.annotType, res.Names[0].AnnotNomenType)
+	}
+}
+
 func TestFakeAnnot(t *testing.T) {
 	assert := assert.New(t)
 	txts := []string{

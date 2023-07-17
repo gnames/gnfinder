@@ -146,14 +146,20 @@ func annotNomen(after []token.TokenSN) string {
 		if len(annot) > 1 {
 			break
 		}
+		annotNoSpace, ok := noSpaceAnnot(v)
+		if ok {
+			return annotNoSpace
+		}
+
 		c := v.Cleaned()
 		isN := (c == "n" || c == "nv" || c == "nov")
 		if isN {
 			nNum++
 		}
-		isSp := (c == "sp" || c == "comb" || c == "subsp" || c == "ssp")
-		isNom := (c == "nom")
-		if isN || isSp || isNom {
+		isSp := c == "sp" || c == "comb" || c == "subsp" ||
+			c == "ssp" || c == "nom"
+
+		if isN || isSp {
 			annot = append(annot, string(v.Raw()))
 		} else {
 			annot = annot[0:0]
@@ -164,6 +170,20 @@ func annotNomen(after []token.TokenSN) string {
 		return strings.Join(annot, " ")
 	}
 	return ""
+}
+
+func noSpaceAnnot(t token.TokenSN) (string, bool) {
+	raw := string(t.Raw())
+	annots := []string{
+		"sp�nov", "comb�nov", "nom�nov",
+		"subsp�nov", "ssp�nov",
+	}
+	for i := range annots {
+		if t.Cleaned() == annots[i] {
+			return strings.TrimSpace(raw), true
+		}
+	}
+	return "", false
 }
 
 // UniqueNameStrings takes a list of names, and returns a list of unique
