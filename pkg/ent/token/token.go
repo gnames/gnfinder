@@ -5,6 +5,7 @@
 package token
 
 import (
+	"strings"
 	"unicode"
 
 	"github.com/gnames/bayes/ent/feature"
@@ -74,6 +75,18 @@ func NewTokenSN(token gner.TokenNER) gner.TokenNER {
 // finding.
 func (t *tokenSN) Features() *Features {
 	return &t.features
+}
+
+// Annotation returns dectected annotation for a name candidate and verbatim
+// string of the annotation.
+func (t *tokenSN) Annotation() (annot.Annotation, string) {
+	return t.annotation, t.annotationRaw
+}
+
+// SetAnnotation sets detected annotation.
+func (t *tokenSN) SetAnnotation(s string) {
+	t.annotationRaw = s
+	t.annotation = annot.New(s)
 }
 
 // NLP returns natural language processing features of a scientific name.
@@ -216,6 +229,101 @@ func SetIndices(ts []TokenSN, d *dict.Dictionary) {
 	u.Indices().Infraspecies = iIsp
 	isp := ts[iIsp]
 	isp.Features().SetSpeciesDict(isp.Cleaned(), d)
+}
+
+// checkAnnot adds information about nomenclatural annotation for a name
+// candidate.
+func checkAnnot(ts []TokenSN) {
+	idx := maxIndex(ts[0]) + 4
+	l := len(ts)
+	if l < idx {
+		idx = l
+	}
+	if ts[0].Line() != ts[idx-1].Line() {
+		return
+	}
+	ant := annotNomen(ts[0:idx])
+	ts[0].SetAnnotation(ant)
+}
+
+func maxIndex(t TokenSN) int {
+	idx := t.Indices()
+	res := idx.Species
+	if idx.Infraspecies > res {
+		res = idx.Infraspecies
+	}
+	return res
+}
+
+func annotNomen(after []TokenSN) string {
+	annt := make([]string, 0, 2)
+	nNum := 0
+	for _, v := range after {
+		if len(annt) > 1 {
+			break
+		}
+		annotNoSpace, ok := noSpaceAnnot(v)
+		if ok {
+			return annotNoSpace
+		}
+
+		c := v.Cleaned()
+		isN := (c == "n" || c == "nv" || c == "nov")
+		if isN {
+			nNum++
+		}
+		isSp := c == "sp" || c == "comb" || c == "subsp" ||
+			c == "ssp" || c == "nom"
+
+		if isN || isSp {
+			annt = append(annt, string(v.Raw()))
+		} else {
+			annt = annt[0:0]
+			nNum = 0
+		}
+	}
+	if len(annt) == 2 && nNum == 1 {
+		return strings.Join(annt, " ")
+	}
+	return ""
+}
+
+func noSpaceAnnot(t TokenSN) (string, bool) {
+	raw := string(t.Raw())
+	annots := []string{
+		"sp�nov", "comb�nov", "nom�nov",
+		"subsp�nov", "ssp�nov",
+	}
+	for i := range annots {
+		if t.Cleaned() == annots[i] {
+			return strings.TrimSpace(raw), true
+		}
+	}
+	return "", false
+}
+
+func normalizeAnnotNomen(annot string) string {
+	if len(annot) == 0 {
+		return "NO_ANNOT"
+	}
+
+	if strings.Contains(annot, "subsp") || strings.Contains(annot, "ssp") {
+		return "SUBSP_NOV"
+	}
+
+	if strings.Contains(annot, "sp") {
+		return "SP_NOV"
+	}
+
+	if strings.Contains(annot, "comb") {
+		return "COMB_NOV"
+	}
+
+	if strings.Contains(annot, "nom") {
+		return "NOM_NOV"
+	}
+
+	return "NO_ANNOT"
 }
 
 func checkRank(t TokenSN, d *dict.Dictionary) bool {
