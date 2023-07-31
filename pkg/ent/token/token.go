@@ -223,10 +223,12 @@ func SetIndices(ts []TokenSN, d *dict.Dictionary) {
 	}
 
 	tIsp := ts[iIsp]
+	_, isNoSpAnnot_ := noSpaceAnnot(tIsp)
 
 	if l <= iIsp ||
 		tIsp.Features().IsCapitalized ||
 		!tIsp.Features().StartsWithLetter ||
+		isNoSpAnnot_ ||
 		len(tIsp.Cleaned()) < 3 {
 		checkAnnot(ts)
 		return
