@@ -10,6 +10,7 @@ import (
 	"github.com/gnames/bayes/ent/feature"
 	boutput "github.com/gnames/bayes/ent/output"
 	gner "github.com/gnames/gner/ent/token"
+	"github.com/gnames/gnfinder/pkg/ent/annot"
 	"github.com/gnames/gnfinder/pkg/io/dict"
 )
 
@@ -27,6 +28,12 @@ type tokenSN struct {
 
 	// indices of semantic elements of a possible name.
 	indices Indices
+
+	// detected annotation
+	annotation annot.Annotation
+
+	// annotationRaw verbatim annotation
+	annotationRaw string
 
 	// decision tags the first token of a possible name with a classification
 	// decision.

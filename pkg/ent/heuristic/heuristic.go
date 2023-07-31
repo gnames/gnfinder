@@ -21,7 +21,10 @@ func TagTokens(ts []token.TokenSN, d *dict.Dictionary, withAnnot bool) {
 		}
 		nameTs := ts[i:token.UpperIndex(i, l)]
 		token.SetIndices(nameTs, d)
-		exploreNameCandidate(nameTs, d)
+		done := exploreNameCandidate(nameTs, d)
+		if done {
+			continue
+		}
 	}
 }
 
