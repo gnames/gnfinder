@@ -65,6 +65,7 @@ type cfgData struct {
 	WithAllMatches       bool
 	WithAmbiguousNames   bool
 	WithBayesOddsDetails bool
+	WithFindByAnnotation bool
 	WithOddsAdjustment   bool
 	WithPlainInput       bool
 	WithPositionInBytes  bool
@@ -120,6 +121,7 @@ verification results.
 		inputOnlyFlag(cmd)
 		langFlag(cmd)
 		allMatchesFlag(cmd)
+		findByAnnotFlag(cmd)
 		oddsDetailsFlag(cmd)
 		plainInputFlag(cmd)
 		sourcesFlag(cmd)
@@ -194,6 +196,9 @@ func init() {
 		"show details of odds calculation.")
 	rootCmd.Flags().StringP("verifier-url", "e", "",
 		"custom URL for name-verification service.")
+	rootCmd.Flags().BoolP("find-by-annotation", "F", false,
+		`if there is a nomenclatural annotation ('sp. nov.' etc),
+a name will be detected.`)
 	rootCmd.Flags().StringP("format", "f", "",
 		`Format of the output: "compact", "pretty", "csv".
   compact: compact JSON,
@@ -272,6 +277,7 @@ func initConfig() {
 	_ = viper.BindEnv("WithAmbiguousNames", "GNF_WITH_AMBIGUOUS_NAMES")
 	_ = viper.BindEnv("WithAllMatches", "GNF_WITH_ALL_MATCHES")
 	_ = viper.BindEnv("WithBayesOddsDetails", "GNF_WITH_BAYES_ODDS_DETAILS")
+	_ = viper.BindEnv("WithFindByAnnotation", "GNF_WITH_FIND_BY_ANNOTATION")
 	_ = viper.BindEnv("WithOddsAdjustment", "GNF_WITH_ODDS_ADJUSTMENT")
 	_ = viper.BindEnv("WithPlainInput", "GNF_WITH_PLAIN_INPUT")
 	_ = viper.BindEnv("WithPositionInBytes", "GNF_WITH_POSITION_IN_BYTES")
@@ -362,16 +368,20 @@ func getOpts() {
 		opts = append(opts, config.OptWithBayesOddsDetails(true))
 	}
 
+	if cfgCli.WithFindByAnnotation {
+		opts = append(opts, config.OptWithFindByAnnotation(true))
+	}
+
+	if cfgCli.WithOddsAdjustment {
+		opts = append(opts, config.OptWithOddsAdjustment(true))
+	}
+
 	if cfgCli.WithPlainInput {
 		opts = append(opts, config.OptWithPlainInput(true))
 	}
 
 	if cfgCli.WithPositionInBytes {
 		opts = append(opts, config.OptWithPositonInBytes(true))
-	}
-
-	if cfgCli.WithOddsAdjustment {
-		opts = append(opts, config.OptWithOddsAdjustment(true))
 	}
 
 	if cfgCli.WithUniqueNames {

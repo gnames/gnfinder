@@ -71,6 +71,12 @@
 #
 # WithBayesOddsDetails: false
 
+# WithFindByAnnotation allows to detect names by existence of a
+# nomenclatural annotation. If it is true, dictionaries do not prevent
+# detection of a name.
+#
+# WithFindByAnnotation: false
+
 # WithOddsAdjustment can be set to true to adjust calculated odds using the
 # ratio of scientific names found in text to the number of capitalized
 # words.

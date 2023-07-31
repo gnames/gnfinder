@@ -17,7 +17,7 @@ func TestHeuristic(t *testing.T) {
          randomly... Pardosa is a very nice when it is not sad. Drosophila
          (Sophophora) melanogaster disagrees!`)
 	ts := token.Tokenize(txt)
-	heuristic.TagTokens(ts, dictionary)
+	heuristic.TagTokens(ts, dictionary, false)
 	tests := map[int]struct {
 		name     string
 		decision token.Decision

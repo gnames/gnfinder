@@ -26,7 +26,7 @@ cheilum, 1 5s. per doz.
 Conostylis americana, 2i. 6d.
 			`)
 	tokens := token.Tokenize(txt)
-	heuristic.TagTokens(tokens, dictionary)
+	heuristic.TagTokens(tokens, dictionary, false)
 	nb := weights[lang.English]
 
 	tkn := tokens[10]

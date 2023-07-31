@@ -113,7 +113,7 @@ func processText(t *TextData, d *dict.Dictionary) []feature.ClassFeatures {
 	var lfs, lfsText []feature.ClassFeatures
 	var nd NameData
 	ts := token.Tokenize(t.Text)
-	heuristic.TagTokens(ts, d)
+	heuristic.TagTokens(ts, d, false)
 	l := len(t.NamesPositions)
 	var nameIdx, i int
 	for {

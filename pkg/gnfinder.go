@@ -64,7 +64,7 @@ func (gnf gnfinder) Find(file, txt string) output.Output {
 		gnf.Language, gnf.LanguageDetected = lang.DetectLanguage(text)
 	}
 
-	heuristic.TagTokens(tokens, gnf.Dictionary)
+	heuristic.TagTokens(tokens, gnf.Dictionary, gnf.WithFindByAnnotation)
 	if gnf.WithBayes {
 		nb := gnf.bayesWeights[gnf.Language]
 		nlp.TagTokens(tokens, gnf.Dictionary, nb, gnf.BayesOddsThreshold)

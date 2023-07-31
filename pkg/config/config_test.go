@@ -16,17 +16,17 @@ func TestConfig(t *testing.T) {
 
 	t.Run("returns new Config object", func(t *testing.T) {
 		cfg := config.New()
-		assert.Equal(t, cfg.Language, lang.English)
-		assert.Equal(t, cfg.LanguageDetected, "")
-		assert.Equal(t, cfg.TokensAround, 0)
+		assert.Equal(t, lang.English, cfg.Language)
+		assert.Equal(t, "", cfg.LanguageDetected)
+		assert.Equal(t, 0, cfg.TokensAround)
 		assert.True(t, cfg.WithBayes)
 		assert.False(t, cfg.WithPositionInBytes)
 	})
 
 	t.Run("takes language", func(t *testing.T) {
 		cfg := config.New(config.OptLanguage(lang.English))
-		assert.Equal(t, cfg.Language, lang.English)
-		assert.Equal(t, cfg.LanguageDetected, "")
+		assert.Equal(t, lang.English, cfg.Language)
+		assert.Equal(t, "", cfg.LanguageDetected)
 	})
 
 	t.Run("sets bayes", func(t *testing.T) {
@@ -41,19 +41,24 @@ func TestConfig(t *testing.T) {
 
 	t.Run("sets tokens number", func(t *testing.T) {
 		cfg := config.New(config.OptTokensAround(4))
-		assert.Equal(t, cfg.TokensAround, 4)
+		assert.Equal(t, 4, cfg.TokensAround)
+	})
+
+	t.Run("sets find by annotation", func(t *testing.T) {
+		cfg := config.New(config.OptWithFindByAnnotation(true))
+		assert.Equal(t, true, cfg.WithFindByAnnotation)
 	})
 
 	t.Run("does not set 'bad' tokens number", func(t *testing.T) {
 		cfg := config.New(config.OptTokensAround(-1))
-		assert.Equal(t, cfg.TokensAround, 0)
+		assert.Equal(t, 0, cfg.TokensAround)
 		cfg = config.New(config.OptTokensAround(10))
-		assert.Equal(t, cfg.TokensAround, 5)
+		assert.Equal(t, 5, cfg.TokensAround)
 	})
 
 	t.Run("sets bayes' threshold", func(t *testing.T) {
 		cfg := config.New(config.OptBayesOddsThreshold(200))
-		assert.Equal(t, cfg.BayesOddsThreshold, 200.0)
+		assert.Equal(t, 200.0, cfg.BayesOddsThreshold)
 	})
 
 	t.Run("sets several options", func(t *testing.T) {
@@ -62,7 +67,7 @@ func TestConfig(t *testing.T) {
 			config.OptLanguage(lang.German),
 		}
 		cfg := config.New(opts...)
-		assert.Equal(t, cfg.Language, lang.German)
+		assert.Equal(t, lang.German, cfg.Language)
 		assert.True(t, cfg.WithBayes)
 	})
 
@@ -81,11 +86,11 @@ func TestConfig(t *testing.T) {
 
 		for _, v := range tests {
 			l, err := lang.New(v.lang)
-			assert.Equal(t, err != nil, v.hasErr, v.msg)
+			assert.Equal(t, v.hasErr, err != nil, v.msg)
 			langOpt := config.OptLanguage(l)
 			opts := []config.Option{langOpt}
 			cfg := config.New(opts...)
-			assert.Equal(t, cfg.Language, v.langCfg, v.msg)
+			assert.Equal(t, v.langCfg, cfg.Language, v.msg)
 		}
 	})
 }

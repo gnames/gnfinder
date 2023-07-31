@@ -95,6 +95,13 @@ func allMatchesFlag(cmd *cobra.Command) {
 	}
 }
 
+func findByAnnotFlag(cmd *cobra.Command) {
+	b, _ := cmd.Flags().GetBool("find-by-annotation")
+	if b {
+		opts = append(opts, config.OptWithFindByAnnotation(b))
+	}
+}
+
 func oddsDetailsFlag(cmd *cobra.Command) {
 	b, _ := cmd.Flags().GetBool("details-odds")
 	if b {

@@ -75,6 +75,11 @@ type Config struct {
 	// WithBayesOddsDetails show in detail how odds are calculated.
 	WithBayesOddsDetails bool
 
+	// WithFindByAnnotation allows to detect names by existence of a
+	// nomenclatural annotation. If it is true, dictionaries do not prevent
+	// detection of a name.
+	WithFindByAnnotation bool
+
 	// WithOddsAdjustment can be set to true to adjust calculated odds using the
 	// ratio of scientific names found in text to the number of capitalized
 	// words.
@@ -205,6 +210,14 @@ func OptWithBayes(b bool) Option {
 func OptWithBayesOddsDetails(b bool) Option {
 	return func(cfg *Config) {
 		cfg.WithBayesOddsDetails = b
+	}
+}
+
+// OptWithFindByAnnotation option to allow detect names solely by their
+// nomenclatural annotation.
+func OptWithFindByAnnotation(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithFindByAnnotation = b
 	}
 }
 

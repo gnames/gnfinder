@@ -11,7 +11,7 @@ import (
 // tokens and sets up token's indices. Indices determine if a token is a
 // potential unimonial, binomial or trinomial. Then if fills out signfificant
 // number of features pertained to the token.
-func TagTokens(ts []token.TokenSN, d *dict.Dictionary) {
+func TagTokens(ts []token.TokenSN, d *dict.Dictionary, withAnnot bool) {
 	l := len(ts)
 
 	for i := range ts {
