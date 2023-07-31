@@ -178,6 +178,7 @@ func SetIndices(ts []TokenSN, d *dict.Dictionary) {
 	l := len(ts)
 
 	if !uF.PotentialBinomialGenus || l == 1 {
+		checkAnnot(ts)
 		return
 	}
 
@@ -185,10 +186,12 @@ func SetIndices(ts []TokenSN, d *dict.Dictionary) {
 		sp := ts[1]
 		spF := sp.Features()
 		if !spF.StartsWithLetter || spF.IsCapitalized || len(sp.Cleaned()) < 3 {
+			checkAnnot(ts)
 			return
 		}
 		u.Indices().Species = 1
 		spF.SetSpeciesDict(sp.Cleaned(), d)
+		checkAnnot(ts)
 		return
 	}
 
@@ -201,6 +204,7 @@ func SetIndices(ts []TokenSN, d *dict.Dictionary) {
 	spF = sp.Features()
 	if !spF.StartsWithLetter ||
 		spF.IsCapitalized || len(sp.Cleaned()) < 3 {
+		checkAnnot(ts)
 		return
 	}
 
@@ -208,6 +212,7 @@ func SetIndices(ts []TokenSN, d *dict.Dictionary) {
 	sp.Features().SetSpeciesDict(sp.Cleaned(), d)
 
 	if !sp.Features().EndsWithLetter || l == iSp+1 {
+		checkAnnot(ts)
 		return
 	}
 
@@ -223,12 +228,14 @@ func SetIndices(ts []TokenSN, d *dict.Dictionary) {
 		tIsp.Features().IsCapitalized ||
 		!tIsp.Features().StartsWithLetter ||
 		len(tIsp.Cleaned()) < 3 {
+		checkAnnot(ts)
 		return
 	}
 
 	u.Indices().Infraspecies = iIsp
 	isp := ts[iIsp]
 	isp.Features().SetSpeciesDict(isp.Cleaned(), d)
+	checkAnnot(ts)
 }
 
 // checkAnnot adds information about nomenclatural annotation for a name
