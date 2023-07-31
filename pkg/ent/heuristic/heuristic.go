@@ -21,8 +21,6 @@ func TagTokens(ts []token.TokenSN, d *dict.Dictionary, withAnnot bool) {
 		}
 		nameTs := ts[i:token.UpperIndex(i, l)]
 		token.SetIndices(nameTs, d)
-		a, _ := ts[i].Annotation()
-		fmt.Printf("%s %d %d %s\n", ts[i].Cleaned(), ts[i].Indices().Species, ts[i].Indices().Infraspecies, a.String())
 		done := exploreNameCandidate(nameTs, d)
 		if done {
 			continue
