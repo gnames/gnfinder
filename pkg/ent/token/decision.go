@@ -14,11 +14,15 @@ const (
 	BayesUninomial
 	BayesBinomial
 	BayesTrinomial
+	AnnotUninomial
+	AnnotBinomial
+	AnnotTrinomial
 )
 
 var decisionsStrings = [...]string{"NotName", "Uninomial", "PossibleUninomial",
 	"Binomial", "PossibleBinomial", "Trinomial", "Uninomial(nlp)",
-	"Binomial(nlp)", "Trinomial(nlp)",
+	"Binomial(nlp)", "Trinomial(nlp)", "Uninomial(annot.)", "Binomial(annot.)",
+	"Trinomial(annot.)",
 }
 
 // String representation of a Decision
@@ -30,11 +34,11 @@ func (d Decision) String() string {
 // name. If name is uninomial 1 is returned, for binomial 2, for trinomial 3.
 func (d Decision) Cardinality() int {
 	switch d {
-	case Uninomial, PossibleUninomial, BayesUninomial:
+	case Uninomial, PossibleUninomial, BayesUninomial, AnnotUninomial:
 		return 1
-	case Binomial, PossibleBinomial, BayesBinomial:
+	case Binomial, PossibleBinomial, BayesBinomial, AnnotBinomial:
 		return 2
-	case Trinomial, BayesTrinomial:
+	case Trinomial, BayesTrinomial, AnnotTrinomial:
 		return 3
 	default:
 		return 0
