@@ -251,7 +251,8 @@ func checkAnnot(ts []TokenSN) {
 	if ts[0].Line() != ts[idx-1].Line() {
 		return
 	}
-	ant := annotNomen(ts[0:idx])
+	ant, _ := annotNomen(ts[0:idx])
+	// adjustIndex(ts[0], idx)
 	ts[0].SetAnnotation(ant)
 }
 
@@ -264,16 +265,26 @@ func maxIndex(t TokenSN) int {
 	return res
 }
 
-func annotNomen(after []TokenSN) string {
+func adjustIndex(t TokenSN, idx int) {
+	is := t.Indices()
+	if is.Infraspecies >= idx {
+		is.Infraspecies = 0
+	}
+	if is.Species >= idx {
+		is.Species = 0
+	}
+}
+
+func annotNomen(after []TokenSN) (string, int) {
 	annt := make([]string, 0, 2)
-	nNum := 0
-	for _, v := range after {
+	var idx, nNum int
+	for i, v := range after {
 		if len(annt) > 1 {
 			break
 		}
 		annotNoSpace, ok := noSpaceAnnot(v)
 		if ok {
-			return annotNoSpace
+			return annotNoSpace, i
 		}
 
 		c := v.Cleaned()
@@ -286,15 +297,18 @@ func annotNomen(after []TokenSN) string {
 
 		if isN || isSp {
 			annt = append(annt, string(v.Raw()))
+			if len(annt) == 1 {
+				idx = i
+			}
 		} else {
 			annt = annt[0:0]
 			nNum = 0
 		}
 	}
 	if len(annt) == 2 && nNum == 1 {
-		return strings.Join(annt, " ")
+		return strings.Join(annt, " "), idx
 	}
-	return ""
+	return "", 0
 }
 
 func noSpaceAnnot(t TokenSN) (string, bool) {
