@@ -3,6 +3,7 @@ package heuristic
 import (
 	"fmt"
 
+	"github.com/gnames/gnfinder/pkg/ent/annot"
 	"github.com/gnames/gnfinder/pkg/ent/token"
 	"github.com/gnames/gnfinder/pkg/io/dict"
 )
@@ -21,11 +22,31 @@ func TagTokens(ts []token.TokenSN, d *dict.Dictionary, withAnnot bool) {
 		}
 		nameTs := ts[i:token.UpperIndex(i, l)]
 		token.SetIndices(nameTs, d)
+		if withAnnot {
+			annt, _ := ts[i].Annotation()
+			if annt != annot.NO_ANNOT {
+				annotName(ts[i])
+				continue
+			}
+		}
 		done := exploreNameCandidate(nameTs, d)
 		if done {
 			continue
 		}
 	}
+}
+
+func annotName(t token.TokenSN) {
+	if t.Indices().Infraspecies > 0 {
+		t.SetDecision(token.Trinomial)
+		return
+	}
+
+	if t.Indices().Species > 0 {
+		t.SetDecision(token.Binomial)
+		return
+	}
+	t.SetDecision(token.Uninomial)
 }
 
 func exploreNameCandidate(ts []token.TokenSN, d *dict.Dictionary) bool {
