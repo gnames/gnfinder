@@ -34,7 +34,7 @@ func TokensToOutput(
 		}
 		name := tokensToName(ts[i:token.UpperIndex(i, len(ts))], text, cfg)
 		name.Odds = calculateOdds(name.OddsDetails)
-		if name.Odds == 0.0 || name.Odds > 1.0 ||
+		if cfg.WithFindByAnnotation || name.Odds == 0.0 || name.Odds > 1.0 ||
 			name.Decision == token.PossibleUninomial {
 			getTokensAround(ts, i, &name, cfg.TokensAround)
 			if name.Decision == token.Binomial || name.Decision == token.Trinomial {

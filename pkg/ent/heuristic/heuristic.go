@@ -22,16 +22,17 @@ func TagTokens(ts []token.TokenSN, d *dict.Dictionary, withAnnot bool) {
 		}
 		nameTs := ts[i:token.UpperIndex(i, l)]
 		token.SetIndices(nameTs, d)
-		if withAnnot {
-			annt, _ := ts[i].Annotation()
-			if annt != annot.NO_ANNOT {
-				annotName(ts[i])
-				continue
-			}
-		}
 		done := exploreNameCandidate(nameTs, d)
 		if done {
 			continue
+		}
+		if withAnnot {
+			annt, _ := ts[i].Annotation()
+			if annt != annot.NO_ANNOT {
+				fmt.Println("HERE")
+				annotName(ts[i])
+				continue
+			}
 		}
 	}
 }
