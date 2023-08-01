@@ -251,8 +251,8 @@ func checkAnnot(ts []TokenSN) {
 	if ts[0].Line() != ts[idx-1].Line() {
 		return
 	}
-	ant, _ := annotNomen(ts[0:idx])
-	// adjustIndex(ts[0], idx)
+	ant, idx := annotNomen(ts[0:idx])
+	adjustIndex(ts[0], idx)
 	ts[0].SetAnnotation(ant)
 }
 
@@ -266,6 +266,9 @@ func maxIndex(t TokenSN) int {
 }
 
 func adjustIndex(t TokenSN, idx int) {
+	if idx == 0 {
+		return
+	}
 	is := t.Indices()
 	if is.Infraspecies >= idx {
 		is.Infraspecies = 0
