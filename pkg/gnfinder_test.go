@@ -518,8 +518,6 @@ func TestNomenAnnot(t *testing.T) {
 		{"Pardosa moesta nov comb", "nov comb", "COMB_NOV"},
 		{"Pardosa moesta nom. nov.", "nom. nov.", "NOM_NOV"},
 		{"Pardosa moesta smth nov nom", "nov nom", "NOM_NOV"},
-		{"Pardosa moesta and then something ssp. n.", "ssp. n.", "SUBSP_NOV"},
-		{"Pardosa moesta one two three sp. n.", "sp. n.", "SP_NOV"},
 		{"Pardosa moesta", "", "NO_ANNOT"},
 	}
 
@@ -558,6 +556,7 @@ func TestFakeAnnot(t *testing.T) {
 	txts := []string{
 		"Pardosa moesta sp. and n.",
 		"Pardosa moesta nov. n.",
+		"Pardosa moesta \n sp. nov.",
 		"Pardosa moesta subsp. sp.",
 		"Pardosa moesta one two three four sp. n.",
 		"Pardosa moesta barmasp. nov.",

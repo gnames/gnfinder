@@ -86,7 +86,6 @@ func getTokensAround(
 	limit := 5
 	tooBig := 30
 	before := index - tokensAround
-	after := make([]token.TokenSN, 0, limit)
 	if before < 0 {
 		before = 0
 	}
@@ -108,82 +107,12 @@ func getTokensAround(
 		if count < tokensAround && len(t.Cleaned()) < 30 {
 			name.WordsAfter = append(name.WordsAfter, string(t.Raw()))
 		}
-		after = append(after, t)
 		count++
 	}
-	name.AnnotNomen = annotNomen(after)
-	name.AnnotNomenType = normalizeAnnotNomen(name.AnnotNomen)
-}
+	annot, annotRaw := ts[0].Annotation()
 
-func normalizeAnnotNomen(annot string) string {
-	if len(annot) == 0 {
-		return "NO_ANNOT"
-	}
-
-	if strings.Contains(annot, "subsp") || strings.Contains(annot, "ssp") {
-		return "SUBSP_NOV"
-	}
-
-	if strings.Contains(annot, "sp") {
-		return "SP_NOV"
-	}
-
-	if strings.Contains(annot, "comb") {
-		return "COMB_NOV"
-	}
-
-	if strings.Contains(annot, "nom") {
-		return "NOM_NOV"
-	}
-
-	return "NO_ANNOT"
-}
-
-func annotNomen(after []token.TokenSN) string {
-	annot := make([]string, 0, 2)
-	nNum := 0
-	for _, v := range after {
-		if len(annot) > 1 {
-			break
-		}
-		annotNoSpace, ok := noSpaceAnnot(v)
-		if ok {
-			return annotNoSpace
-		}
-
-		c := v.Cleaned()
-		isN := (c == "n" || c == "nv" || c == "nov")
-		if isN {
-			nNum++
-		}
-		isSp := c == "sp" || c == "comb" || c == "subsp" ||
-			c == "ssp" || c == "nom"
-
-		if isN || isSp {
-			annot = append(annot, string(v.Raw()))
-		} else {
-			annot = annot[0:0]
-			nNum = 0
-		}
-	}
-	if len(annot) == 2 && nNum == 1 {
-		return strings.Join(annot, " ")
-	}
-	return ""
-}
-
-func noSpaceAnnot(t token.TokenSN) (string, bool) {
-	raw := string(t.Raw())
-	annots := []string{
-		"sp�nov", "comb�nov", "nom�nov",
-		"subsp�nov", "ssp�nov",
-	}
-	for i := range annots {
-		if t.Cleaned() == annots[i] {
-			return strings.TrimSpace(raw), true
-		}
-	}
-	return "", false
+	name.AnnotNomen = annotRaw
+	name.AnnotNomenType = annot.String()
 }
 
 // UniqueNameStrings takes a list of names, and returns a list of unique
