@@ -109,7 +109,7 @@ func getTokensAround(
 		}
 		count++
 	}
-	annot, annotRaw := ts[0].Annotation()
+	annot, annotRaw := ts[index].Annotation()
 
 	name.AnnotNomen = annotRaw
 	name.AnnotNomenType = annot.String()

@@ -529,6 +529,23 @@ func TestNomenAnnot(t *testing.T) {
 	}
 }
 
+func TestFindByAnnot(t *testing.T) {
+	assert := assert.New(t)
+	tests := []struct {
+		msg, txt, annot, annotType string
+	}{
+		// {"1", "Dddd bbbb sp. nov.", "sp. nov.", "SP_NOV"},
+		// {"2", "Pardosa moesta sp.nov.", "sp.nov.", "SP_NOV"},
+		{"3", "2008. Cheiloneurus pistaciae sp. nov. (Hymenoptera: Encyrtidae) a ", "sp. nov.", "SP_NOV"},
+	}
+	gnf := genFinder(config.OptWithFindByAnnotation(true))
+	for _, v := range tests {
+		res := gnf.Find("", v.txt)
+		assert.Equal(v.annot, res.Names[0].AnnotNomen)
+		assert.Equal(v.annotType, res.Names[0].AnnotNomenType)
+	}
+}
+
 // TestNomenAnnotNoSpace covers issue #140:
 // Process correctly annotations without spaces.
 func TestNomenAnnotNoSpace(t *testing.T) {
