@@ -6,9 +6,9 @@ import (
 
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnstats/ent/stats"
-	"github.com/gnames/gnverifier"
-	gnvconfig "github.com/gnames/gnverifier/config"
-	"github.com/gnames/gnverifier/io/verifrest"
+	gnverifier "github.com/gnames/gnverifier/pkg"
+	gnvconfig "github.com/gnames/gnverifier/pkg/config"
+	"github.com/gnames/gnverifier/pkg/io/verifrest"
 )
 
 type verif struct {
