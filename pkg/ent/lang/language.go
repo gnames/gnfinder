@@ -2,7 +2,7 @@ package lang
 
 import (
 	"fmt"
-	"sort"
+	"slices"
 
 	"github.com/abadojack/whatlanggo"
 )
@@ -73,7 +73,7 @@ func LangStrings() []string {
 			res = append(res, k)
 		}
 	}
-	sort.Strings(res)
+	slices.Sort(res)
 	return res
 }
 

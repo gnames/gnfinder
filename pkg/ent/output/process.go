@@ -1,8 +1,9 @@
 package output
 
 import (
+	"cmp"
 	"fmt"
-	"sort"
+	"slices"
 	"strings"
 
 	boutput "github.com/gnames/bayes/ent/output"
@@ -232,8 +233,8 @@ func (o *Output) getStats(st stats.Stats) {
 			NamesPercentage: v.Percentage,
 		}
 	}
-	sort.Slice(ks, func(i, j int) bool {
-		return ks[i].NamesPercentage > ks[j].NamesPercentage
+	slices.SortFunc(ks, func(a, b Kingdom) int {
+		return cmp.Compare(b.NamesPercentage, a.NamesPercentage)
 	})
 	o.Kingdoms = ks
 	o.MainTaxon = st.MainTaxon.Name

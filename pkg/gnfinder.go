@@ -1,7 +1,8 @@
 package gnfinder
 
 import (
-	"sort"
+	"cmp"
+	"slices"
 	"time"
 
 	"github.com/gnames/bayes"
@@ -129,8 +130,8 @@ func uniqueNames(o output.Output) output.Output {
 		names[count] = v
 		count++
 	}
-	sort.Slice(names, func(i, j int) bool {
-		return names[i].Name < names[j].Name
+	slices.SortFunc(names, func(a, b output.Name) int {
+		return cmp.Compare(a.Name, b.Name)
 	})
 	o.Names = names
 	return o

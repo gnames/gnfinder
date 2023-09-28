@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add: use `slices` package for sorting.
 - Add [#140]: support nomenclatural annotations without space, like `sp.nov.`.
 
 ## [v1.1.3] - 2023-07-01 Sat
