@@ -2,8 +2,11 @@
 
 ## Unreleased
 
+## [v1.1.4] - 2023-02-02 Fri
+
 - Add: use `slices` package for sorting.
 - Add [#140]: support nomenclatural annotations without space, like `sp.nov.`.
+- Fix [#152]: fix timeout for verification of large list of names.
 
 ## [v1.1.3] - 2023-07-01 Sat
 
@@ -360,6 +363,7 @@
 
 This document follows [changelog guidelines]
 
+[v1.1.4]: https://github.com/gnames/gnfinder/compare/v1.1.3...v1.1.4
 [v1.1.3]: https://github.com/gnames/gnfinder/compare/v1.1.2...v1.1.3
 [v1.1.2]: https://github.com/gnames/gnfinder/compare/v1.1.1...v1.1.2
 [v1.1.1]: https://github.com/gnames/gnfinder/compare/v1.1.0...v1.1.1
@@ -417,6 +421,16 @@ This document follows [changelog guidelines]
 [v0.5.2]: https://github.com/gnames/gnfinder/compare/v0.5.1...v0.5.2
 [v0.5.1]: https://github.com/gnames/gnfinder/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnfinder/tree/v0.5.0
+[#160]: https://github.com/gnames/gnfinder/issues/160
+[#159]: https://github.com/gnames/gnfinder/issues/159
+[#158]: https://github.com/gnames/gnfinder/issues/158
+[#157]: https://github.com/gnames/gnfinder/issues/157
+[#156]: https://github.com/gnames/gnfinder/issues/156
+[#155]: https://github.com/gnames/gnfinder/issues/155
+[#154]: https://github.com/gnames/gnfinder/issues/154
+[#153]: https://github.com/gnames/gnfinder/issues/153
+[#152]: https://github.com/gnames/gnfinder/issues/152
+[#151]: https://github.com/gnames/gnfinder/issues/151
 [#150]: https://github.com/gnames/gnfinder/issues/150
 [#149]: https://github.com/gnames/gnfinder/issues/149
 [#148]: https://github.com/gnames/gnfinder/issues/148
