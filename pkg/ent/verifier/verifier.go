@@ -29,6 +29,19 @@ func New(url string, sources []int, all bool) Verifier {
 	return &verif{gnverifier.New(gnvcfg, vfr)}
 }
 
+func getBatches(names []string) [][]string {
+	batchSize := 1000
+	batches := make([][]string, 0)
+	for i := 0; i < len(names); i += batchSize {
+		end := i + batchSize
+		if end > len(names) {
+			end = len(names)
+		}
+		batches = append(batches, names[i:end])
+	}
+	return batches
+}
+
 // Verify method takes a slice of name-strings, matches them to a variety of
 // scientific name databases and returns reconciliation/resolution results.
 func (gnv *verif) Verify(names []string) (map[string]vlib.Name, stats.Stats, float32) {
@@ -39,14 +52,19 @@ func (gnv *verif) Verify(names []string) (map[string]vlib.Name, stats.Stats, flo
 
 	start := time.Now()
 	names = unique(names)
-	verif := gnv.VerifyBatch(context.Background(), names)
-	for _, v := range verif {
-		res[v.Name] = v
+	batches := getBatches(names)
+	verifTotal := make([]vlib.Name, 0)
+	for _, batch := range batches {
+		verif := gnv.VerifyBatch(context.Background(), batch)
+		for _, v := range verif {
+			res[v.Name] = v
+		}
+		verifTotal = append(verifTotal, verif...)
 	}
 	dur := float32(time.Since(start)) / float32(time.Second)
-	hier := make([]stats.Hierarchy, len(verif))
-	for i := range verif {
-		hier[i] = verif[i]
+	hier := make([]stats.Hierarchy, len(verifTotal))
+	for i := range verifTotal {
+		hier[i] = verifTotal[i]
 	}
 	ctx := stats.New(hier, 0.5)
 	return res, ctx, dur
