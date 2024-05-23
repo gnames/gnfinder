@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [v1.1.5] - 2024-05-23 Thu
+
+- Add: update dictionaries
+- Add: update modules
+
 ## [v1.1.4] - 2023-02-02 Fri
 
 - Add: use `slices` package for sorting.

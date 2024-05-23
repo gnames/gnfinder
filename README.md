@@ -1,7 +1,6 @@
 # Global Names Finder (GNfinder)
 
 [![DOI](https://zenodo.org/badge/137407958.svg)](https://zenodo.org/badge/latestdoi/137407958)
-[![Build Status][travis-img]][travis]
 [![Doc Status][doc-img]][doc]
 [![Go Report Card][go-report-img]][go-report]
 
@@ -77,7 +76,7 @@ as a [RESTful API][apidoc].
 [Homebrew] is a popular package manager for Open Source software originally
 developed for Mac OS X. Now it is also available on Linux, and can easily
 be used on MS Windows 10 or 11, if Windows Subsystem for Linux (WSL) is
-[installed][WSL install].
+[installed][wsl].
 
 Note that [Homebrew] requires some other programs to be installed, like Curl,
 Git, a compiler (GCC compiler on Linux, Xcode on Mac). If it is too much,

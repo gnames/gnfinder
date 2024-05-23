@@ -6,6 +6,7 @@ DATE = $(shell date -u '+%Y-%m-%d_%H:%M:%S%Z')
 
 NO_C = CGO_ENABLED=0
 FLAGS_SHARED = $(NO_C) GOARCH=amd64
+FLAGS_MAC_ARM = $(NO_C) $GOARCH=arm64 GOOS=darwin
 FLAGS_LD = -trimpath -ldflags "-w -s \
 					 -X github.com/gnames/$(PROJ_NAME)/pkg.Build=$(DATE) \
            -X github.com/gnames/$(PROJ_NAME)/pkg.Version=$(VERSION)"
@@ -21,7 +22,7 @@ GOGET = $(GOCMD) get
 
 all: install
 
-test: deps install
+test:
 	go test -shuffle=on -count=1 -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 tools: deps
@@ -48,7 +49,7 @@ release: dockerhub
 	$(FLAGS_SHARED) GOOS=linux $(GORELEASE); \
 	tar zcvf /tmp/$(PROJ_NAME)-$(VER)-linux.tar.gz $(PROJ_NAME); \
 	$(GOCLEAN); \
-	$(FLAGS_SHARED) GOOS=darwin $(GORELEASE); \
+	$(FLAGS_MAC_ARM) $(GORELEASE); \
 	tar zcvf /tmp/$(PROJ_NAME)-$(VER)-mac.tar.gz $(PROJ_NAME); \
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=windows $(GORELEASE); \

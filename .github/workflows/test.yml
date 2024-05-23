@@ -28,6 +28,11 @@ jobs:
     - name: Vet
       run: go vet ./...
 
-    - name: CodeCovif
-      if: matrix.platform != 'windows-latest'
-      run: bash <(curl -s https://codecov.io/bash)
+    # - name: Upload coverage reports to Codecov
+    #     uses: codecov/codecov-action@v4.0.1
+    #     with:
+    #       token: ${{ secrets.CODECOV_TOKEN }}
+    #
+    # - name: CodeCovif
+    #   if: matrix.platform != 'windows-latest'
+    #   run: bash <(curl -s https://codecov.io/bash)
