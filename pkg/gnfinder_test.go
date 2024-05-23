@@ -502,6 +502,17 @@ func TestAllGrey(t *testing.T) {
 
 }
 
+func TestRuhoffNames(t *testing.T) {
+	assert := assert.New(t)
+	text := `We should be able to find Cerithium evaricosum name, which
+	now dissapeared from molluscs databases.
+`
+	gnf := genFinder()
+	res := gnf.Find("", text)
+	namesNum := len(res.Names)
+	assert.Equal(1, namesNum)
+}
+
 // TestNomenAnnot tests detection of new species descriptions.
 func TestNomenAnnot(t *testing.T) {
 	assert := assert.New(t)
