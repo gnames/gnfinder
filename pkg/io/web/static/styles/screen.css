@@ -142,6 +142,18 @@ label {
 #BodyContent .inner {
   padding: 0px; }
 
+#version img {
+   vertical-align: middle;
+  height: 25px;
+  margin-right: 7px;
+}
+
+#version a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 #Footer .inner {
   padding: 30px 20px;
   text-align: center; }

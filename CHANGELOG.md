@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [v1.1.6] - 2024-06-11 Tue
+
+- Add: GitHub icon for the web GUI
+- Fix: discrepancy between shown version and real version.
+
 ## [v1.1.5] - 2024-05-23 Thu
 
 - Add: update dictionaries
