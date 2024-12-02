@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "GNfinder -- a finder of scientific names in a variety of media."
+version: v1.1.5
+authors:
+  - family-names: "Mozzherin"
+    given-names: "Dmitry"
+    orcid: "https://orcid.org/0000-0003-1593-1417"
+repository-code: "https://github.com/gnames/gnfinder"
+date-released: 2024-05-24
+doi: 10.5281/zenodo.10070488
+license: MIT
