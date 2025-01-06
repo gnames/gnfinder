@@ -42,7 +42,7 @@ buildrel:
 	$(NO_C) $(GORELEASE);
 
 install:
-	$(FLAGS_SHARED) $(GOINSTALL);
+	$(NO_C) $(GOINSTALL);
 
 release: dockerhub
 	$(GOCLEAN); \
