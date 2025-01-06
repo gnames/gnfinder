@@ -100,17 +100,6 @@ verification results.
 			os.Exit(0)
 		}
 
-		if port := portFlag(cmd); port > 0 {
-			dict := dict.LoadDictionary()
-			weights := nlp.BayesWeights()
-
-			cfg := config.New()
-			gnf := gnfinder.New(cfg, dict, weights)
-			web.Run(gnf, port)
-
-			os.Exit(0)
-		}
-
 		ambiguousUninomialsFlag(cmd)
 		adjustOddsFlag(cmd)
 		bayesFlag(cmd)
@@ -130,6 +119,16 @@ verification results.
 		wordsFlag(cmd)
 
 		cfg := config.New(opts...)
+
+		if port := portFlag(cmd); port > 0 {
+			dict := dict.LoadDictionary()
+			weights := nlp.BayesWeights()
+
+			gnf := gnfinder.New(cfg, dict, weights)
+			web.Run(gnf, port)
+
+			os.Exit(0)
+		}
 
 		var data, input string
 		var rawData []byte

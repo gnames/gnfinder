@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.1.7] - 2025-01-06 Mon
+
+- Fix: GNF_VERIFIER_URL now works for web GUI.
+
 ## [v1.1.6] - 2024-06-11 Tue
 
 - Add: GitHub icon for the web GUI
