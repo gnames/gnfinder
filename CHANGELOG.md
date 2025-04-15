@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.1.9] - 2025-04-15 Tue
+
+- Add: update modules.
+
 ## [v1.1.8] - 2025-02-06 Thu
 
 - Add: update modules and dictionaries.
