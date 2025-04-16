@@ -1,63 +1,57 @@
 {
  "classes": [
-  "name",
-  "notName"
+  "notName",
+  "name"
  ],
- "casesTotal": 59489,
+ "casesTotal": 59513,
  "classCases": {
   "name": 11038,
-  "notName": 48451
+  "notName": 48475
  },
  "featureCases": {
   "abbr": {
    "false": {
     "name": 9245,
-    "notName": 46469
+    "notName": 46488
    },
    "true": {
     "name": 1793,
-    "notName": 1982
+    "notName": 1987
    }
   },
   "hasDash": {
    "true": {
     "name": 50,
-    "notName": 164
+    "notName": 161
    }
   },
   "ispDict": {
    "commonWords": {
     "name": 2,
-    "notName": 3900
+    "notName": 3642
    },
    "inAmbigGenusSp": {
-    "name": 308
+    "name": 307
    },
    "inAmbigSpecies": {
     "name": 81,
-    "notName": 811
+    "notName": 1072
    },
    "inSpecies": {
     "name": 1762,
-    "notName": 1
+    "notName": 4
    },
    "notInDictionary": {
-    "name": 4,
-    "notName": 1262
+    "name": 5,
+    "notName": 1259
    },
    "notInSpecies": {
     "name": 3,
-    "notName": 3306
+    "notName": 3308
    }
   },
   "ispEnd3": {
-   "--a": {
-    "notName": 1
-   },
-   "-it": {
-    "notName": 1
-   },
-   "-so": {
+   "-�a": {
     "notName": 1
    },
    "abu": {
@@ -598,7 +592,7 @@
     "notName": 1
    },
    "ent": {
-    "notName": 122
+    "notName": 123
    },
    "eny": {
     "notName": 1
@@ -792,7 +786,7 @@
     "notName": 19
    },
    "hat": {
-    "notName": 330
+    "notName": 331
    },
    "hed": {
     "notName": 25
@@ -933,7 +927,7 @@
     "notName": 30
    },
    "iew": {
-    "notName": 16
+    "notName": 18
    },
    "ife": {
     "notName": 3
@@ -1057,7 +1051,7 @@
     "notName": 16
    },
    "ith": {
-    "notName": 103
+    "notName": 104
    },
    "its": {
     "notName": 4
@@ -2336,30 +2330,36 @@
    "zii": {
     "name": 3
    },
+   "�it": {
+    "notName": 1
+   },
    "�on": {
+    "notName": 1
+   },
+   "�so": {
     "notName": 1
    }
   },
   "ispLen": {
    "10": {
     "name": 331,
-    "notName": 296
+    "notName": 295
    },
    "11": {
     "name": 252,
-    "notName": 143
+    "notName": 142
    },
    "12": {
     "name": 151,
-    "notName": 133
+    "notName": 135
    },
    "13": {
     "name": 92,
-    "notName": 55
+    "notName": 54
    },
    "14": {
     "name": 43,
-    "notName": 26
+    "notName": 25
    },
    "15": {
     "name": 27,
@@ -2367,7 +2367,7 @@
    },
    "16": {
     "name": 12,
-    "notName": 4
+    "notName": 3
    },
    "17": {
     "name": 4,
@@ -2377,6 +2377,9 @@
     "name": 4,
     "notName": 2
    },
+   "19": {
+    "notName": 2
+   },
    "20": {
     "notName": 1
    },
@@ -2384,7 +2387,8 @@
     "name": 1
    },
    "22": {
-    "name": 2
+    "name": 2,
+    "notName": 2
    },
    "3": {
     "name": 2,
@@ -2392,7 +2396,7 @@
    },
    "4": {
     "name": 22,
-    "notName": 2007
+    "notName": 2010
    },
    "5": {
     "name": 111,
@@ -2404,15 +2408,15 @@
    },
    "7": {
     "name": 265,
-    "notName": 782
+    "notName": 781
    },
    "8": {
     "name": 302,
-    "notName": 663
+    "notName": 662
    },
    "9": {
     "name": 383,
-    "notName": 447
+    "notName": 450
    }
   },
   "ispRank": {
@@ -2424,54 +2428,36 @@
   "spDict": {
    "commonWords": {
     "name": 2,
-    "notName": 7808
+    "notName": 7223
    },
    "inAmbigGenusSp": {
-    "name": 841
+    "name": 838
    },
    "inAmbigSpecies": {
     "name": 347,
-    "notName": 1064
+    "notName": 1653
    },
    "inSpecies": {
-    "name": 8131,
-    "notName": 4
+    "name": 8140,
+    "notName": 18
    },
    "notInDictionary": {
-    "name": 41,
-    "notName": 2401
+    "name": 35,
+    "notName": 2393
    },
    "notInSpecies": {
     "name": 5,
-    "notName": 5280
+    "notName": 5282
    }
   },
   "spEnd3": {
-   "--a": {
-    "notName": 6
-   },
-   "--i": {
-    "notName": 1
-   },
-   "-if": {
-    "notName": 1
-   },
-   "-in": {
-    "notName": 2
-   },
-   "-is": {
-    "notName": 3
-   },
-   "-it": {
-    "notName": 1
-   },
-   "-on": {
-    "notName": 1
-   },
-   "-to": {
-    "notName": 2
-   },
    "-up": {
+    "notName": 1
+   },
+   "-�a": {
+    "notName": 5
+   },
+   "-�i": {
     "notName": 1
    },
    "aam": {
@@ -3042,7 +3028,7 @@
    },
    "dum": {
     "name": 27,
-    "notName": 6
+    "notName": 7
    },
    "dus": {
     "name": 44
@@ -3555,7 +3541,7 @@
    },
    "hes": {
     "name": 3,
-    "notName": 19
+    "notName": 20
    },
    "hey": {
     "notName": 31
@@ -3715,7 +3701,7 @@
     "notName": 1
    },
    "ied": {
-    "notName": 77
+    "notName": 78
    },
    "ief": {
     "notName": 13
@@ -3733,7 +3719,7 @@
     "notName": 4
    },
    "iew": {
-    "notName": 51
+    "notName": 52
    },
    "ife": {
     "notName": 3
@@ -4044,7 +4030,8 @@
     "notName": 2
    },
    "lea": {
-    "name": 5
+    "name": 5,
+    "notName": 1
    },
    "led": {
     "notName": 41
@@ -4477,7 +4464,7 @@
     "notName": 25
    },
    "nts": {
-    "notName": 107
+    "notName": 108
    },
    "ntu": {
     "name": 1
@@ -4625,7 +4612,7 @@
     "name": 7
    },
    "ond": {
-    "notName": 3
+    "notName": 4
    },
    "one": {
     "name": 3,
@@ -4739,7 +4726,7 @@
     "name": 9
    },
    "ote": {
-    "notName": 165
+    "notName": 166
    },
    "oth": {
     "notName": 14
@@ -5092,7 +5079,7 @@
     "name": 2
    },
    "rst": {
-    "notName": 57
+    "notName": 58
    },
    "rsy": {
     "notName": 12
@@ -5296,7 +5283,7 @@
     "name": 13
    },
    "ted": {
-    "notName": 286
+    "notName": 287
    },
    "tee": {
     "notName": 1
@@ -5319,7 +5306,7 @@
    },
    "tes": {
     "name": 17,
-    "notName": 30
+    "notName": 32
    },
    "tha": {
     "name": 37
@@ -5874,16 +5861,34 @@
     "notName": 1
    },
    "�if": {
+    "notName": 2
+   },
+   "�in": {
+    "notName": 2
+   },
+   "�is": {
+    "notName": 3
+   },
+   "�it": {
     "notName": 1
    },
+   "�on": {
+    "notName": 1
+   },
+   "�to": {
+    "notName": 2
+   },
    "�un": {
+    "notName": 1
+   },
+   "��a": {
     "notName": 1
    }
   },
   "spLen": {
    "10": {
     "name": 1411,
-    "notName": 687
+    "notName": 684
    },
    "11": {
     "name": 1012,
@@ -5891,11 +5896,11 @@
    },
    "12": {
     "name": 665,
-    "notName": 303
+    "notName": 310
    },
    "13": {
     "name": 396,
-    "notName": 136
+    "notName": 133
    },
    "14": {
     "name": 176,
@@ -5903,15 +5908,15 @@
    },
    "15": {
     "name": 79,
-    "notName": 20
+    "notName": 24
    },
    "16": {
     "name": 44,
-    "notName": 7
+    "notName": 8
    },
    "17": {
     "name": 14,
-    "notName": 1
+    "notName": 3
    },
    "18": {
     "name": 11,
@@ -5926,10 +5931,16 @@
     "notName": 1
    },
    "21": {
-    "notName": 3
+    "notName": 2
    },
    "22": {
     "name": 1
+   },
+   "23": {
+    "notName": 1
+   },
+   "24": {
+    "notName": 1
    },
    "3": {
     "name": 15,
@@ -5937,115 +5948,76 @@
    },
    "4": {
     "name": 84,
-    "notName": 2597
+    "notName": 2599
    },
    "5": {
     "name": 336,
-    "notName": 2245
+    "notName": 2246
    },
    "6": {
     "name": 767,
-    "notName": 1672
+    "notName": 1674
    },
    "7": {
     "name": 1259,
-    "notName": 1534
+    "notName": 1535
    },
    "8": {
     "name": 1526,
-    "notName": 1251
+    "notName": 1250
    },
    "9": {
     "name": 1567,
-    "notName": 933
+    "notName": 931
    }
   },
   "uniDict": {
    "commonWords": {
     "name": 1,
-    "notName": 25115
+    "notName": 24309
    },
    "inAmbigGenus": {
-    "name": 53,
-    "notName": 2032
+    "name": 54,
+    "notName": 2316
    },
    "inAmbigGenusSp": {
-    "name": 841
+    "name": 838
    },
    "inAmbigUninomial": {
-    "notName": 15
+    "notName": 549
    },
    "inGenus": {
-    "name": 8140,
+    "name": 8150,
     "notName": 12
    },
    "inUninomial": {
-    "name": 191,
-    "notName": 1
+    "name": 187,
+    "notName": 7
    },
    "notInDictionary": {
-    "name": 18,
-    "notName": 7132
+    "name": 14,
+    "notName": 7131
    },
    "notInUninomial": {
     "name": 1,
-    "notName": 12162
+    "notName": 12164
    }
   },
   "uniEnd3": {
-   "---": {
-    "notName": 2
-   },
-   "--a": {
-    "notName": 15
-   },
-   "--i": {
-    "notName": 1
-   },
-   "-an": {
-    "notName": 5
-   },
-   "-as": {
-    "notName": 2
-   },
-   "-at": {
-    "notName": 1
-   },
-   "-by": {
-    "notName": 2
-   },
    "-ci": {
     "notName": 1
    },
-   "-he": {
-    "notName": 1
-   },
-   "-in": {
-    "notName": 2
-   },
    "-is": {
-    "notName": 6
-   },
-   "-it": {
-    "notName": 4
-   },
-   "-mr": {
-    "notName": 7
-   },
-   "-no": {
-    "notName": 1
-   },
-   "-of": {
-    "notName": 1
+    "notName": 2
    },
    "-tm": {
     "notName": 112
    },
-   "-to": {
-    "notName": 1
+   "-�a": {
+    "notName": 10
    },
-   "-we": {
-    "notName": 2
+   "-�i": {
+    "notName": 1
    },
    "aba": {
     "name": 11
@@ -6181,7 +6153,7 @@
     "notName": 52
    },
    "ams": {
-    "notName": 727
+    "notName": 729
    },
    "ana": {
     "name": 44,
@@ -6258,7 +6230,7 @@
     "notName": 5
    },
    "ary": {
-    "notName": 434
+    "notName": 435
    },
    "asa": {
     "name": 6
@@ -6811,7 +6783,7 @@
     "notName": 27
    },
    "ell": {
-    "notName": 1272
+    "notName": 1273
    },
    "elm": {
     "notName": 1
@@ -7155,7 +7127,7 @@
     "notName": 43
    },
    "han": {
-    "notName": 12
+    "notName": 13
    },
    "has": {
     "name": 1,
@@ -7724,7 +7696,7 @@
     "notName": 1
    },
    "ler": {
-    "notName": 22
+    "notName": 23
    },
    "les": {
     "name": 29,
@@ -7737,7 +7709,7 @@
     "name": 16
    },
    "ley": {
-    "notName": 232
+    "notName": 233
    },
    "lfa": {
     "name": 1
@@ -7907,7 +7879,7 @@
     "notName": 2
    },
    "l�s": {
-    "notName": 219
+    "notName": 225
    },
    "mac": {
     "notName": 7
@@ -8063,7 +8035,7 @@
     "notName": 701
    },
    "nch": {
-    "notName": 302
+    "notName": 303
    },
    "nck": {
     "notName": 9
@@ -8107,7 +8079,8 @@
     "notName": 6
    },
    "nga": {
-    "name": 17
+    "name": 17,
+    "notName": 1
    },
    "nge": {
     "notName": 4
@@ -8392,7 +8365,7 @@
    },
    "ons": {
     "name": 1,
-    "notName": 968
+    "notName": 969
    },
    "ont": {
     "notName": 5
@@ -8791,7 +8764,7 @@
     "notName": 1
    },
    "ril": {
-    "notName": 221
+    "notName": 222
    },
    "rim": {
     "notName": 2
@@ -8898,6 +8871,9 @@
    },
    "rst": {
     "notName": 11
+   },
+   "rt-": {
+    "notName": 1
    },
    "rta": {
     "name": 7
@@ -9117,9 +9093,6 @@
    "s�s": {
     "notName": 1
    },
-   "t--": {
-    "notName": 1
-   },
    "tae": {
     "name": 2
    },
@@ -9327,7 +9300,7 @@
     "name": 19
    },
    "uce": {
-    "notName": 15
+    "notName": 16
    },
    "uch": {
     "notName": 58
@@ -9475,7 +9448,7 @@
     "notName": 24
    },
    "ury": {
-    "notName": 35
+    "notName": 36
    },
    "urz": {
     "notName": 10
@@ -9527,7 +9500,7 @@
     "notName": 1
    },
    "val": {
-    "notName": 3
+    "notName": 4
    },
    "ved": {
     "notName": 12
@@ -9826,11 +9799,50 @@
    "ère": {
     "notName": 1
    },
-   "�--": {
-    "notName": 3
+   "�an": {
+    "notName": 5
+   },
+   "�as": {
+    "notName": 2
+   },
+   "�at": {
+    "notName": 1
+   },
+   "�by": {
+    "notName": 2
+   },
+   "�he": {
+    "notName": 1
+   },
+   "�in": {
+    "notName": 2
+   },
+   "�is": {
+    "notName": 4
+   },
+   "�it": {
+    "notName": 4
    },
    "�ll": {
     "notName": 2
+   },
+   "�mr": {
+    "notName": 7
+   },
+   "�no": {
+    "notName": 1
+   },
+   "�of": {
+    "notName": 1
+   },
+   "�to": {
+    "notName": 1
+   },
+   "�we": {
+    "notName": 2
+   },
+   "��a": {
+    "notName": 5
    },
    "��s": {
     "notName": 2
@@ -9842,11 +9854,11 @@
    },
    "10": {
     "name": 1282,
-    "notName": 2484
+    "notName": 2471
    },
    "11": {
     "name": 1100,
-    "notName": 1528
+    "notName": 1527
    },
    "12": {
     "name": 864,
@@ -9854,55 +9866,64 @@
    },
    "13": {
     "name": 517,
-    "notName": 460
+    "notName": 454
    },
    "14": {
     "name": 312,
-    "notName": 270
+    "notName": 276
    },
    "15": {
     "name": 166,
-    "notName": 45
+    "notName": 46
    },
    "16": {
     "name": 93,
-    "notName": 41
+    "notName": 36
    },
    "17": {
     "name": 48,
-    "notName": 22
+    "notName": 27
    },
    "18": {
     "name": 19,
-    "notName": 21
+    "notName": 28
    },
    "19": {
     "name": 10,
-    "notName": 3
+    "notName": 6
    },
    "2": {
     "notName": 2789
    },
    "20": {
     "name": 5,
-    "notName": 13
+    "notName": 17
    },
    "21": {
     "name": 3,
-    "notName": 3
+    "notName": 10
+   },
+   "22": {
+    "notName": 6
    },
    "23": {
     "notName": 1
    },
    "24": {
-    "notName": 2
+    "notName": 1
    },
    "27": {
     "notName": 1
    },
+   "28": {
+    "notName": 2
+   },
    "3": {
     "name": 18,
-    "notName": 4435
+    "notName": 4439
+   },
+   "31": {
+    "notName": 1
    },
    "4": {
     "name": 96,
@@ -9910,23 +9931,23 @@
    },
    "5": {
     "name": 425,
-    "notName": 7230
+    "notName": 7237
    },
    "6": {
     "name": 672,
-    "notName": 5817
+    "notName": 5818
    },
    "7": {
     "name": 1069,
-    "notName": 7715
+    "notName": 7714
    },
    "8": {
     "name": 1217,
-    "notName": 5561
+    "notName": 5558
    },
    "9": {
     "name": 1329,
-    "notName": 2189
+    "notName": 2184
    }
   }
  }
