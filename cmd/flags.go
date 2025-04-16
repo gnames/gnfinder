@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"log/slog"
 	"strconv"
 	"strings"
 
@@ -51,9 +52,9 @@ func formatFlag(cmd *cobra.Command) {
 	if s != "csv" {
 		format, _ = gnfmt.NewFormat(s)
 		if format == gnfmt.FormatNone {
-			log.Printf(
-				"Cannot set format from '%s', setting format to csv",
-				s,
+			slog.Warn(
+				"Cannot set format from the input setting format to csv",
+				"intput", s,
 			)
 		}
 	}
@@ -79,10 +80,9 @@ func langFlag(cmd *cobra.Command) {
 	// can take "detect" as a string
 	l, err := lang.New(s)
 	if err != nil {
-		log.Print(err)
-		log.Printf("Supported language codes: %s.", langStrings())
-		log.Printf("To detect language automatically use '-l detect'.")
-		log.Printf("Switching to default English language setting.")
+		slog.Warn("Supported language codes", "codes", langStrings())
+		slog.Info("To detect language automatically use '-l detect'.")
+		slog.Info("Switching to default English language setting.")
 	}
 	opts = append(opts, config.OptLanguage(l))
 }
@@ -117,7 +117,8 @@ func portFlag(cmd *cobra.Command) int {
 func sourcesFlag(cmd *cobra.Command) {
 	s, _ := cmd.Flags().GetString("sources")
 	if s != "" {
-		opts = append(opts, config.OptDataSources(parseDataSources(s)))
+		sources, _ := parseDataSources(s)
+		opts = append(opts, config.OptDataSources(sources))
 		opts = append(opts, config.OptWithVerification(true))
 	}
 }
@@ -166,15 +167,15 @@ func wordsFlag(cmd *cobra.Command) {
 	}
 }
 
-func parseDataSources(s string) []int {
+func parseDataSources(s string) ([]int, error) {
 	dss := strings.Split(s, ",")
 	res := make([]int, 0, len(dss))
 	for _, v := range dss {
 		v = strings.Trim(v, " ")
 		ds, err := strconv.Atoi(v)
 		if err != nil {
-			log.Printf("Cannot convert data-source '%s' to list, skipping", v)
-			return nil
+			slog.Error("Cannot convert data-source list, skipping", "data_source", v, "error", err)
+			return nil, err
 		}
 		if ds < 1 {
 			log.Printf("Data source ID %d is less than one, skipping", ds)
@@ -183,7 +184,7 @@ func parseDataSources(s string) []int {
 		}
 	}
 	if len(res) > 0 {
-		return res
+		return res, nil
 	}
-	return nil
+	return nil, nil
 }

@@ -3,7 +3,7 @@ package web
 import (
 	"embed"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -18,21 +18,18 @@ const withLogs = false
 var static embed.FS
 
 // Run starts GNfinder service for its webiste and RESTful API.
-func Run(gnf gnfinder.GNfinder, port int) {
-	log.Printf("Starting the HTTP API server on port %d.", port)
+func Run(gnf gnfinder.GNfinder, port int) error {
+	slog.Info("Starting the HTTP API server", "port", port)
 	e := echo.New()
 
 	var err error
 	e.Renderer, err = NewTemplate()
 	if err != nil {
-		e.Logger.Fatal(err)
+		return err
 	}
 
 	e.Use(middleware.Gzip())
 	e.Use(middleware.CORS())
-	if withLogs {
-		e.Use(middleware.Logger())
-	}
 
 	e.GET("/", home(gnf))
 	e.GET("/apidoc", apidoc(gnf))
@@ -56,5 +53,10 @@ func Run(gnf gnfinder.GNfinder, port int) {
 		ReadTimeout:  5 * time.Minute,
 		WriteTimeout: 5 * time.Minute,
 	}
-	e.Logger.Fatal(e.StartServer(s))
+	err = e.StartServer(s)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

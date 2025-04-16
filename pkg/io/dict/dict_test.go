@@ -7,25 +7,32 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var dictionary = dict.LoadDictionary()
-
 func TestInAmbigUninomials(t *testing.T) {
+	assert := assert.New(t)
+	dictionary, err := dict.LoadDictionary()
+	assert.Nil(err)
 	l := len(dictionary.InAmbigUninomials)
-	assert.Equal(t, 410, l)
+	assert.Equal(410, l)
 	_, ok := dictionary.InAmbigUninomials["Minimi"]
-	assert.True(t, ok)
+	assert.True(ok)
 }
 
 func TestCommonWords(t *testing.T) {
+	assert := assert.New(t)
+	dictionary, err := dict.LoadDictionary()
+	assert.Nil(err)
 	l := len(dictionary.CommonWords)
-	assert.Equal(t, 70792, l)
+	assert.Equal(70792, l)
 	_, ok := dictionary.CommonWords["all"]
-	assert.True(t, ok)
+	assert.True(ok)
 }
 
 func TestInGenera(t *testing.T) {
+	assert := assert.New(t)
+	dictionary, err := dict.LoadDictionary()
+	assert.Nil(err)
 	l := len(dictionary.InGenera)
-	assert.Equal(t, 541379, l)
+	assert.Equal(541379, l)
 	_, ok := dictionary.InGenera["Plantago"]
-	assert.True(t, ok)
+	assert.True(ok)
 }

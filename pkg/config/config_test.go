@@ -2,7 +2,7 @@ package config_test
 
 import (
 	"io"
-	"log"
+	"log/slog"
 	"testing"
 
 	"github.com/gnames/gnfinder/pkg/config"
@@ -12,9 +12,8 @@ import (
 
 func TestConfig(t *testing.T) {
 
-	log.SetOutput(io.Discard)
-
 	t.Run("returns new Config object", func(t *testing.T) {
+		slog.SetDefault(slog.New(slog.NewTextHandler(io.Discard, nil)))
 		cfg := config.New()
 		assert.Equal(t, cfg.Language, lang.English)
 		assert.Equal(t, cfg.LanguageDetected, "")

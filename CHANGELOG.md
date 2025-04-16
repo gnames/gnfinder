@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [v1.1.10] - 2025-04-17 Thu
+
+- Add: slog as as a logging engine.
+- Fix: error handling through the project.
+
 ## [v1.1.9] - 2025-04-15 Tue
 
 - Add: update modules.
@@ -385,6 +390,12 @@
 
 This document follows [changelog guidelines]
 
+[v1.1.10]: https://github.com/gnames/gnfinder/compare/v1.1.9...v1.1.10
+[v1.1.9]: https://github.com/gnames/gnfinder/compare/v1.1.8...v1.1.9
+[v1.1.8]: https://github.com/gnames/gnfinder/compare/v1.1.7...v1.1.8
+[v1.1.7]: https://github.com/gnames/gnfinder/compare/v1.1.6...v1.1.7
+[v1.1.6]: https://github.com/gnames/gnfinder/compare/v1.1.5...v1.1.6
+[v1.1.5]: https://github.com/gnames/gnfinder/compare/v1.1.4...v1.1.5
 [v1.1.4]: https://github.com/gnames/gnfinder/compare/v1.1.3...v1.1.4
 [v1.1.3]: https://github.com/gnames/gnfinder/compare/v1.1.2...v1.1.3
 [v1.1.2]: https://github.com/gnames/gnfinder/compare/v1.1.1...v1.1.2

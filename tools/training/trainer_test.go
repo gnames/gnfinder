@@ -10,30 +10,37 @@ import (
 
 // TestLangData returns training data for a language.
 func TestLangData(t *testing.T) {
+	assert := assert.New(t)
 	path := "../../pkg/io/nlpfs/data/training/eng"
-	td := NewTrainingData(path)
-	assert.Greater(t, len(td), 1)
+	td, err := NewTrainingData(path)
+	assert.Nil(err)
+	assert.Greater(len(td), 1)
 	_, ok := td[FileName("no_names")]
-	assert.True(t, ok)
+	assert.True(ok)
 }
 
 // TestTrainingData tests getting training data organized by languages.
 func TestTrainingData(t *testing.T) {
+	assert := assert.New(t)
 	path := "../../pkg/io/nlpfs/data/training"
-	tld := NewTrainingLanguageData(path)
-	assert.Greater(t, len(tld), 1)
+	tld, err := NewTrainingLanguageData(path)
+	assert.Nil(err)
+	assert.Greater(len(tld), 1)
 	_, ok := tld[lang.English]
-	assert.True(t, ok)
+	assert.True(ok)
 	_, ok = tld[lang.German]
-	assert.True(t, ok)
+	assert.True(ok)
 }
 
 // TestTrain tests on returning NaiveBayes object.
 func TestTrain(t *testing.T) {
-	dictionary := dict.LoadDictionary()
+	assert := assert.New(t)
+	dictionary, err := dict.LoadDictionary()
+	assert.Nil(err)
 	path := "../../pkg/io/nlpfs/data/training"
-	tld := NewTrainingLanguageData(path)
+	tld, err := NewTrainingLanguageData(path)
+	assert.Nil(err)
 	nb := Train(tld[lang.English], dictionary)
 	bout := nb.Inspect()
-	assert.Equal(t, len(bout.Classes), 2)
+	assert.Equal(len(bout.Classes), 2)
 }

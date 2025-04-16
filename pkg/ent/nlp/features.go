@@ -34,7 +34,7 @@ func (fs *FeatureSet) Flatten() []feature.Feature {
 // genus or other uninomial
 func NewFeatureSet(ts []token.TokenSN) FeatureSet {
 	var fs FeatureSet
-	var u, sp, isp, rank token.TokenSN
+	var u, sp, isp token.TokenSN
 	u = ts[0]
 
 	if !u.Features().IsCapitalized {
@@ -49,11 +49,7 @@ func NewFeatureSet(ts []token.TokenSN) FeatureSet {
 		isp = ts[i]
 	}
 
-	if i := u.Indices().Rank; i > 0 {
-		rank = ts[i]
-	}
-
-	fs.convertFeatures(u, sp, isp, rank)
+	fs.convertFeatures(u, sp, isp)
 	return fs
 }
 
@@ -61,7 +57,6 @@ func (fs *FeatureSet) convertFeatures(
 	uni token.TokenSN,
 	sp token.TokenSN,
 	isp token.TokenSN,
-	rank token.TokenSN,
 ) {
 	var uniDict, spDict, ispDict string
 	if !uni.Features().Abbr {

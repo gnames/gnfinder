@@ -3,16 +3,16 @@
   "notName",
   "name"
  ],
- "casesTotal": 36217,
+ "casesTotal": 36218,
  "classCases": {
   "name": 11038,
-  "notName": 25179
+  "notName": 25180
  },
  "featureCases": {
   "abbr": {
    "false": {
     "name": 9245,
-    "notName": 24345
+    "notName": 24346
    },
    "true": {
     "name": 1793,
@@ -22,28 +22,28 @@
   "hasDash": {
    "true": {
     "name": 50,
-    "notName": 17
+    "notName": 16
    }
   },
   "ispDict": {
    "commonWords": {
     "name": 2,
-    "notName": 2531
+    "notName": 2495
    },
    "inAmbigGenusSp": {
-    "name": 308
+    "name": 307
    },
    "inAmbigSpecies": {
     "name": 81,
-    "notName": 1065
+    "notName": 1101
    },
    "inSpecies": {
     "name": 1762,
-    "notName": 16
+    "notName": 17
    },
    "notInDictionary": {
-    "name": 4,
-    "notName": 1787
+    "name": 5,
+    "notName": 1786
    },
    "notInSpecies": {
     "name": 3,
@@ -2143,13 +2143,13 @@
    },
    "18": {
     "name": 4,
-    "notName": 9
+    "notName": 8
    },
    "19": {
     "notName": 5
    },
    "20": {
-    "notName": 2
+    "notName": 3
    },
    "21": {
     "name": 1,
@@ -2207,22 +2207,22 @@
   "spDict": {
    "commonWords": {
     "name": 2,
-    "notName": 4622
+    "notName": 4415
    },
    "inAmbigGenusSp": {
-    "name": 841
+    "name": 838
    },
    "inAmbigSpecies": {
     "name": 347,
-    "notName": 1378
+    "notName": 1585
    },
    "inSpecies": {
-    "name": 8131,
-    "notName": 45
+    "name": 8140,
+    "notName": 46
    },
    "notInDictionary": {
-    "name": 41,
-    "notName": 4225
+    "name": 35,
+    "notName": 4224
    },
    "notInSpecies": {
     "name": 5,
@@ -5704,19 +5704,19 @@
    },
    "11": {
     "name": 1012,
-    "notName": 334
+    "notName": 333
    },
    "12": {
     "name": 665,
-    "notName": 178
+    "notName": 177
    },
    "13": {
     "name": 396,
-    "notName": 95
+    "notName": 96
    },
    "14": {
     "name": 176,
-    "notName": 44
+    "notName": 45
    },
    "15": {
     "name": 79,
@@ -5735,15 +5735,14 @@
     "notName": 3
    },
    "19": {
-    "name": 3,
-    "notName": 1
+    "name": 3
    },
    "20": {
     "name": 1,
     "notName": 2
    },
    "21": {
-    "notName": 2
+    "notName": 3
    },
    "22": {
     "name": 1,
@@ -5765,7 +5764,7 @@
    },
    "5": {
     "name": 336,
-    "notName": 1595
+    "notName": 1594
    },
    "6": {
     "name": 767,
@@ -5773,7 +5772,7 @@
    },
    "7": {
     "name": 1259,
-    "notName": 876
+    "notName": 877
    },
    "8": {
     "name": 1526,
@@ -5787,29 +5786,29 @@
   "uniDict": {
    "commonWords": {
     "name": 1,
-    "notName": 6533
+    "notName": 6486
    },
    "inAmbigGenus": {
-    "name": 53,
-    "notName": 784
+    "name": 54,
+    "notName": 828
    },
    "inAmbigGenusSp": {
-    "name": 841
+    "name": 838
    },
    "inAmbigUninomial": {
-    "notName": 21
+    "notName": 26
    },
    "inGenus": {
-    "name": 8140,
-    "notName": 2
-   },
-   "inUninomial": {
-    "name": 191,
+    "name": 8150,
     "notName": 5
    },
+   "inUninomial": {
+    "name": 187,
+    "notName": 18
+   },
    "notInDictionary": {
-    "name": 18,
-    "notName": 15773
+    "name": 14,
+    "notName": 15756
    },
    "notInUninomial": {
     "name": 1,
@@ -6699,7 +6698,7 @@
     "notName": 1
    },
    "eft": {
-    "notName": 1
+    "notName": 2
    },
    "ega": {
     "name": 1
@@ -10793,10 +10792,10 @@
    "üße": {
     "notName": 2
    },
-   "�-a": {
+   "�ge": {
     "notName": 1
    },
-   "�ge": {
+   "��a": {
     "notName": 1
    }
   },
@@ -10806,7 +10805,7 @@
    },
    "10": {
     "name": 1282,
-    "notName": 1583
+    "notName": 1582
    },
    "11": {
     "name": 1100,
@@ -10814,7 +10813,7 @@
    },
    "12": {
     "name": 864,
-    "notName": 993
+    "notName": 995
    },
    "13": {
     "name": 517,
@@ -10822,7 +10821,7 @@
    },
    "14": {
     "name": 312,
-    "notName": 393
+    "notName": 392
    },
    "15": {
     "name": 166,
@@ -10830,7 +10829,7 @@
    },
    "16": {
     "name": 93,
-    "notName": 176
+    "notName": 177
    },
    "17": {
     "name": 48,
@@ -10853,13 +10852,13 @@
    },
    "21": {
     "name": 3,
-    "notName": 15
+    "notName": 14
    },
    "22": {
     "notName": 12
    },
    "23": {
-    "notName": 8
+    "notName": 9
    },
    "24": {
     "notName": 2
@@ -10884,7 +10883,7 @@
    },
    "6": {
     "name": 672,
-    "notName": 3377
+    "notName": 3376
    },
    "7": {
     "name": 1069,
@@ -10892,7 +10891,7 @@
    },
    "8": {
     "name": 1217,
-    "notName": 2238
+    "notName": 2239
    },
    "9": {
     "name": 1329,

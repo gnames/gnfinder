@@ -5,7 +5,7 @@ go 1.24.1
 require (
 	github.com/abadojack/whatlanggo v1.0.1
 	github.com/aclements/perflock v0.0.0-20240209181333-b67f3f23152f
-	github.com/gnames/bayes v0.5.2
+	github.com/gnames/bayes v0.5.3
 	github.com/gnames/gndoc v0.3.2
 	github.com/gnames/gner v0.1.6
 	github.com/gnames/gnfmt v0.6.0
@@ -15,6 +15,7 @@ require (
 	github.com/gnames/gnverifier v1.2.5
 	github.com/json-iterator/go v1.1.12
 	github.com/labstack/echo/v4 v4.13.3
+	github.com/lmittmann/tint v1.0.7
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.11.2
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/cobra-cli v1.3.0

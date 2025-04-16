@@ -1,7 +1,7 @@
 package verifier_test
 
 import (
-	"log"
+	"log/slog"
 	"testing"
 
 	"github.com/gnames/gnfinder/pkg/config"
@@ -17,6 +17,6 @@ func TestVerifier(t *testing.T) {
 		res, _, _ := verif.Verify([]string{"Bubo bubo"})
 		assert.Equal(t, 1, len(res))
 	} else {
-		log.Print("WARNING: no internet connection, skipping some tests")
+		slog.Warn("No internet connection, skipping some tests")
 	}
 }

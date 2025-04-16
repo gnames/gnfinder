@@ -11,12 +11,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	dictionary = dict.LoadDictionary()
-	weights    = nlp.BayesWeights()
-)
-
 func TestTag(t *testing.T) {
+	assert := assert.New(t)
+	dictionary, err := dict.LoadDictionary()
+	assert.Nil(err)
+	weights, err := nlp.BayesWeights()
+	assert.Nil(err)
 	txt := []rune(`
 Thalictroides, 18s per doz.
 vitifoiia, Is. 6d. each
@@ -30,10 +30,10 @@ Conostylis americana, 2i. 6d.
 	nb := weights[lang.English]
 
 	tkn := tokens[10]
-	assert.Equal(t, tkn.Cleaned(), "Cymbidium")
-	assert.Equal(t, tkn.Decision(), token.Uninomial)
+	assert.Equal("Cymbidium", tkn.Cleaned())
+	assert.Equal(token.Uninomial, tkn.Decision())
 
 	nlp.TagTokens(tokens, dictionary, nb, 80.0)
-	assert.Equal(t, tkn.Cleaned(), "Cymbidium")
-	assert.Equal(t, tkn.Decision(), token.BayesBinomial)
+	assert.Equal("Cymbidium", tkn.Cleaned())
+	assert.Equal(token.BayesBinomial, tkn.Decision())
 }

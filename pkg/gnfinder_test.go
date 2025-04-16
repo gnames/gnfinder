@@ -3,7 +3,8 @@ package gnfinder_test
 import (
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
+	"os"
 	"regexp"
 	"testing"
 	"time"
@@ -25,7 +26,7 @@ func TestMeta(t *testing.T) {
 	assert := assert.New(t)
 	txt := `Pardosa moesta, Pomatomus saltator and Bubo bubo
 		      decided to get a cup of Camelia sinensis on Sunday.`
-	gnf := genFinder()
+	gnf := genFinder(t)
 	res := gnf.Find("", txt)
 	assert.Equal(time.Now().Year(), res.Date.Year())
 
@@ -77,7 +78,7 @@ func TestFindEdgeCases(t *testing.T) {
 		{"Awsa lineages", 0, false},
 	}
 
-	gnf := genFinder()
+	gnf := genFinder(t)
 	for _, v := range tests {
 		res := gnf.Find("", v.name)
 		assert.Equal(v.found, len(res.Names) > 0, v.name)
@@ -93,7 +94,7 @@ func TestNoBreakSpaces(t *testing.T) {
 	assert := assert.New(t)
 	text := `d      Family Blaniulidae
         (I) Blaniulus guttulatus (Fabricius, 1798)`
-	gnf := genFinder()
+	gnf := genFinder(t)
 	res := gnf.Find("", text)
 	assert.Equal(2, len(res.Names))
 	assert.Equal("Blaniulidae", res.Names[0].Name)
@@ -106,7 +107,7 @@ func TestWideSpaces(t *testing.T) {
 	assert := assert.New(t)
 	text := `d　Family　Blaniulidae
 　(I)　Blaniulus　guttulatus　(Fabricius,　1798)`
-	gnf := genFinder()
+	gnf := genFinder(t)
 	res := gnf.Find("", text)
 	assert.Equal(2, len(res.Names))
 	assert.Equal("Blaniulidae", res.Names[0].Name)
@@ -218,7 +219,7 @@ func TestHumanNames(t *testing.T) {
 		{"Gregorius", false},
 	}
 
-	gnf := genFinder()
+	gnf := genFinder(t)
 	for _, v := range tests {
 		res := gnf.Find("", v.name)
 		assert.Equal(t, v.found, len(res.Names) > 0, v.name)
@@ -306,7 +307,7 @@ func TestGeoNames(t *testing.T) {
 		{"Yulong", false},
 	}
 
-	gnf := genFinder()
+	gnf := genFinder(t)
 	for _, v := range tests {
 		res := gnf.Find("", v.name)
 		assert.Equal(t, v.found, len(res.Names) > 0, v.name)
@@ -354,7 +355,7 @@ Conostylis americana, 2i. 6d.
 	}
 
 	for _, v := range tests {
-		gnf := genFinder(config.OptWithBayes(v.bayes))
+		gnf := genFinder(t, config.OptWithBayes(v.bayes))
 
 		res := gnf.Find("", txt)
 		name := res.Names[v.nameIdx]
@@ -386,7 +387,7 @@ cheilum, 1 5s. per doz.
 Conostylis americana, 2i. 6d.
 			`
 
-	gnf := genFinder(config.OptTokensAround(2))
+	gnf := genFinder(t, config.OptTokensAround(2))
 	res := gnf.Find("", txt)
 	assert.Equal(2, res.WordsAround)
 	tests := []struct {
@@ -427,7 +428,7 @@ func TextTokensAroundSizeLimit(t *testing.T) {
 	txt := "Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa " +
 		"Pardosa moesta " +
 		"Bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-	gnf := genFinder(config.OptTokensAround(2))
+	gnf := genFinder(t, config.OptTokensAround(2))
 	res := gnf.Find("", txt)
 	assert.Equal(2, res.WordsAround)
 
@@ -437,7 +438,7 @@ func TextTokensAroundSizeLimit(t *testing.T) {
 
 	txt = "Aaaaaaaaaaaaaaaaaaaaaaa Pardosa moesta " +
 		"bbbbbbbbbbbbbbbbbbbbbbb"
-	gnf = genFinder(config.OptTokensAround(2))
+	gnf = genFinder(t, config.OptTokensAround(2))
 	res = gnf.Find("", txt)
 	assert.Equal(2, res.WordsAround)
 	n = res.Names[0]
@@ -450,7 +451,7 @@ func TextTokensAroundSizeLimit(t *testing.T) {
 func TestLastName(t *testing.T) {
 	assert := assert.New(t)
 	txt := "Pardosa moesta"
-	gnf := genFinder(config.OptWithBayes(false))
+	gnf := genFinder(t, config.OptWithBayes(false))
 	res := gnf.Find("", txt)
 	assert.Equal(1, res.TotalNames)
 
@@ -458,7 +459,7 @@ func TestLastName(t *testing.T) {
 	assert.Equal("Pardosa moesta", name.Name)
 	assert.Equal(0.0, name.Odds)
 
-	gnf = genFinder(config.OptWithBayes(true))
+	gnf = genFinder(t, config.OptWithBayes(true))
 	res = gnf.Find("", txt)
 	name = res.Names[0]
 	assert.Equal("Pardosa moesta", name.Name)
@@ -486,7 +487,7 @@ func TestAllGrey(t *testing.T) {
 	}
 
 	for _, v := range tests {
-		gnf := genFinder()
+		gnf := genFinder(t)
 		res := gnf.Find("", v.txt)
 		namesNum := len(res.Names)
 
@@ -507,7 +508,7 @@ func TestRuhoffNames(t *testing.T) {
 	text := `We should be able to find Cerithium evaricosum name, which
 	now dissapeared from molluscs databases.
 `
-	gnf := genFinder()
+	gnf := genFinder(t)
 	res := gnf.Find("", text)
 	namesNum := len(res.Names)
 	assert.Equal(1, namesNum)
@@ -534,7 +535,7 @@ func TestNomenAnnot(t *testing.T) {
 		{"Pardosa moesta", "", "NO_ANNOT"},
 	}
 
-	gnf := genFinder()
+	gnf := genFinder(t)
 	for _, v := range tests {
 		res := gnf.Find("", v.txt)
 		assert.Equal(v.annot, res.Names[0].AnnotNomen)
@@ -556,7 +557,7 @@ func TestNomenAnnotNoSpace(t *testing.T) {
 		{"Pardosa moesta subsp.nov.", "subsp.nov.", "SUBSP_NOV"},
 		{"Pardosa moesta ssp.nov.", "ssp.nov.", "SUBSP_NOV"},
 	}
-	gnf := genFinder()
+	gnf := genFinder(t)
 	for _, v := range tests {
 		res := gnf.Find("", v.txt)
 		assert.Equal(v.annot, res.Names[0].AnnotNomen)
@@ -575,7 +576,7 @@ func TestFakeAnnot(t *testing.T) {
 		"Parsoda moesta nova sp.",
 		"Pardosa moesta n. and sp.",
 	}
-	gnf := genFinder()
+	gnf := genFinder(t)
 	for _, v := range txts {
 		res := gnf.Find("", v)
 		assert.Empty(res.Names[0].AnnotNomen)
@@ -585,18 +586,22 @@ func TestFakeAnnot(t *testing.T) {
 
 func TestChangeConfig(t *testing.T) {
 	assert := assert.New(t)
-	gnf := genFinder()
+	gnf := genFinder(t)
 	cfg := gnf.GetConfig()
 	assert.True(cfg.WithBayes)
 	gnf = gnf.ChangeConfig(config.OptWithBayes(false))
 	assert.False(gnf.GetConfig().WithBayes)
 }
 
-func genFinder(opts ...config.Option) gnfinder.GNfinder {
+func genFinder(t *testing.T, opts ...config.Option) gnfinder.GNfinder {
+	assert := assert.New(t)
+	var err error
 	if dictionary == nil {
-		dictionary = dict.LoadDictionary()
-		weights = nlp.BayesWeights()
-		log.SetOutput(io.Discard)
+		dictionary, err = dict.LoadDictionary()
+		assert.Nil(err)
+		weights, err = nlp.BayesWeights()
+		assert.Nil(err)
+		slog.SetDefault(slog.New(slog.NewTextHandler(io.Discard, nil)))
 	}
 	cfg := config.New(opts...)
 	return gnfinder.New(cfg, dictionary, weights)
@@ -604,7 +609,7 @@ func genFinder(opts ...config.Option) gnfinder.GNfinder {
 
 func TestBytesOffset(t *testing.T) {
 	assert := assert.New(t)
-	gnf := genFinder()
+	gnf := genFinder(t)
 	tests := []struct {
 		msg, input string
 		withBytes  bool
@@ -635,7 +640,7 @@ func TestBytesOffset(t *testing.T) {
 
 func TestAmbiguousGenera(t *testing.T) {
 	assert := assert.New(t)
-	gnf := genFinder()
+	gnf := genFinder(t)
 	tests := []struct {
 		msg, text string
 		namesNum  int
@@ -669,7 +674,7 @@ func TestAmbiguousGenera(t *testing.T) {
 
 func TestAmbiguousFlag(t *testing.T) {
 	assert := assert.New(t)
-	gnf := genFinder()
+	gnf := genFinder(t)
 	gnf = gnf.ChangeConfig(config.OptWithAmbiguousNames(true))
 	tests := []struct {
 		msg, text string
@@ -700,7 +705,7 @@ func TestAmbiguousFlag(t *testing.T) {
 // Issue #132: Why does � appear in output instead on non-letter characters?
 func TestWordsAround(t *testing.T) {
 	assert := assert.New(t)
-	gnf := genFinder()
+	gnf := genFinder(t)
 	gnf = gnf.ChangeConfig(config.OptTokensAround(4))
 	tests := []struct {
 		msg, text string
@@ -734,8 +739,16 @@ func Example() {
 	txt := `Blue Adussel (Mytilus edulis) grows to about two
 inches the first year,Pardosa moesta Banks, 1892`
 	cfg := config.New()
-	dictionary := dict.LoadDictionary()
-	weights := nlp.BayesWeights()
+	dictionary, err := dict.LoadDictionary()
+	if err != nil {
+		slog.Error("Cannot load dictionary")
+		os.Exit(1)
+	}
+	weights, err := nlp.BayesWeights()
+	if err != nil {
+		slog.Error("Cannot get Bayesian weights")
+		os.Exit(1)
+	}
 	gnf := gnfinder.New(cfg, dictionary, weights)
 	res := gnf.Find("", txt)
 	name := res.Names[0]

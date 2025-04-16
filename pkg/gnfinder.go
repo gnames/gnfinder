@@ -2,6 +2,7 @@ package gnfinder
 
 import (
 	"cmp"
+	"log/slog"
 	"slices"
 	"time"
 
@@ -39,13 +40,19 @@ func New(
 	dictionaries *dict.Dictionary,
 	weights map[lang.Language]bayes.Bayes,
 ) GNfinder {
+	var err error
 	gnf := &gnfinder{
 		Config:       cfg,
 		Dictionary:   dictionaries,
 		bayesWeights: weights,
 	}
 	if gnf.WithBayes && gnf.bayesWeights == nil {
-		gnf.bayesWeights = nlp.BayesWeights()
+		gnf.bayesWeights, err = nlp.BayesWeights()
+		if err != nil {
+			slog.Error("Cannot get Bayesian weights", "error", err)
+			slog.Warn("Switching Bayes algorithm off")
+			gnf.Config.WithBayes = false
+		}
 	}
 	return gnf
 }

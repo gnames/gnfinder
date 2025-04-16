@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -121,11 +122,23 @@ verification results.
 		cfg := config.New(opts...)
 
 		if port := portFlag(cmd); port > 0 {
-			dict := dict.LoadDictionary()
-			weights := nlp.BayesWeights()
+			dict, err := dict.LoadDictionary()
+			if err != nil {
+				slog.Error("Cannot load dictionary", "error", err)
+				os.Exit(1)
+			}
+			weights, err := nlp.BayesWeights()
+			if err != nil {
+				slog.Error("Cannot load Bayesian weights", "error", err)
+				os.Exit(1)
+			}
 
 			gnf := gnfinder.New(cfg, dict, weights)
-			web.Run(gnf, port)
+			err = web.Run(gnf, port)
+			if err != nil {
+				slog.Error("Web service stopped suddenly", "error", err)
+				os.Exit(1)
+			}
 
 			os.Exit(0)
 		}
@@ -141,7 +154,7 @@ verification results.
 			}
 			rawData, err = io.ReadAll(os.Stdin)
 			if err != nil {
-				log.Println(err)
+				slog.Error("Cannot read data", "error", err)
 			}
 			data = string(rawData)
 			input = "STDIN"
@@ -154,7 +167,7 @@ verification results.
 				data, convDur, err = d.TextFromFile(input, cfg.WithPlainInput)
 			}
 			if err != nil {
-				log.Println(err)
+				slog.Error("Cannot get input", "error", err)
 				os.Exit(1)
 			}
 		default:
@@ -237,7 +250,6 @@ Apache Tika service.`)
 	rootCmd.Flags().BoolP("version", "V", false, "show version.")
 	rootCmd.Flags().IntP("words-around",
 		"w", 0, "show this many words surrounding name-strings.")
-	log.SetFlags(0)
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -249,8 +261,8 @@ func initConfig() {
 	// Find config directory.
 	configDir, err = os.UserConfigDir()
 	if err != nil {
-		log.Printf("Cannot find config directory: %s.", err)
-		return
+		slog.Error("Cannot find config directory", "error", err)
+		os.Exit(1)
 	}
 
 	// Search config in home directory with name ".gnmatcher" (without extension).
@@ -285,7 +297,8 @@ func initConfig() {
 	// If a config file is found, read it in.
 	err = viper.ReadInConfig()
 	if err != nil {
-		log.Printf("Cannot use config file: %s", viper.ConfigFileUsed())
+		slog.Error("Cannot use config file", "config", viper.ConfigFileUsed())
+		os.Exit(1)
 	} else {
 		getOpts()
 	}
@@ -297,7 +310,8 @@ func getOpts() {
 	cfgCli := &cfgData{}
 	err := viper.Unmarshal(cfgCli)
 	if err != nil {
-		log.Fatalf("Cannot deserialize config data: %s.", err)
+		slog.Error("Cannot deserialize config data", "error", err)
+		os.Exit(1)
 	}
 
 	if cfgCli.BayesOddsThreshold > 0 {
@@ -330,10 +344,7 @@ func getOpts() {
 	}
 
 	if cfgCli.Language != "" {
-		l, err := lang.New(cfgCli.Language)
-		if err != nil {
-			log.Print(err)
-		}
+		l, _ := lang.New(cfgCli.Language)
 		opts = append(opts, config.OptLanguage(l))
 	}
 
@@ -393,8 +404,16 @@ func findNames(
 	file string,
 	convDur float32,
 ) {
-	dict := dict.LoadDictionary()
-	weights := nlp.BayesWeights()
+	dict, err := dict.LoadDictionary()
+	if err != nil {
+		slog.Error("Cannot load dictionary", "error", err)
+		os.Exit(1)
+	}
+	weights, err := nlp.BayesWeights()
+	if err != nil {
+		slog.Error("Cannot load Bayesian weights", "error", err)
+		os.Exit(1)
+	}
 
 	gnf := gnfinder.New(cfg, dict, weights)
 	res := gnf.Find(file, data)
@@ -419,7 +438,8 @@ func checkStdin() bool {
 	stdInFile := os.Stdin
 	stat, err := stdInFile.Stat()
 	if err != nil {
-		log.Panic(err)
+		slog.Error("Cannot read from Stdin", "error", err)
+		os.Exit(1)
 	}
 	return (stat.Mode() & os.ModeCharDevice) == 0
 }
@@ -439,13 +459,13 @@ func touchConfigFile(configPath string) error {
 func createConfig(path string) error {
 	err := gnsys.MakeDir(filepath.Dir(path))
 	if err != nil {
-		log.Printf("Cannot create dir %s: %s.", path, err)
+		slog.Error("Cannot create dir", "path", path, "error", err)
 		return err
 	}
 
 	err = os.WriteFile(path, []byte(configText), 0644)
 	if err != nil {
-		log.Printf("Cannot write to file %s: %s", path, err)
+		slog.Error("Cannot write to file", "path", path, "error", err)
 		return err
 	}
 	return nil

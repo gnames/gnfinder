@@ -1,7 +1,7 @@
 package config
 
 import (
-	"log"
+	"log/slog"
 
 	"github.com/gnames/gnfinder/pkg/ent/lang"
 	"github.com/gnames/gnfmt"
@@ -159,11 +159,11 @@ func OptTikaURL(s string) Option {
 func OptTokensAround(i int) Option {
 	return func(cfg *Config) {
 		if i < 0 {
-			log.Println("tokens number around name must be positive")
+			slog.Warn("Tokens' number around name must be in between 0 and 5")
 			i = 0
 		}
 		if i > 5 {
-			log.Println("tokens number around name must be in between 0 and 5")
+			slog.Warn("Tokens' number around name must be in between 0 and 5")
 			i = 5
 		}
 		cfg.TokensAround = i
