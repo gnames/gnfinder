@@ -5,8 +5,6 @@ import (
 	"embed"
 	"encoding/csv"
 	"io"
-	"log/slog"
-	"os"
 )
 
 //go:embed data
@@ -55,38 +53,73 @@ type Dictionary struct {
 }
 
 // LoadDictionary contain most popular words in European languages.
-func LoadDictionary() *Dictionary {
+func LoadDictionary() (*Dictionary, error) {
+	notInUninomials, err := readData("data/not-in/uninomials.csv")
+	if err != nil {
+		return nil, err
+	}
+	notInSpecies, err := readData("data/not-in/species.csv")
+	if err != nil {
+		return nil, err
+	}
+	commonWords, err := readData("data/common/eu.csv")
+	if err != nil {
+		return nil, err
+	}
+	inAmbigGenera, err := readData("data/in-ambig/genera.csv")
+	if err != nil {
+		return nil, err
+	}
+	inAmbigGeneraSp, err := readData("data/in-ambig/genera_species.csv")
+	if err != nil {
+		return nil, err
+	}
+	inAmbigSpecies, err := readData("data/in-ambig/species.csv")
+	if err != nil {
+		return nil, err
+	}
+	inAmbigUninomials, err := readData("data/in-ambig/uninomials.csv")
+	if err != nil {
+		return nil, err
+	}
+	inGenera, err := readData("data/in/genera.csv")
+	if err != nil {
+		return nil, err
+	}
+	inSpecies, err := readData("data/in/species.csv")
+	if err != nil {
+		return nil, err
+	}
+	inUninomials, err := readData("data/in/uninomials.csv")
+	if err != nil {
+		return nil, err
+	}
+
 	d := &Dictionary{
-		NotInUninomials:   readData("data/not-in/uninomials.csv"),
-		NotInSpecies:      readData("data/not-in/species.csv"),
-		CommonWords:       readData("data/common/eu.csv"),
-		InAmbigGenera:     readData("data/in-ambig/genera.csv"),
-		InAmbigGeneraSp:   readData("data/in-ambig/genera_species.csv"),
-		InAmbigSpecies:    readData("data/in-ambig/species.csv"),
-		InAmbigUninomials: readData("data/in-ambig/uninomials.csv"),
-		InGenera:          readData("data/in/genera.csv"),
-		InSpecies:         readData("data/in/species.csv"),
-		InUninomials:      readData("data/in/uninomials.csv"),
+		NotInUninomials:   notInUninomials,
+		NotInSpecies:      notInSpecies,
+		CommonWords:       commonWords,
+		InAmbigGenera:     inAmbigGenera,
+		InAmbigGeneraSp:   inAmbigGeneraSp,
+		InAmbigSpecies:    inAmbigSpecies,
+		InAmbigUninomials: inAmbigUninomials,
+		InGenera:          inGenera,
+		InSpecies:         inSpecies,
+		InUninomials:      inUninomials,
 		Ranks:             setRanks(),
 	}
-	return d
+	return d, nil
 }
 
-func readData(path string) map[string]struct{} {
+func readData(path string) (map[string]struct{}, error) {
 	res := make(map[string]struct{})
 	f, err := data.Open(path)
 	if err != nil {
-		slog.Error("Cannot open file", "error", err)
-		os.Exit(1)
+		return nil, err
 	}
 	var empty struct{}
 
-	defer func() {
-		err := f.Close()
-		if err != nil {
-			slog.Error("Cannot close the file", "error", err)
-		}
-	}()
+	defer f.Close()
 
 	reader := csv.NewReader(f)
 	for {
@@ -95,12 +128,11 @@ func readData(path string) map[string]struct{} {
 			break
 		}
 		if err != nil {
-			slog.Error("Cannot read csv file", "error", err)
-			os.Exit(1)
+			return nil, err
 		}
 		res[v[0]] = empty
 	}
-	return res
+	return res, nil
 }
 
 func setRanks() map[string]struct{} {

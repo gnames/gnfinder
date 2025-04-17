@@ -125,11 +125,12 @@ func BenchmarkBigYesBayesLangDetect(b *testing.B) {
 }
 
 func beforeBench() {
+	var err error
 	if dictionary != nil {
 		return
 	}
 	dictionary = dict.LoadDictionary()
-	weights, err := nlp.BayesWeights()
+	weights, err = nlp.BayesWeights()
 	if err != nil {
 		slog.Error("Cannot read Bayes weights")
 		os.Exit(1)

@@ -13,9 +13,17 @@ import (
 func main() {
 	dir := filepath.Join("..", "..", "pkg", "io", "nlpfs", "data")
 	// get text and names positions in the text, if any
-	data := NewTrainingLanguageData(filepath.Join(dir, "training"))
+	data, err := NewTrainingLanguageData(filepath.Join(dir, "training"))
+	if err != nil {
+		slog.Error("Cannot get new training language data", "error", err)
+		os.Exit(1)
+	}
 	output := filepath.Join(dir, "files")
-	d := dict.LoadDictionary()
+	d, err := dict.LoadDictionary()
+	if err != nil {
+		slog.Error("Cannot load dictionaries", "error", err)
+		os.Exit(1)
+	}
 	for lang, v := range data {
 		path := filepath.Join(output, lang.String(), "bayes.json")
 		// produce bayes object with training data

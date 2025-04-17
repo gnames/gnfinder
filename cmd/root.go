@@ -122,11 +122,23 @@ verification results.
 		cfg := config.New(opts...)
 
 		if port := portFlag(cmd); port > 0 {
-			dict := dict.LoadDictionary()
-			weights := nlp.BayesWeights()
+			dict, err := dict.LoadDictionary()
+			if err != nil {
+				slog.Error("Cannot load dictionary", "error", err)
+				os.Exit(1)
+			}
+			weights, err := nlp.BayesWeights()
+			if err != nil {
+				slog.Error("Cannot load Bayesian weights", "error", err)
+				os.Exit(1)
+			}
 
 			gnf := gnfinder.New(cfg, dict, weights)
-			web.Run(gnf, port)
+			err = web.Run(gnf, port)
+			if err != nil {
+				slog.Error("Web service stopped suddenly", "error", err)
+				os.Exit(1)
+			}
 
 			os.Exit(0)
 		}
