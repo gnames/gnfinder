@@ -3,7 +3,7 @@ package nlp
 import (
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 
 	"github.com/gnames/bayes"
 	"github.com/gnames/bayes/ent/feature"
@@ -126,7 +126,7 @@ func calcOdds(
 	t token.TokenSN,
 	fs *FeatureSet,
 	priorOdds map[feature.Class]int,
-) []posterior.Odds {
+) ([]posterior.Odds, error) {
 	evenOdds := map[feature.Class]int{IsName: 1, IsNotName: 1}
 
 	oddsUni, err := nb.PosteriorOdds(
@@ -134,29 +134,31 @@ func calcOdds(
 		bayes.OptPriorOdds(priorOdds),
 	)
 	if err != nil {
-		log.Fatal(err)
+		slog.Error("Cannot get posterior odds for uninomial", "error", err)
+		return nil, err
 	}
 	if t.Indices().Species == 0 {
-		return []posterior.Odds{oddsUni}
+		return []posterior.Odds{oddsUni}, nil
 	}
 	oddsSp, err := nb.PosteriorOdds(
 		features(fs.Species),
 		bayes.OptPriorOdds(evenOdds),
 	)
 	if err != nil {
-		log.Fatal(err)
+		slog.Error("Cannot get posterior odds for species", "error", err)
+		return nil, err
 	}
 	delete(oddsSp.Likelihoods[IsName], feature.Feature{Name: "priorOdds", Value: "true"})
 	if t.Indices().Infraspecies == 0 {
-		return []posterior.Odds{oddsUni, oddsSp}
+		return []posterior.Odds{oddsUni, oddsSp}, nil
 	}
 	f := features(fs.InfraSp)
 	oddsInfraSp, err := nb.PosteriorOdds(f, bayes.OptPriorOdds(evenOdds))
 	if err != nil {
-		log.Fatal(err)
+		slog.Error("Cannot get posterior odds for infraspecies", "error", err)
 	}
 	delete(oddsInfraSp.Likelihoods[IsName], feature.Feature{Name: "priorOdds", Value: "true"})
-	return []posterior.Odds{oddsUni, oddsSp, oddsInfraSp}
+	return []posterior.Odds{oddsUni, oddsSp, oddsInfraSp}, nil
 }
 
 func nameFrequency() map[feature.Class]int {
@@ -166,40 +168,38 @@ func nameFrequency() map[feature.Class]int {
 	}
 }
 
-func BayesWeights() map[lang.Language]bayes.Bayes {
+func BayesWeights() (map[lang.Language]bayes.Bayes, error) {
 	bw := make(map[lang.Language]bayes.Bayes)
 	for k := range lang.LanguagesSet {
-		bw[k] = naiveBayesFromDump(k)
+		bw[k], err = naiveBayesFromDump(k)
 	}
-	return bw
+	if err != nil {
+		return nil, err
+	}
+	return bw, nil
 }
 
-func naiveBayesFromDump(l lang.Language) bayes.Bayes {
+func naiveBayesFromDump(l lang.Language) (bayes.Bayes, error) {
 	nb := bayes.New()
-	dir := fmt.Sprintf("data/files/%s/bayes.json", l.String())
+	path := fmt.Sprintf("data/files/%s/bayes.json", l.String())
 
-	f, err := nlpfs.Data.Open(dir)
+	f, err := nlpfs.Data.Open(path)
 	if err != nil {
-		log.Fatal(err)
+		slog.Error("Cannot open file", "path", path, "error", err)
 	}
 
-	defer func() {
-		err = f.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}()
+	defer f.Close()
 
 	json, err := io.ReadAll(f)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	err = nb.Load(json)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	return nb
+	return nb, nil
 }
 
 func features(bf []BayesF) []feature.Feature {

@@ -3,7 +3,7 @@ package gnfinder_test
 import (
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"regexp"
 	"testing"
 	"time"
@@ -596,7 +596,7 @@ func genFinder(opts ...config.Option) gnfinder.GNfinder {
 	if dictionary == nil {
 		dictionary = dict.LoadDictionary()
 		weights = nlp.BayesWeights()
-		log.SetOutput(io.Discard)
+		slog.SetDefault(slog.New(slog.NewTextHandler(io.Discard, nil)))
 	}
 	cfg := config.New(opts...)
 	return gnfinder.New(cfg, dictionary, weights)

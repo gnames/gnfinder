@@ -15,6 +15,7 @@ require (
 	github.com/gnames/gnverifier v1.2.5
 	github.com/json-iterator/go v1.1.12
 	github.com/labstack/echo/v4 v4.13.3
+	github.com/lmittmann/tint v1.0.7
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.11.2
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/cobra-cli v1.3.0

@@ -5,7 +5,8 @@ import (
 	"embed"
 	"encoding/csv"
 	"io"
-	"log"
+	"log/slog"
+	"os"
 )
 
 //go:embed data
@@ -75,14 +76,15 @@ func readData(path string) map[string]struct{} {
 	res := make(map[string]struct{})
 	f, err := data.Open(path)
 	if err != nil {
-		log.Fatal(err)
+		slog.Error("Cannot open file", "error", err)
+		os.Exit(1)
 	}
 	var empty struct{}
 
 	defer func() {
 		err := f.Close()
 		if err != nil {
-			log.Fatal(err)
+			slog.Error("Cannot close the file", "error", err)
 		}
 	}()
 
@@ -93,7 +95,8 @@ func readData(path string) map[string]struct{} {
 			break
 		}
 		if err != nil {
-			log.Fatal(err)
+			slog.Error("Cannot read csv file", "error", err)
+			os.Exit(1)
 		}
 		res[v[0]] = empty
 	}

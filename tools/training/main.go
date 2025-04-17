@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -22,11 +22,13 @@ func main() {
 		nb := Train(v, d)
 		dump, err := json.MarshalIndent(nb, "", " ")
 		if err != nil {
-			log.Fatal(err)
+			slog.Error("Cannot marshal data", "error", err)
+			os.Exit(1)
 		}
 		err = os.WriteFile(path, dump, 0644)
 		if err != nil {
-			log.Fatal(err)
+			slog.Error("Cannot write to file", "path", path, "error", err)
+			os.Exit(1)
 		}
 	}
 	fmt.Println("**InGenus for noName**")

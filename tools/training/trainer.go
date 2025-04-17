@@ -3,7 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -48,20 +48,23 @@ func Train(td TrainingData, d *dict.Dictionary) bayes.Bayes {
 }
 
 // LoadTrainingData loads TrainingData from a file.
-func NewTrainingLanguageData(dir string) TrainingLanguageData {
+func NewTrainingLanguageData(dir string) (TrainingLanguageData, error) {
 	tld := make(TrainingLanguageData)
 	for lang := range lang.LanguagesSet {
 		path := filepath.Join(dir, lang.String())
-		td := NewTrainingData(path)
+		td, err := NewTrainingData(path)
+		if err != nil {
+			return nil, err
+		}
 		tld[lang] = td
 	}
-	return tld
+	return tld, nil
 }
 
 // NewTrainingData assembles text and name occurance information from several
 // files that contain no names at all, or are botanical and zoological research
 // papers that do contain names.
-func NewTrainingData(path string) TrainingData {
+func NewTrainingData(path string) (TrainingData, error) {
 	td := make(TrainingData)
 	// files := [...]string{"no_names", "names", "phyto1", "phyto2", "zoo1",
 	// "zoo2", "zoo3", "zoo4"}
@@ -71,7 +74,8 @@ func NewTrainingData(path string) TrainingData {
 		txtPath := filepath.Join(path, txt)
 		txtBytes, err := os.ReadFile(txtPath)
 		if err != nil {
-			log.Fatal(err)
+			slog.Error("Cannot read file", "error", err)
+			os.Exit(1)
 		}
 		text := []rune(string(txtBytes))
 
@@ -79,18 +83,20 @@ func NewTrainingData(path string) TrainingData {
 		jsonPath := filepath.Join(path, json)
 		namesBytes, err := os.ReadFile(jsonPath)
 		if err != nil {
-			log.Fatal(err)
+			slog.Error("Cannot read file", "error", err)
+			return nil, err
 		}
 		r := bytes.NewReader(namesBytes)
 		var nps NamesPositions
 		err = jsoniter.NewDecoder(r).Decode(&nps)
 		if err != nil {
-			log.Fatal(err)
+			slog.Error("Cannot decode JSON", "error", err)
+			return nil, err
 		}
 
 		td[FileName(v)] = &TextData{Text: text, NamesPositions: nps}
 	}
-	return td
+	return td, nil
 }
 
 // processTrainingData takes data from several training texts, ignores

@@ -2,6 +2,7 @@ package gnfinder_test
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"runtime/trace"
 	"testing"
@@ -69,9 +70,11 @@ func BenchmarkSmallYesBayesLangDetect(b *testing.B) {
 // BenchmarkBigNoBayes runs only heuristic algorithm on large text
 // without language detection
 func BenchmarkBigNoBayes(b *testing.B) {
-	input, err := os.ReadFile("testdata/seashells_book.txt")
+	file := "testdata/seashells_book.txt"
+	input, err := os.ReadFile(file)
 	if err != nil {
-		panic(err)
+		slog.Error("Cannot read file")
+		os.Exit(1)
 	}
 	args := inputs{
 		opts: []config.Option{
@@ -126,7 +129,11 @@ func beforeBench() {
 		return
 	}
 	dictionary = dict.LoadDictionary()
-	weights = nlp.BayesWeights()
+	weights, err := nlp.BayesWeights()
+	if err != nil {
+		slog.Error("Cannot read Bayes weights")
+		os.Exit(1)
+	}
 }
 
 func runBenchmark(n string, b *testing.B, args inputs) {
