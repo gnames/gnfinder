@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.1.13] - 2026-05-19 Tue
+
+- Fix: Too short timeout for http requests.
+
 ## [v1.1.12] - 2026-05-19 Tue
 
 - Fix [#163]: make sure that the last selected tab is used when a request
