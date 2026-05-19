@@ -228,8 +228,9 @@ func getText(
 		return params.Text, filename, dur, err
 	}
 
-	d := gndoc.New(tikaURL)
 	if params.URL != "" {
+		ua := "gnfinder/" + gnfinder.Version + " (https://github.com/gnames/gnfinder)"
+		d := gndoc.New(tikaURL, gndoc.OptUserAgent(ua))
 		txt, dur, err = d.TextFromURL(params.URL)
 		return txt, filename, dur, err
 	}

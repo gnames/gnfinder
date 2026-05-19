@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## [v1.1.11] - 2026-05-19 Tue
+
+- Fix [#162]: Fix URL ingestion. It stopped working because sites like
+  Wikipedia became less permissive to empty user agents and requests that
+  do not specify text/http in the header.
+- Fix: prevent crashes caused by "perfect" odds edge case.
+
 ## [v1.1.10] - 2025-04-17 Thu
 
 - Add: slog as as a logging engine.

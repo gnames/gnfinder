@@ -160,7 +160,8 @@ verification results.
 			input = "STDIN"
 		case 1:
 			input = args[0]
-			d := gndoc.New(cfg.TikaURL)
+			ua := "gnfinder/" + gnfinder.Version + " (https://github.com/gnames/gnfinder)"
+			d := gndoc.New(cfg.TikaURL, gndoc.OptUserAgent(ua))
 			if strings.HasPrefix(input, "http") {
 				data, convDur, err = d.TextFromURL(input)
 			} else {

@@ -70,7 +70,8 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 		if t := params.Text; t != "" {
 			txt = t
 		} else if url := params.URL; url != "" {
-			doc := gndoc.New(tikaURL)
+			ua := "gnfinder/" + gnfinder.Version + " (https://github.com/gnames/gnfinder)"
+			doc := gndoc.New(tikaURL, gndoc.OptUserAgent(ua))
 			txt, dur.TextExtraction, err = doc.TextFromURL(url)
 		} else {
 			txt, filename, dur.TextExtraction, err = textFromFile(c, tikaURL)
