@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 title: "GNfinder -- a finder of scientific names in a variety of media."
-version: v1.1.11
+version: v1.1.12
 authors:
   - family-names: "Mozzherin"
     given-names: "Dmitry"

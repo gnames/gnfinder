@@ -2,9 +2,14 @@
 
 ## Unreleased
 
+## [v1.1.12] - 2026-05-19 Tue
+
+- Fix [#163]: make sure that the last selected tab is used when a request
+  is sent form Web UI.
+
 ## [v1.1.11] - 2026-05-19 Tue
 
-- Fix [#162]: Fix URL ingestion. It stopped working because sites like
+- Fix [#162]: URL ingestion. It stopped working because sites like
   Wikipedia became less permissive to empty user agents and requests that
   do not specify text/http in the header.
 - Fix: prevent crashes caused by "perfect" odds edge case.
