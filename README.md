@@ -201,7 +201,7 @@ settings in both the configuration file and from the flags.
 
 API is located at `https://finder.globalnames.org/api/v1`.
 
-Best source for API usage is its [documenation][apidoc].
+Best source for API usage is its [documentation][apidoc].
 
 If you want to start your own API endpoint (for example on `localhost`, port
 8080) use:
