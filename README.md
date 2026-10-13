@@ -88,6 +88,7 @@ go to the `Linux and Mac without Homebrew` section.
 
     ```bash
     brew tap gnames/gn
+    brew trust gnames/gn
     brew install gnfinder
     # to upgrade
     brew upgrade gnfinder
