@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+## [v1.2.0] - 2026-10-15 Thu
+
+- Add: architecture of the gotemplate project: XDG directories,
+  `~/.config/gnfinder/config.yaml` with snake_case keys, JSON logs in
+  `~/.local/share/gnfinder/logs`, user-facing messages and errors on STDERR.
+- Add: automatic migration of settings from the old `gnfinder.yml` on the
+  first run.
+- Add: `log.format`, `log.level`, `log.destination` settings
+  (`GNF_LOG_FORMAT`, `GNF_LOG_LEVEL`, `GNF_LOG_DESTINATION`).
+- Add: `GNF_WITH_BAYES` environment variable (`GNF_WITHOUT_BAYES` still
+  works).
+- Add: `Update` and `ToOptions` methods for `config.Config`; options
+  reject invalid values with a warning.
+- Add: justfile replaces Makefile, Go v1.26.
+- Fix: language from the config file was ignored, because `-l` flag reset it
+  to English even when the flag was not given.
+- Fix: invalid `-f` value set an empty output format.
+- Fix: invalid values in the config file or environment are reported
+  instead of being silently ignored.
+
 ## [v1.1.13] - 2026-05-19 Tue
 
 - Fix: Too short timeout for http requests.
@@ -406,6 +426,10 @@
 
 This document follows [changelog guidelines]
 
+[v1.2.0]: https://github.com/gnames/gnfinder/compare/v1.1.13...v1.2.0
+[v1.1.13]: https://github.com/gnames/gnfinder/compare/v1.1.12...v1.1.13
+[v1.1.12]: https://github.com/gnames/gnfinder/compare/v1.1.11...v1.1.12
+[v1.1.11]: https://github.com/gnames/gnfinder/compare/v1.1.10...v1.1.11
 [v1.1.10]: https://github.com/gnames/gnfinder/compare/v1.1.9...v1.1.10
 [v1.1.9]: https://github.com/gnames/gnfinder/compare/v1.1.8...v1.1.9
 [v1.1.8]: https://github.com/gnames/gnfinder/compare/v1.1.7...v1.1.8

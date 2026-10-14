@@ -152,45 +152,80 @@ just install
 ## Configuration
 
 When you run ``gnfinder`` command for the first time, it will create a
-[``gnfinder.yml``][gnfinder.yml] configuration file.
+``config.yaml`` configuration file. The file lists all settings with their
+default values commented out.
 
-This file should be located in the following places:
+| Purpose       | Location                                   |
+|---------------|--------------------------------------------|
+| Configuration | `$HOME/.config/gnfinder/config.yaml`       |
+| Logs          | `$HOME/.local/share/gnfinder/logs/`        |
+| Cache         | `$HOME/.cache/gnfinder/`                   |
 
-MS Windows: `C:\Users\AppData\Roaming\gnfinder.yml`
-
-Mac OS: `$HOME/.config/gnfinder.yml`
-
-Linux: `$HOME/.config/gnfinder.yml`
+The same locations are used on Linux, Mac OS and MS Windows (where
+`$HOME` is `C:\Users\<user>`).
 
 This file allows to set options that will modify behaviour of ``GNfinder``
 according to your needs. It will spare you to enter the same flags for the
 command line application again and again.
 
-Command line flags will override the settings in the configuration file.
+Settings can also be given as environment variables. The order of
+precedence, from highest to lowest, is:
 
-It is also possible to setup environment variables. They will override the
-settings in both the configuration file and from the flags.
+1. Command line flags
+2. Environment variables
+3. Configuration file
+4. Built-in defaults
 
-| Settings              | Environment variables       |
-|-----------------------|-----------------------------|
-| BayesOddsThreshold    | GNF_BAYES_ODDS_THRESHOLD    |
-| DataSources           | GNF_DATA_SOURCES            |
-| Format                | GNF_FORMAT                  |
-| InputTextOnly         | GNF_INPUT_TEXT_ONLY         |
-| IncludeInputText      | GNF_INCLUDE_INPUT_TEXT      |
-| Language              | GNF_LANGUAGE                |
-| TikaURL               | GNF_TIKA_URL                |
-| TokensAround          | GNF_TOKENS_AROUND           |
-| VerifierURL           | GNF_VERIFIER_URL            |
-| WithAllMatches        | GNF_WITH_ALL_MATCHES        |
-| WithAmbiguousNames    | GNF_WITH_AMBIGUOUS_NAMES    |
-| WithBayesOddsDetails  | GNF_WITH_BAYES_ODDS_DETAILS |
-| WithOddsAdjustment    | GNF_WITH_ODDS_ADJUSTMENT    |
-| WithPlainInput        | GNF_WITH_PLAIN_INPUT        |
-| WithPositionInBytes   | GNF_WITH_POSITION_IN_BYTES  |
-| WithUniqueNames       | GNF_WITH_UNIQUE_NAMES       |
-| WithVerification      | GNF_WITH_VERIFICATION       |
-| WithoutBayes          | GNF_WITHOUT_BAYES           |
+| Settings                | Environment variables       |
+|-------------------------|-----------------------------|
+| bayes_odds_threshold    | GNF_BAYES_ODDS_THRESHOLD    |
+| data_sources            | GNF_DATA_SOURCES            |
+| format                  | GNF_FORMAT                  |
+| include_input_text      | GNF_INCLUDE_INPUT_TEXT      |
+| input_text_only         | GNF_INPUT_TEXT_ONLY         |
+| language                | GNF_LANGUAGE                |
+| tika_url                | GNF_TIKA_URL                |
+| tokens_around           | GNF_TOKENS_AROUND           |
+| verifier_url            | GNF_VERIFIER_URL            |
+| with_all_matches        | GNF_WITH_ALL_MATCHES        |
+| with_ambiguous_names    | GNF_WITH_AMBIGUOUS_NAMES    |
+| with_bayes              | GNF_WITH_BAYES              |
+| with_bayes_odds_details | GNF_WITH_BAYES_ODDS_DETAILS |
+| with_odds_adjustment    | GNF_WITH_ODDS_ADJUSTMENT    |
+| with_plain_input        | GNF_WITH_PLAIN_INPUT        |
+| with_position_in_bytes  | GNF_WITH_POSITION_IN_BYTES  |
+| with_unique_names       | GNF_WITH_UNIQUE_NAMES       |
+| with_verification       | GNF_WITH_VERIFICATION       |
+| log.format              | GNF_LOG_FORMAT              |
+| log.level               | GNF_LOG_LEVEL               |
+| log.destination         | GNF_LOG_DESTINATION         |
+
+`GNF_DATA_SOURCES` takes a comma-separated list, for example
+`GNF_DATA_SOURCES="1,11"`. The older `GNF_WITHOUT_BAYES` variable still
+works.
+
+### Output and logs
+
+Results of name-finding are written to STDOUT. Short user-facing messages,
+warnings and errors are written to STDERR, so they do not mix with the
+results.
+
+Detailed logs are written in JSON format to
+`$HOME/.local/share/gnfinder/logs/gnfinder.log`. The log file is
+overwritten on every run. Logs can be redirected and reformatted:
+
+```bash
+# human-readable colored logs to STDERR
+GNF_LOG_DESTINATION=stderr GNF_LOG_FORMAT=tint gnfinder file.txt
+```
+
+### Migration from GNfinder v1.1 and earlier
+
+Earlier versions used `gnfinder.yml` located directly in the user's config
+directory (for example `$HOME/.config/gnfinder.yml`) with CamelCase keys.
+On the first run GNfinder v1.2 copies settings from that file into the new
+`config.yaml` and reports which settings were migrated. After that the old
+file is not used anymore and can be deleted.
 
 ## Usage
 
@@ -359,19 +394,29 @@ There is also a [tutorial] about processing many PDF files in parallel.
 
 ```go
 import (
-  "github.com/gnames/gnfinder"
-  "github.com/gnames/gnfinder/ent/nlp"
-  "github.com/gnames/gnfinder/io/dict"
+  "fmt"
+  "log"
+
+  gnfinder "github.com/gnames/gnfinder/pkg"
+  "github.com/gnames/gnfinder/pkg/config"
+  "github.com/gnames/gnfinder/pkg/ent/nlp"
+  "github.com/gnames/gnfinder/pkg/io/dict"
 )
 
 func Example() {
   txt := `Blue Adussel (Mytilus edulis) grows to about two
 inches the first year,Pardosa moesta Banks, 1892`
-  cfg := gnfinder.NewConfig()
-  dictionary := dict.LoadDictionary()
-  weights := nlp.BayesWeights()
+  cfg := config.New()
+  dictionary, err := dict.LoadDictionary()
+  if err != nil {
+    log.Fatal(err)
+  }
+  weights, err := nlp.BayesWeights()
+  if err != nil {
+    log.Fatal(err)
+  }
   gnf := gnfinder.New(cfg, dictionary, weights)
-  res := gnf.Find(txt)
+  res := gnf.Find("", txt)
   name := res.Names[0]
   fmt.Printf(
     "Name: %s, start: %d, end: %d",
@@ -384,13 +429,17 @@ inches the first year,Pardosa moesta Banks, 1892`
 }
 ```
 
+Settings are changed with options, for example
+`config.New(config.OptWithVerification(true), config.OptTokensAround(3))`.
+Invalid option values are ignored, and a warning is printed to STDERR.
+
 ### Usage as a docker container
 
 ```bash
 docker pull gnames/gnfinder
 
 # run GNfinder server, and map it to port 8888 on the host machine
-docker run -d -p 8888:8778 --name gnfinder gnames/gnfinder
+docker run -d -p 8888:8999 --name gnfinder gnames/gnfinder
 ```
 
 ## Projects based on GNfinder
@@ -446,7 +495,6 @@ just test
 [finder-web]: https://finder.globalnames.org
 [gnfinder gem]: https://rubygems.org/gems/gnfinder
 [gnfinder-plus]: https://github.com/biodiv-platform/gnfinder-plus
-[gnfinder.yml]: https://github.com/gnames/gnfinder/blob/master/gnfinder/cmd/gnfinder.yml
 [gnindex]: https://index.globalnames.org
 [gnverifier]: https://verifier.globalnames.org/data_sources
 [go-report-img]: https://goreportcard.com/badge/github.com/gnames/gnfinder
