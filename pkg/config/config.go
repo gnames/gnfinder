@@ -2,9 +2,8 @@
 // gnfinder application.
 //
 // This package has no I/O dependencies (no file operations, no network
-// calls). Invalid option values are rejected or corrected with a warning
-// sent to slog. gn.Warn is not used, because gn prints to STDOUT, where
-// gnfinder writes its results.
+// calls). Invalid option values are rejected or corrected with a
+// user-facing warning via gn.Warn (written to STDERR).
 //
 // # Configuration Sources
 //
@@ -19,10 +18,10 @@
 package config
 
 import (
-	"log/slog"
 	"slices"
 	"strings"
 
+	"github.com/gnames/gn"
 	"github.com/gnames/gnfinder/pkg/ent/lang"
 	"github.com/gnames/gnfmt"
 )
@@ -135,7 +134,7 @@ type Option func(*Config)
 func OptBayesOddsThreshold(f float64) Option {
 	return func(cfg *Config) {
 		if f <= 0 {
-			slog.Warn("Bayes odds threshold must be positive", "value", f)
+			gn.Warn("Bayes odds threshold must be positive, got %v", f)
 			return
 		}
 		cfg.BayesOddsThreshold = f
@@ -146,7 +145,7 @@ func OptBayesOddsThreshold(f float64) Option {
 func OptFormat(f gnfmt.Format) Option {
 	return func(cfg *Config) {
 		if f == gnfmt.FormatNone {
-			slog.Warn("Output format cannot be empty")
+			gn.Warn("Output format cannot be empty")
 			return
 		}
 		cfg.Format = f
@@ -195,13 +194,9 @@ func OptTikaURL(s string) Option {
 // side of a name-candidate.
 func OptTokensAround(i int) Option {
 	return func(cfg *Config) {
-		if i < 0 {
-			slog.Warn("Tokens' number around name must be in between 0 and 5")
-			i = 0
-		}
-		if i > 5 {
-			slog.Warn("Tokens' number around name must be in between 0 and 5")
-			i = 5
+		if i < 0 || i > 5 {
+			gn.Warn("Number of words around names must be between 0 and 5, got %d", i)
+			i = max(0, min(i, 5))
 		}
 		cfg.TokensAround = i
 	}
@@ -352,7 +347,7 @@ func New(opts ...Option) Config {
 }
 
 // Update applies configuration options to an existing Config.
-// Invalid options are ignored or corrected with a warning in the log.
+// Invalid options are ignored or corrected with a warning via gn.Warn().
 func (c *Config) Update(opts ...Option) {
 	for _, opt := range opts {
 		opt(c)
@@ -417,7 +412,7 @@ func (c *Config) ToOptions() []Option {
 
 func isValidString(name, value string) bool {
 	if strings.TrimSpace(value) == "" {
-		slog.Warn(name + " cannot be empty")
+		gn.Warn("%s cannot be empty", name)
 		return false
 	}
 	return true
@@ -427,6 +422,6 @@ func isValidEnum(name, value string, allowed []string) bool {
 	if slices.Contains(allowed, value) {
 		return true
 	}
-	slog.Warn(name+" has an unknown value", "value", value, "allowed", allowed)
+	gn.Warn("%s must be one of %v, got '%s'", name, allowed, value)
 	return false
 }

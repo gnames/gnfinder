@@ -20,17 +20,8 @@
 
 package main
 
-import (
-	"log/slog"
-	"os"
-
-	"github.com/gnames/gnfinder/cmd"
-	"github.com/lmittmann/tint"
-)
+import "github.com/gnames/gnfinder/cmd"
 
 func main() {
-	handle := slog.New(tint.NewHandler(os.Stderr, nil))
-	slog.SetDefault(handle)
-
 	cmd.Execute()
 }

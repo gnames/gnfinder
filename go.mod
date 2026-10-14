@@ -6,19 +6,20 @@ require (
 	github.com/abadojack/whatlanggo v1.0.1
 	github.com/aclements/perflock v0.0.0-20240209181333-b67f3f23152f
 	github.com/gnames/bayes v0.5.3
-	github.com/gnames/gn v0.1.3
+	github.com/gnames/gn v0.1.4
 	github.com/gnames/gndoc v0.3.4
 	github.com/gnames/gner v0.1.6
 	github.com/gnames/gnfmt v0.6.0
 	github.com/gnames/gnlib v0.47.0
 	github.com/gnames/gnstats v0.2.1
-	github.com/gnames/gnsys v0.3.8
 	github.com/gnames/gnverifier v1.2.5
+	github.com/go-viper/mapstructure/v2 v2.2.1
 	github.com/json-iterator/go v1.1.12
 	github.com/labstack/echo/v4 v4.13.3
 	github.com/lmittmann/tint v1.0.7
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.11.2
 	github.com/spf13/cobra v1.9.1
+	github.com/spf13/pflag v1.0.6
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/perf v0.0.0-20250414141303-3fc2b901edf3
@@ -33,8 +34,8 @@ require (
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/gnames/gnquery v0.3.4 // indirect
+	github.com/gnames/gnsys v0.3.8 // indirect
 	github.com/gnames/gnuuid v0.2.0 // indirect
-	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
 	github.com/google/go-tika v0.3.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
@@ -50,7 +51,6 @@ require (
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.14.0 // indirect
 	github.com/spf13/cast v1.7.1 // indirect
-	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/ulikunitz/xz v0.5.12 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
