@@ -176,15 +176,18 @@ func bootstrap(cmd *cobra.Command, args []string) error {
 	_, statErr := os.Stat(cfgPath)
 	isFirstRun := os.IsNotExist(statErr)
 
+	if isFirstRun {
+		gn.Info("Configuration file created at <em>%s</em>", cfgPath)
+		gn.Info("Logs are available at <em>%s</em>", config.LogDir(homeDir))
+		migrateLegacyConfig(homeDir)
+	}
+
 	if err = iofs.EnsureConfigFile(homeDir); err != nil {
 		slog.Error("Failed to ensure config file", "error", err)
 		return err
 	}
-
 	if isFirstRun {
 		slog.Info("Config file created", "config_file", cfgPath)
-		gn.Info("Configuration file created at <em>%s</em>", cfgPath)
-		gn.Info("Logs are available at <em>%s</em>", config.LogDir(homeDir))
 	}
 
 	opts, err := initConfig(homeDir)
@@ -206,6 +209,41 @@ func bootstrap(cmd *cobra.Command, args []string) error {
 		"log_destination", cfg.Log.Destination,
 	)
 	return nil
+}
+
+// migrateLegacyConfig moves settings from gnfinder.yml used by gnfinder
+// v1.1 and earlier to config.yaml. Failures do not stop gnfinder, because
+// config.yaml with default settings is created afterwards.
+func migrateLegacyConfig(homeDir string) {
+	cfgDir, err := os.UserConfigDir()
+	if err != nil {
+		return
+	}
+	legacyPath := filepath.Join(cfgDir, iofs.LegacyConfigFile)
+	if _, err = os.Stat(legacyPath); err != nil {
+		return
+	}
+
+	slog.Info("Legacy config file found", "legacy_path", legacyPath)
+	keys, err := iofs.MigrateLegacyConfig(legacyPath, homeDir)
+	if err != nil {
+		slog.Warn("Failed to migrate legacy config file",
+			"legacy_path", legacyPath, "error", err,
+		)
+		gn.Warn("Cannot migrate settings from old <em>%s</em>", legacyPath)
+		return
+	}
+
+	if len(keys) > 0 {
+		slog.Info("Legacy config file migrated",
+			"legacy_path", legacyPath, "keys", keys,
+		)
+		gn.Info("Settings <em>%s</em> migrated from <em>%s</em>",
+			strings.Join(keys, ", "), legacyPath,
+		)
+	}
+	gn.Info("Old config file <em>%s</em> is not used anymore "+
+		"and can be deleted", legacyPath)
 }
 
 // reconfigureLogging reinitializes the logger with the loaded configuration.
