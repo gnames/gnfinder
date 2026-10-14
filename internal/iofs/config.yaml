@@ -1,0 +1,53 @@
+# GNfinder Configuration File
+#
+# This file contains persistent settings that can also be set via environment
+# variables. Uncomment and modify values as needed. All values below show the
+# built-in defaults.
+#
+# Configuration Precedence (highest to lowest):
+#   1. CLI flags (--format, --lang, etc.)
+#   2. Environment variables (GNF_FORMAT, GNF_LANGUAGE, etc.)
+#   3. This config file (~/.config/gnfinder/config.yaml)
+#   4. Built-in defaults (shown below)
+
+# Logging settings
+log:
+  # format: json                  # Options: json, text, tint
+  # level: info                   # Options: debug, info, warn, error
+  # destination: file             # Options: file, stdout, stderr
+
+# Output format of name-finding results.
+# format: csv                     # Options: csv, tsv, compact, pretty
+
+# Language of the text. 'detect' tries to detect the language automatically.
+# language: eng                   # Options: eng, deu, detect
+
+# Posterior odds limit. Name-candidates with higher odds are names.
+# bayes_odds_threshold: 80
+
+# Number of words before and after each name to return (0-5).
+# tokens_around: 0
+
+# URL of Apache Tika service that converts files to UTF-8-encoded text.
+# tika_url: https://tika.globalnames.org
+
+# URL of the name-verification service.
+# verifier_url: https://verifier.globalnames.org/api/v1/
+
+# IDs of data-sources to verify names against. Setting data-sources
+# turns verification on. For IDs see
+# https://verifier.globalnames.org/data_sources
+# data_sources: []                # Example: [1, 11]
+
+# Boolean settings
+# include_input_text: false       # add the input text to results
+# input_text_only: false          # return only input text, no name-finding
+# with_all_matches: false         # verification returns all matches
+# with_ambiguous_names: false     # keep uninomials that are also common words
+# with_bayes: true                # run Bayes algorithms after heuristics
+# with_bayes_odds_details: false  # show details of odds calculation
+# with_odds_adjustment: false     # adjust odds using density of found names
+# with_plain_input: false         # read files directly, without Apache Tika
+# with_position_in_bytes: false   # offsets in bytes, not UTF-8 characters
+# with_unique_names: false        # return a unique list of names
+# with_verification: false        # verify found names
