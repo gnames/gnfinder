@@ -7,6 +7,7 @@ import (
 
 	"github.com/gnames/gnfinder/pkg/config"
 	"github.com/gnames/gnfinder/pkg/ent/lang"
+	"github.com/gnames/gnfmt"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -86,5 +87,92 @@ func TestConfig(t *testing.T) {
 			cfg := config.New(opts...)
 			assert.Equal(t, cfg.Language, v.langCfg, v.msg)
 		}
+	})
+}
+
+func TestLogDefaults(t *testing.T) {
+	cfg := config.New()
+	assert.Equal(t, "json", cfg.Log.Format)
+	assert.Equal(t, "info", cfg.Log.Level)
+	assert.Equal(t, "file", cfg.Log.Destination)
+	assert.Equal(t, "", cfg.HomeDir)
+}
+
+func TestInvalidOptions(t *testing.T) {
+	slog.SetDefault(slog.New(slog.NewTextHandler(io.Discard, nil)))
+	def := config.New()
+	cfg := config.New(
+		config.OptBayesOddsThreshold(-1),
+		config.OptFormat(gnfmt.FormatNone),
+		config.OptTikaURL(""),
+		config.OptVerifierURL("  "),
+		config.OptLogFormat("xml"),
+		config.OptLogLevel("loud"),
+		config.OptLogDestination("printer"),
+		config.OptHomeDir(""),
+	)
+	assert.Equal(t, def, cfg)
+}
+
+func TestUpdate(t *testing.T) {
+	cfg := config.New()
+	cfg.Update(
+		config.OptFormat(gnfmt.PrettyJSON),
+		config.OptLogLevel("debug"),
+		config.OptHomeDir(" /home/user "),
+	)
+	assert.Equal(t, gnfmt.PrettyJSON, cfg.Format)
+	assert.Equal(t, "debug", cfg.Log.Level)
+	assert.Equal(t, "/home/user", cfg.HomeDir)
+
+	assert.False(t, cfg.WithVerification)
+	cfg.Update(config.OptDataSources([]int{1, 11}))
+	assert.True(t, cfg.WithVerification, "data-sources turn on verification")
+}
+
+func TestToOptions(t *testing.T) {
+	t.Run("round-trip of persistent fields", func(t *testing.T) {
+		src := config.New(
+			config.OptBayesOddsThreshold(100),
+			config.OptFormat(gnfmt.TSV),
+			config.OptIncludeInputText(true),
+			config.OptLanguage(lang.None),
+			config.OptDataSources([]int{1, 11}),
+			config.OptTikaURL("http://localhost:9998"),
+			config.OptTokensAround(3),
+			config.OptVerifierURL("http://localhost:8888/api/v1/"),
+			config.OptWithAllMatches(true),
+			config.OptWithAmbiguousNames(true),
+			config.OptWithBayes(false),
+			config.OptWithBayesOddsDetails(true),
+			config.OptWithOddsAdjustment(true),
+			config.OptWithPlainInput(true),
+			config.OptWithPositonInBytes(true),
+			config.OptWithUniqueNames(true),
+			config.OptLogFormat("tint"),
+			config.OptLogLevel("warn"),
+			config.OptLogDestination("stderr"),
+		)
+		cfg := config.New(src.ToOptions()...)
+		assert.Equal(t, src, cfg)
+
+		src.DataSources[0] = 3
+		assert.Equal(t, []int{1, 11}, cfg.DataSources, "data-sources are copied")
+	})
+
+	t.Run("runtime fields are not included", func(t *testing.T) {
+		src := config.New(config.OptHomeDir("/home/user"))
+		src.LanguageDetected = "deu"
+		src.APIDoc = "http://example.org"
+		cfg := config.New(src.ToOptions()...)
+		assert.Equal(t, "", cfg.HomeDir)
+		assert.Equal(t, "", cfg.LanguageDetected)
+		assert.Equal(t, config.New().APIDoc, cfg.APIDoc)
+	})
+
+	t.Run("empty values do not override defaults", func(t *testing.T) {
+		src := config.Config{WithBayes: true, Language: lang.English}
+		cfg := config.New(src.ToOptions()...)
+		assert.Equal(t, config.New(), cfg)
 	})
 }
