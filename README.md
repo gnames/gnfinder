@@ -140,13 +140,13 @@ copy path_to\gnfinder.exe C:\bin
 
 #### Go
 
-Install Go v1.19 or higher.
+Install Go v1.26 or higher.
 
 ```bash
 git clone git@github.com:/gnames/gnfinder
 cd gnfinder
-make tools
-make install
+just tools
+just install
 ```
 
 ## Configuration
@@ -411,8 +411,8 @@ To install the latest GNfinder
 ```bash
 git clone git@github.com:/gnames/gnfinder
 cd gnfinder
-make tools
-make install
+just tools
+just install
 ```
 
 ## Testing
@@ -420,9 +420,9 @@ make install
 From the root of the project:
 
 ```bash
-make tools
-# run make install for CLI testing
-make install
+just tools
+# run just install for CLI testing
+just install
 ```
 
 To run tests go to the root directory of the project and run
@@ -432,7 +432,7 @@ go test ./...
 
 #or
 
-make test
+just test
 ```
 
 [Homebrew]: https://brew.sh/

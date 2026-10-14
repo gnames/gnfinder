@@ -16,3 +16,6 @@ bench*.txt
 binding/*.so
 binding/*.h
 result
+
+# Build artifacts
+bin/

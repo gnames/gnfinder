@@ -8,22 +8,21 @@ jobs:
   test:
     strategy:
       matrix:
-        go-version: [1.22.x]
         platform: [ubuntu-latest, macos-latest, windows-latest]
 
     runs-on: ${{ matrix.platform }}
 
     steps:
-    - name: Install Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: ${{ matrix.go-version }}
-
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
+
+    - name: Install Go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: go.mod
 
     - name: Test
-      run: make test
+      run: go test -shuffle=on -count=1 -race ./...
 
     - name: Vet
       run: go vet ./...

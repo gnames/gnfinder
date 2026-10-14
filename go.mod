@@ -1,6 +1,6 @@
 module github.com/gnames/gnfinder
 
-go 1.25.1
+go 1.26
 
 require (
 	github.com/abadojack/whatlanggo v1.0.1
@@ -18,7 +18,6 @@ require (
 	github.com/lmittmann/tint v1.0.7
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.11.2
 	github.com/spf13/cobra v1.9.1
-	github.com/spf13/cobra-cli v1.3.0
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/perf v0.0.0-20250414141303-3fc2b901edf3
