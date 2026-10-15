@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add [#160]: `VerifCurrentName` and `VerifCurrentCanonical` columns to CSV/TSV
+  output with the currently accepted name and its canonical form from
+  verification.
+
 ## [v1.2.0] - 2026-10-15 Thu
 
 - Add: architecture of the gotemplate project: XDG directories,

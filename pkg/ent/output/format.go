@@ -28,7 +28,8 @@ func CSVHeader(withVerification bool, sep rune) string {
 		"OddsLog10", "Cardinality", "AnnotNomenType", "WordsBefore", "WordsAfter"}
 	if withVerification {
 		verif := []string{"VerifMatchType", "VerifSortScore", "VerifEditDistance",
-			"VerifMatchedName", "VerifMatchedCanonical", "VerifTaxonId",
+			"VerifMatchedName", "VerifMatchedCanonical", "VerifCurrentName",
+			"VerifCurrentCanonical", "VerifTaxonId",
 			"VerifDataSourceId", "VerifDataSourceTitle", "VerifClassificationPath", "VerifError"}
 		res = append(res, verif...)
 	}
@@ -81,7 +82,8 @@ func withVerification(s []string, nv *vlib.Name, sep rune) []string {
 	all := nv.Results
 	if len(all) == 0 {
 		verif := []string{
-			nv.MatchType.String(), "0.0", "", "", "", "", "", "", "", nv.Error,
+			nv.MatchType.String(), "0.0", "", "", "", "", "", "", "", "", "",
+			nv.Error,
 		}
 		row := append(s, verif...)
 		res = append(res, gnfmt.ToCSV(row, sep))
@@ -100,7 +102,8 @@ func makeRow(s []string, v *vlib.ResultData, err string) []string {
 	sortScore := strconv.FormatFloat(v.SortScore, 'f', 5, 64)
 	verif := []string{
 		v.MatchType.String(), sortScore, strconv.Itoa(v.EditDistance), v.MatchedName,
-		v.MatchedCanonicalSimple, v.RecordID, strconv.Itoa(v.DataSourceID),
+		v.MatchedCanonicalSimple, v.CurrentName, v.CurrentCanonicalSimple,
+		v.RecordID, strconv.Itoa(v.DataSourceID),
 		v.DataSourceTitleShort, v.ClassificationPath, err,
 	}
 	return append(s, verif...)
