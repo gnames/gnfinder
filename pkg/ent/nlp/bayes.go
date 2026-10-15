@@ -193,7 +193,7 @@ func naiveBayesFromDump(l lang.Language) (bayes.Bayes, error) {
 		slog.Error("Cannot open file", "path", path, "error", err)
 	}
 
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	json, err := io.ReadAll(f)
 	if err != nil {

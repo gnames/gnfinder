@@ -60,7 +60,7 @@ func Init(logDir string, cfg config.LogConfig, append bool) error {
 	case "text":
 		handler = slog.NewTextHandler(writer, handlerOpts)
 	case "tint":
-		handler = tint.NewHandler(writer, &tint.Options{
+		handler = tint.NewTextHandler(writer, &tint.Options{
 			Level: level,
 			// colors make no sense in a log file
 			NoColor: cfg.Destination == "file",

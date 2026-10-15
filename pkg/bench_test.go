@@ -153,7 +153,7 @@ func runBenchmark(n string, b *testing.B, args inputs) {
 	if err != nil {
 		panic(err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	defer b.StopTimer()
 	defer trace.Stop()
 

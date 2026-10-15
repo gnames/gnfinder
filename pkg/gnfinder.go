@@ -51,7 +51,7 @@ func New(
 		if err != nil {
 			slog.Error("Cannot get Bayesian weights", "error", err)
 			slog.Warn("Switching Bayes algorithm off")
-			gnf.Config.WithBayes = false
+			gnf.WithBayes = false
 		}
 	}
 	return gnf

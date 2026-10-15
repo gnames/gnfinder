@@ -20,10 +20,10 @@ func setupHome(t *testing.T, content string) string {
 	t.Helper()
 	for _, env := range envVars {
 		t.Setenv(env, "")
-		os.Unsetenv(env)
+		require.NoError(t, os.Unsetenv(env))
 	}
 	t.Setenv(envWithoutBayes, "")
-	os.Unsetenv(envWithoutBayes)
+	require.NoError(t, os.Unsetenv(envWithoutBayes))
 
 	home := t.TempDir()
 	require.NoError(t, iofs.EnsureDirs(home))

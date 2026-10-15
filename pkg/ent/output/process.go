@@ -238,7 +238,7 @@ func (o *Output) getStats(st stats.Stats) {
 	})
 	o.Kingdoms = ks
 	o.MainTaxon = st.MainTaxon.Name
-	o.MainTaxonRank = st.MainTaxon.Rank.String()
+	o.MainTaxonRank = st.MainTaxon.String()
 	o.MainTaxonPercentage = st.MainTaxonPercentage
 	o.StatsNamesNum = st.NamesNum
 }

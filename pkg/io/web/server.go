@@ -12,8 +12,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-const withLogs = false
-
 //go:embed static
 var static embed.FS
 

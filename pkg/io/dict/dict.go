@@ -119,7 +119,7 @@ func readData(path string) (map[string]struct{}, error) {
 	}
 	var empty struct{}
 
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	reader := csv.NewReader(f)
 	for {
