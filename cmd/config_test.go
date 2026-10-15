@@ -82,6 +82,8 @@ func TestInitConfigEnv(t *testing.T) {
 	t.Setenv("GNF_DATA_SOURCES", "1,12")
 	t.Setenv("GNF_WITH_AMBIGUOUS_NAMES", "true")
 	t.Setenv("GNF_TIKA_URL", "http://localhost:9998")
+	t.Setenv("GNF_WITH_TIKA", "false")
+	t.Setenv("GNF_WITH_TIKA_FIRST", "true")
 	t.Setenv("GNF_LOG_DESTINATION", "stderr")
 
 	cfg := configFrom(t, home)
@@ -90,6 +92,8 @@ func TestInitConfigEnv(t *testing.T) {
 	assert.Equal(t, []int{1, 12}, cfg.DataSources)
 	assert.True(t, cfg.WithAmbiguousNames)
 	assert.Equal(t, "http://localhost:9998", cfg.TikaURL)
+	assert.False(t, cfg.WithTika)
+	assert.True(t, cfg.WithTikaFirst)
 	assert.Equal(t, "stderr", cfg.Log.Destination)
 }
 
@@ -153,6 +157,7 @@ func TestFlagOpts(t *testing.T) {
 		cmd := newTestCmd(t,
 			"-f", "csv", "-l", "detect", "-n", "-u", "-w", "3",
 			"-s", "1, 11", "-t", "http://localhost:9998",
+			"--no-tika", "--tika-first",
 		)
 		cfg.Update(flagOpts(cmd)...)
 		assert.Equal(t, gnfmt.CSV, cfg.Format)
@@ -163,6 +168,8 @@ func TestFlagOpts(t *testing.T) {
 		assert.Equal(t, []int{1, 11}, cfg.DataSources)
 		assert.True(t, cfg.WithVerification)
 		assert.Equal(t, "http://localhost:9998", cfg.TikaURL)
+		assert.False(t, cfg.WithTika)
+		assert.True(t, cfg.WithTikaFirst)
 	})
 
 	t.Run("all matches turn on verification", func(t *testing.T) {

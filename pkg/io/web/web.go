@@ -48,7 +48,7 @@ func apidoc(gnf gnfinder.GNfinder) func(echo.Context) error {
 	}
 }
 
-func find(gnf gnfinder.GNfinder) func(echo.Context) error {
+func find(gnf gnfinder.GNfinder, doc gndoc.GNdoc) func(echo.Context) error {
 
 	return func(c echo.Context) error {
 		var err error
@@ -62,19 +62,17 @@ func find(gnf gnfinder.GNfinder) func(echo.Context) error {
 			return err
 		}
 
-		tikaURL := gnf.GetConfig().TikaURL
-
 		opts := getOpts(params)
 		gnf = gnf.ChangeConfig(opts...)
 
 		if t := params.Text; t != "" {
 			txt = t
 		} else if url := params.URL; url != "" {
-			ua := "gnfinder/" + gnfinder.Version + " (https://github.com/gnames/gnfinder)"
-			doc := gndoc.New(tikaURL, gndoc.OptUserAgent(ua))
-			txt, dur.TextExtraction, err = doc.TextFromURL(url)
+			var res gndoc.Result
+			res, err = doc.TextFromURL(url)
+			txt, dur.TextExtraction = res.Text, res.Duration
 		} else {
-			txt, filename, dur.TextExtraction, err = textFromFile(c, tikaURL)
+			txt, filename, dur.TextExtraction, err = textFromFile(c, doc)
 		}
 		if err != nil {
 			return err
@@ -153,10 +151,8 @@ func findNames(
 // text of the file content, duration of conversion, and a potential error.
 func textFromFile(
 	c echo.Context,
-	tikaURL string,
+	doc gndoc.GNdoc,
 ) (string, string, float32, error) {
-	start := time.Now()
-	doc := gndoc.New(tikaURL)
 	file, err := c.FormFile("file")
 	if err != nil {
 		return "", "", 0, err
@@ -169,11 +165,12 @@ func textFromFile(
 		return "", filename, 0, err
 	}
 
-	txt, err := doc.GetText(f)
+	defer f.Close()
+
+	res, err := doc.GetText(f)
 	if err != nil {
 		return "", filename, 0, err
 	}
 
-	dur := float32(time.Since(start)) / float32(time.Second)
-	return txt, filename, dur, nil
+	return res.Text, filename, res.Duration, nil
 }

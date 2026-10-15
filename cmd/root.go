@@ -30,6 +30,7 @@ import (
 
 	"github.com/gnames/gn"
 	"github.com/gnames/gndoc"
+	"github.com/gnames/gnfinder/internal/iodoc"
 	"github.com/gnames/gnfinder/internal/iofs"
 	"github.com/gnames/gnfinder/internal/iologger"
 	gnfinder "github.com/gnames/gnfinder/pkg"
@@ -131,13 +132,18 @@ To find IDs refer to "https://verifier.globalnames.org/data_sources".
   181 - IRMNG`)
 	rootCmd.Flags().StringP("tika-url", "t", "",
 		`custom URL for the Apache Tika service.
-The service is used for converting files into UTF8-encoded text.`)
+Files are converted into UTF8-encoded text locally, the service is
+used for formats that cannot be converted locally (images, scanned PDFs).`)
+	rootCmd.Flags().Bool("no-tika", false,
+		"convert files to text only locally, never use Apache Tika.")
+	rootCmd.Flags().Bool("tika-first", false,
+		`convert files with Apache Tika, use local conversion only
+if Tika fails.`)
 	rootCmd.Flags().BoolP("all-matches", "M", false,
 		"verification returns all found matches")
 	rootCmd.Flags().BoolP("utf8-input", "U", false,
 		`affirm that the input is a plain text UTF8 file.
-The direct reading of a file will be used instead of a remote
-Apache Tika service.`)
+The file is read as is, without format detection and conversion.`)
 	rootCmd.Flags().BoolP("unique-names", "u", false,
 		"return unique names list")
 	rootCmd.Flags().BoolP("verify", "v", false, "verify found name-strings.")
@@ -299,17 +305,22 @@ func runRoot(cmd *cobra.Command, args []string) error {
 		data = string(rawData)
 	case 1:
 		input = args[0]
-		ua := "gnfinder/" + gnfinder.Version +
-			" (https://github.com/gnames/gnfinder)"
-		d := gndoc.New(cfg.TikaURL, gndoc.OptUserAgent(ua))
+		d := iodoc.New(cfg, gnfinder.Version)
+		var res gndoc.Result
 		if strings.HasPrefix(input, "http") {
-			data, convDur, err = d.TextFromURL(input)
+			res, err = d.TextFromURL(input)
 		} else {
-			data, convDur, err = d.TextFromFile(input, cfg.WithPlainInput)
+			res, err = d.TextFromFile(input, cfg.WithPlainInput)
 		}
 		if err != nil {
 			return readInputError(input, err)
 		}
+		data, convDur = res.Text, res.Duration
+		slog.Info("Input converted to text",
+			"input", input,
+			"mime", res.MIME,
+			"converter", res.Converter.String(),
+		)
 	default:
 		return cmd.Help()
 	}

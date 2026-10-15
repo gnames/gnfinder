@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gnames/gnfinder/internal/iodoc"
 	gnfinder "github.com/gnames/gnfinder/pkg"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -26,12 +27,16 @@ func Run(gnf gnfinder.GNfinder, port int) error {
 		return err
 	}
 
+	// doc converts URLs and uploaded files to texts, it is safe for
+	// concurrent use, so it is shared by all requests.
+	doc := iodoc.New(gnf.GetConfig(), gnfinder.Version)
+
 	e.Use(middleware.Gzip())
 	e.Use(middleware.CORS())
 
 	e.GET("/", home(gnf))
 	e.GET("/apidoc", apidoc(gnf))
-	e.POST("/find", find(gnf))
+	e.POST("/find", find(gnf, doc))
 
 	e.GET("/api", infoApiGET(gnf))
 	e.GET("/api/", infoApiGET(gnf))
@@ -39,8 +44,8 @@ func Run(gnf gnfinder.GNfinder, port int) error {
 	e.GET("/api/v1/", infoApiGET(gnf))
 	e.GET("/api/v1/ping", pingApiGET())
 	e.GET("/api/v1/version", verApiGET(gnf))
-	e.GET("/api/v1/find/:text", findApiGET(gnf))
-	e.POST("/api/v1/find", findApiPOST(gnf))
+	e.GET("/api/v1/find/:text", findApiGET(gnf, doc))
+	e.POST("/api/v1/find", findApiPOST(gnf, doc))
 
 	fs := http.FileServer(http.FS(static))
 	e.GET("/static/*", echo.WrapHandler(fs))

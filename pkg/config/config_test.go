@@ -148,6 +148,8 @@ func TestToOptions(t *testing.T) {
 			config.OptWithOddsAdjustment(true),
 			config.OptWithPlainInput(true),
 			config.OptWithPositonInBytes(true),
+			config.OptWithTika(false),
+			config.OptWithTikaFirst(true),
 			config.OptWithUniqueNames(true),
 			config.OptLogFormat("tint"),
 			config.OptLogLevel("warn"),
@@ -171,7 +173,9 @@ func TestToOptions(t *testing.T) {
 	})
 
 	t.Run("empty values do not override defaults", func(t *testing.T) {
-		src := config.Config{WithBayes: true, Language: lang.English}
+		src := config.Config{
+			WithBayes: true, WithTika: true, Language: lang.English,
+		}
 		cfg := config.New(src.ToOptions()...)
 		assert.Equal(t, config.New(), cfg)
 	})

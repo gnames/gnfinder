@@ -68,8 +68,11 @@ type Config struct {
 	// https://verifier.globalnames.org/api/v1/data_sources
 	DataSources []int `mapstructure:"data_sources" yaml:"data_sources"`
 
-	// TikaURL contains the URL of Apache Tika service. This service is used
-	// for extraction of UTF8-encoded texts from a variety of file formats.
+	// TikaURL contains the URL of Apache Tika service. Common formats
+	// (plain texts, HTML, XML, PDF, MS Office, OpenDocument) are converted
+	// to UTF8-encoded texts locally, Tika is used as a fallback for other
+	// formats (for example images or scanned PDFs). See also WithTika and
+	// WithTikaFirst.
 	TikaURL string `mapstructure:"tika_url" yaml:"tika_url"`
 
 	// TokensAround sets the number of tokens (words) before and after each
@@ -107,6 +110,16 @@ type Config struct {
 	// WithPositionInBytes can be set to true to receive offsets in number of
 	// bytes instead of UTF-8 characters.
 	WithPositionInBytes bool `mapstructure:"with_position_in_bytes" yaml:"with_position_in_bytes"`
+
+	// WithTika allows to use Apache Tika service for files that cannot be
+	// converted to text locally. If it is false, files are converted only
+	// locally, and they are never sent to a remote service.
+	WithTika bool `mapstructure:"with_tika" yaml:"with_tika"`
+
+	// WithTikaFirst makes Apache Tika the main converter of files to text,
+	// local conversion is used only if Tika fails. It has no effect if
+	// WithTika is false.
+	WithTikaFirst bool `mapstructure:"with_tika_first" yaml:"with_tika_first"`
 
 	// WithUniqueNames can be set to true to get a unique list of names.
 	WithUniqueNames bool `mapstructure:"with_unique_names" yaml:"with_unique_names"`
@@ -258,6 +271,22 @@ func OptWithPlainInput(b bool) Option {
 	}
 }
 
+// OptWithTika sets WithTika option. If it is false, files are converted
+// to text only locally, without Apache Tika service.
+func OptWithTika(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithTika = b
+	}
+}
+
+// OptWithTikaFirst sets WithTikaFirst option. If it is true, Apache Tika
+// is the main converter of files to text, local conversion is a fallback.
+func OptWithTikaFirst(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithTikaFirst = b
+	}
+}
+
 // OptWithPositonInBytes is an option that allows to have offsets in number of
 // bytes of number of UTF-8 characters.
 func OptWithPositonInBytes(b bool) Option {
@@ -330,6 +359,7 @@ func New(opts ...Option) Config {
 		Format:             gnfmt.CSV,
 		Language:           lang.English,
 		WithBayes:          true,
+		WithTika:           true,
 		BayesOddsThreshold: 80.0,
 		TokensAround:       0,
 		VerifierURL:        "https://verifier.globalnames.org/api/v1/",
@@ -380,6 +410,8 @@ func (c *Config) ToOptions() []Option {
 		OptWithOddsAdjustment(c.WithOddsAdjustment),
 		OptWithPlainInput(c.WithPlainInput),
 		OptWithPositonInBytes(c.WithPositionInBytes),
+		OptWithTika(c.WithTika),
+		OptWithTikaFirst(c.WithTikaFirst),
 		OptWithUniqueNames(c.WithUniqueNames),
 		OptWithVerification(c.WithVerification),
 	}

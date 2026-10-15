@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## [v1.3.0] - 2026-10-15 Thu
+
+- Add: gndoc v0.4.0 converts files to text locally (plain texts in
+  various encodings, HTML, XML, PDF, MS Office, OpenDocument), Apache Tika
+  is used only for formats that cannot be converted locally.
+- Add: `with_tika` setting (`--no-tika` flag, `GNF_WITH_TIKA`) to convert
+  files only locally, without Apache Tika.
+- Add: `with_tika_first` setting (`--tika-first` flag,
+  `GNF_WITH_TIKA_FIRST`) to use Apache Tika first, and local conversion as
+  a fallback.
+- Add: cache of compiled PDFium module in `~/.cache/gndoc` for faster
+  start of PDF conversion.
+
 ## [v1.2.0] - 2026-10-15 Thu
 
 - Add [#160]: `VerifCurrentName` and `VerifCurrentCanonical` columns to CSV/TSV
@@ -430,6 +443,7 @@
 
 This document follows [changelog guidelines]
 
+[v1.3.0]: https://github.com/gnames/gnfinder/compare/v1.2.0...v1.3.0
 [v1.2.0]: https://github.com/gnames/gnfinder/compare/v1.1.13...v1.2.0
 [v1.1.13]: https://github.com/gnames/gnfinder/compare/v1.1.12...v1.1.13
 [v1.1.12]: https://github.com/gnames/gnfinder/compare/v1.1.11...v1.1.12

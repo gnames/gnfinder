@@ -36,6 +36,8 @@ var envVars = map[string]string{
 	"with_odds_adjustment":    "GNF_WITH_ODDS_ADJUSTMENT",
 	"with_plain_input":        "GNF_WITH_PLAIN_INPUT",
 	"with_position_in_bytes":  "GNF_WITH_POSITION_IN_BYTES",
+	"with_tika":               "GNF_WITH_TIKA",
+	"with_tika_first":         "GNF_WITH_TIKA_FIRST",
 	"with_unique_names":       "GNF_WITH_UNIQUE_NAMES",
 	"with_verification":       "GNF_WITH_VERIFICATION",
 	"log.format":              "GNF_LOG_FORMAT",

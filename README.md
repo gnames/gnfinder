@@ -52,8 +52,10 @@ as a [RESTful API][apidoc].
 * Includes REST API and web-based User Interface.
 * Takes UTF8-encoded text and returns back CSV, TSV or JSON-formatted output
   that contains detected scientific names.
-* Extracts text from PDF files, MS Word, MS Excel, HTML, XML, RTF, JPG,
-  TIFF, GIF etc. files for names-detection.
+* Extracts text from PDF, MS Office (DOCX, XLSX, PPTX), OpenDocument,
+  HTML, XML files and plain texts in UTF-8, UTF-16 or Latin-1 encodings
+  locally. Other formats (images, scanned PDFs, legacy MS Office files,
+  RTF etc.) are converted by a remote [Apache Tika] service.
 * Downloads web-page from a given URL for names-detection.
 * Optionally, automatically detects the language of the text, and adjusts Bayes
   algorithm for the language. English and German languages are currently
@@ -194,6 +196,8 @@ precedence, from highest to lowest, is:
 | with_odds_adjustment    | GNF_WITH_ODDS_ADJUSTMENT    |
 | with_plain_input        | GNF_WITH_PLAIN_INPUT        |
 | with_position_in_bytes  | GNF_WITH_POSITION_IN_BYTES  |
+| with_tika               | GNF_WITH_TIKA               |
+| with_tika_first         | GNF_WITH_TIKA_FIRST         |
 | with_unique_names       | GNF_WITH_UNIQUE_NAMES       |
 | with_verification       | GNF_WITH_VERIFICATION       |
 | log.format              | GNF_LOG_FORMAT              |
@@ -203,6 +207,32 @@ precedence, from highest to lowest, is:
 `GNF_DATA_SOURCES` takes a comma-separated list, for example
 `GNF_DATA_SOURCES="1,11"`. The older `GNF_WITHOUT_BAYES` variable still
 works.
+
+### Conversion of files to text
+
+Files are converted to UTF-8-encoded text by [gndoc]. There are three
+modes of conversion:
+
+| Settings                | Flags          | Behavior                         |
+|-------------------------|----------------|----------------------------------|
+| defaults                |                | local first, Tika as a fallback  |
+| `with_tika_first: true` | `--tika-first` | Tika first, local as a fallback  |
+| `with_tika: false`      | `--no-tika`    | local conversion only            |
+
+By default files never leave your computer, unless they cannot be
+converted locally (images, scanned PDFs without a text layer, legacy MS
+Office files etc.). Then they are sent to the Apache Tika service at
+`tika_url`. Use `--no-tika` to make sure no file is sent to a remote
+service. In this case formats that need Tika return an error.
+
+PDF files are converted with [PDFium] compiled to WebAssembly. Its first
+start takes about 1.5 seconds, so the compiled module is cached in
+`$HOME/.cache/gndoc`, and the following runs are fast. The directory can
+be removed at any time.
+
+Offsets of names in plain-text files (UTF-8, UTF-16, Latin-1) correspond
+to the original file. For other formats offsets correspond to the
+converted text, which can be received with the `-I` or `-i` flags.
 
 ### Output and logs
 
@@ -277,12 +307,11 @@ Starting as a web-application and an API server on port 8080
 gnfinder -p 8080
 ```
 
-Getting names from a UTF8-encoded file without remote Tika service.
+Getting names from a UTF8-encoded file.
 
 ```bash
-# -U flag prevents use of remote Apache Tika service for file conversion to
-# UTF8-encoded plain text
-# -U flag is optional, but it removes unnecessary remote call to Tika.
+# -U flag reads the file as is, without detection of its format.
+# The flag is optional, plain texts are detected and read locally anyway.
 
 gnfinder file_with_names.txt -U
 ```
@@ -297,6 +326,12 @@ Getting names from a file that is not a plain UTF8-encoded text
 
 ```bash
 gnfinder file.pdf
+
+# do not send files to the remote Tika service
+gnfinder file.pdf --no-tika
+
+# convert files with Tika, use local conversion only if Tika fails
+gnfinder file.pdf --tika-first
 ```
 
 Getting names from a URL
@@ -484,7 +519,9 @@ go test ./...
 just test
 ```
 
+[Apache Tika]: https://tika.apache.org/
 [Homebrew]: https://brew.sh/
+[PDFium]: https://pdfium.googlesource.com/pdfium/
 [Zenodo DOI]: https://zenodo.org/badge/latestdoi/137407958
 [apidoc]: https://apidoc.globalnames.org/gnfinder
 [bhlindex]: https://github.com/gnames/bhlindex
@@ -494,6 +531,7 @@ just test
 [doc]: https://godoc.org/github.com/gnames/gnfinder
 [finder-web]: https://finder.globalnames.org
 [gnfinder gem]: https://rubygems.org/gems/gnfinder
+[gndoc]: https://github.com/gnames/gndoc
 [gnfinder-plus]: https://github.com/biodiv-platform/gnfinder-plus
 [gnindex]: https://index.globalnames.org
 [gnverifier]: https://verifier.globalnames.org/data_sources

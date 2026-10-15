@@ -45,14 +45,17 @@ func verApiGET(gnf gnfinder.GNfinder) func(echo.Context) error {
 	}
 }
 
-func findApiGET(gnf gnfinder.GNfinder) func(echo.Context) error {
+func findApiGET(
+	gnf gnfinder.GNfinder,
+	doc gndoc.GNdoc,
+) func(echo.Context) error {
 	return func(c echo.Context) error {
 		ctx, cancel := getContext(c)
 		defer cancel()
 		chErr := make(chan error)
 		params := paramsFindGET(c)
 
-		go finder(c, gnf, params, chErr)
+		go finder(c, gnf, doc, params, chErr)
 
 		select {
 		case <-ctx.Done():
@@ -110,7 +113,10 @@ func paramsFindGET(c echo.Context) api.FinderParams {
 	return params
 }
 
-func findApiPOST(gnf gnfinder.GNfinder) func(echo.Context) error {
+func findApiPOST(
+	gnf gnfinder.GNfinder,
+	doc gndoc.GNdoc,
+) func(echo.Context) error {
 	return func(c echo.Context) error {
 		ctx, cancel := getContext(c)
 		defer cancel()
@@ -122,7 +128,7 @@ func findApiPOST(gnf gnfinder.GNfinder) func(echo.Context) error {
 			return err
 		}
 
-		go finder(c, gnf, params, chErr)
+		go finder(c, gnf, doc, params, chErr)
 
 		select {
 		case <-ctx.Done():
@@ -136,7 +142,13 @@ func findApiPOST(gnf gnfinder.GNfinder) func(echo.Context) error {
 	}
 }
 
-func finder(c echo.Context, gnf gnfinder.GNfinder, params api.FinderParams, chErr chan<- error) {
+func finder(
+	c echo.Context,
+	gnf gnfinder.GNfinder,
+	doc gndoc.GNdoc,
+	params api.FinderParams,
+	chErr chan<- error,
+) {
 	var err error
 	var text, filename string
 	var txtExtr float32
@@ -144,11 +156,7 @@ func finder(c echo.Context, gnf gnfinder.GNfinder, params api.FinderParams, chEr
 	var format gnfmt.Format
 	var opts []config.Option
 
-	text, filename, txtExtr, err = getText(
-		c,
-		params,
-		gnf.GetConfig().TikaURL,
-	)
+	text, filename, txtExtr, err = getText(c, doc, params)
 
 	opts, format = getOptsAPI(params)
 	gnf = gnf.ChangeConfig(opts...)
@@ -217,23 +225,17 @@ func getContext(c echo.Context) (ctx context.Context, cancel func()) {
 
 func getText(
 	c echo.Context,
+	doc gndoc.GNdoc,
 	params api.FinderParams,
-	tikaURL string,
 ) (string, string, float32, error) {
-	var err error
-	var txt, filename string
-	var dur float32
-
 	if params.Text != "" {
-		return params.Text, filename, dur, err
+		return params.Text, "", 0, nil
 	}
 
 	if params.URL != "" {
-		ua := "gnfinder/" + gnfinder.Version + " (https://github.com/gnames/gnfinder)"
-		d := gndoc.New(tikaURL, gndoc.OptUserAgent(ua))
-		txt, dur, err = d.TextFromURL(params.URL)
-		return txt, filename, dur, err
+		res, err := doc.TextFromURL(params.URL)
+		return res.Text, "", res.Duration, err
 	}
 
-	return textFromFile(c, tikaURL)
+	return textFromFile(c, doc)
 }

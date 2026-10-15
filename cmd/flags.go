@@ -35,6 +35,10 @@ func flagOpts(cmd *cobra.Command) []config.Option {
 		{"no-bayes", func(b bool) config.Option {
 			return config.OptWithBayes(!b)
 		}},
+		{"no-tika", func(b bool) config.Option {
+			return config.OptWithTika(!b)
+		}},
+		{"tika-first", config.OptWithTikaFirst},
 	}
 	for _, v := range boolFlags {
 		if b, ok := changedBool(fs, v.name); ok {
