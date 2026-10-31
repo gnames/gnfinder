@@ -15,7 +15,7 @@ require (
 	github.com/gnames/gnverifier v1.3.7
 	github.com/go-viper/mapstructure/v2 v2.5.0
 	github.com/json-iterator/go v1.1.12
-	github.com/labstack/echo/v4 v4.16.0
+	github.com/labstack/echo/v4 v4.16.3
 	github.com/lmittmann/tint v1.2.1
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.14.0
 	github.com/spf13/cobra v1.10.2
