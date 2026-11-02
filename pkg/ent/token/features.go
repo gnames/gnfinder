@@ -101,25 +101,26 @@ func (p *Features) SetUninomialDict(cleaned string, d *dict.Dictionary) {
 	if p.UninomialDict != dict.NotSet {
 		return
 	}
-	in := func(dict map[string]struct{}) bool { _, ok := dict[cleaned]; return ok }
-	inlow := func(dict map[string]struct{}) bool {
-		_, ok := dict[strings.ToLower(cleaned)]
-		return ok
-	}
+	low := strings.ToLower(cleaned)
 
+	// Exact sets go first, probabilistic InGenera and InUninomials last, so
+	// known non-names cannot become false positives. The order of exact
+	// sets matters: ambiguous names are also common words. InGenera and
+	// InUninomials share no words with the exact sets, so this order gives
+	// the same results as checking them first.
 	switch {
-	case in(d.InGenera):
-		p.UninomialDict = dict.InGenus
-	case in(d.InAmbigGenera):
+	case d.InAmbigGenera.Has(cleaned):
 		p.UninomialDict = dict.InAmbigGenus
-	case in(d.InUninomials):
-		p.UninomialDict = dict.InUninomial
-	case in(d.InAmbigUninomials):
+	case d.InAmbigUninomials.Has(cleaned):
 		p.UninomialDict = dict.InAmbigUninomial
-	case inlow(d.NotInUninomials):
+	case d.NotInUninomials.Has(low):
 		p.UninomialDict = dict.NotInUninomial
-	case inlow(d.CommonWords):
+	case d.CommonWords.Has(low):
 		p.UninomialDict = dict.CommonWords
+	case d.InGenera.Has(cleaned):
+		p.UninomialDict = dict.InGenus
+	case d.InUninomials.Has(cleaned):
+		p.UninomialDict = dict.InUninomial
 	default:
 		p.UninomialDict = dict.NotInDictionary
 	}
@@ -129,23 +130,23 @@ func (p *Features) SetSpeciesDict(cleaned string, d *dict.Dictionary) {
 	if p.SpeciesDict != dict.NotSet {
 		return
 	}
-	in := func(dict map[string]struct{}) bool { _, ok := dict[cleaned]; return ok }
+	// Exact sets first, probabilistic InSpecies last (see SetUninomialDict).
 	switch {
-	case in(d.InSpecies):
-		p.SpeciesDict = dict.InSpecies
-	case in(d.InAmbigSpecies):
+	case d.InAmbigSpecies.Has(cleaned):
 		p.SpeciesDict = dict.InAmbigSpecies
-	case in(d.NotInSpecies):
+	case d.NotInSpecies.Has(cleaned):
 		p.SpeciesDict = dict.NotInSpecies
-	case in(d.CommonWords):
+	case d.CommonWords.Has(cleaned):
 		p.SpeciesDict = dict.CommonWords
+	case d.InSpecies.Has(cleaned):
+		p.SpeciesDict = dict.InSpecies
 	default:
 		p.SpeciesDict = dict.NotInDictionary
 	}
 }
 
 func (p *Features) SetRank(raw string, d *dict.Dictionary) {
-	if _, ok := d.Ranks[raw]; ok {
+	if d.Ranks.Has(raw) {
 		p.RankLike = true
 	}
 }

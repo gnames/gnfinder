@@ -3,11 +3,21 @@ package dict
 
 import (
 	"embed"
-	"encoding/csv"
-	"io"
+
+	"github.com/gnames/gnfinder/pkg/io/dict/fuse"
 )
 
-//go:embed data
+// Small dictionaries are embedded as CSV files and kept as exact sets.
+// Large dictionaries are embedded as binary fuse filters (see filter.go),
+// their CSV sources are not embedded. Regenerate filters with
+// `go generate ./pkg/io/dict` after changing the large CSV files.
+//
+//go:generate go run ../../../tools/dictfilter -data data
+//go:embed data/common/eu.csv
+//go:embed data/not-in/uninomials.csv data/not-in/species.csv
+//go:embed data/in-ambig/genera.csv data/in-ambig/species.csv
+//go:embed data/in-ambig/uninomials.csv
+//go:embed data/filter/*.bin
 var data embed.FS
 
 // DictionaryType describes available dictionaries
@@ -37,107 +47,78 @@ const (
 	NotInDictionary
 )
 
-// Dictionary contains dictionaries used for detecting scientific names
+// Dictionary contains dictionaries used for detecting scientific names.
+//
+// InGenera, InSpecies, InUninomials and InAmbigGeneraSp are probabilistic:
+// they never miss a word they contain, but report about 0.0015% of other
+// words as present. All other sets are exact. Callers should check exact
+// sets of non-names (NotInUninomials, NotInSpecies, CommonWords) before the
+// probabilistic ones, so that known words cannot become false positives.
 type Dictionary struct {
-	NotInUninomials   map[string]struct{}
-	NotInSpecies      map[string]struct{}
-	CommonWords       map[string]struct{}
-	InAmbigGenera     map[string]struct{}
-	InAmbigGeneraSp   map[string]struct{}
-	InAmbigSpecies    map[string]struct{}
-	InAmbigUninomials map[string]struct{}
-	InGenera          map[string]struct{}
-	InSpecies         map[string]struct{}
-	InUninomials      map[string]struct{}
-	Ranks             map[string]struct{}
+	NotInUninomials   Set
+	NotInSpecies      Set
+	CommonWords       Set
+	InAmbigGenera     Set
+	InAmbigGeneraSp   Set
+	InAmbigSpecies    Set
+	InAmbigUninomials Set
+	InGenera          Set
+	InSpecies         Set
+	InUninomials      Set
+	Ranks             Set
 }
 
 // LoadDictionary contain most popular words in European languages.
 func LoadDictionary() (*Dictionary, error) {
-	notInUninomials, err := readData("data/not-in/uninomials.csv")
-	if err != nil {
-		return nil, err
+	var err error
+	d := &Dictionary{Ranks: setRanks()}
+
+	exact := []struct {
+		set  *Set
+		path string
+	}{
+		{&d.NotInUninomials, "data/not-in/uninomials.csv"},
+		{&d.NotInSpecies, "data/not-in/species.csv"},
+		{&d.CommonWords, "data/common/eu.csv"},
+		{&d.InAmbigGenera, "data/in-ambig/genera.csv"},
+		{&d.InAmbigSpecies, "data/in-ambig/species.csv"},
+		{&d.InAmbigUninomials, "data/in-ambig/uninomials.csv"},
 	}
-	notInSpecies, err := readData("data/not-in/species.csv")
-	if err != nil {
-		return nil, err
-	}
-	commonWords, err := readData("data/common/eu.csv")
-	if err != nil {
-		return nil, err
-	}
-	inAmbigGenera, err := readData("data/in-ambig/genera.csv")
-	if err != nil {
-		return nil, err
-	}
-	inAmbigGeneraSp, err := readData("data/in-ambig/genera_species.csv")
-	if err != nil {
-		return nil, err
-	}
-	inAmbigSpecies, err := readData("data/in-ambig/species.csv")
-	if err != nil {
-		return nil, err
-	}
-	inAmbigUninomials, err := readData("data/in-ambig/uninomials.csv")
-	if err != nil {
-		return nil, err
-	}
-	inGenera, err := readData("data/in/genera.csv")
-	if err != nil {
-		return nil, err
-	}
-	inSpecies, err := readData("data/in/species.csv")
-	if err != nil {
-		return nil, err
-	}
-	inUninomials, err := readData("data/in/uninomials.csv")
-	if err != nil {
-		return nil, err
+	for _, v := range exact {
+		if *v.set, err = readData(v.path); err != nil {
+			return nil, err
+		}
 	}
 
-	d := &Dictionary{
-		NotInUninomials:   notInUninomials,
-		NotInSpecies:      notInSpecies,
-		CommonWords:       commonWords,
-		InAmbigGenera:     inAmbigGenera,
-		InAmbigGeneraSp:   inAmbigGeneraSp,
-		InAmbigSpecies:    inAmbigSpecies,
-		InAmbigUninomials: inAmbigUninomials,
-		InGenera:          inGenera,
-		InSpecies:         inSpecies,
-		InUninomials:      inUninomials,
-		Ranks:             setRanks(),
+	filters := []struct {
+		set  *Set
+		name string
+	}{
+		{&d.InGenera, "genera"},
+		{&d.InSpecies, "species"},
+		{&d.InUninomials, "uninomials"},
+		{&d.InAmbigGeneraSp, "genera_species"},
+	}
+	for _, v := range filters {
+		if *v.set, err = readFilter(v.name); err != nil {
+			return nil, err
+		}
 	}
 	return d, nil
 }
 
-func readData(path string) (map[string]struct{}, error) {
-	res := make(map[string]struct{})
+func readData(path string) (WordSet, error) {
 	f, err := data.Open(path)
 	if err != nil {
 		return nil, err
 	}
-	var empty struct{}
-
 	defer func() { _ = f.Close() }()
-
-	reader := csv.NewReader(f)
-	for {
-		v, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return nil, err
-		}
-		res[v[0]] = empty
-	}
-	return res, nil
+	return fuse.ReadCSV(f)
 }
 
-func setRanks() map[string]struct{} {
+func setRanks() WordSet {
 	var empty struct{}
-	ranks := map[string]struct{}{
+	ranks := WordSet{
 		"nat": empty, "f.sp": empty, "mut.": empty, "morph.": empty,
 		"nothosubsp.": empty, "convar.": empty, "pseudovar": empty, "sect.": empty,
 		"ser.": empty, "subvar.": empty, "subf.": empty, "race": empty,

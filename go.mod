@@ -3,6 +3,7 @@ module github.com/gnames/gnfinder
 go 1.27.3
 
 require (
+	github.com/FastFilter/xorfilter v0.5.1
 	github.com/abadojack/whatlanggo v1.0.1
 	github.com/aclements/perflock v0.0.0-20240209181333-b67f3f23152f
 	github.com/gnames/bayes v0.5.3
