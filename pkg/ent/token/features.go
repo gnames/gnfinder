@@ -5,6 +5,7 @@ import (
 	"unicode"
 
 	"github.com/gnames/gnfinder/pkg/io/dict"
+	"github.com/gnames/gnfinder/pkg/io/dict/hashdict"
 )
 
 // Features keep properties of a token as a possible candidate for a
@@ -101,24 +102,25 @@ func (p *Features) SetUninomialDict(cleaned string, d *dict.Dictionary) {
 	if p.UninomialDict != dict.NotSet {
 		return
 	}
-	in := func(dict map[string]struct{}) bool { _, ok := dict[cleaned]; return ok }
-	inlow := func(dict map[string]struct{}) bool {
-		_, ok := dict[strings.ToLower(cleaned)]
-		return ok
+	f := d.Lookup(cleaned)
+	// lists of non-names are checked with the lowercased word
+	fl := f
+	if low := strings.ToLower(cleaned); low != cleaned {
+		fl = d.Lookup(low)
 	}
 
 	switch {
-	case in(d.InGenera):
+	case f.Has(hashdict.InGenus):
 		p.UninomialDict = dict.InGenus
-	case in(d.InAmbigGenera):
+	case f.Has(hashdict.InAmbigGenus):
 		p.UninomialDict = dict.InAmbigGenus
-	case in(d.InUninomials):
+	case f.Has(hashdict.InUninomial):
 		p.UninomialDict = dict.InUninomial
-	case in(d.InAmbigUninomials):
+	case f.Has(hashdict.InAmbigUninomial):
 		p.UninomialDict = dict.InAmbigUninomial
-	case inlow(d.NotInUninomials):
+	case fl.Has(hashdict.NotInUninomial):
 		p.UninomialDict = dict.NotInUninomial
-	case inlow(d.CommonWords):
+	case fl.Has(hashdict.CommonWord):
 		p.UninomialDict = dict.CommonWords
 	default:
 		p.UninomialDict = dict.NotInDictionary
@@ -129,15 +131,15 @@ func (p *Features) SetSpeciesDict(cleaned string, d *dict.Dictionary) {
 	if p.SpeciesDict != dict.NotSet {
 		return
 	}
-	in := func(dict map[string]struct{}) bool { _, ok := dict[cleaned]; return ok }
+	f := d.Lookup(cleaned)
 	switch {
-	case in(d.InSpecies):
+	case f.Has(hashdict.InSpecies):
 		p.SpeciesDict = dict.InSpecies
-	case in(d.InAmbigSpecies):
+	case f.Has(hashdict.InAmbigSpecies):
 		p.SpeciesDict = dict.InAmbigSpecies
-	case in(d.NotInSpecies):
+	case f.Has(hashdict.NotInSpecies):
 		p.SpeciesDict = dict.NotInSpecies
-	case in(d.CommonWords):
+	case f.Has(hashdict.CommonWord):
 		p.SpeciesDict = dict.CommonWords
 	default:
 		p.SpeciesDict = dict.NotInDictionary
@@ -145,7 +147,7 @@ func (p *Features) SetSpeciesDict(cleaned string, d *dict.Dictionary) {
 }
 
 func (p *Features) SetRank(raw string, d *dict.Dictionary) {
-	if _, ok := d.Ranks[raw]; ok {
+	if d.Ranks.Has(raw) {
 		p.RankLike = true
 	}
 }

@@ -114,7 +114,7 @@ func checkInAmbigGeneraSp(
 	d *dict.Dictionary,
 ) bool {
 	sp := fmt.Sprintf("%s %s", g.Cleaned(), s.Cleaned())
-	if _, ok := d.InAmbigGeneraSp[sp]; ok {
+	if d.InAmbigGeneraSp.Has(sp) {
 		g.Features().GenSpInAmbigDict += 1
 		return true
 	}
@@ -126,7 +126,7 @@ func checkInAmbigGeneraIsp(
 	d *dict.Dictionary,
 ) bool {
 	name := fmt.Sprintf("%s %s %s", g.Cleaned(), s.Cleaned(), isp.Cleaned())
-	if _, ok := d.InAmbigGeneraSp[name]; ok {
+	if d.InAmbigGeneraSp.Has(name) {
 		g.Features().GenSpInAmbigDict += 1
 		return true
 	}
