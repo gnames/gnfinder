@@ -8,12 +8,15 @@ import (
 
 	"github.com/gnames/bayes"
 	"github.com/gnames/bayes/ent/feature"
+	"github.com/gnames/gnabbr"
+	abbrcfg "github.com/gnames/gnabbr/pkg/config"
 	"github.com/gnames/gnfinder/pkg/config"
 	"github.com/gnames/gnfinder/pkg/ent/heuristic"
 	"github.com/gnames/gnfinder/pkg/ent/lang"
 	"github.com/gnames/gnfinder/pkg/ent/nlp"
 	"github.com/gnames/gnfinder/pkg/ent/output"
 	"github.com/gnames/gnfinder/pkg/ent/token"
+	"github.com/gnames/gnfinder/pkg/ent/verifier"
 	"github.com/gnames/gnfinder/pkg/io/dict"
 	"github.com/gnames/gnfmt"
 	"github.com/gnames/gnlib/ent/gnvers"
@@ -79,17 +82,23 @@ func (gnf gnfinder) Find(file, txt string) output.Output {
 	}
 
 	o := output.TokensToOutput(tokens, text, Version, gnf.GetConfig())
+	o.NameFindingSec = float32(time.Since(start).Seconds())
 
 	o.InputFile = file
+	if gnf.WithVerification {
+		vf := verifier.New(gnf.VerifierURL, gnf.DataSources, gnf.WithAllMatches)
+		ga := gnabbr.New(abbrcfg.OptGnamesURL(gnf.VerifierURL))
+		verify(&o, vf, ga)
+	}
+	if gnf.WithPositionInBytes {
+		o.OffsetsToBytes(text)
+	}
 	if gnf.WithUniqueNames {
 		o = uniqueNames(o)
 	}
 	if gnf.IncludeInputText && gnf.Format != gnfmt.CSV {
 		o.InputText = txt
 	}
-
-	dur := time.Since(start)
-	o.NameFindingSec = float32(dur) / float32(time.Second)
 	return o
 }
 
@@ -122,6 +131,7 @@ func uniqueNames(o output.Output) output.Output {
 			name := output.Name{
 				Cardinality:  v.Cardinality,
 				Name:         v.Name,
+				AbbrName:     v.AbbrName,
 				OddsLog10:    v.OddsLog10,
 				OddsDetails:  v.OddsDetails,
 				OffsetStart:  v.OffsetStart,

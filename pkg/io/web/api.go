@@ -16,7 +16,6 @@ import (
 	"github.com/gnames/gnfinder/pkg/ent/api"
 	"github.com/gnames/gnfinder/pkg/ent/lang"
 	"github.com/gnames/gnfinder/pkg/ent/output"
-	"github.com/gnames/gnfinder/pkg/ent/verifier"
 	"github.com/gnames/gnfmt"
 	"github.com/labstack/echo/v4"
 )
@@ -162,17 +161,6 @@ func finder(
 	gnf = gnf.ChangeConfig(opts...)
 	out = gnf.Find(filename, text)
 	out.TextExtractionSec = txtExtr
-	cfg := gnf.GetConfig()
-	if cfg.WithVerification {
-		verif := verifier.New(
-			cfg.VerifierURL,
-			cfg.DataSources,
-			cfg.WithAllMatches,
-		)
-		verifiedNames, stats, dur := verif.Verify(out.UniqueNameStrings())
-		out.MergeVerification(verifiedNames, stats, dur)
-	}
-
 	out.TotalSec = out.TextExtractionSec + out.NameFindingSec + out.NameVerifSec
 
 	if err == nil {

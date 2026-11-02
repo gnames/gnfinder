@@ -2,14 +2,12 @@ package web
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/gnames/gndoc"
 	gnfinder "github.com/gnames/gnfinder/pkg"
 	"github.com/gnames/gnfinder/pkg/config"
 	"github.com/gnames/gnfinder/pkg/ent/api"
 	"github.com/gnames/gnfinder/pkg/ent/output"
-	"github.com/gnames/gnfinder/pkg/ent/verifier"
 	"github.com/gnames/gnfmt"
 	"github.com/labstack/echo/v4"
 )
@@ -130,21 +128,11 @@ func findNames(
 	gnf gnfinder.GNfinder,
 	file, txt string,
 ) (output.Output, float32) {
-	start := time.Now()
-	cfg := gnf.GetConfig()
 	res := gnf.Find(file, txt)
-	dur := float32(time.Since(start)) / float32(time.Second)
-	if cfg.WithVerification {
-		sources := cfg.DataSources
-		all := cfg.WithAllMatches
-		verif := verifier.New(cfg.VerifierURL, sources, all)
-		verifiedNames, stats, durVerif := verif.Verify(res.UniqueNameStrings())
-		res.MergeVerification(verifiedNames, stats, durVerif)
-	}
-	if cfg.IncludeInputText {
+	if gnf.GetConfig().IncludeInputText {
 		res.InputText = txt
 	}
-	return res, float32(dur)
+	return res, res.NameFindingSec
 }
 
 // textFromFile converts uploaded file into text, returns UTF-8 encoded

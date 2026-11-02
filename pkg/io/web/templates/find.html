@@ -21,7 +21,7 @@
         {{ range .Output.Names }}
           <tr>
             <td>{{ isVerified .Verification }}</td>
-            <td>{{ .Name }}</td>
+            <td>{{ .Name }}{{ if .AbbrName }} ({{ .AbbrName }}){{ end }}</td>
           </tr>
         {{ end }}
         </tbody>

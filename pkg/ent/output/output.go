@@ -108,6 +108,14 @@ type Meta struct {
 	// MainTaxonPercentage is the percentage of names in MainTaxon.
 	MainTaxonPercentage float32 `json:"mainTaxonPercentage,omitempty"`
 
+	// AbbrNamesNum is the number of names with an abbreviated genus that
+	// verification tried to expand.
+	AbbrNamesNum int `json:"abbrNamesNum,omitempty"`
+
+	// AbbrExpandedNum is the number of names with an abbreviated genus
+	// expanded to a full name that verification confirmed.
+	AbbrExpandedNum int `json:"abbrExpandedNum,omitempty"`
+
 	// StatsNamesNum is the number of names used for calculating statistics.
 	// It includes names that are genus and lower and are verified to
 	// Catalogue of Life.
@@ -137,8 +145,14 @@ type Name struct {
 	// Verbatim shows name the way it was in the text.
 	Verbatim string `json:"verbatim,omitempty"`
 
-	// Name is a normalized version of a name.
+	// Name is a normalized version of a name. For a name with an
+	// abbreviated genus reconciled during verification it is the expanded
+	// name: `Carex nigra` for `C. nigra`.
 	Name string `json:"name"`
+
+	// AbbrName is the name with an abbreviated genus (`C. nigra`) when
+	// verification expanded it to Name. Empty for other names.
+	AbbrName string `json:"abbrName,omitempty"`
 
 	// Decision about the quality of name detection.
 	Decision token.Decision `json:"-"`
@@ -226,6 +240,7 @@ func newOutput(
 		WithUniqueNames:     cfg.WithUniqueNames,
 		WithBayes:           cfg.WithBayes,
 		WithOddsAdjustment:  cfg.WithOddsAdjustment,
+		WithPositionInBytes: cfg.WithPositionInBytes,
 		WithVerification:    cfg.WithVerification,
 		WordsAround:         cfg.TokensAround,
 		Language:            cfg.Language.String(),

@@ -36,7 +36,6 @@ import (
 	gnfinder "github.com/gnames/gnfinder/pkg"
 	"github.com/gnames/gnfinder/pkg/config"
 	"github.com/gnames/gnfinder/pkg/ent/nlp"
-	"github.com/gnames/gnfinder/pkg/ent/verifier"
 	"github.com/gnames/gnfinder/pkg/io/dict"
 	"github.com/gnames/gnfinder/pkg/io/web"
 	"github.com/spf13/cobra"
@@ -367,11 +366,6 @@ func findNames(data, file string, convDur float32) error {
 
 	res := gnf.Find(file, data)
 	res.TextExtractionSec = convDur
-	if cfg.WithVerification {
-		verif := verifier.New(cfg.VerifierURL, cfg.DataSources, cfg.WithAllMatches)
-		verifiedNames, stats, dur := verif.Verify(res.UniqueNameStrings())
-		res.MergeVerification(verifiedNames, stats, dur)
-	}
 	res.TotalSec = res.TextExtractionSec + res.NameFindingSec + res.NameVerifSec
 	slog.Info("Name-finding finished",
 		"names", len(res.Names),

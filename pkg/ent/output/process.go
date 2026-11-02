@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"slices"
 	"strings"
+	"unicode/utf8"
 
 	boutput "github.com/gnames/bayes/ent/output"
 	"github.com/gnames/gnfinder/pkg/config"
@@ -13,19 +14,12 @@ import (
 	"github.com/gnames/gnstats/ent/stats"
 )
 
-var rtb map[int]int
-
 // TokensToOutput takes tagged tokens and assembles output out of them.
 func TokensToOutput(
 	ts []token.TokenSN,
 	text []rune,
 	version string,
 	cfg config.Config) Output {
-	// map rune number to byte number
-	if cfg.WithPositionInBytes {
-		populateBytesMap(text)
-	}
-
 	var names []Name
 	genera := make(map[string]struct{})
 	for i := range ts {
@@ -68,14 +62,21 @@ func calculateOdds(det boutput.OddsDetails) float64 {
 	return res
 }
 
-func populateBytesMap(text []rune) {
-	rtb = make(map[int]int)
-	bytes := 0
+// OffsetsToBytes converts offsets of names from runes to bytes of the
+// text. Names are found and verified with offsets in runes; this is the
+// last step when offsets in bytes are asked for.
+func (o *Output) OffsetsToBytes(text []rune) {
+	rtb := make([]int, len(text)+1)
+	var bytes int
 	for i := range text {
 		rtb[i] = bytes
-		bytes += len(string(text[i]))
+		bytes += utf8.RuneLen(text[i])
 	}
 	rtb[len(text)] = bytes
+	for i := range o.Names {
+		o.Names[i].OffsetStart = rtb[o.Names[i].OffsetStart]
+		o.Names[i].OffsetEnd = rtb[o.Names[i].OffsetEnd]
+	}
 }
 
 func getTokensAround(
@@ -275,15 +276,7 @@ func uninomialName(
 	}
 
 	name.OddsDetails = u.NLP().OddsDetails
-	if cfg.WithPositionInBytes {
-		offsetsToBytes(&name)
-	}
 	return name
-}
-
-func offsetsToBytes(name *Name) {
-	name.OffsetStart = rtb[name.OffsetStart]
-	name.OffsetEnd = rtb[name.OffsetEnd]
 }
 
 func speciesName(
@@ -310,9 +303,6 @@ func speciesName(
 		name.OddsDetails[k] = v
 	}
 
-	if cfg.WithPositionInBytes {
-		offsetsToBytes(&name)
-	}
 	return name
 }
 
@@ -351,9 +341,6 @@ func infraspeciesName(
 		name.OddsDetails[k] = v
 	}
 
-	if cfg.WithPositionInBytes {
-		offsetsToBytes(&name)
-	}
 	return name
 }
 

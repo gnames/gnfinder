@@ -63,6 +63,9 @@ as a [RESTful API][apidoc].
 * Uses complementary heuristic and natural language processing algorithms.
 * Optionally verifies found names against multiple biodiversity databases using
   [gnindex] service.
+* During verification, reconciles names with abbreviated genera
+  (`C. nigra` -> `Carex nigra`) with [gnabbr], using full names of the text
+  and its taxonomic statistics.
 * Detection of nomenclatural annotations like `sp. nov.`, `comb. nov.`,
   `ssp. nov.`, `nom. nov.` and their variants.
 * Ability to see words that surround detected name-strings.
@@ -359,6 +362,15 @@ echo "Pomatomus saltator and Parus major" | gnfinder -v -l eng
 echo "Pomatomus saltator and Parus major" | gnfinder --verify --lang eng
 ```
 
+Verification also expands abbreviated genera. An expanded name keeps the
+text as written in `verbatim` and the abbreviated name in `abbrName`
+(`AbbrName`, the last column of CSV/TSV output). An expansion is kept only
+if it has an exact or fuzzy match; otherwise the name stays as it was.
+
+```bash
+echo "Carex nigra is common. C. nigra grows in meadows." | gnfinder -v
+```
+
 Limit matches to ``NCBI`` and ``Encyclopedia of Life``.  For
 the list of data source ids go to [gnverifier's data sources page][gnverifier].
 
@@ -535,6 +547,7 @@ just test
 [gnfinder-plus]: https://github.com/biodiv-platform/gnfinder-plus
 [gnindex]: https://index.globalnames.org
 [gnverifier]: https://verifier.globalnames.org/data_sources
+[gnabbr]: https://github.com/gnames/gnabbr
 [go-report-img]: https://goreportcard.com/badge/github.com/gnames/gnfinder
 [go-report]: https://goreportcard.com/report/github.com/gnames/gnfinder
 [newwinlogo]: https://i.stack.imgur.com/B8Zit.png

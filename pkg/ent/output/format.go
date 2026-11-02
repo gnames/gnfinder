@@ -30,7 +30,8 @@ func CSVHeader(withVerification bool, sep rune) string {
 		verif := []string{"VerifMatchType", "VerifSortScore", "VerifEditDistance",
 			"VerifMatchedName", "VerifMatchedCanonical", "VerifCurrentName",
 			"VerifCurrentCanonical", "VerifTaxonId",
-			"VerifDataSourceId", "VerifDataSourceTitle", "VerifClassificationPath", "VerifError"}
+			"VerifDataSourceId", "VerifDataSourceTitle", "VerifClassificationPath", "VerifError",
+			"AbbrName"}
 		res = append(res, verif...)
 	}
 	return gnfmt.ToCSV(res, sep)
@@ -64,17 +65,22 @@ func csvRow(name Name, i int, sep rune) []string {
 	}
 
 	if name.Verification != nil {
-		return withVerification(s, name.Verification, sep)
+		return withVerification(s, name.Verification, name.AbbrName, sep)
 	}
 
 	res = append(res, gnfmt.ToCSV(s, sep))
 	return res
 }
 
-func withVerification(s []string, nv *vlib.Name, sep rune) []string {
+func withVerification(
+	s []string,
+	nv *vlib.Name,
+	abbrName string,
+	sep rune,
+) []string {
 	var res []string
 	if nv.BestResult != nil {
-		row := makeRow(s, nv.BestResult, nv.Error)
+		row := makeRow(s, nv.BestResult, nv.Error, abbrName)
 		res = append(res, gnfmt.ToCSV(row, sep))
 		return res
 	}
@@ -83,7 +89,7 @@ func withVerification(s []string, nv *vlib.Name, sep rune) []string {
 	if len(all) == 0 {
 		verif := []string{
 			nv.MatchType.String(), "0.0", "", "", "", "", "", "", "", "", "",
-			nv.Error,
+			nv.Error, abbrName,
 		}
 		row := append(s, verif...)
 		res = append(res, gnfmt.ToCSV(row, sep))
@@ -91,20 +97,24 @@ func withVerification(s []string, nv *vlib.Name, sep rune) []string {
 	}
 
 	for _, v := range all {
-		row := makeRow(s, v, nv.Error)
+		row := makeRow(s, v, nv.Error, abbrName)
 		res = append(res, gnfmt.ToCSV(row, sep))
 	}
 
 	return res
 }
 
-func makeRow(s []string, v *vlib.ResultData, err string) []string {
+func makeRow(
+	s []string,
+	v *vlib.ResultData,
+	err, abbrName string,
+) []string {
 	sortScore := strconv.FormatFloat(v.SortScore, 'f', 5, 64)
 	verif := []string{
 		v.MatchType.String(), sortScore, strconv.Itoa(v.EditDistance), v.MatchedName,
 		v.MatchedCanonicalSimple, v.CurrentName, v.CurrentCanonicalSimple,
 		v.RecordID, strconv.Itoa(v.DataSourceID),
-		v.DataSourceTitleShort, v.ClassificationPath, err,
+		v.DataSourceTitleShort, v.ClassificationPath, err, abbrName,
 	}
 	return append(s, verif...)
 }

@@ -1,6 +1,23 @@
 # Changelog
 
-## Unreleased
+## [v1.4.0] - 2026-11-02 Mon
+
+- Add: verification reconciles names with abbreviated genera
+  (`C. nigra` -> `Carex nigra`) with gnabbr. An expansion is kept only if
+  it has an exact or fuzzy match. Expanded names have `abbrName` in JSON
+  and an `AbbrName` column at the end of CSV/TSV verification output;
+  metadata has `abbrNamesNum` and `abbrExpandedNum`.
+- Change: `Find` verifies names when `WithVerification` is set; callers
+  no longer verify the output themselves.
+- Change: unique names and offsets in bytes are applied after
+  verification.
+- Fix: offsets in bytes are given for all names, also those without odds
+  details. `withPositionInBytes` is set in metadata.
+- Change: CLI and web API no longer run verification themselves, they rely
+  on `Find`.
+- Change: update dependencies (gnabbr v0.0.1 added, gnverifier v1.3.8,
+  gnlib v0.71.0, gnstats v0.2.3, echo v4.16.3), Go v1.27.3.
+- Docs: README describes verification of abbreviated genera.
 
 ## [v1.3.0] - 2026-10-15 Thu
 
@@ -443,6 +460,7 @@
 
 This document follows [changelog guidelines]
 
+[v1.4.0]: https://github.com/gnames/gnfinder/compare/v1.3.0...v1.4.0
 [v1.3.0]: https://github.com/gnames/gnfinder/compare/v1.2.0...v1.3.0
 [v1.2.0]: https://github.com/gnames/gnfinder/compare/v1.1.13...v1.2.0
 [v1.1.13]: https://github.com/gnames/gnfinder/compare/v1.1.12...v1.1.13
