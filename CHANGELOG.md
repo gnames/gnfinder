@@ -1,5 +1,7 @@
 # Changelog
 
+- Fix: github CI code, update modules.
+
 ## [v1.4.0] - 2026-11-02 Mon
 
 - Add: verification reconciles names with abbreviated genera
