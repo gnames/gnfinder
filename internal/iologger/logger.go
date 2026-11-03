@@ -14,11 +14,15 @@ import (
 // LogFile is the name of the log file created in the log directory.
 const LogFile = "gnfinder.log"
 
+// logFile is the currently open log file, if any.
+var logFile *os.File
+
 // Init initializes the global slog logger with the given configuration.
 // Creates log file in logDir if destination is "file".
 // If append is true, appends to existing log file; otherwise creates fresh file.
 func Init(logDir string, cfg config.LogConfig, append bool) error {
 	var writer io.Writer
+	var file *os.File
 
 	// Determine output destination
 	switch cfg.Destination {
@@ -28,7 +32,6 @@ func Init(logDir string, cfg config.LogConfig, append bool) error {
 		writer = os.Stderr
 	case "file":
 		logPath := filepath.Join(logDir, LogFile)
-		var file *os.File
 		var err error
 
 		if append {
@@ -72,7 +75,23 @@ func Init(logDir string, cfg config.LogConfig, append bool) error {
 
 	slog.SetDefault(slog.New(handler))
 
+	// close the previous log file, it is not used by the new logger
+	if logFile != nil {
+		_ = logFile.Close()
+	}
+	logFile = file
+
 	return nil
+}
+
+// Close closes the log file opened by Init, if any.
+func Close() error {
+	if logFile == nil {
+		return nil
+	}
+	err := logFile.Close()
+	logFile = nil
+	return err
 }
 
 // parseLevel converts string level to slog.Level.

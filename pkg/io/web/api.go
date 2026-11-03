@@ -58,8 +58,7 @@ func findApiGET(
 
 		select {
 		case <-ctx.Done():
-			<-chErr
-			return ctx.Err()
+			return errors.Join(ctx.Err(), <-chErr)
 		case err := <-chErr:
 			return err
 		case <-time.After(1 * time.Minute):
@@ -131,8 +130,7 @@ func findApiPOST(
 
 		select {
 		case <-ctx.Done():
-			<-chErr
-			return ctx.Err()
+			return errors.Join(ctx.Err(), <-chErr)
 		case err := <-chErr:
 			return err
 		case <-time.After(1 * time.Minute):

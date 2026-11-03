@@ -153,7 +153,7 @@ func textFromFile(
 		return "", filename, 0, err
 	}
 
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	res, err := doc.GetText(f)
 	if err != nil {

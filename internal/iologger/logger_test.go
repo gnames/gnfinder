@@ -15,6 +15,7 @@ import (
 func TestInitFile(t *testing.T) {
 	defer slog.SetDefault(slog.Default())
 	dir := t.TempDir()
+	t.Cleanup(func() { _ = iologger.Close() })
 	path := filepath.Join(dir, iologger.LogFile)
 	cfg := config.LogConfig{Format: "json", Level: "info", Destination: "file"}
 
@@ -43,6 +44,7 @@ func TestInitFile(t *testing.T) {
 func TestInitTintFile(t *testing.T) {
 	defer slog.SetDefault(slog.Default())
 	dir := t.TempDir()
+	t.Cleanup(func() { _ = iologger.Close() })
 	cfg := config.LogConfig{Format: "tint", Level: "debug", Destination: "file"}
 
 	require.NoError(t, iologger.Init(dir, cfg, false))
