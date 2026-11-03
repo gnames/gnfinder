@@ -1,6 +1,6 @@
 package dict
 
-import "github.com/gnames/gnfinder/pkg/io/dict/fuse"
+import "github.com/gnames/gnfinder/pkg/io/dict/hashdict"
 
 // Set is a set of dictionary words.
 type Set interface {
@@ -17,11 +17,13 @@ func (ws WordSet) Has(word string) bool {
 	return ok
 }
 
-func readFilter(name string) (fuse.Filter, error) {
-	f, err := data.Open("data/" + fuse.Path(name))
-	if err != nil {
-		return fuse.Filter{}, err
-	}
-	defer func() { _ = f.Close() }()
-	return fuse.Load(f)
+// flagSet is a view of the words of a hash dictionary with given flags.
+type flagSet struct {
+	hd    *hashdict.Dict
+	flags hashdict.Flags
+}
+
+// Has is true if the word is in the set.
+func (fs flagSet) Has(word string) bool {
+	return fs.hd.Lookup(word).Has(fs.flags)
 }

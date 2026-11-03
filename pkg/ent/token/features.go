@@ -5,6 +5,7 @@ import (
 	"unicode"
 
 	"github.com/gnames/gnfinder/pkg/io/dict"
+	"github.com/gnames/gnfinder/pkg/io/dict/hashdict"
 )
 
 // Features keep properties of a token as a possible candidate for a
@@ -101,26 +102,26 @@ func (p *Features) SetUninomialDict(cleaned string, d *dict.Dictionary) {
 	if p.UninomialDict != dict.NotSet {
 		return
 	}
-	low := strings.ToLower(cleaned)
+	f := d.Lookup(cleaned)
+	// lists of non-names are checked with the lowercased word
+	fl := f
+	if low := strings.ToLower(cleaned); low != cleaned {
+		fl = d.Lookup(low)
+	}
 
-	// Exact sets go first, probabilistic InGenera and InUninomials last, so
-	// known non-names cannot become false positives. The order of exact
-	// sets matters: ambiguous names are also common words. InGenera and
-	// InUninomials share no words with the exact sets, so this order gives
-	// the same results as checking them first.
 	switch {
-	case d.InAmbigGenera.Has(cleaned):
-		p.UninomialDict = dict.InAmbigGenus
-	case d.InAmbigUninomials.Has(cleaned):
-		p.UninomialDict = dict.InAmbigUninomial
-	case d.NotInUninomials.Has(low):
-		p.UninomialDict = dict.NotInUninomial
-	case d.CommonWords.Has(low):
-		p.UninomialDict = dict.CommonWords
-	case d.InGenera.Has(cleaned):
+	case f.Has(hashdict.InGenus):
 		p.UninomialDict = dict.InGenus
-	case d.InUninomials.Has(cleaned):
+	case f.Has(hashdict.InAmbigGenus):
+		p.UninomialDict = dict.InAmbigGenus
+	case f.Has(hashdict.InUninomial):
 		p.UninomialDict = dict.InUninomial
+	case f.Has(hashdict.InAmbigUninomial):
+		p.UninomialDict = dict.InAmbigUninomial
+	case fl.Has(hashdict.NotInUninomial):
+		p.UninomialDict = dict.NotInUninomial
+	case fl.Has(hashdict.CommonWord):
+		p.UninomialDict = dict.CommonWords
 	default:
 		p.UninomialDict = dict.NotInDictionary
 	}
@@ -130,16 +131,16 @@ func (p *Features) SetSpeciesDict(cleaned string, d *dict.Dictionary) {
 	if p.SpeciesDict != dict.NotSet {
 		return
 	}
-	// Exact sets first, probabilistic InSpecies last (see SetUninomialDict).
+	f := d.Lookup(cleaned)
 	switch {
-	case d.InAmbigSpecies.Has(cleaned):
-		p.SpeciesDict = dict.InAmbigSpecies
-	case d.NotInSpecies.Has(cleaned):
-		p.SpeciesDict = dict.NotInSpecies
-	case d.CommonWords.Has(cleaned):
-		p.SpeciesDict = dict.CommonWords
-	case d.InSpecies.Has(cleaned):
+	case f.Has(hashdict.InSpecies):
 		p.SpeciesDict = dict.InSpecies
+	case f.Has(hashdict.InAmbigSpecies):
+		p.SpeciesDict = dict.InAmbigSpecies
+	case f.Has(hashdict.NotInSpecies):
+		p.SpeciesDict = dict.NotInSpecies
+	case f.Has(hashdict.CommonWord):
+		p.SpeciesDict = dict.CommonWords
 	default:
 		p.SpeciesDict = dict.NotInDictionary
 	}

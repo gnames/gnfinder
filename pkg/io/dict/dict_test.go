@@ -4,30 +4,11 @@ import (
 	"testing"
 
 	"github.com/gnames/gnfinder/pkg/io/dict"
+	"github.com/gnames/gnfinder/pkg/io/dict/hashdict"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestInAmbigUninomials(t *testing.T) {
-	assert := assert.New(t)
-	dictionary, err := dict.LoadDictionary()
-	assert.Nil(err)
-	ws, ok := dictionary.InAmbigUninomials.(dict.WordSet)
-	assert.True(ok)
-	assert.Equal(410, len(ws))
-	assert.True(dictionary.InAmbigUninomials.Has("Minimi"))
-}
-
-func TestCommonWords(t *testing.T) {
-	assert := assert.New(t)
-	dictionary, err := dict.LoadDictionary()
-	assert.Nil(err)
-	ws, ok := dictionary.CommonWords.(dict.WordSet)
-	assert.True(ok)
-	assert.Equal(70792, len(ws))
-	assert.True(dictionary.CommonWords.Has("all"))
-}
-
-func TestFilters(t *testing.T) {
+func TestSets(t *testing.T) {
 	assert := assert.New(t)
 	dictionary, err := dict.LoadDictionary()
 	assert.Nil(err)
@@ -40,9 +21,25 @@ func TestFilters(t *testing.T) {
 		{"species", dictionary.InSpecies, "plantaginea"},
 		{"uninomial", dictionary.InUninomials, "Plantaginaceae"},
 		{"ambig genus species", dictionary.InAmbigGeneraSp, "Aphidius funebris"},
+		{"ambig uninomial", dictionary.InAmbigUninomials, "Minimi"},
+		{"common word", dictionary.CommonWords, "all"},
+		{"rank", dictionary.Ranks, "subsp."},
 	}
 	for _, v := range tests {
 		assert.True(v.set.Has(v.word), v.msg)
 	}
 	assert.False(dictionary.InGenera.Has("Notagenusatall"))
+	assert.False(dictionary.CommonWords.Has("Plantago"))
+}
+
+func TestLookup(t *testing.T) {
+	assert := assert.New(t)
+	dictionary, err := dict.LoadDictionary()
+	assert.Nil(err)
+	// America is an ambiguous genus and a common word
+	f := dictionary.Lookup("America")
+	assert.True(f.Has(hashdict.InAmbigGenus))
+	assert.False(f.Has(hashdict.InGenus))
+	assert.True(dictionary.Lookup("america").Has(hashdict.CommonWord))
+	assert.Equal(hashdict.Flags(0), dictionary.Lookup("Notagenusatall"))
 }
