@@ -1,6 +1,24 @@
 # Changelog
 
-- Fix: github CI code, update modules.
+## [v1.5.0] - 2026-11-10 Tue
+
+- Change: all CSV dictionaries are combined into one embedded `dict.bin`
+  file. The new `hashdict` package stores each word as a 64-bit FNV-1a hash
+  in a sorted array with flags that tell which dictionaries contain the
+  word. One lookup returns all dictionaries of a word. Dictionary loading
+  drops from about 380 ms to under 10 ms, the binary from 84 MB to about
+  70 MB. A word outside the dictionary can match only if its 64-bit hash
+  equals the hash of a dictionary word.
+- Change: `Dictionary` fields are `Set` views over the flags, callers use
+  `Has` instead of map lookups.
+- Fix: log file is closed when the logger is re-initialized, add
+  `iologger.Close`.
+- Fix: github CI code (actions/checkout, actions/setup-go,
+  golangci-lint-action).
+- Change: update dependencies (gnlib v0.72.0, gnverifier v1.3.9,
+  pflag v1.1.0).
+- Docs: add PLAN.md with the plan for context-aware detection of ambiguous
+  names.
 
 ## [v1.4.0] - 2026-11-02 Mon
 
@@ -462,6 +480,7 @@
 
 This document follows [changelog guidelines]
 
+[v1.5.0]: https://github.com/gnames/gnfinder/compare/v1.4.0...v1.5.0
 [v1.4.0]: https://github.com/gnames/gnfinder/compare/v1.3.0...v1.4.0
 [v1.3.0]: https://github.com/gnames/gnfinder/compare/v1.2.0...v1.3.0
 [v1.2.0]: https://github.com/gnames/gnfinder/compare/v1.1.13...v1.2.0
